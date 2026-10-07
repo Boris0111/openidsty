@@ -2,31 +2,31 @@
 
 ## 1. 規範與驗證基礎
 
-- [ ] 1.1 建立 `industry-map/README.md`，定義 frontmatter 必填欄位、代號格式（`.TW` / `.TWO` / 純字母 / `.KS` / `.T` / `.HK` / `PRIVATE:`）、固定散文段落標題、題材狀態列舉值、環節切分的裁決規則（可彼此替換的供應角色），並明示圖可能含回路、遍歷須記錄已訪問節點。驗證：僅依此文件（不參考既有檔案）寫出一個新環節檔並通過 1.3 的驗證器
-- [ ] 1.2 建立 `requirements.txt` 記錄 PyYAML 依賴。驗證：`pip install -r requirements.txt` 成功結束
-- [ ] 1.3 實作 `scripts/validate_map.py`，檢查必填欄位、環節識別碼唯一性、上下游與題材引用可解析、上下游雙向一致、代號格式、題材狀態列舉值、散文段落齊備；提供 `--skip-prose` 旗標供骨架階段使用。驗證：對 `tests/fixtures/` 下每一類刻意錯誤的檔案各跑一次，確認每類都失敗且訊息指出檔案路徑與具體欄位
-- [ ] 1.4 建立 `tests/fixtures/`，每一類驗證規則各一個失敗案例與一個合法案例。驗證：合法案例全部通過、失敗案例全部被攔下，無漏網
+- [x] 1.1 建立 `industry-map/README.md`，定義 frontmatter 必填欄位、代號格式（`.TW` / `.TWO` / 純字母 / `.KS` / `.T` / `.HK` / `PRIVATE:`）、固定散文段落標題、題材狀態列舉值、環節切分的裁決規則（可彼此替換的供應角色），並明示圖可能含回路、遍歷須記錄已訪問節點。驗證：僅依此文件（不參考既有檔案）寫出一個新環節檔並通過 1.3 的驗證器
+- [x] 1.2 建立 `requirements.txt` 記錄 PyYAML 依賴。驗證：`pip install -r requirements.txt` 成功結束
+- [x] 1.3 實作 `scripts/validate_map.py`，檢查必填欄位、環節識別碼唯一性、上下游與題材引用可解析、上下游雙向一致、代號格式、題材狀態列舉值、散文段落齊備；提供 `--skip-prose` 旗標供骨架階段使用。驗證：對 `tests/fixtures/` 下每一類刻意錯誤的檔案各跑一次，確認每類都失敗且訊息指出檔案路徑與具體欄位
+- [x] 1.4 建立 `tests/fixtures/`，每一類驗證規則各一個失敗案例與一個合法案例。驗證：合法案例全部通過、失敗案例全部被攔下，無漏網
 
 ## 2. 地圖骨架（僅 frontmatter，不寫散文）
 
 此組先把整張關係圖建起來並驗證參照完整性，再投入散文。關係圖是本次最高風險的部分，必須先驗。
 
-- [ ] 2.1 建立 11 個 AI 伺服器環節檔的 frontmatter：`compute`、`memory`、`advanced-packaging`、`substrate`、`pcb`、`networking`、`odm`、`thermal`、`power`、`interconnect`、`datacenter`，含公司清單（台股、美股，以及該環節若由韓日等市場主導則一併列入）與上下游關係。驗證：`validate_map.py --skip-prose` 通過
-- [ ] 2.2 建立 6 個半導體環節檔的 frontmatter：`foundry`、`equipment`、`materials`、`eda-ip`、`test`、`power-discrete`，並接上與 AI 伺服器環節的上下游關係。驗證：`validate_map.py --skip-prose` 通過，且無跨層孤島環節
-- [ ] 2.3 建立 7 個題材檔的 frontmatter：`cpo-silicon-photonics`、`hbm4`、`liquid-cooling`、`800vdc`、`custom-asic-vs-gpu`、`advanced-node-2nm`、`power-bottleneck`，含狀態、涵蓋環節、受惠公司與里程碑。驗證：`validate_map.py --skip-prose` 通過，題材與環節雙向一致
-- [ ] 2.4 補齊每個環節的市場覆蓋表態：確認台股與美股各自有主要玩家，或明確標記該市場無實質玩家。驗證：驗證器檢出零個留空的市場欄位
+- [x] 2.1 建立 11 個 AI 伺服器環節檔的 frontmatter：`compute`、`memory`、`advanced-packaging`、`substrate`、`pcb`、`networking`、`odm`、`thermal`、`power`、`interconnect`、`datacenter`，含公司清單（台股、美股，以及該環節若由韓日等市場主導則一併列入）與上下游關係。驗證：`validate_map.py --skip-prose` 通過
+- [x] 2.2 建立 6 個半導體環節檔的 frontmatter：`foundry`、`equipment`、`materials`、`eda-ip`、`test`、`power-discrete`，並接上與 AI 伺服器環節的上下游關係。驗證：`validate_map.py --skip-prose` 通過，且無跨層孤島環節
+- [x] 2.3 建立 7 個題材檔的 frontmatter：`cpo-silicon-photonics`、`hbm4`、`liquid-cooling`、`800vdc`、`custom-asic-vs-gpu`、`advanced-node-2nm`、`power-bottleneck`，含狀態、涵蓋環節、受惠公司與里程碑。驗證：`validate_map.py --skip-prose` 通過，題材與環節雙向一致
+- [x] 2.4 補齊每個環節的市場覆蓋表態：確認台股與美股各自有主要玩家，或明確標記該市場無實質玩家。驗證：驗證器檢出零個留空的市場欄位
 
 ## 3. Schema 可查詢性實測（進入散文前的關卡）
 
-- [ ] 3.1 取 3 則真實近期新聞（分屬不同環節，至少一則為上游美系或韓系廠商消息），**手動**沿 frontmatter 的上下游推導受影響環節與公司，逐則記錄推導路徑於 `industry-map/README.md` 的實測章節。驗證：三則都能推導出下游受影響的台廠，且推導過程只讀地圖檔案
-- [ ] 3.2 若 3.1 有任一則走不通，修正 frontmatter 欄位設計並回頭更新 `README.md` 與驗證器，然後重跑 3.1。驗證：三則全部走通後才進入第 4 組；不得以「散文補足」繞過結構缺陷
+- [x] 3.1 取 3 則真實近期新聞（分屬不同環節，至少一則為上游美系或韓系廠商消息），**手動**沿 frontmatter 的上下游推導受影響環節與公司，逐則記錄推導路徑於 `industry-map/README.md` 的實測章節。驗證：三則都能推導出下游受影響的台廠，且推導過程只讀地圖檔案
+- [x] 3.2 若 3.1 有任一則走不通，修正 frontmatter 欄位設計並回頭更新 `README.md` 與驗證器，然後重跑 3.1。驗證：三則全部走通後才進入第 4 組；不得以「散文補足」繞過結構缺陷
 
 ## 4. AI 伺服器散文：上游（運算、記憶體、先進封裝）
 
-- [ ] 4.1 填寫 `compute.md` 六個段落（環節定義、技術變數、玩家格局、傳導鏈、監測指標、風險），涵蓋 GPU 與自研 ASIC 兩條路線的分歧。驗證：`validate_map.py`（不帶旗標）通過
-- [ ] 4.2 填寫 `memory.md`，交代 HBM 與傳統記憶體兩塊、韓廠主導格局與台廠位置。驗證：驗證器通過，傳導鏈段落明確指出對下游哪些環節的影響路徑
-- [ ] 4.3 填寫 `advanced-packaging.md`，涵蓋 CoWoS 與 OSAT 分工。驗證：驗證器通過
-- [ ] 4.4 跑全量驗證並以本組三檔抽查散文與 frontmatter 的一致性（玩家格局提到的公司都在公司清單中）。驗證：驗證器通過且抽查無不一致
+- [x] 4.1 填寫 `compute.md` 六個段落（環節定義、技術變數、玩家格局、傳導鏈、監測指標、風險），涵蓋 GPU 與自研 ASIC 兩條路線的分歧。驗證：`validate_map.py`（不帶旗標）通過
+- [x] 4.2 填寫 `memory.md`，交代 HBM 與傳統記憶體兩塊、韓廠主導格局與台廠位置。驗證：驗證器通過，傳導鏈段落明確指出對下游哪些環節的影響路徑
+- [x] 4.3 填寫 `advanced-packaging.md`，涵蓋 CoWoS 與 OSAT 分工。驗證：驗證器通過
+- [x] 4.4 跑全量驗證並以本組三檔抽查散文與 frontmatter 的一致性（玩家格局提到的公司都在公司清單中）。驗證：驗證器通過且抽查無不一致
 
 ## 5. AI 伺服器散文：載板、電路板、網通、系統
 
@@ -48,7 +48,7 @@
 
 - [ ] 7.1 填寫 `foundry.md` 與 `equipment.md`。驗證：驗證器通過
 - [ ] 7.2 填寫 `materials.md` 與 `test.md`。驗證：驗證器通過
-- [ ] 7.3 填寫 `eda-ip.md` 與 `power-discrete.md`，其中 EDA 工具環節需明確標記台股無實質玩家（設計服務業者另列）。驗證：驗證器通過，且標記被正確識別而非視為缺漏
+- [ ] 7.3 填寫 `eda-ip.md` 與 `power-discrete.md`，其中 `eda-ip` 的玩家格局需說明台廠是以矽智財授權參與（力旺、M31），EDA 工具本身無台廠，而客製 ASIC 設計服務業者（創意、世芯）依可替換性規則歸於 `compute`。驗證：驗證器通過。`market_coverage` 的 `none` 標記由 `datacenter.tw` 與 `substrate.us` 兩處驗證
 - [ ] 7.4 跑全量驗證並抽查本組六檔一致性。驗證：驗證器通過且抽查無不一致
 
 ## 8. 題材散文與里程碑

@@ -1,0 +1,17 @@
+tw:
+  filings:
+    - name: 範例申報來源
+      url: https://example.invalid/filings
+      type: filings
+      access: free
+      reachability: verified
+      checked: '2026-10-07'
+      segments: [mid-part]
+us:
+  industry_media:
+    - name: 範例產業媒體
+      url: https://example.invalid/news
+      type: industry_media
+      access: free
+      reachability: unverified
+      checked: '2026-10-07'
