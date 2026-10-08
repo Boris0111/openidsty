@@ -1,0 +1,98 @@
+# 結構來源仍是 industry-map；此檔只補足公司識別與有來源的企業關係。
+companies:
+  NVDA:
+    cik: '1045810'
+    aliases: [NVIDIA, Nvidia, 英偉達]
+  AMD:
+    cik: '2488'
+    aliases: [Advanced Micro Devices]
+  AVGO:
+    cik: '1730168'
+    aliases: [Broadcom]
+  MSFT:
+    cik: '789019'
+    aliases: [Microsoft]
+  GOOGL:
+    cik: '1652044'
+    aliases: [Google, Alphabet]
+  AMZN:
+    cik: '1018724'
+    aliases: [Amazon, AWS]
+  META:
+    cik: '1326801'
+    aliases: [Meta Platforms, Facebook]
+  INTC:
+    cik: '50863'
+    aliases: [Intel]
+  MU:
+    cik: '723125'
+    aliases: [Micron]
+  '2330.TW':
+    aliases: [台積電, 臺積電, TSMC, Taiwan Semiconductor]
+  '2308.TW':
+    aliases: [台達電, 臺達電, Delta Electronics]
+  '2317.TW':
+    aliases: [鴻海, 鴻海精密, Foxconn, Hon Hai]
+  '3231.TW':
+    aliases: [Wistron]
+relations:
+  - id: tsmc-nvidia-foundry
+    source: '2330.TW'
+    target: NVDA
+    kind: supply
+    direction: one_way
+    review_status: confirmed
+    relevance: high
+    relevance_reason: 先進晶圓製造是加速器交付的關鍵供應角色；分級為研究判斷，非營收占比。
+    evidence: official_statement
+    reason: NVIDIA 官方表示台積電鳳凰城廠已量產 Blackwell 晶圓。
+    source_url: https://blogs.nvidia.com/blog/nvidia-and-partners-build-in-america-for-america/
+    checked: '2026-10-08'
+  - id: tsmc-nvidia-fab-ai
+    source: '2330.TW'
+    target: NVDA
+    kind: partner
+    direction: two_way
+    review_status: confirmed
+    relevance: medium
+    relevance_reason: 雙方合作將 AI 導入晶圓廠；尚未量化此合作對各自業務占比。
+    evidence: official_statement
+    reason: 雙方官方合作涵蓋製程模擬、微影與晶圓廠營運優化。
+    source_url: https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-and-TSMC-Bring-AI-Into-Fabs-to-Advance-Semiconductor-Design-and-Manufacturing/default.aspx
+    checked: '2026-10-08'
+  - id: nvidia-foxconn-ai-factory
+    source: NVDA
+    target: '2317.TW'
+    kind: partner
+    direction: two_way
+    review_status: confirmed
+    relevance: high
+    relevance_reason: 共同建置 AI 工廠並整合機櫃系統，屬直接平台合作；分級為研究判斷。
+    evidence: official_statement
+    reason: NVIDIA 與鴻海官方宣布在台灣合作建置 AI 工廠。
+    source_url: https://nvidianews.nvidia.com/news/foxconn-ai-factory-tsmc-taiwan-nvidia
+    checked: '2026-10-08'
+  - id: wistron-nvidia-systems
+    source: '3231.TW'
+    target: NVDA
+    kind: supply
+    direction: one_way
+    review_status: confirmed
+    relevance: high
+    relevance_reason: AI 系統組裝與測試是平台交付的直接角色；非市值或 evidence 分數。
+    evidence: official_statement
+    reason: NVIDIA 官方指出緯創在德州製造及測試 NVIDIA AI 系統。
+    source_url: https://blogs.nvidia.com/blog/nvidia-and-partners-build-in-america-for-america/
+    checked: '2026-10-08'
+  - id: tsmc-foxconn-taiwan-project
+    source: '2330.TW'
+    target: '2317.TW'
+    kind: partner
+    direction: two_way
+    review_status: candidate
+    relevance: unknown
+    relevance_reason: 同一專案被提及不足以量化兩家公司直接合作程度。
+    evidence: inference
+    reason: 官方 AI 工廠新聞同時提到台積電與鴻海；直接雙邊契約仍待驗證。
+    source_url: https://nvidianews.nvidia.com/news/foxconn-ai-factory-tsmc-taiwan-nvidia
+    checked: '2026-10-08'

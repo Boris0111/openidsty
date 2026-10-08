@@ -1,0 +1,26 @@
+# Same isolated project; use this override for container hot reload.
+services:
+  api:
+    command: [uvicorn, app.main:app, --host, 0.0.0.0, --port, "8000", --reload]
+    volumes:
+      - ./backend:/workspace/backend
+      - ./industry-map:/workspace/industry-map:ro
+      - ./data:/workspace/data:ro
+      - ./scripts/validate_map.py:/workspace/scripts/validate_map.py:ro
+  web:
+    image: industryflow-web:dev
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      target: builder
+    command: [npm, run, dev]
+    volumes:
+      - ./frontend:/app
+      - web-node-modules:/app/node_modules
+      - web-next:/app/.next
+  worker:
+    volumes:
+      - ./backend:/workspace/backend
+volumes:
+  web-node-modules:
+  web-next:

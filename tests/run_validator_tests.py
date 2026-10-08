@@ -22,7 +22,7 @@ VALIDATOR = ROOT / "scripts" / "validate_map.py"
 
 def run_validator(map_dir: Path, *extra: str):
     result = subprocess.run(
-        [sys.executable, str(VALIDATOR), "--map-dir", str(map_dir), *extra],
+        [sys.executable, '-X', 'utf8', str(VALIDATOR), "--map-dir", str(map_dir), *extra],
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -124,6 +124,10 @@ SOURCES = "sources.yaml"
 
 # (案例名稱, 突變, 預期訊息片段, 是否也該在 --skip-prose 模式下被攔下)
 CASES = [
+    ('來源 ID 重複', edit(SOURCES, 'id: sample-media', 'id: sample-filings'), '來源識別碼重複', True),
+    ('來源 ID 缺少', edit(SOURCES, 'id: sample-media\n      ', ''), '缺少必填欄位: id', True),
+    ('自動設定錯誤', edit(SOURCES, 'id: sample-media', 'ingestion: {adapter: nope}\n      id: sample-media'), 'adapter 不合法', True),
+    ('來源題材無法解析', edit(SOURCES, 'id: sample-media', 'themes: [nope]\n      id: sample-media'), '引用不存在的題材', True),
     ("缺少必填欄位", edit(MID, "kpis:\n  - 出貨量\n  - 毛利率\n", ""), "缺少必填欄位: kpis", True),
     ("環節識別碼重複", copy_as(MID, "ai-server/dup.md"), "識別碼重複", True),
     ("上下游引用無法解析", edit(MID, "downstream: [end-part]", "downstream: [nonexistent]"), "引用不存在的環節: nonexistent", True),
@@ -155,6 +159,7 @@ CASES = [
     ("付費來源混入", edit(SOURCES, "access: free", "access: paid", count=1), "僅限免費公開來源", True),
     ("來源缺少必填欄位", edit(SOURCES, "      checked: '2026-10-07'\n      segments: [mid-part]\n", "      segments: [mid-part]\n"), "缺少必填欄位: checked", True),
     ("來源引用不存在的環節", edit(SOURCES, "segments: [mid-part]", "segments: [nope]"), "引用不存在的環節: nope", True),
+    ("來源回補頁數超限", edit(SOURCES, "      segments: [mid-part]", "      ingestion: {adapter: rss, max_pages: 201}\n      segments: [mid-part]", count=1), "max_pages 須為 1–200", True),
 ]
 
 

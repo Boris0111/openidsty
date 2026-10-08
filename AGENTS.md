@@ -6,18 +6,22 @@
 
 建立半導體與 AI 伺服器產業的**結構化、可遍歷地圖**，讓「一則新聞 → 受影響的環節與公司」這個推導能自動完成。
 
-交付形態刻意是 **repo 內的純文字 Markdown ＋ agent skill**：無伺服器、無資料庫、無排程、無 API key。消息的即時性靠查詢當下的 web search，不靠建置時抓取。
+產業結構仍以 **Markdown ＋ agent skill** 維護；`add-industry-info-platform` 新增公開唯讀網站，以 Next.js／Cytoscape.js、FastAPI、PostgreSQL 與 Prefect 呈現公司關係、官方事件及基本財報。啟動及資料維護見 `README.md`。行情、帳號與 AI 摘要不在此 change 範圍。
 
 ## 產物在哪
 
 | 路徑 | 是什麼 |
 |---|---|
+| `README.md` | 專案環境設定、執行驗證與開發操作指南 |
 | `industry-map/README.md` | **Schema 的唯一真實來源。動任何地圖檔之前必讀。** |
 | `industry-map/ai-server/`、`semiconductor/` | 環節檔。YAML frontmatter 承載結構，散文承載解釋 |
 | `industry-map/themes/` | 題材檔，含生命週期狀態與里程碑 |
-| `industry-map/sources.yaml` | 免費公開資訊來源註冊表（尚未建立，見 `add-industry-map` 第 9 組 tasks） |
+| `industry-map/sources.yaml` | 免費公開資訊來源註冊表；欄位與維護流程見 `industry-map/README.md` |
 | `scripts/validate_map.py` | 結構驗證器 |
 | `tests/run_validator_tests.py` | 驗證器自身的測試套件 |
+| `backend/`、`frontend/`、`compose.yaml` | 應用、離線測試與隔離 Docker 執行環境 |
+| `data/company-research.yaml` | aliases、CIK 與有來源的公司關係；維護見 `docs/company-research.md` |
+| `docs/` | API、來源、前端操作與整合驗收記錄 |
 | `openspec/` | 規格與變更記錄（見下方工作流） |
 
 ## 動手前後必做

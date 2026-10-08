@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "IndustryFlow 前端開發",
+      "runtimeExecutable": "npm.cmd",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/frontend",
+      "port": 3010
+    },
+    {
+      "name": "IndustryFlow API 開發（Docker）",
+      "runtimeExecutable": "docker",
+      "runtimeArgs": ["compose", "-f", "compose.yaml", "-f", "compose.dev.yaml", "up", "api"],
+      "cwd": "${workspaceFolder}",
+      "port": 8010
+    }
+  ]
+}

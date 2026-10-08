@@ -1,0 +1,179 @@
+# IndustryFlow｜半導體與 AI 產業情報地圖
+
+以產業探索為入口：選產業 → 理解環節 → 查看題材與近期事件 → 追溯來源。完整研究、監測訊號與風險直接呈現，公司提供定位與相關資訊。公開唯讀、不需帳號；股價、行情估值與 AI 摘要留待後續 change。
+
+產業結構以 `industry-map/` Markdown 為唯一來源；FastAPI 將環節與題材全文匯入 PostgreSQL，另外保存媒體事件、官方背景統計與既有財報。Next.js／Cytoscape.js 提供介面，Prefect 每小時更新免費公開來源；版本化規則產生內容分類證據。Redis 與 Neo4j 尚未引入。
+
+## 快速啟動（Windows PowerShell）
+
+需要 Docker Desktop（Linux containers）。第一次建置需要網路與數分鐘。以下命令只使用本專案 `industryflow` 的容器與 volumes，不會停止其他專案。
+
+```powershell
+cd C:\Users\User\openspec_pjt
+.\scripts\setup-env.ps1
+docker compose up -d --build
+# 第一次立即取得資料；排程另於每小時第 7 分鐘執行
+docker compose run --rm ingestion python -m app.ingest
+```
+
+| 入口 | 網址 |
+|---|---|
+| 網站 | http://localhost:3010 |
+| API／Swagger | http://localhost:8010/api/docs |
+| API health | http://localhost:8010/api/health |
+| Prefect 管理介面（限本機） | http://localhost:4201 |
+
+首次啟動會建立 app 與 Prefect 各自的 database、執行 Alembic、驗證並匯入地圖、註冊來源及 hourly deployment。PostgreSQL 不發布外部 port；`.env` 含隨機密碼且已忽略，不要提交。設定 SEC 前，在 `.env` 的 `SEC_USER_AGENT` 填「專案名稱＋維護者實際 email」，再 `docker compose up -d --force-recreate worker`。空值會顯示「待設定」；台灣與 IR 來源仍照常執行。
+
+Linux 自架可複製 `.env.example` 成 `.env`，將 POSTGRES_PASSWORD 改成隨機十六進位密碼；其餘 Compose 命令相同。
+
+```powershell
+docker compose ps
+docker compose logs --tail 80 api worker prefect
+docker compose logs --tail 80 initialize deploy
+# 停止，保留資料
+docker compose down
+# 再次啟動
+docker compose up -d
+```
+
+`down` 不加 `-v`；刪除 volume 會刪除資料。其他專案已使用 3000／8000，本專案採 3010／8010。變更 port 可編輯 `.env`；網站 proxy 使用內部服務名稱，不依賴外部 port。
+
+## 操作流程
+
+桌機採完整產業圖與展開的研究側欄；手機預設環節清單與選中環節關係圖，可開啟全螢幕完整圖。選取寫入 URL，支援返回與分享；搜尋環節／題材／公司支援鍵盤。跨產業節點可展開，圖保留方向與真實回路。
+
+題材頁提供研究全文、證據、查核日期與預期里程碑；已發布事件另列。公司頁保留名稱、代號、跨環節角色與相關事件，舊 `/compare` 導回產業探索並說明入口調整。既有財報、企業關係與比較 API／DB 資料保留；本次 additive migration 不刪除歷史。
+
+「近期事件」優先呈現產業變化，可依產業／環節／題材／發布日期篩選，另行開啟例行財報。事件詳情附分類命中詞、摘錄、規則版本與來源；影響推導以直接分類起算並標 inference。發布日未知保留缺口，出表日、活動日與取得時間分開。
+
+「資料覆蓋」逐環節與題材列研究、設定來源、近 30／90 日直接事件及真實樣本，可下載矩陣。來源頁將註冊資訊、網頁可讀性與實際擷取狀態分開；成功擷取不表示已完整回補 90 日。最近驗收快照見 [近 90 日矩陣](docs/coverage-90d.md)，操作與限制見 [來源文件](docs/sources.md)。
+
+## 前後端開發
+
+最直接的方式是開啟容器 hot reload，修改 `frontend/` 或 `backend/app/` 即更新。
+
+```powershell
+docker compose -f compose.yaml -f compose.dev.yaml up -d --build
+```
+
+回到 production build：
+
+```powershell
+docker compose up -d --build --force-recreate api web worker
+```
+
+若前端要在本機跑 Node.js 24（API 與 DB 保留 Docker）：
+
+```powershell
+docker compose up -d api prefect worker
+docker compose stop web
+cd frontend
+npm.cmd ci
+npm.cmd run dev
+```
+
+前端仍在 http://localhost:3010。`.Codex/launch.json` 提供前端與 Docker API 開發設定；前端 API_ORIGIN 預設 http://127.0.0.1:8010，可由環境變數改寫。瀏覽器僅使用同網域 `/api/`，不需要把 DB 或 SEC 直接公開。
+
+Python 3.12 離線測試環境：
+
+```powershell
+cd C:\Users\User\openspec_pjt
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r backend/requirements.txt
+$env:PYTHONUTF8 = '1'
+cd backend
+..\.venv\Scripts\python.exe -m pytest tests -q
+```
+
+後端 runtime 使用 PostgreSQL；SQLite 僅為 unit tests。API 容器的 reload 不會創建排程，排程僅在獨立 worker 執行。變更 flows 後重建 worker／deploy。
+
+## 地圖與企業關係維護
+
+改地圖前先讀 [唯一 Schema](industry-map/README.md)。修改後執行驗證；錯誤地圖不會覆蓋既有投影。
+
+```powershell
+$env:PYTHONUTF8 = '1'
+.\.venv\Scripts\python.exe scripts/validate_map.py
+# 只撰寫 frontmatter 時；交付仍須全量通過
+.\.venv\Scripts\python.exe scripts/validate_map.py --skip-prose
+# 改驗證器時
+.\.venv\Scripts\python.exe tests/run_validator_tests.py
+# 將修改的地圖／公司研究檔匯入（也適用 production）
+docker compose build api
+docker compose run --rm initialize
+# 更新使用新 image 的 API／worker
+docker compose up -d api worker
+```
+
+公司 aliases、CIK、關係在 `data/company-research.yaml`；維護規則見 [company-research](docs/company-research.md)。業務關聯程度、證據型態與審核狀態分開，不以市值／tier 代替。結構有回路；影響遍歷包含上下游、題材及共同下游手足，皆標為 inference。
+
+## 驗證
+
+```powershell
+# 網站必須已啟動
+cd frontend
+npm.cmd run typecheck
+npm.cmd run build
+npx.cmd playwright install chromium
+npm.cmd run test:e2e
+# 容器內也可驗證後端
+docker compose exec -T api python -m pytest tests -q
+# 至少一次 Prefect 更新完成後，驗證排程、PostgreSQL 與防重疊鎖
+docker compose exec -T api python -m app.verify_runtime
+```
+
+測試 fixtures 只用於離線測試，不會被 runtime 載入。整合驗收記錄見 [verification](docs/verification.md)。
+
+## 更新、備份與還原
+
+```powershell
+# 單次或單一來源更新
+docker compose run --rm ingestion python -m app.ingest --source twse-financials
+# 強制嘗試公開歷史回補（逐來源記錄可取範圍與缺口）
+docker compose run --rm ingestion python -m app.ingest --backfill-days 90
+# 更新分類規則後重分類，不呼叫外部來源；initialize 也會執行
+docker compose run --rm ingestion python -m app.ingest --reclassify
+# 透過 Prefect worker 立即觸發整輪
+docker compose exec -T worker prefect deployment run official-information/hourly
+# 查來源健康
+Invoke-RestMethod http://localhost:8010/api/sources
+# 備份 app database（不含 Prefect 管理歷史）
+.\scripts\backup.ps1
+# 使用剛建立的 dump，在新的隔離 database 還原並核對筆數
+.\scripts\restore-check.ps1 -BackupFile .\backups\industry-YYYYMMDD-HHMMSS.dump
+```
+
+備份腳本使用 pg_dump custom format，再由 docker cp 複製，避免 PowerShell 將二進位 dump 轉碼。還原腳本只建立 `industry_restore_<時間>`，不覆寫 app DB；確認後可用 `docker compose exec db dropdb -U industry <還原資料庫名>` 移除該驗證 DB。災難還原先停本專案 API／worker，保留現有 DB，將 dump 還原至新資料庫後，在 `.env` 設 `APP_DATABASE=industry_restore_<時間>`，再 `docker compose up -d`，讓 API／worker 使用新資料庫。不要用資料刪除取代備份。
+
+## 自架公開部署
+
+在有 Docker 的主機複製 repo 與安全保存的 `.env`，設定 PUBLIC_DOMAIN（自己的網域）及 ACME_EMAIL，讓 DNS 指向主機，開放 80／443；不要公開 5432、8010 或 4201。
+
+```bash
+docker compose --profile public up -d --build
+```
+
+Caddy 自動申請 TLS，僅代理網站及其唯讀 API。預設 localhost ports 仍供主機管理；Prefect UI 必須透過 SSH tunnel 或可信內網使用。若 80／443 已有 proxy，將其導至 web:3010 或 localhost:3010，不必啟動 Caddy。回滾可停止本專案 Compose 或回復前一版 image；地圖與 DB volumes 保留。
+
+## 專案文件與 OpenSpec
+
+| 路徑 | 用途 |
+|---|---|
+| `industry-map/` | 環節、題材、免費研究入口與唯一 Schema |
+| `backend/` | API、migrations、connectors、Prefect flows 與 unit tests |
+| `frontend/` | Next.js 與瀏覽器流程測試 |
+| `data/` | 可審查的公司研究補充資料 |
+| `docs/api.md`／`sources.md`／`frontend.md` | API 契約、來源設定與前端操作 |
+| `compose.yaml`／`compose.dev.yaml` | 執行與 hot reload |
+
+本 repo 已初始化 OpenSpec，無須再次 init。全域 CLI 是共用工具，規格在本 repo 的 `openspec/`；implementation 進度在各 change 的 tasks checkbox，不等於 planning artifacts 的完成數。
+
+```powershell
+openspec.cmd list
+openspec.cmd status --change refocus-industry-explorer
+openspec.cmd instructions apply --change refocus-industry-explorer --json
+openspec.cmd validate refocus-industry-explorer --type change --strict
+```
+
+新工作一律在此 repo；舊 `financeinfost` 只供參考。Codex 可用 `$openspec-propose`／`$openspec-apply-change`／`$openspec-archive-change`；歸檔須另行啟動。

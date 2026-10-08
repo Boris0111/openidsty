@@ -1,0 +1,30 @@
+version: industry-rules-2026-10-08-v1
+# 只匹配內容技術詞。名稱／代號使用另一組 aliases；來源範圍不是分類證據。
+segments:
+  compute: {terms: [GPU, ASIC, AI accelerator, 運算晶片, 加速器晶片, 客製化晶片, 客製晶片]}
+  memory: {terms: [HBM, HBM4, HBM3E, DRAM, NAND, DDR5, 高頻寬記憶體]}
+  advanced-packaging: {terms: [CoWoS, SoIC, 先進封裝, advanced packaging, hybrid bonding, chiplet, 晶粒堆疊]}
+  substrate: {terms: [ABF, IC substrate, 載板, 封裝基板]}
+  pcb: {terms: [PCB, CCL, printed circuit board, 電路板, 銅箔基板]}
+  thermal: {terms: [液冷, 冷板, 冷卻分配, 散熱模組, 散熱系統, liquid cooling, cold plate, CDU, heatsink, immersion cooling]}
+  power: {terms: [電源供應, 供電架構, 電力架構, 高功率電源, 電力需求, 供電瓶頸, 電網接入, power supply, power delivery, power grid, 800V, 800 V, 800VDC, 800 VDC, HVDC]}
+  interconnect: {terms: [連接器, 高速線纜, 高速連接, connector, copper cable, twinax, PCIe, PCI Express]}
+  networking: {terms: [CPO, silicon photonics, 矽光子, 光收發, 網路交換器, Ethernet, InfiniBand, 光通訊, optical interconnect]}
+  odm: {terms: [伺服器代工, 伺服器組裝, server ODM, AI伺服器, AI 伺服器, AI server, 機櫃出貨], context: [代工, 組裝, 出貨, 製造, ODM, assembly, shipments, manufacturing]}
+  datacenter: {terms: [資料中心, 數據中心, data center, data centre, datacenter, hyperscaler]}
+  eda-ip: {terms: [EDA, 電子設計自動化, 半導體設計自動化, 矽智財, silicon IP, electronic design automation]}
+  foundry: {terms: [晶圓代工, foundry, foundries, 2nm, 2 nm, 二奈米, 2奈米, 2 奈米, N2, wafer fabrication]}
+  equipment: {terms: [EUV, DUV, 光刻, 微影設備, 蝕刻設備, 半導體設備, lithography, etch equipment, semiconductor equipment]}
+  materials: {terms: [矽晶圓, 矽晶片材料, 光阻, 電子特氣, silicon wafer, photoresist, CMP slurry, semiconductor materials, 半導體材料]}
+  test: {terms: [晶圓測試, 晶片測試, 測試探針, 探針卡, wafer test, chip testing, probe card, burn-in, ATE], context: [晶片, 晶圓, 半導體, semiconductor, chip, wafer, probe card, 探針卡]}
+  power-discrete: {terms: [SiC, GaN, MOSFET, IGBT, 功率半導體, 功率元件, power semiconductor, 碳化矽, 氮化鎵]}
+themes:
+  liquid-cooling: {terms: [液冷, liquid cooling, cold plate, immersion cooling, 冷板]}
+  hbm4: {terms: [HBM4, HBM 4, 第四代HBM]}
+  cpo-silicon-photonics: {terms: [CPO, silicon photonics, 矽光子, co-packaged optics]}
+  advanced-node-2nm: {terms: [2nm, 2 nm, 2奈米, 2 奈米, 二奈米, N2], context: [晶片, 晶圓, 製程, 台積電, TSMC, chip, node, process, foundry, transistor]}
+  custom-asic-vs-gpu: {terms: [ASIC, 客製晶片, 客製化晶片, custom silicon, custom chip], context: [AI, GPU, 人工智慧, 加速器, accelerator, 資料中心, data center]}
+  800vdc: {terms: [800V, 800 V, 800VDC, 800 VDC, 正負400V, ±400V]}
+  power-bottleneck: {terms: [缺電, 供電瓶頸, 電力瓶頸, 電網接入, 電力短缺, power shortage, power bottleneck, grid connection, grid interconnection, power constraints], context: [資料中心, 數據中心, data center, datacenter, AI, 算力]}
+routine_titles: [月營收, 營收月增, 營收年增, 每股盈餘, 季度財報, 財報快訊, financial results, quarterly results, reports earnings, earnings release]
+software_titles: [CRAM, swap, Android, iOS, 軟體更新, 作業系統, 遊戲更新, 遊戲效能, 記憶體壓縮, memory compression]

@@ -1,0 +1,17 @@
+export type GraphNode = {id:string; name:string; position?:number; external?:boolean; center?:boolean; relevance?:string; size?:number; company_count?:number; layer?:string};
+export type GraphEdge = {id:string; source:string; target:string; kind:string; direction:string; review_status?:string; relevance?:string; relevance_reason?:string; color_role?:string; reason?:string; source_url?:string; evidence?:string; checked?:string};
+export type GraphData = {nodes:GraphNode[]; edges:GraphEdge[]; layer?:string; center?:string};
+export type Industry = {id:string; name:string; segment_count:number};
+export type Role = {segment:string; segment_name:string; layer:string; role:string};
+export type Financial = {id:number; source_id:string; period:string; period_end:string; basis:string; currency:string; revenue:number|null; revenue_yoy:number|null; gross_margin:number|null; eps:number|null; published_at:string; fetched_at:string; url:string};
+export type Classification = {id:string;relevance:'direct'|'background';evidence:{term:string;matched:string;excerpt:string}[]};
+export type InfoEvent = {id:number; title:string; body:string; ticker:string|null; kind:string; lifecycle:string; source_id:string; published_at:string|null;published_precision:'day'|'minute'|'unknown';reported_at:string|null;activity_at:string|null;date_semantics:string;period:string|null;basis:string|null;routine:boolean;rules_version:string|null;segments:Classification[];themes:Classification[]; fetched_at:string; url:string; mentioned:string[]};
+export type Company = {ticker:string; name:string; aliases:string[]; roles:Role[]; financials:Financial[]; events:InfoEvent[]; mentioned_events:InfoEvent[]};
+export type SegmentLink = {id:string;name:string;layer:string};
+export type Theme = {theme:string;name_zh:string;status:string;prose:string;checked:string|null;segments:string[];segments_detail?:SegmentLink[];beneficiaries:string[];milestones:{date:string;event:string;evidence:string}[];events?:InfoEvent[]};
+export type Segment = {segment:string; name_zh:string; layer:string; prose:string; companies:{ticker:string; name_zh:string; role:string}[]; kpis:string[]; signals:string[]; upstream:string[]; downstream:string[]; themes_detail:Theme[];neighbors:SegmentLink[];events:InfoEvent[]};
+export type FetchMeta = {requested_days:number;pages:number;oldest_observed:string|null;newest_observed:string|null;cutoff_reached:boolean;limit:string;warnings:string[]};
+export type Source = {id:string; name:string; url:string; status:string; last_attempt:string|null; last_success:string|null; error:string|null; new_count:number;data:{reachability?:string;checked?:string;adapter?:string;registry_url?:string;fetch_meta?:FetchMeta;backfill_meta?:FetchMeta;backfill_completed_at?:string}};
+export type CoverageRow = {id:string;kind:'segment'|'theme';name:string;layer:string|null;research_available:boolean;checked:string|null;configured_sources:number;successful_sources:number;last_updated:string|null;direct_30d:number;direct_90d:number;background_90d:number;unknown_date:number;routine_90d:number;company_mentions_90d:number;samples:InfoEvent[];gaps:string[];sources:Source[]};
+export type Coverage = {as_of:string;window_start:string;rules_version:string;counting:string;rows:CoverageRow[]};
+export type ImpactPath = {segment:string; name:string; mechanism:string; via:string|null; path:string[]; companies:string[]; confidence:string};

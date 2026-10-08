@@ -326,7 +326,7 @@ def check_cross_refs(segments: dict, themes: dict, errors: Errors) -> None:
                 errors.add(path, "beneficiaries 的代號未出現在任何環節的 companies 中: {}".format(ticker))
 
 
-def check_sources(segments: dict, errors: Errors) -> int:
+def check_sources(segments: dict, themes: dict, errors: Errors) -> int:
     path = MAP_DIR / SOURCES_FILE
     if not path.is_file():
         return 0
@@ -340,6 +340,7 @@ def check_sources(segments: dict, errors: Errors) -> int:
         return 0
 
     count = 0
+    identifiers = set()
     for market, groups in data.items():
         if not isinstance(groups, dict):
             errors.add(path, "{} 之下須為對應表，依資料類型分組".format(market))
@@ -359,9 +360,30 @@ def check_sources(segments: dict, errors: Errors) -> int:
                 if not isinstance(entry, dict):
                     errors.add(path, "{} 必須是對應表".format(label))
                     continue
-                for field in ("name", "url", "type", "access", "reachability", "checked"):
+                for field in ("id", "name", "url", "type", "access", "reachability", "checked"):
                     if field not in entry or entry[field] is None:
                         errors.add(path, "{} 缺少必填欄位: {}".format(label, field))
+                sid = entry.get('id')
+                if not isinstance(sid, str) or not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', sid):
+                    errors.add(path, '{}.id 須為 kebab-case'.format(label))
+                elif sid in identifiers:
+                    errors.add(path, '{}.id 來源識別碼重複: {}'.format(label, sid))
+                else:
+                    identifiers.add(sid)
+                if not isinstance(entry.get('url'), str) or not entry['url'].startswith('https://'):
+                    errors.add(path, '{}.url 須為 HTTPS'.format(label))
+                ingestion = entry.get('ingestion')
+                if ingestion is not None:
+                    adapters = {'manual','tw','tsmc','delta','nvidia','microsoft','sec-submissions','sec-facts','rss','tpca','moea','census','eia'}
+                    if not isinstance(ingestion, dict) or ingestion.get('adapter') not in adapters:
+                        errors.add(path, '{}.ingestion adapter 不合法'.format(label))
+                    else:
+                        for url_key in ('url','fallback'):
+                            if ingestion.get(url_key) and (not isinstance(ingestion[url_key],str) or not ingestion[url_key].startswith('https://')):
+                                errors.add(path, '{}.ingestion.{} 須為 HTTPS'.format(label,url_key))
+                        pages = ingestion.get('max_pages',1)
+                        if type(pages) is not int or not 1 <= pages <= 200:
+                            errors.add(path, '{}.ingestion.max_pages 須為 1–200'.format(label))
                 if entry.get("type") not in (None, source_type):
                     errors.add(
                         path,
@@ -384,9 +406,14 @@ def check_sources(segments: dict, errors: Errors) -> int:
                 checked = entry.get("checked")
                 if checked is not None and not CHECKED_RE.match(str(checked)):
                     errors.add(path, "{}.checked 須為 YYYY-MM-DD，目前為 {!r}".format(label, checked))
-                for ref in entry.get("segments") or []:
-                    if ref not in segments:
-                        errors.add(path, "{}.segments 引用不存在的環節: {}".format(label, ref))
+                for key, known in [('segments', segments), ('themes', themes)]:
+                    refs = entry.get(key, [])
+                    if not isinstance(refs, list):
+                        errors.add(path, '{}.{} 須為陣列'.format(label, key))
+                        continue
+                    for ref in refs:
+                        if not isinstance(ref,str) or ref not in known:
+                            errors.add(path, '{}.{} 引用不存在的{}: {}'.format(label, key, '環節' if key=='segments' else '題材', ref))
     return count
 
 
@@ -408,7 +435,7 @@ def main() -> int:
     segments = load_segments(errors)
     themes = load_themes(errors)
     check_cross_refs(segments, themes, errors)
-    source_count = check_sources(segments, errors)
+    source_count = check_sources(segments, themes, errors)
 
     if not args.skip_prose:
         for seg in segments.values():

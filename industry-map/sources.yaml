@@ -1,0 +1,401 @@
+# 唯一來源註冊表；入口可讀性與 runtime 擷取狀態分開。
+tw:
+  filings:
+  - name: 公開資訊觀測站（MOPS）
+    url: https://mops.twse.com.tw/?lang=tw
+    type: filings
+    access: free
+    reachability: unverified
+    checked: '2026-10-07'
+    notes: HTTP 200 僅取得 MOPS JavaScript 外殼，未讀到申報內容，故標為 unverified；免費申報入口保留供瀏覽器重試。
+    id: mops-manual
+    provider: mops-manual
+    ingestion:
+      adapter: manual
+  - id: twse-announcements
+    provider: twse
+    name: TWSE 重大訊息
+    url: https://openapi.twse.com.tw/v1/opendata/t187ap04_L
+    type: filings
+    access: free
+    reachability: unverified
+    checked: '2026-10-08'
+    ingestion:
+      adapter: tw
+      kind: announcements
+      fallback: https://mopsfin.twse.com.tw/opendata/t187ap04_L.csv
+  - id: twse-revenue
+    provider: twse
+    name: TWSE 月營收
+    url: https://openapi.twse.com.tw/v1/opendata/t187ap05_L
+    type: filings
+    access: free
+    reachability: unverified
+    checked: '2026-10-08'
+    ingestion:
+      adapter: tw
+      kind: revenue
+      fallback: https://mopsfin.twse.com.tw/opendata/t187ap05_L.csv
+  - id: twse-financials
+    provider: twse
+    name: TWSE 累計損益表
+    url: https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci
+    type: filings
+    access: free
+    reachability: unverified
+    checked: '2026-10-08'
+    ingestion:
+      adapter: tw
+      kind: financials
+      fallback: https://mopsfin.twse.com.tw/opendata/t187ap06_L_ci.csv
+  - id: tpex-announcements
+    provider: tpex
+    name: TPEX 重大訊息
+    url: https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap04_O
+    type: filings
+    access: free
+    reachability: unverified
+    checked: '2026-10-08'
+    ingestion:
+      adapter: tw
+      kind: announcements
+  - id: tpex-revenue
+    provider: tpex
+    name: TPEX 月營收
+    url: https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O
+    type: filings
+    access: free
+    reachability: unverified
+    checked: '2026-10-08'
+    ingestion:
+      adapter: tw
+      kind: revenue
+  - id: tpex-financials
+    provider: tpex
+    name: TPEX 累計損益表
+    url: https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci
+    type: filings
+    access: free
+    reachability: unverified
+    checked: '2026-10-08'
+    ingestion:
+      adapter: tw
+      kind: financials
+  earnings_call:
+  - name: 台積電季度法說會與財報
+    url: https://investor.tsmc.com/english/quarterly-results
+    type: earnings_call
+    access: free
+    reachability: verified
+    checked: '2026-10-07'
+    notes: HTTP 200，公開季度財報、簡報及法說會入口可讀；若入口導向尚未發布的季度，只能使用已發布資料。
+    segments:
+    - foundry
+    - advanced-packaging
+    id: ir-tsmc
+    provider: ir-tsmc
+    ingestion:
+      adapter: tsmc
+  - name: 台達電法說會簡報與錄影
+    url: https://www.deltaww.com/en-US/investors/analyst-meeting
+    type: earnings_call
+    access: free
+    reachability: verified
+    checked: '2026-10-07'
+    notes: HTTP 200，公開法說會季度索引可讀，提供簡報及錄影入口；自動字幕需與原始發言交叉確認。
+    segments:
+    - power
+    - thermal
+    - datacenter
+    id: ir-delta
+    provider: ir-delta
+    ingestion:
+      adapter: delta
+  industry_media:
+  - name: 科技新報半導體公開文章
+    url: https://technews.tw/category/semiconductor/
+    type: industry_media
+    access: free
+    reachability: verified
+    checked: '2026-10-08'
+    notes: HTTP 200，公開半導體分類可讀；來源範圍僅免費全文，VIP／會員文章、付費報告及外連付費內容不收錄。
+    segments:
+    - compute
+    - memory
+    - foundry
+    - equipment
+    - advanced-packaging
+    - eda-ip
+    - materials
+    - test
+    - power-discrete
+    - substrate
+    id: technews-semiconductor
+    provider: technews
+    ingestion:
+      adapter: rss
+      url: https://technews.tw/category/semiconductor/feed/
+      max_pages: 120
+      paged: true
+    themes:
+    - advanced-node-2nm
+    - custom-asic-vs-gpu
+    - hbm4
+    - cpo-silicon-photonics
+  - name: TPCA 公開產業消息
+    url: https://www.tpca.org.tw/web/list_news.php?menu_no=182&mod_no=5
+    type: industry_media
+    access: free
+    reachability: verified
+    checked: '2026-10-08'
+    notes: 公開新聞稿列表可讀；僅收免費新聞稿，會員專屬知識庫、收費研究與書局不屬本來源。
+    segments:
+    - pcb
+    - substrate
+    - materials
+    - equipment
+    id: tpca-news
+    provider: tpca
+    ingestion:
+      adapter: tpca
+      max_pages: 10
+  - id: technews-components
+    provider: technews
+    name: 科技新報零組件公開文章
+    url: https://technews.tw/category/component/
+    type: industry_media
+    access: free
+    reachability: unverified
+    checked: '2026-10-08'
+    segments:
+    - pcb
+    - substrate
+    - power
+    - thermal
+    - interconnect
+    - networking
+    - materials
+    - power-discrete
+    themes:
+    - 800vdc
+    - liquid-cooling
+    - cpo-silicon-photonics
+    notes: 僅公開標題及有限摘錄；略過 VIP／會員內容。網頁可讀性與實際 connector 狀態分開。
+    ingestion:
+      adapter: rss
+      url: https://technews.tw/category/component/feed/
+      max_pages: 60
+      paged: true
+  - id: technews-server
+    provider: technews
+    name: 科技新報伺服器公開文章
+    url: https://technews.tw/category/pcnotebook/伺服器/
+    type: industry_media
+    access: free
+    reachability: unverified
+    checked: '2026-10-08'
+    segments:
+    - compute
+    - memory
+    - odm
+    - datacenter
+    - power
+    - thermal
+    - networking
+    - interconnect
+    themes: &id001
+    - 800vdc
+    - advanced-node-2nm
+    - cpo-silicon-photonics
+    - custom-asic-vs-gpu
+    - hbm4
+    - liquid-cooling
+    - power-bottleneck
+    notes: 僅公開標題及有限摘錄；略過 VIP／會員內容。網頁可讀性與實際 connector 狀態分開。
+    ingestion:
+      adapter: rss
+      url: https://technews.tw/category/pcnotebook/伺服器/feed/
+      max_pages: 40
+      paged: true
+  - id: technews-energy
+    provider: technews
+    name: 科技新報能源公開文章
+    url: https://technews.tw/category/能源科技/
+    type: industry_media
+    access: free
+    reachability: unverified
+    checked: '2026-10-08'
+    segments:
+    - power
+    - datacenter
+    - power-discrete
+    themes:
+    - 800vdc
+    - power-bottleneck
+    notes: 僅公開標題及有限摘錄；略過 VIP／會員內容。網頁可讀性與實際 connector 狀態分開。
+    ingestion:
+      adapter: rss
+      url: https://technews.tw/category/能源科技/feed/
+      max_pages: 40
+      paged: true
+  official_stats:
+  - name: 經濟部工業生產統計
+    url: https://service.moea.gov.tw/EE520/investigate/InvestigateDB.aspx?lang=E
+    type: official_stats
+    access: free
+    reachability: verified
+    checked: '2026-10-08'
+    notes: HTTP 200，工業生產、出貨與存貨統計的公開查詢介面可讀；統計產業分類不等於純 AI 需求。
+    segments:
+    - foundry
+    - test
+    - power-discrete
+    - pcb
+    - odm
+    - networking
+    id: moea-industrial-production
+    provider: moea
+    ingestion:
+      adapter: moea
+      url: https://www.moea.gov.tw/Mns/dos/bulletin/Bulletin.aspx?kind=6&html=1&menu_id=6725
+      max_pages: 1
+us:
+  filings:
+  - name: SEC EDGAR 公開申報搜尋
+    url: https://www.sec.gov/edgar/search/
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-07'
+    notes: HTTP 200，公開申報搜尋介面可讀；本來源使用免費網頁及申報文件。
+    id: sec-search
+    provider: sec-search
+    ingestion:
+      adapter: manual
+  - id: sec-submissions
+    provider: sec
+    name: SEC 公司申報
+    url: https://data.sec.gov/
+    type: filings
+    access: free
+    reachability: unverified
+    checked: '2026-10-08'
+    ingestion:
+      adapter: sec-submissions
+      url: https://data.sec.gov/submissions/CIK{cik}.json
+      per_company: true
+    notes: 公開資料無 API key；SEC 要求具維護者聯絡方式的 User-Agent，未設定則顯示待設定。
+  - id: sec-facts
+    provider: sec
+    name: SEC 公司財報
+    url: https://data.sec.gov/
+    type: filings
+    access: free
+    reachability: unverified
+    checked: '2026-10-08'
+    ingestion:
+      adapter: sec-facts
+      url: https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json
+      per_company: true
+    notes: 公開資料無 API key；SEC 要求具維護者聯絡方式的 User-Agent，未設定則顯示待設定。
+  earnings_call:
+  - name: NVIDIA 財報活動與簡報
+    url: https://investor.nvidia.com/events-and-presentations/events-and-presentations/default.aspx
+    type: earnings_call
+    access: free
+    reachability: verified
+    checked: '2026-10-07'
+    notes: HTTP 200，公開活動及簡報索引可讀；使用已發布的財報法說資料，不以活動預告當已發生事件。
+    segments:
+    - compute
+    - networking
+    - datacenter
+    id: ir-nvidia
+    provider: ir-nvidia
+    ingestion:
+      adapter: nvidia
+  - name: 微軟公開財報與 webcast
+    url: https://www.microsoft.com/en-us/investor/earnings/fy-2026-q4/press-release-webcast
+    type: earnings_call
+    access: free
+    reachability: verified
+    checked: '2026-10-07'
+    notes: HTTP 200，FY2026 Q4 公開財報全文與 webcast 入口可讀，可由頁面前往其他季度。
+    segments:
+    - datacenter
+    - compute
+    id: ir-microsoft
+    provider: ir-microsoft
+    ingestion:
+      adapter: microsoft
+  industry_media:
+  - name: Semiconductor Engineering 公開文章
+    url: https://semiengineering.com/
+    type: industry_media
+    access: free
+    reachability: verified
+    checked: '2026-10-08'
+    notes: HTTP 200，公開文章首頁可讀；僅收免費全文，外連收費研究與私有內容不收錄。
+    segments:
+    - advanced-packaging
+    - compute
+    - datacenter
+    - interconnect
+    - memory
+    - networking
+    - odm
+    - pcb
+    - power
+    - substrate
+    - thermal
+    - eda-ip
+    - equipment
+    - foundry
+    - materials
+    - power-discrete
+    - test
+    id: semiengineering
+    provider: semiengineering
+    ingestion:
+      adapter: rss
+      url: https://semiengineering.com/feed/
+      max_pages: 40
+      paged: true
+    themes: *id001
+  official_stats:
+  - name: U.S. Census M3 製造業訂單與出貨
+    url: https://www.census.gov/manufacturing/m3/
+    type: official_stats
+    access: free
+    reachability: verified
+    checked: '2026-10-08'
+    notes: HTTP 200，M3 公開製造業訂單、出貨與存貨頁面可讀；資料按產業分類，非公司訂單。
+    segments:
+    - equipment
+    - pcb
+    - networking
+    - odm
+    - power
+    id: census-m3
+    provider: census
+    ingestion:
+      adapter: census
+      url: https://www.census.gov/manufacturing/m3/current/index.html
+      max_pages: 3
+  - name: EIA 電力統計公開網頁
+    url: https://www.eia.gov/electricity/monthly/
+    type: official_stats
+    access: free
+    reachability: verified
+    checked: '2026-10-08'
+    notes: HTTP 200，電力資料與公開表格入口可讀；僅使用免費網頁／下載，不使用需註冊金鑰的 API。
+    segments:
+    - datacenter
+    - power
+    id: eia-monthly
+    provider: eia
+    ingestion:
+      adapter: eia
+      max_pages: 3
+    themes:
+    - power-bottleneck

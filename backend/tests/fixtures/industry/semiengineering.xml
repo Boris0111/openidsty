@@ -1,0 +1,601 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>Semiconductor Engineering</title>
+	<atom:link href="https://semiengineering.com/feed/" rel="self" type="application/rss+xml" />
+	<link>https://semiengineering.com/</link>
+	<description>Deep Insights For Chip Engineers</description>
+	<lastBuildDate>Thu, 08 Oct 2026 04:12:35 +0000</lastBuildDate>
+	<language>en-US</language>
+	<sy:updatePeriod>
+	hourly	</sy:updatePeriod>
+	<sy:updateFrequency>
+	1	</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=7.1.3</generator>
+
+<image>
+	<url>https://i0.wp.com/semiengineering.com/wp-content/uploads/2020/03/cropped-SE-Icon-3.jpg?fit=32%2C32&#038;ssl=1</url>
+	<title>Semiconductor Engineering</title>
+	<link>https://semiengineering.com/</link>
+	<width>32</width>
+	<height>32</height>
+</image> 
+<site xmlns="com-wordpress:feed-additions:1">143345712</site>	<item>
+		<title>Finding Critical Defects Before They Become Costly Failures: Process Control For Hybrid Bonding And Advanced Packaging</title>
+		<link>https://semiengineering.com/finding-critical-defects-before-they-become-costly-failures-process-control-for-hybrid-bonding-and-advanced-packaging/</link>
+					<comments>https://semiengineering.com/finding-critical-defects-before-they-become-costly-failures-process-control-for-hybrid-bonding-and-advanced-packaging/#respond</comments>
+		
+		<dc:creator><![CDATA[Yong Gao]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 07:06:04 +0000</pubDate>
+				<category><![CDATA[Blogs - PTES]]></category>
+		<category><![CDATA[Intelligent Innovation]]></category>
+		<category><![CDATA[Test, Measurement and Analytics]]></category>
+		<category><![CDATA[advanced packaging]]></category>
+		<category><![CDATA[defects]]></category>
+		<category><![CDATA[hybrid bonding]]></category>
+		<category><![CDATA[inspection]]></category>
+		<category><![CDATA[metrology]]></category>
+		<category><![CDATA[Onto Innovation]]></category>
+		<category><![CDATA[process control]]></category>
+		<guid isPermaLink="false">https://semiengineering.com/?p=24282509</guid>
+
+					<description><![CDATA[<p>How complementary inspection and metrology techniques can detect smaller defects and distinguish among a wide range of defect types within a unified workflow.</p>
+<p>The post <a href="https://semiengineering.com/finding-critical-defects-before-they-become-costly-failures-process-control-for-hybrid-bonding-and-advanced-packaging/">Finding Critical Defects Before They Become Costly Failures: Process Control For Hybrid Bonding And Advanced Packaging</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>In advanced packaging, value accumulates layer by layer, component by component, and process step by process step. By the time chiplets, high-bandwidth memory stacks, or hybrid-bonded devices reach assembly, manufacturers have invested substantial material and processing resources in those devices. An undetected defect at this stage can place the larger assembly at risk.</p>
+<p>Compounding this challenge, shrinking package features are bringing advanced packaging requirements closer to the tolerances historically associated with front-end fabrication. Going forward, manufacturers will face increasing pressure to detect smaller defects and characterize increasingly complex structures.</p>
+<p>However, the challenge extends beyond smaller surface defects.</p>
+<p>Advanced packaging processes can present surface, sidewall and subsurface inspection challenges, including particles, cracks, embedded defects, microbump irregularities and bonding voids. They also require precise measurements of bump height and surface profile. As defect types and process control requirements become more diverse, manufacturers need the flexibility to apply complementary inspection and metrology techniques within a unified workflow.</p>
+<p>Manufacturers consequently need process control strategies that can address the specific risk at each layer. High-sensitivity 2D inspection can identify surface particles and pattern-related anomalies, while high-speed infrared sub-surface inspection can reveal voids and embedded defects that otherwise remain hidden. 3D metrology can measure critical microbump height and surface profiles, helping manufacturers characterize advanced packaging structures more completely. The objective is to give process engineers the information they need at the point where a manufacturing decision must be made.</p>
+<p>Sensitivity, however, cannot come at the expense of productivity. As features shrink, inspection must detect smaller and subtler defects while maintaining the throughput required for high-volume manufacturing. If an inspection throughput is too low, it can become a bottleneck in an already capital-intensive production flow.</p>
+<p>Advanced optical architectures, multiple illumination angles, and purpose-built imaging techniques can help improve the visibility of difficult defects. Multi-angle illumination can improve the visibility of sidewall and low-contrast defects that may be difficult to detect with conventional brightfield or darkfield inspection. But greater visibility is only part of the challenge.</p>
+<p><img data-recalc-dims="1" fetchpriority="high" decoding="async" class="alignnone wp-image-24282511 size-full" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Onto_Process-Control-for-Hybrid-Bonding-fig1.webp?resize=612%2C200&#038;ssl=1" alt="" width="612" height="200" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Onto_Process-Control-for-Hybrid-Bonding-fig1.webp?w=612&amp;ssl=1 612w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Onto_Process-Control-for-Hybrid-Bonding-fig1.webp?resize=300%2C98&amp;ssl=1 300w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Onto_Process-Control-for-Hybrid-Bonding-fig1.webp?resize=600%2C196&amp;ssl=1 600w" sizes="(max-width: 612px) 100vw, 612px" /></p>
+<p><strong>Fig. 1: Manufacturers must align inspection and metrology capabilities with the specific risks and decision points associated with that layer.</strong></p>
+<p>Each layer presents distinct process control requirements. Manufacturers must align inspection and metrology capabilities with the specific risks and decision points associated with that layer (Figure 1). The chemical mechanical planarization (CMP) step used to prepare surfaces for hybrid bonding illustrates this challenge. Because the prepared surfaces must meet stringent requirements, even a small imperfection can become yield limiting. As bond pitches shrink, manufacturers need greater inspection sensitivity and tighter process control at this critical stage.</p>
+<p>Greater sensitivity creates another challenge: determining which defects require action. Since advanced packaging combines varied materials, structures and surface conditions, increasing the number and diversity of detected events, engineers can spend valuable time reviewing nuisance or low-priority detections without effective classification. More detections do not automatically lead to better decisions. Manufacturers need more than a defect map. Effective classification helps separate likely yield-relevant defects from nuisance defects and turns inspection results into actionable process information.</p>
+<h2>Earlier, more confident decisions</h2>
+<p>Advanced packaging manufacturers must protect growing device value while detecting smaller defects and distinguishing among a wider range of defect types. Ultimately, a production-worthy process control strategy should help manufacturers answer five questions:</p>
+<ul>
+<li>Should this device continue to the next process step?</li>
+<li>Is the process beginning to drift?</li>
+<li>Which defects are most likely to affect yield?</li>
+<li>Can those defects be found without slowing production?</li>
+<li>Can the inspection strategy adapt as structures and requirements change?</li>
+</ul>
+<p>Today’s manufacturers need a flexible, integrated platform that brings together complementary inspection and metrology capabilities to answer these questions across the process flow. Bringing these capabilities together on a <a href="https://ontoinnovation.com/products/dragonfly-g5-inspection/">single platform</a> gives manufacturers the flexibility to address varied process requirements within a unified workflow while improving cost of ownership and making more efficient use of valuable fab floor space.</p>
+<p>By finding relevant defects, prioritizing their potential impact, and delivering actionable information before compromised devices move downstream, manufacturers can make earlier disposition decisions, respond more effectively to process variation, and better protect yield.</p>
+<p>In our next blog in this series, we will examine how manufacturers can extend this integrated approach into front-end process control, connecting information from the wafer surface, edge, and backside to support better manufacturing decisions.</p>
+<p>We hope you will join us.</p>
+<p>The post <a href="https://semiengineering.com/finding-critical-defects-before-they-become-costly-failures-process-control-for-hybrid-bonding-and-advanced-packaging/">Finding Critical Defects Before They Become Costly Failures: Process Control For Hybrid Bonding And Advanced Packaging</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://semiengineering.com/finding-critical-defects-before-they-become-costly-failures-process-control-for-hybrid-bonding-and-advanced-packaging/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">24282509</post-id>	</item>
+		<item>
+		<title>Demonstrating Plasma As A Viable Alternative To KOH For LCP Metallization Applications</title>
+		<link>https://semiengineering.com/demonstrating-plasma-as-a-viable-alternative-to-koh-for-lcp-metallization-applications/</link>
+					<comments>https://semiengineering.com/demonstrating-plasma-as-a-viable-alternative-to-koh-for-lcp-metallization-applications/#respond</comments>
+		
+		<dc:creator><![CDATA[Kobe Zhang]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 07:05:11 +0000</pubDate>
+				<category><![CDATA[Blogs - PTES]]></category>
+		<category><![CDATA[Inspecting The Future]]></category>
+		<category><![CDATA[Test, Measurement and Analytics]]></category>
+		<category><![CDATA[liquid crystal polymers]]></category>
+		<category><![CDATA[metallization]]></category>
+		<category><![CDATA[Nordson]]></category>
+		<category><![CDATA[plasma]]></category>
+		<guid isPermaLink="false">https://semiengineering.com/?p=24282522</guid>
+
+					<description><![CDATA[<p>How optimized plasma processing can achieve effective surface roughening and activation.</p>
+<p>The post <a href="https://semiengineering.com/demonstrating-plasma-as-a-viable-alternative-to-koh-for-lcp-metallization-applications/">Demonstrating Plasma As A Viable Alternative To KOH For LCP Metallization Applications</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>This blog examines the use of plasma technology as an alternative surface treatment method for liquid crystal polymer (LCP) materials. The study demonstrates how optimized plasma processing can achieve effective surface roughening and activation, providing a viable alternative to conventional KOH treatment while delivering the coverage and adhesion required for subsequent electroless copper plating.</p>
+<h2>The challenge</h2>
+<p>LCP is a high-performance engineering plastic widely used in the electronics, automotive, medical, and communications industries because of its excellent mechanical properties, thermal stability, and electrical insulation characteristics. However, untreated LCP surfaces are extremely smooth, exhibit low surface energy, and have poor wettability. As a result, direct electroless copper plating typically cannot achieve the adhesion and coverage required for manufacturing processes.</p>
+<p>Traditionally, KOH treatment has been the only widely accepted industrial solution for processing LCP materials. However, KOH is a strong alkaline chemical that requires special safety precautions and dedicated process infrastructure. Many PCB manufacturers do not have KOH desmear capability and are reluctant to add a chemical process to their production facilities.</p>
+<p>The objective of this project was to determine whether plasma processing could provide a practical alternative to KOH by addressing several key challenges:</p>
+<ul>
+<li>Demonstrate surface roughening performance comparable to KOH treatment.</li>
+<li>Achieve both surface roughening and activation of the LCP material.</li>
+<li>Effectively process thicker LCP boards, which are more difficult to treat than conventional PCB materials.</li>
+</ul>
+<h2>Application development process</h2>
+<p><img data-recalc-dims="1" decoding="async" class="wp-image-24282523 alignright" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table1.webp?resize=250%2C467&#038;ssl=1" alt="" width="250" height="467" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table1.webp?w=330&amp;ssl=1 330w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table1.webp?resize=160%2C300&amp;ssl=1 160w" sizes="(max-width: 250px) 100vw, 250px" />Nordson’s applications team evaluated plasma processing using the Nordson MARCH MaxVIA system, a high-performance platform engineered for high-volume PCB plasma treatment. Featuring an advanced power-power electrode configuration, the system delivers outstanding etchback and desmear uniformity while ensuring excellent process consistency. Together with sophisticated vacuum and gas-flow control and enhanced temperature management, the MaxVIA system enables reliable, repeatable plasma processing for demanding manufacturing applications.</p>
+<h3>Initial process development</h3>
+<p>The team used a three-step plasma process:</p>
+<ol>
+<li>Material Warm-Up.</li>
+<li>Hole Wall Roughening.</li>
+<li>Surface Activation.</li>
+</ol>
+<p>Initial evaluation confirmed that both etch rate and process uniformity met specification requirements while leaving no detectable LCP residue on copper surfaces.</p>
+<p>Cross-sectional analysis and SEM inspection verified successful roughening throughout the treated structures, as shown in Figures 1 and 2.</p>
+<p><img data-recalc-dims="1" decoding="async" class="alignnone size-full wp-image-24282524" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table2.webp?resize=1092%2C193&#038;ssl=1" alt="" width="1092" height="193" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table2.webp?w=1092&amp;ssl=1 1092w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table2.webp?resize=300%2C53&amp;ssl=1 300w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table2.webp?resize=1024%2C181&amp;ssl=1 1024w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table2.webp?resize=768%2C136&amp;ssl=1 768w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table2.webp?resize=600%2C106&amp;ssl=1 600w" sizes="(max-width: 1000px) 100vw, 1000px" /></p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" class="alignnone size-full wp-image-24282525" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig12.webp?resize=477%2C210&#038;ssl=1" alt="" width="477" height="210" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig12.webp?w=477&amp;ssl=1 477w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig12.webp?resize=300%2C132&amp;ssl=1 300w" sizes="auto, (max-width: 477px) 100vw, 477px" /></p>
+<h3>Surface activation evaluation</h3>
+<p>Experiments compared process results with and without the H₂/N₂ activation step, as shown in Figures 3 and 4. The results demonstrated that the activation step was necessary to achieve good plating coverage, indicating that roughening alone was insufficient for optimal performance.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" class="alignnone size-full wp-image-24282526" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table3.webp?resize=1093%2C193&#038;ssl=1" alt="" width="1093" height="193" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table3.webp?w=1093&amp;ssl=1 1093w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table3.webp?resize=300%2C53&amp;ssl=1 300w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table3.webp?resize=1024%2C181&amp;ssl=1 1024w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table3.webp?resize=768%2C136&amp;ssl=1 768w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table3.webp?resize=600%2C106&amp;ssl=1 600w" sizes="auto, (max-width: 1000px) 100vw, 1000px" /></p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" class="alignnone size-full wp-image-24282527" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig34.webp?resize=502%2C203&#038;ssl=1" alt="" width="502" height="203" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig34.webp?w=502&amp;ssl=1 502w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig34.webp?resize=300%2C121&amp;ssl=1 300w" sizes="auto, (max-width: 502px) 100vw, 502px" /></p>
+<h3>Process optimization</h3>
+<p>Additional experiments evaluated the effect of treatment duration on process efficiency. Comparative testing at 20, 30, and 60 minutes demonstrated that the treatment time could be reduced to 30 minutes while maintaining acceptable results, as shown in Figures 5-7.</p>
+<p>The optimized process enabled effective treatment of LCP material while reducing overall processing time and maintaining the required surface characteristics for subsequent metallization.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" class="alignnone size-full wp-image-24282528" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig567.webp?resize=769%2C205&#038;ssl=1" alt="" width="769" height="205" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig567.webp?w=769&amp;ssl=1 769w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig567.webp?resize=300%2C80&amp;ssl=1 300w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig567.webp?resize=600%2C160&amp;ssl=1 600w" sizes="auto, (max-width: 769px) 100vw, 769px" /></p>
+<h2>The conclusion</h2>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" class="wp-image-24282529 alignright" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table4.webp?resize=250%2C434&#038;ssl=1" alt="" width="250" height="434" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table4.webp?resize=173%2C300&amp;ssl=1 173w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-table4.webp?w=329&amp;ssl=1 329w" sizes="auto, (max-width: 250px) 100vw, 250px" />The optimized plasma process successfully demonstrated that plasma treatment can serve as a practical alternative to KOH processing for LCP materials. The plasma treatment effectively roughened and activated the material surface, producing the surface characteristics required for reliable metallization, as shown in Figures 8–12.</p>
+<p>Surface analysis showed significant texturing after plasma treatment compared with untreated LCP. Results following activation demonstrated good plating coverage and adhesion. Solder float testing further confirmed process effectiveness on both four-core and eight-core structures.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" class="alignnone size-full wp-image-24282530" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig8-12.webp?resize=748%2C788&#038;ssl=1" alt="" width="748" height="788" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig8-12.webp?w=748&amp;ssl=1 748w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig8-12.webp?resize=285%2C300&amp;ssl=1 285w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig8-12.webp?resize=600%2C632&amp;ssl=1 600w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Nordson_Plasma-for-LCP-Metallization-fig8-12.webp?resize=24%2C24&amp;ssl=1 24w" sizes="auto, (max-width: 748px) 100vw, 748px" /></p>
+<h2>Key results</h2>
+<ul>
+<li>Plasma proved to be a suitable alternative to KOH treatment for LCP materials.</li>
+<li>Plasma treatment successfully roughened and activated the LCP surface.</li>
+<li>Activated samples demonstrated good copper coverage and adhesion performance.</li>
+<li>Process optimization reduced treatment time to 30 minutes while maintaining successful results</li>
+</ul>
+<p>The post <a href="https://semiengineering.com/demonstrating-plasma-as-a-viable-alternative-to-koh-for-lcp-metallization-applications/">Demonstrating Plasma As A Viable Alternative To KOH For LCP Metallization Applications</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://semiengineering.com/demonstrating-plasma-as-a-viable-alternative-to-koh-for-lcp-metallization-applications/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">24282522</post-id>	</item>
+		<item>
+		<title>Closing The Visibility Gap</title>
+		<link>https://semiengineering.com/closing-the-visibility-gap/</link>
+					<comments>https://semiengineering.com/closing-the-visibility-gap/#respond</comments>
+		
+		<dc:creator><![CDATA[Gregory Haley]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 07:04:49 +0000</pubDate>
+				<category><![CDATA[Test, Measurement and Analytics]]></category>
+		<category><![CDATA[Top Stories]]></category>
+		<category><![CDATA[advanced packaging]]></category>
+		<category><![CDATA[Advantest]]></category>
+		<category><![CDATA[data analytics]]></category>
+		<category><![CDATA[failure analysis]]></category>
+		<category><![CDATA[inspection]]></category>
+		<category><![CDATA[metrology]]></category>
+		<category><![CDATA[Microtronic]]></category>
+		<category><![CDATA[Nordson Test & Inspection]]></category>
+		<category><![CDATA[on-chip monitoring]]></category>
+		<category><![CDATA[proteanTecs]]></category>
+		<category><![CDATA[reliability]]></category>
+		<category><![CDATA[Siemens EDA]]></category>
+		<category><![CDATA[simulation]]></category>
+		<category><![CDATA[Synopsys]]></category>
+		<category><![CDATA[Teradyne]]></category>
+		<category><![CDATA[test]]></category>
+		<category><![CDATA[traceability]]></category>
+		<category><![CDATA[ZEISS Microscopy]]></category>
+		<guid isPermaLink="false">https://semiengineering.com/?p=24282377</guid>
+
+					<description><![CDATA[<p>More measurements don’t eliminate blind spots when each view captures only part of the device.</p>
+<p>The post <a href="https://semiengineering.com/closing-the-visibility-gap/">Closing The Visibility Gap</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><strong>Key Takeaways:</strong></p>
+<ul>
+<li>No single test, inspection, model, or monitoring technique provides a complete view of an advanced device. Each has physical, spatial, temporal, or contextual blind spots.</li>
+<li>Important failure evidence often already exists, but it may be scattered across inspection images, test data, manufacturing history, simulation, or field measurements that were never connected.</li>
+<li>Better coverage increasingly depends on correlation between those views, so one measurement can narrow the uncertainty left by another rather than trying to make every tool see everything.</li>
+</ul>
+<hr />
+<p>Advanced chips now come with an extraordinary amount of evidence about them. They’re modeled before they exist, measured during fabrication, inspected during assembly, electrically tested at the wafer and package levels, characterized under thermal and power loads, and increasingly monitored from inside the silicon after deployment. In some ways, engineers can see more of a device than ever before.</p>
+<p>The problem is that each of those views is partial. A measurement can be accurate in every respect and still be pointed at the wrong part of the system.</p>
+<p>“For X-ray and test technologies, we focus on the interconnect between the chips, and chips and the outside world,” said Yipeng Zhou, product line manager for Test Products at <a href="https://semiengineering.com/entities/cyberoptics/">Nordson Test &amp; Inspection</a>. “Voids, cracks in the solder, and head-in-pillow are a few predominant defect types that pass electrical test due to the presence of physical contact. But these defects usually lead to premature failure. It’s like putting a screw in without tightening it.”</p>
+<p>This gets at the broader visibility issue. The electrical test isn’t necessarily wrong. There’s a conductive path, and under the conditions of that test, the device may work exactly as expected. The harder question is whether the physical structure carrying that current is sound enough to keep doing so over the long term, and that’s where the visibility gap increasingly lives.</p>
+<p><strong>Every tool has a blind spot<br />
+</strong>As interconnects shrink, it becomes harder to catch defects before they escape. A defect that once occupied enough area to stand out might now be buried among dense stacks of bumps, wires, vias, and surrounding materials. Even when the right inspection technology exists, there’s usually a tradeoff between what engineers would like to see and what they can practically examine in production.</p>
+<p>“For testing, there is a gap in pull testing for copper pillars and RDL integrity measurement due to the high precision requirement for the system,” said Zhou. “For X-ray, there are still gaps in inspecting overlays of wires and solder bumps from stacked dies and extremely small features in TSVs. In addition, repeatable and quantifiable measurement is a challenge for X-ray. Users also have to make choices between power, throughput, and resolution.”</p>
+<p>Some of those limitations are simply physical. Higher resolution takes more time, greater penetration requires more power, and higher throughput means less attention for any one structure. The problem quickly becomes more complicated than finding a bad feature, because engineers first have to figure out what’s worth looking at most closely.</p>
+<p>“It’s really not practical to just do a brute-force high-resolution X-ray scan, because high resolution means small pixels, means it’s slow, means you’ve got gigabytes worth of data, or terabytes worth of data in some cases,” said Thomas Rodgers, senior director of market strategy and head of business sector electronics at ZEISS Microscopy. “You need to have some heuristics to first know where you’re going to look.”</p>
+<p>Failure analysis becomes less about finding one perfect tool and more about progressively narrowing uncertainty. Electrical test identifies the neighborhood, and acoustic or optical inspection might narrow it further. X-ray can look inside buried structures without immediately destroying the sample, and electron microscopy, which usually requires cross-sectioning, can then resolve the physical mechanism once engineers know where it makes sense to focus.</p>
+<p>The same logic applies at the wafer level. A broad inspection may not tell engineers exactly what’s gone wrong, but it can show that one area, wafer, or lot looks different enough to justify a closer look. Wafer-scale macro inspection plays that screening role alongside the higher-resolution tools.</p>
+<p>“If you’re struggling with a problem that comes with a new substrate or a more advanced node, you may need X-ray, IR, or another technique to get at that specific defect,” said Mike LaTorraca, vice president of marketing at <a href="https://semiengineering.com/entities/microtronic/">Microtronic</a>. “But a tool like ours can still act as a sanity check on everything. It’s your eye in the sky. It sees everything from a higher level, but you don’t stop there. It coexists with these other micro tools.”</p>
+<p>The more useful question in production isn’t which tool can see the smallest feature. It’s whether each view reduces enough uncertainty for engineers to know what to look at next.</p>
+<p><strong>The missing information may already exist<br />
+</strong>Not every blind spot comes from something engineers failed to measure. Sometimes the evidence is already there, buried in a data stream that didn’t look important until something else happened later.</p>
+<p>“Test escapes aren’t always caused because we have missing measurements,” said Eli Roth, smart manufacturing product manager at <a href="https://semiengineering.com/entities/teradyne-corporation/">Teradyne</a>. “The signal may already be somewhere in the wafer data.”</p>
+<p>The signal might also be sitting in equipment telemetry, manufacturing history, final-test results, or field data. The harder part is that those records often live in different tools, different engineering groups, or completely different points in the device’s life. A number captured early in the flow has no way to announce that it’ll become important six process steps later, which is why retained history can matter so much.</p>
+<p>A wafer that eventually breaks during a thermal process, for example, may have looked perfectly fine earlier in the flow. But if engineers have kept the inspection images, they can work backward and sometimes find that the final crack began as a much smaller deformation at the wafer edge.</p>
+<p>“One of the keys is just having the historical images,” said Errol Akomer, applications director at Microtronic. “You may get breakage at a thermal process close to the end of line, and you can trace back with the images and look at that point of origin.”</p>
+<p>Once the failure is known, an earlier feature that seemed inconsequential can become the most useful clue in the record. Negative evidence helps, too, and working backward through the images can be just as revealing as watching a defect develop forward.</p>
+<p>“It’s so helpful to know where it’s not, because if you start going backward, you can blow up a certain area and keep looking at it,” said Reiner Fenske, president at Microtronic. “At some point, that little line or mark goes away. If it’s there in one image and not the previous one, then you know the problem had to start somewhere in between.”</p>
+<p>Test data can hide clues in much the same way, especially when the result looks like good news. Engineers are naturally more likely to investigate falling yield or longer test times than a number moving in the opposite direction.</p>
+<p>“Most commonly, anomalies are overlooked because the associated trend is normally a positive impact, rather than a negative quality or test-time impact,” said Brent Bullock, test technology director at <a href="https://semiengineering.com/entities/advantest-corporation/">Advantest</a>. “If the anomaly produces lower test time or higher yield, it is more likely to be overlooked.”</p>
+<p>Higher yield may really mean the process improved, and shorter test time may mean an optimization worked. But if no one understands why the number moved, the change still holds information that hasn’t been explained.</p>
+<p>Sheer data volume is a little less reassuring than it sounds for the same reason. Modern test programs, inspection systems, equipment logs, embedded sensors, and manufacturing databases can produce an enormous record of what’s happening with a device, but the harder problem is figuring out which pieces of that record belong to the same story.</p>
+<p><strong>The model can’t show what it doesn’t know<br />
+</strong>Models are supposed to fill in some of the places engineers can’t directly see. Statistical models built on test and manufacturing data flag anomalies across huge populations of parts, while physics-based simulation estimates temperatures inside inaccessible structures, calculates voltage drop across power networks, and predicts stress through complicated material stacks. Both share the same catch, which is that a model only knows the world it has been shown.</p>
+<p>“A model could be statistically correct, but it could still be operationally incorrect,” said Teradyne’s Roth. “The issue isn’t that the model fails itself. It’s that the model’s missing context.”</p>
+<p>There’s another way the model can be misled too. The measurement path itself can add enough variation to obscure the thing engineers are trying to find.</p>
+<p>“If the socket variability is making more random failure noise than any other kind of signature, you’re not going to be able to see them,” said Jack Lewis, director of applications and product management at <a href="https://semiengineering.com/entities/modus-test/">Modus Test</a>. “They’re hidden underneath the noise. If your raw data is noisy, it doesn’t matter. You have to filter out the noise to see the real data and build the model around it.”</p>
+<p>Yield can look stable, control charts can look normal, and nothing may be tripping the anomaly detectors. But if the model has never seen a particular failure mechanism, or if the relevant clue lives in an earlier insertion or somewhere else in the manufacturing history, it can still miss what matters.</p>
+<p>The missing context may not surface until much later, when something else finally goes wrong. By then, engineers may be looking back at perfectly valid earlier measurements and realizing they were only seeing pieces of the same problem.</p>
+<p>Sometimes the missing variable is even closer to the measurement itself. Test data usually assumes the temporary interconnect is doing its job, but socket resistance can change with wear, contamination, and repeated insertions in ways that are difficult to separate from what the device is doing.</p>
+<p>“The socket is often forgotten,” said Lewis. “There’s always this assumption that the interconnect is good, and that’s just not the case. Once you get past opens and shorts and it starts to become more contact-resistance-dependent, it’s much more difficult to see what’s going on.”</p>
+<p>Simulation runs into a related problem, where the physics can be right while the representation is still too coarse.</p>
+<p>“Regarding simulation accuracy against measurement, the industry never stops doing that correlation to validate the tool,” said Lang Lin, principal product manager at <a href="https://semiengineering.com/entities/synopsys-inc/">Synopsys</a>. “If an EDA tool provides thermal simulation, the customer will challenge you. ‘You’ve got to provide some correlation data with my silicon so I can trust the simulation.’ That’s been done, and the correlation quality keeps improving.”</p>
+<p>A package-level thermal model doesn’t need to predict every logic gate to be useful. Once an embedded sensor starts measuring behavior close to the device layer, though, the comparison gets much more demanding. A model that treats a die as one big thermal block may simply be looking at the problem from too far away.</p>
+<p>“You cannot just do the single-die simulation or single-package simulation or single PCB,” said Lin. “You have to assemble them, make them exactly the same structure and positions, stacking up with the measurement device.”</p>
+<p>New materials add another wrinkle, because values that work in one model may not transfer cleanly into the next package.</p>
+<p>“Advanced packaging makes some of the underlying physical properties, such as thermal conductivity or Young’s modulus, much harder to characterize,” added Lin.</p>
+<p>The process keeps looping back on itself. Measurements expose where the model is weak, the model gets adjusted, and the next round of measurements tests those assumptions again. The better engineers get at seeing the real device, the more clearly they can see where the model is still guessing.</p>
+<p><strong>Averages can hide the problem<br />
+</strong>Even with the right measurement, where and how engineers take it can change what they see. Temperature is a good example. A package can stay comfortably inside its average thermal limit while a much smaller region runs hot enough to create reliability problems.</p>
+<p>“Average temperature often hides the conditions that drive reliability concerns,” said Andras Vass-Varnai, 3D-IC reliability solution architect at <a href="https://semiengineering.com/entities/mentor-a-siemens-business/">Siemens EDA</a>. “A package may satisfy an average temperature target while individual regions operate substantially hotter than the package mean.”</p>
+<p>The problem gets harder in 2.5D and 3D packages, where one hot region can affect neighboring dies, and workloads can move the hotspot around. A temperature reading that looks perfectly reasonable at one location may say very little about what’s happening a few millimeters away.</p>
+<p>On-chip monitors can get much closer to those local conditions, but only if they’re placed where the useful information actually is.</p>
+<p>“Some of the older technologies use the classical thermal sensor, which is typically placed at the edges of the chip because it requires an analog power supply and it’s huge,” said Nir Sever, senior director of business development at <a href="https://semiengineering.com/entities/proteantecs/">proteanTecs</a>. “Usually you place it on the edges and try to guess what the temperature is in the center of the chip, but with the chips of today that’s no longer sufficient. You have to start probing the temperature in the hotspots that can be in many locations in the chip.”</p>
+<p>Even dense sensor coverage doesn’t eliminate every blind spot. Sever pointed to SRAM as one of the places where internal behavior remains difficult to observe directly. “We can monitor the inputs to the memory. We can monitor the outputs from the memory. We don’t know what’s happening inside the memory.”</p>
+<p>An error during a write, for example, may not become visible until the data is read later. The signals going in and coming out are observable, but what happened between them may stay hidden. Every technique draws a boundary like this somewhere, whether it’s an inspection that can’t scan everything at full resolution, a tester that can’t exercise every condition, or a monitor that can’t be placed inside every structure.</p>
+<p><strong>Connecting the dots<br />
+</strong>The growing number of measurement technologies is both the solution and part of the problem. Engineers now have electrical test, X-ray, optical and acoustic inspection, equipment data, simulation, embedded sensors, manufacturing history, and field results. The missing piece increasingly isn’t another source of data — it’s knowing how one observation relates to another.</p>
+<p>“I don’t think right now the answer is we need more data,” said Roth. “The larger challenge is we need to connect the data and give it context, and be able to act on it quickly. We already generate enormous amounts of data.”</p>
+<p>Failures don’t stay neatly inside one engineering discipline. A structural defect may first appear as an electrical problem, or a field failure may suddenly make an earlier test result look a lot more interesting, even though neither record seemed unusual on its own.</p>
+<p>“How can we connect wafer sort and final test, system-level test, manufacturing history, and field performance? All that stuff is where patterns are going to emerge that are invisible if you’re looking at them independently,&#8221; Roth said. &#8220;I don’t think the answer is going to be building bigger, giant, smarter, more capable models. What we need to be doing now is creating connected data, and connected ecosystems that enable closed feedback loops.”</p>
+<p>More coverage doesn’t necessarily mean making every test longer or putting a monitor everywhere. Test and monitoring are useful precisely because they see different parts of the problem.</p>
+<p>“You cannot avoid test by having monitoring, for the same reason you can’t say, ‘I have the greatest test, so I don’t need monitoring,’” said proteanTecs’ Sever. “They tend to look into different things. Test is about quality — how your chip behaves versus its intended behavior and performance at time zero. For that you absolutely need test. But even if you have the best test in the world, then you move from quality to reliability. Reliability means that the quality you had at time zero remains through the useful life of the chip. For that you need monitoring.”</p>
+<p>The handoffs between those views are improving, too, as the correlation between modeled and measured behavior keeps tightening.</p>
+<p>“We are closing the gap,” said Synopsys’ Lin. “It’s already much better than yesterday.”</p>
+<p><strong>Conclusion<br />
+</strong>There probably isn’t a point where all of these blind spots disappear. Every technique makes choices about what to measure, where to measure it, at what resolution, and for how long. As chips become more heterogeneous and interactions get harder to separate, some of the most important information may keep showing up outside the place engineers first thought to look.</p>
+<p>What’s changing is the expectation that any one measurement has to tell the whole story. An electrical result can point toward a physical defect, an inspection image can send engineers backward through the process history, a sensor can expose a hotspot that an average temperature concealed, and a field failure can give new meaning to data collected months earlier. The value often lies in the connection between those observations, rather than in any one of them alone.</p>
+<p>Closing the visibility gap looks different as a result. The goal isn’t one test, model, sensor, or inspection system that somehow sees everything. It’s getting better at recognizing what each view can’t see and making sure another view can take the investigation the rest of the way.</p>
+<hr />
+<p><strong>Related Articles<br />
+</strong><a href="https://semiengineering.com/how-long-does-a-measurement-remain-valid">How Long Does A Measurement Remain Valid?<br />
+</a>Measurements can be misleading after the chip, the test path, or the assumptions behind the result change.</p>
+<p><a href="https://semiengineering.com/smart-test-collides-with-the-data-chain">Smart Test Collides With The Data Chain<br />
+</a>Increasing complexity is limiting the ability of machine learning models to effectively utilize test data.</p>
+<p><a href="https://semiengineering.com/when-the-test-cell-lies">When The Test Cell Lies<br />
+</a>As margins shrink and dies move into expensive packages, separating device failures from test-cell artifacts has become a first-order economic problem.</p>
+<p>The post <a href="https://semiengineering.com/closing-the-visibility-gap/">Closing The Visibility Gap</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://semiengineering.com/closing-the-visibility-gap/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">24282377</post-id>	</item>
+		<item>
+		<title>From Silicon To Systems: Redefining Competitive Advantage, Part 3</title>
+		<link>https://semiengineering.com/from-silicon-to-systems-redefining-competitive-advantage-part-3/</link>
+					<comments>https://semiengineering.com/from-silicon-to-systems-redefining-competitive-advantage-part-3/#respond</comments>
+		
+		<dc:creator><![CDATA[Don Ong]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 07:03:41 +0000</pubDate>
+				<category><![CDATA[Blogs - PTES]]></category>
+		<category><![CDATA[Test, Measurement and Analytics]]></category>
+		<category><![CDATA[Advantest]]></category>
+		<category><![CDATA[business]]></category>
+		<category><![CDATA[ISIG]]></category>
+		<category><![CDATA[semiconductor manufacturing]]></category>
+		<category><![CDATA[supply chain]]></category>
+		<guid isPermaLink="false">https://semiengineering.com/?p=24282514</guid>
+
+					<description><![CDATA[<p>The next generation of industry leaders may look very different from the last. </p>
+<p>The post <a href="https://semiengineering.com/from-silicon-to-systems-redefining-competitive-advantage-part-3/">From Silicon To Systems: Redefining Competitive Advantage, Part 3</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>For most of the semiconductor industry&#8217;s history, value was captured in fairly predictable places. Smaller transistors, better processing nodes, and higher-performance chips. But the industry is going into a new era. Today, some of the most important breakthroughs are happening outside the transistor itself: in advanced packaging, in AI infrastructure, in system integration, in software, data, and platform ecosystems. And perhaps most importantly, value is beginning to shift from individual components towards the ability to integrate increasingly complex technology into scalable systems.</p>
+<p>Because in the age of AI, performance is no longer determined by a single chip itself. It is shaped by how efficiently the entire system can move data, manage energy, coordinate compute, and operate across interconnected systems.</p>
+<p>Which means the next generation of industry leaders may look very different from the last. The winners may not simply be those with the best technology, but those who can combine technology, platforms, partnerships, and strategic positioning into coherent systems of value creation.</p>
+<p>Advantest&#8217;s Dong Ong sits down with Salah Nasri, CEO &amp; co-founder of ISIG (International Semiconductor Industry Group), to discuss where the semiconductor industry is going and what competitive advantage might look like in the next decade.</p>
+<p><iframe loading="lazy" src="https://www.youtube.com/embed/R1OLAj0V1nk" width="480" height="270" frameborder="0" allowfullscreen="allowfullscreen"></iframe></p>
+<p>Watch <a href="https://semiengineering.com/from-silicon-to-systems-redefining-competitive-advantage-part-1/">part 1</a> and <a href="https://semiengineering.com/from-silicon-to-systems-redefining-competitive-advantage-part-2/">part 2</a>.</p>
+<p>The post <a href="https://semiengineering.com/from-silicon-to-systems-redefining-competitive-advantage-part-3/">From Silicon To Systems: Redefining Competitive Advantage, Part 3</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://semiengineering.com/from-silicon-to-systems-redefining-competitive-advantage-part-3/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">24282514</post-id>	</item>
+		<item>
+		<title>Shift Left Complicates Fab Data Management</title>
+		<link>https://semiengineering.com/shift-left-complicates-fab-data-management/</link>
+					<comments>https://semiengineering.com/shift-left-complicates-fab-data-management/#respond</comments>
+		
+		<dc:creator><![CDATA[Anne Meixner and Laura Peters]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 07:02:25 +0000</pubDate>
+				<category><![CDATA[Test, Measurement and Analytics]]></category>
+		<category><![CDATA[Top Stories]]></category>
+		<category><![CDATA[advanced process control]]></category>
+		<category><![CDATA[AI/ML inference]]></category>
+		<category><![CDATA[APC]]></category>
+		<category><![CDATA[data veracity]]></category>
+		<category><![CDATA[data volume]]></category>
+		<category><![CDATA[digital twins]]></category>
+		<category><![CDATA[equipment sensors]]></category>
+		<category><![CDATA[Intel Foundry]]></category>
+		<category><![CDATA[Lam Research]]></category>
+		<category><![CDATA[Onto Innovation]]></category>
+		<category><![CDATA[PDF Solutions]]></category>
+		<category><![CDATA[shift left]]></category>
+		<category><![CDATA[Siemens EDA]]></category>
+		<category><![CDATA[Synopsys]]></category>
+		<category><![CDATA[virtual twins]]></category>
+		<category><![CDATA[yield]]></category>
+		<guid isPermaLink="false">https://semiengineering.com/?p=24282537</guid>
+
+					<description><![CDATA[<p>Streaming sensor data creates new challenges for advanced process control.</p>
+<p>The post <a href="https://semiengineering.com/shift-left-complicates-fab-data-management/">Shift Left Complicates Fab Data Management</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><strong>Key Takeaways:</strong></p>
+<ul>
+<li>“Shift left” improves yield by moving detection earlier. Fabs are using real-time equipment sensor data and AI/ML to identify process excursions inside the process module and improve advanced process control.</li>
+<li>Higher sampling rates, hundreds of sensor parameters, and sub-second analysis are increasing the volume, velocity, and variety of manufacturing data.</li>
+<li>Data context and connectivity remain important. However, module-level optimization affects both.</li>
+</ul>
+<hr />
+<p>Semiconductor fabs are leveraging AI/ML models and raw equipment data to speed up yield learning, but the volume of data they are collecting — in some cases, hundreds of petabytes a year — is forcing some tough decisions about optimization versus context.</p>
+<p>The amount of data they are wrestling with has exploded due to increased sampling from inspection and metrology tools, which is used to detect yield issues. This includes data that is streaming from equipment sensors, which is a relatively new contributor to the data volume. AI/ML inference models use this sensor data for in-situ analysis, which enables more responsive advanced process control (APC) and quicker identification of changes that could adversely impact downstream yield.</p>
+<p>“Over the last five years, the equipment data segment has grown exponentially,&#8221; said Ashish Gupta, senior data engineering manager for automation at <a href="https://semiengineering.com/entities/intel-foundry/">Intel Foundry</a>. &#8220;This explosion is primarily the result of fabs engaging in shift-left efforts into in-situ, real-time process control.”</p>
+<p>Others agree that the increased use of equipment data has become a source of exponential data growth.</p>
+<p>“Equipment data has expanded along three dimensions,” said Jae Yong Park, vice president of enterprise software business at <a href="https://semiengineering.com/entities/onto-innovation/">Onto Innovation</a>. “Suppliers have added hundreds of parameters over the past few years, sampling rates have increased from about once per second to every tens of milliseconds, and engineers are increasingly working with raw trace data instead of summary data. Together, these changes have dramatically increased the volume of streaming data.”</p>
+<p>More equipment data increases the data volume, velocity, and variety. Real-time usage of data within a process module now requires sub-second processing. Hundreds of equipment sensors have increased data variety by at least 10× from a decade ago.</p>
+<p>&#8220;There&#8217;s been a firehose of data that&#8217;s been coming out of pretty much everywhere,&#8221; said Kartik Venkataraman, senior director of product management at <a href="https://semiengineering.com/entities/synopsys-inc/">Synopsys</a>. &#8220;Even what fabs have, in terms of access to data from all their equipment suppliers, is a small fraction of the total generated by that equipment. That&#8217;s partly because OEMs want to keep some of that information to themselves. That&#8217;s their IP. A lot of times, though, it&#8217;s because the fab literally cannot handle it. If you take something like an RF plasma source in an etch chamber or a CVD chamber, that&#8217;s operating at a megahertz level. But if it&#8217;s pulsing — and pulsing is such a critical parameter — it&#8217;s operating at kilohertz. Every pulse has a waveform, which has a shape to it. It has a certain transient response and a certain droop. It has characteristics and features in there, some of which may be actionable and tell you something about your process, but you can&#8217;t possibly monitor every pulse. You&#8217;re talking about megabytes per second of data.&#8221;</p>
+<p>For advanced device nodes, the growth in real-time/in-situ data analytics improves yield learning and advanced process control. Typically, engineers wait days, weeks, or months for a yield excursion signal from subsequent screening steps, such as electrical test. With AI/ML models, fabs can often shift identification and decisions to within the process module itself. Decisions can adjust process module settings or abort a process mid-operation. This shift requires continuous monitoring of high-resolution data on a grand scale.</p>
+<p><strong>Fabs shift more left</strong><br />
+Semiconductor test has been shifting more test content left in the flow for decades.  The goal was to increase yield at final or system-level test by adding test content to wafer-level test. More recently, due to the proliferation of chiplets, an additional test step has been added for singulated die. Earlier screening increases confidence that known good die (KGD) are being shipped. This, in turn, increases the final product’s yield and quality.</p>
+<p>Similarly, wafer fabs are shifting equipment data left in the flow, using process module data to detect yield excursions and to improve advanced process control algorithms. By relying on equipment sensor data and purpose-built virtual metrology models, process modules can quickly self-identify adverse, yield-impacting shifts within the tool. As a result, process engineers don&#8217;t need to wait for downstream screening to flag yield issues. AI/ML inference model results can identify causes of yield issues in near real-time.</p>
+<p>“Shifting left occurs within each macro phase (Design =&gt; Fab =&gt; Sort =&gt; Advanced Packaging =&gt; Final Test),&#8221; said Intel Foundry&#8217;s Gupta. &#8220;But moving detection upstream inside the fab module, inside the design cycle, or inside the test cell is where the data engineering challenge intensifies. Instead of waiting for summary bin results or post-step inspections, in-phase shift left requires continuous, high-resolution surveillance, in-situ/in-chamber analytics, anomaly detection, virtual metrology, adaptive test, etc. These activities contribute to a 4Vs (volume, velocity, variety, veracity) data tsunami.”</p>
+<p>Fundamentally, the shift to monitoring within a process module adds three steps. AI/ML inference models access real-time equipment sensor data. These models can flag questionable wafer processing that requires either an adjustment of equipment parameters or an abort command. For the latter, a root-cause analysis will indicate subsequent corrective actions, such as maintenance.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" class="alignnone wp-image-24282538" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-01-at-9.12.17-AM.png?resize=490%2C108&#038;ssl=1" alt="" width="490" height="108" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-01-at-9.12.17-AM.png?w=1780&amp;ssl=1 1780w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-01-at-9.12.17-AM.png?resize=300%2C66&amp;ssl=1 300w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-01-at-9.12.17-AM.png?resize=1024%2C226&amp;ssl=1 1024w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-01-at-9.12.17-AM.png?resize=768%2C169&amp;ssl=1 768w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-01-at-9.12.17-AM.png?resize=1536%2C338&amp;ssl=1 1536w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-01-at-9.12.17-AM.png?resize=600%2C132&amp;ssl=1 600w" sizes="auto, (max-width: 490px) 100vw, 490px" /><br />
+<strong>Fig. 1: Shift left identifies yield excursions earlier and better supports advanced process control. Source: Intel Foundry</strong></p>
+<p>Managing this data continues to be a critical topic as fabs increasingly request more data from the equipment suppliers. To support in-situ analysis, equipment logs need to be made available to process engineers for model building and monitoring.</p>
+<p>“Having suppliers export key relevant data in standard formats is essential these days as chipmakers have started leveraging the data by themselves beyond traditional systems (YMS, FDC, R2R),” said Prasad Bachiraju, senior director of sales and product marketing at Onto Innovation. “Additionally, they need to pass on the knowledge of what happened to a substrate (wafer/panel) to the next step in a standard format, so information is consumed and the next process is optimized.”</p>
+<p>Others stress the growth in real-time decisions, which requires access to equipment data to support virtual metrology models.</p>
+<p>“Metrics should be measured inline rather than after-the-fact, because changes that could negatively impact product quality can happen at any time,” said Steve Zamek, director of product management at <a href="https://semiengineering.com/entities/pdf-solutions/">PDF Solutions</a>. “We now have software that can catch these faults and interdict the equipment before making any [more] scrap, reducing the so-called product jeopardy to its absolute minimum. This is especially true in cases where we have robust virtual metrology models that can accurately predict unmeasurable in-situ product quality metrics using real-time equipment parameters.”</p>
+<p>Facilities-related data can also benefit from this shift-left strategy. Changes to water temperature, water pressure, and power fluctuations may also affect yield. “This technique should be applied to sub-fab data as well, since the operating parameters of the components directly associated with a unit of fab equipment are having an increasing impact on the quality of the material being processed by that equipment,&#8221; Zamek noted. &#8220;The industry standards and system technologies already exist to support this kind of analysis in almost real time, so the barriers to this use case are minimal.”</p>
+<p><strong>Feeding data to AI/ML</strong><br />
+AI/ML inference models are supporting the drive to use equipment sensor data for more sophisticated in-situ monitoring. Compared to multivariate statistical process control (SPC), inference models actively consume and analyze a higher data volume and a greater variety of data to support chamber analytics, anomaly detection and virtual metrology.</p>
+<p>“It is difficult to quantify the percentage of collected data now used for analytics. However, with the advent of machine learning and artificial intelligence, fabs are collecting and using raw trace data for outlier detection and root-cause analysis rather than relying only on summary-level data,” said Onto Innovation’s Bachiraju. “The motivation is to identify subtle signals that traditional statistical analytics may have missed.”</p>
+<p>Others confirm the increased data that is feeding today’s AI/ML inference models.</p>
+<p>“Shifting defect detection upstream within fab modules is directly driving higher inspection frequency, denser metrology sampling, and expanded site-level measurements across the wafer. Simultaneously, breakthroughs in equipment sensor fidelity and modality are fueling rich AI/ML models that power next-generation advanced process control (APC), anomaly detection and virtual metrology applications,” said Intel Foundry&#8217;s Gupta.</p>
+<p>The benefits of shifting left range from product yield improvement to higher overall equipment effectiveness (OEE).</p>
+<p>“AI/ML is becoming an important driver of quality improvement because it enables organizations to move from reactive problem-solving to proactive defect prevention,” said Jon Holt, senior director of product management at PDF Solutions. “By analyzing large volumes of operational, process, and equipment data, AI models can identify patterns that are often difficult for humans to detect, helping teams predict quality issues before they occur. This improves process stability, reduces variation, accelerates root-cause analysis, and ultimately increases yield and product consistency. In complex manufacturing environments, AI also supports predictive maintenance and process optimization, reducing the likelihood of quality escapes caused by equipment degradation or process drift.”</p>
+<p>While shift left changes what happens per operation, fabs cannot neglect screening steps or the need to connect data between process modules.</p>
+<p>Inspection, metrology and test steps remain effective screens for what escapes these new AI/ML inference models. In addition, when connected to process module data, inspection, metrology, and test steps can identify model improvements. However, AI/ML models for connecting data between fab process steps need to operate on trustworthy data and thus traceability between these steps and context for data needs to be preserved.</p>
+<p>Balancing data trustworthiness and traceability can be challenging, in part because standards for traceability are lacking and in part because teams are tempted to optimize data management on a per-process-module basis.</p>
+<p>“The local optimization trap results in a situation you can describe as ‘data rich but context poor,’” said Gupta. “Each process module optimizes fiercely for its specific, time-constraint challenges. While enterprise data integration, cross-module traceability, and global correlation are more difficult to prioritize (data veracity challenge).”</p>
+<p><strong>Connecting data across the fab</strong><br />
+Trading off between a process module’s optimization and the need to connect data among process modules remains a challenge. Yet ironically, connecting this data is necessary to train and maintain the AI/ML models for in-situ inference within a process module. Specifically, insufficient context for data for a process module can result as a byproduct of a process optimized for its own constraints rather than the connected data across multiple fab steps. This, in turn, can negatively impact the ability to bridge data silos within a factory and across factories.</p>
+<p>One of the big challenges here is figuring out the right starting point. &#8220;Not only are there more tools, but they&#8217;re all generating more data, and pretty rich modes of data,&#8221; said Jim Schiely, chief of staff for Calibre Semiconductor R&amp;D at <a href="https://semiengineering.com/entities/mentor-a-siemens-business/">Siemens EDA</a>. &#8220;When you look at new giant companies like Rapidus or Terafab, there&#8217;s an opportunity to start with what we know now, rather than having little models with local ontologies and local provenance of data. For each department, they could start from scratch with the idea that this is an information business. We have to build these threads of all the different data, how they join together, and how to build this huge graph of data. These graphs are exactly the kind of fuel that AI can cook with.&#8221;</p>
+<p>For established fabs, this requires remaking the models that are at the core of chip manufacturing. &#8220;When we did lithography models 25 years ago, we had guys who were like Michelangelos of modeling,&#8221; Schiely said. &#8220;They were the only people who knew how to do it. If you had a hard data set, you could go to these guys and they could get it working. The maturity of the modeling discipline has evolved, and the tools available for that are not only in the compute hardware, but in the libraries available in Python and the models. Automating some of the neural network models wasn&#8217;t even possible in the past. When we talked about automating model fitting 25 years ago, it seemed ridiculous. And if you couldn&#8217;t keep that data current, it wasn&#8217;t worth it to generate all these graphs and keep track of all this data, especially if it sat unused.&#8221;</p>
+<p>AI and digital twins address these kinds of issues, but with semiconductors those abstractions need to be correlated with multi-physics simulations and testing.</p>
+<p>&#8220;Core engines still have to generate the ground truth, and this cannot be done by LLMs,&#8221; said Synopsys&#8217; Venkataraman. &#8220;We still have to go through the progression of first making sure that the human experts are doing it right, and that it&#8217;s validated and calibrated by real data. So the calibration piece is critical. The physical models will tell you how it should behave, but you need the actual data to anchor that in reality. Once you have that, instead of just collecting the data and seeing for yourself what you get, you understand why the data is the way it is. That&#8217;s what the digital twin is supposed to tell you. It&#8217;s supposed to reveal the physics to you. That&#8217;s where the real learning comes from, and it&#8217;s what enables generalized learning.&#8221;</p>
+<p>That&#8217;s the goal. But data-related challenges persist across the design-through-manufacturing flow, and those challenges compound when multiple processes are involved.</p>
+<p>“We have an increasing level of complexity with advanced devices, whether it&#8217;s gate-all-around devices in logic, 3D DRAM, modular stack NAND, and more sophisticated multi-die packaging like HBM and SoCs in a system-in-package,” said Russell Dover, managing director of equipment intelligence product development at <a href="https://semiengineering.com/entities/lam-research/">Lam Research</a>. “So we need to bring in smart tools to enable the digital thread, using AI technology to manage more than what we can do alone. Fundamentally, this is about speed to problem resolution and faster learning cycles.”</p>
+<p>Engineers are going beyond process module optimization to the fleet level across fabs. “Using AI, we can create a corrective model that uses feedback or feedforward from different sorts of process tools to drive a better integrated outcome for the chip manufacturer,” said Dover. “And data does not care about physical location. And so if you have a fab, for example, in Asia, and then a sister fab somewhere else in the world, you can commingle that data and treat them as one virtual fleet. Then you can go beyond what traditional tool matching is, where you&#8217;re optimizing a fleet in a particular fab and a particular process, to now a fleet of chambers across different locations, and you can drive matching and output optimization, improving Cpk and yield for that process.”</p>
+<p>The same applies to other processes. For example, plasma processing offers a strong platform for virtual metrology because of the ever-changing conditions associated with residue on chamber walls. “The same process chemical can behave differently in a freshly cleaned chamber than in one that has processed hundreds of wafers,&#8221; said Shalini Sharma, head of semiconductor materials innovation and cross-vertical strategy at SandboxAQ. “In plasma etch, for example, polymer residue on chamber walls can gradually change the gas-phase chemistry inside the tool and shift etch rate as the chamber ages. Engineers characterize these interactions using designed experiments, chamber telemetry, and witness wafers, then manage them through cleaning, seasoning, and run-to-run control. Machine learning can identify patterns across RF impedance, gas flow, and other sensor data that would be difficult for a person to detect, and virtual metrology can estimate results such as film thickness or etch depth before conventional measurements are available.”</p>
+<p><strong>Conclusion</strong><br />
+Shifting detection and process control earlier in the manufacturing flow is accelerating yield learning, but it&#8217;s also putting a strain on the data infrastructure inside the fab. As manufacturers optimize AI/ML models within different process steps, the challenge will be preserving the context around data and the traceability needed for fab analytics and process optimization.</p>
+<p><strong>— Ed Sperling contributed to this article.</strong></p>
+<p><strong>Related Articles</strong><br />
+<a href="https://semiengineering.com/how-robotics-and-intelligent-equipment-control-drive-next-gen-fab-productivity/">How Robotics And Intelligent Equipment Control Drive Next-Gen Fab Productivity</a><br />
+Behind the scenes, advanced equipment control and robotics are enabling higher levels of repeatability, tool uptime, and yield.</p>
+<p><a href="https://semiengineering.com/secure-data-sharing-becoming-critical-for-chip-manufacturing/">Secure Data Sharing Becoming Critical For Chip Manufacturing</a><br />
+Driven by a plethora of benefits, data sharing is gradually becoming a “must have” for advanced device nodes and multi-die assemblies.</p>
+<p><a href="https://semiengineering.com/digital-twins-the-clouds-the-limit/">Digital Twins: The Cloud&#8217;s The Limit</a><br />
+Chip industry leverages massive compute resources and AI for virtual sandboxes.</p>
+<p><a href="http://-">New Frontiers In Fault Detection And Classification</a><br />
+AI is enabling timelier and more accurate data, but AI-based command and control has yet to appear.</p>
+<p>The post <a href="https://semiengineering.com/shift-left-complicates-fab-data-management/">Shift Left Complicates Fab Data Management</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://semiengineering.com/shift-left-complicates-fab-data-management/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">24282537</post-id>	</item>
+		<item>
+		<title>From Process Learning To Production Control: Trends In Advanced Packaging And Implications To Characterization And Test</title>
+		<link>https://semiengineering.com/from-process-learning-to-production-control-trends-in-advanced-packaging-and-implications-to-characterization-and-test/</link>
+					<comments>https://semiengineering.com/from-process-learning-to-production-control-trends-in-advanced-packaging-and-implications-to-characterization-and-test/#respond</comments>
+		
+		<dc:creator><![CDATA[PDF Solutions]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 07:02:08 +0000</pubDate>
+				<category><![CDATA[Test, Measurement and Analytics]]></category>
+		<category><![CDATA[Whitepapers]]></category>
+		<category><![CDATA[advanced packaging]]></category>
+		<category><![CDATA[Charaterization]]></category>
+		<category><![CDATA[metrology]]></category>
+		<category><![CDATA[PDF Solutions]]></category>
+		<category><![CDATA[process control]]></category>
+		<category><![CDATA[semiconductor test]]></category>
+		<guid isPermaLink="false">https://semiengineering.com/?p=24282441</guid>
+
+					<description><![CDATA[<p>An integrated methodology for accelerating process development and sustaining production control for advanced packaging technologies.</p>
+<p>The post <a href="https://semiengineering.com/from-process-learning-to-production-control-trends-in-advanced-packaging-and-implications-to-characterization-and-test/">From Process Learning To Production Control: Trends In Advanced Packaging And Implications To Characterization And Test</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><span data-teams="true">The explosive growth of heterogeneous integration, from 2.5D interposers and CoWoS to hybrid bonding and 3D stacking, is redefining what it means to “ramp a process.” Advanced packaging technologies exhibit yield sensitivities and defect mechanisms fundamentally different from front-end logic or standard packaging technology, yet the industry has lacked purpose-built metrology, characterization, and analytics frameworks to address these new challenges at scale. This presentation explains an integrated methodology for accelerating process development and sustaining production control for advanced packaging technologies.</span></p>
+<p>Read <a href="https://www.pdf.com/resources/2026-imaps-from-process-learning-to-production-control/">more here.</a></p>
+<p>The post <a href="https://semiengineering.com/from-process-learning-to-production-control-trends-in-advanced-packaging-and-implications-to-characterization-and-test/">From Process Learning To Production Control: Trends In Advanced Packaging And Implications To Characterization And Test</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://semiengineering.com/from-process-learning-to-production-control-trends-in-advanced-packaging-and-implications-to-characterization-and-test/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">24282441</post-id>	</item>
+		<item>
+		<title>The FAaST Track: Enabling Advanced Packaging Through Electrical Process Control</title>
+		<link>https://semiengineering.com/the-faast-track-enabling-advanced-packaging-through-electrical-process-control/</link>
+					<comments>https://semiengineering.com/the-faast-track-enabling-advanced-packaging-through-electrical-process-control/#respond</comments>
+		
+		<dc:creator><![CDATA[Onto Innovation]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 07:01:59 +0000</pubDate>
+				<category><![CDATA[Test, Measurement and Analytics]]></category>
+		<category><![CDATA[Whitepapers]]></category>
+		<category><![CDATA[advanced packaging]]></category>
+		<category><![CDATA[charge control]]></category>
+		<category><![CDATA[FAaST platform]]></category>
+		<category><![CDATA[Onto Innovation]]></category>
+		<category><![CDATA[process control]]></category>
+		<category><![CDATA[residual surface charge]]></category>
+		<category><![CDATA[semiconductor metrology]]></category>
+		<guid isPermaLink="false">https://semiengineering.com/?p=24282434</guid>
+
+					<description><![CDATA[<p>The next frontier in process control isn’t just visual—it’s electrical.</p>
+<p>The post <a href="https://semiengineering.com/the-faast-track-enabling-advanced-packaging-through-electrical-process-control/">The FAaST Track: Enabling Advanced Packaging Through Electrical Process Control</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>The semiconductor industry is entering an era where packaging innovation is as important as transistor scaling.</p>
+<p>Artificial intelligence, high-performance computing systems, advanced smartphones, automotive electronics, and next-generation networking platforms increasingly depend on advanced packaging technologies to deliver the bandwidth, power efficiency, and functionality these applications demand, often in increasingly smaller footprints.</p>
+<p>While much of the advanced packaging process control discussion focuses on defect detection, some challenges take of the form of subtle electrical conditions that can impact downstream yield, device reliability, and manufacturing consistency. These electrical effects are often invisible to traditional inspection and metrology methods, yet they can negatively affect downstream process performance, device reliability, and overall yield.</p>
+<p>Residual charge control has emerged as a particularly important requirement for advanced packaging.</p>
+<p>As manufacturers adopt new package architectures, they are also introducing a growing number of hygroscopic films and materials which are often combined with insulating layers and substrates. These materials require tighter environmental control, and in drier environments, residual and static charge can become a significant process concern. Plasma-based processing, deposition, cleaning, surface preparation, and bonding steps can further generate localized charge buildup across wafers and panels.</p>
+<p>Read <a href="https://ontoinnovation.com/resources/the-faast-track-enabling-advanced-packaging-through-electrical-process-control/?">more here</a>.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" class="alignnone wp-image-24282435" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-06-at-10.37.22-AM.png?resize=543%2C380&#038;ssl=1" alt="" width="543" height="380" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-06-at-10.37.22-AM.png?resize=300%2C210&amp;ssl=1 300w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-06-at-10.37.22-AM.png?resize=1024%2C715&amp;ssl=1 1024w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-06-at-10.37.22-AM.png?resize=768%2C537&amp;ssl=1 768w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-06-at-10.37.22-AM.png?resize=600%2C419&amp;ssl=1 600w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-06-at-10.37.22-AM.png?w=1334&amp;ssl=1 1334w" sizes="auto, (max-width: 543px) 100vw, 543px" /></p>
+<p><strong>Fig.1: Full wafer mapping highlights local non-uniformities (left). High resolution panel level mapping identifies patterns and localized hotspots (right). Source: Onto Innovation</strong></p>
+<p>The post <a href="https://semiengineering.com/the-faast-track-enabling-advanced-packaging-through-electrical-process-control/">The FAaST Track: Enabling Advanced Packaging Through Electrical Process Control</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://semiengineering.com/the-faast-track-enabling-advanced-packaging-through-electrical-process-control/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">24282434</post-id>	</item>
+		<item>
+		<title>CPO Testing Faces A Moving Target Problem</title>
+		<link>https://semiengineering.com/cpo-testing-faces-a-moving-target-problem/</link>
+					<comments>https://semiengineering.com/cpo-testing-faces-a-moving-target-problem/#respond</comments>
+		
+		<dc:creator><![CDATA[Laura Peters]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 07:01:36 +0000</pubDate>
+				<category><![CDATA[Round Tables]]></category>
+		<category><![CDATA[Test, Measurement and Analytics]]></category>
+		<category><![CDATA[Top Stories]]></category>
+		<category><![CDATA[Advantest]]></category>
+		<category><![CDATA[ASE]]></category>
+		<category><![CDATA[co-packaged optics]]></category>
+		<category><![CDATA[CPO]]></category>
+		<category><![CDATA[data centers]]></category>
+		<category><![CDATA[ISE Labs]]></category>
+		<category><![CDATA[Keysight Technologies]]></category>
+		<category><![CDATA[near packaged optics]]></category>
+		<category><![CDATA[NPO]]></category>
+		<category><![CDATA[photonics]]></category>
+		<category><![CDATA[Teradyne]]></category>
+		<guid isPermaLink="false">https://semiengineering.com/?p=24282422</guid>
+
+					<description><![CDATA[<p>Test vendors are adapting to changing connector architectures and extreme alignment tolerances as co-packaged optics heads toward mainstream.</p>
+<p>The post <a href="https://semiengineering.com/cpo-testing-faces-a-moving-target-problem/">CPO Testing Faces A Moving Target Problem</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p><strong>Key Takeaways:</strong></p>
+<ul>
+<li>The industry is busy developing different connector designs and laser sources, while massive data centers with the first levels of CPO are being built.</li>
+<li>In the absence of design-for-test, companies have to test each individual waveguide, resonator or photodiode, which is inefficient and does not scale.</li>
+<li>Optical components are much more sensitive to slight offset than electronic components, making issues like thermal and warpage particularly troublesome.</li>
+</ul>
+<hr />
+<p><strong>Experts At The Table</strong>: The steep data center build-out contains an increasing amount of near-packaged optics (NPO) and co-packaged optics (CPO), putting pressure on test manufacturers to produce high-volume manufacturing tooling. Semiconductor Engineering sat down with Matt Griffin, senior product manager for optoelectronics test at <a href="https://semiengineering.com/entities/teradyne-corporation/">Teradyne</a>; Ira Leventhal, vice president of research and venture at <a href="https://semiengineering.com/entities/advantest-corporation/">Advantest America</a>; Dave Armstrong, fellow at ISE Labs, a subsidiary of <a href="https://semiengineering.com/entities/ase/">ASE Group</a>; and Kazuo Yamaguchi, silicon photonics researcher and engineer at <a href="https://semiengineering.com/entities/keysight-technologies/">Keysight Technologies</a>.</p>
+<p><img data-recalc-dims="1" loading="lazy" decoding="async" class="alignnone size-full wp-image-24282423" src="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-05-at-4.54.22-PM.png?resize=1768%2C548&#038;ssl=1" alt="" width="1768" height="548" srcset="https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-05-at-4.54.22-PM.png?w=1768&amp;ssl=1 1768w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-05-at-4.54.22-PM.png?resize=300%2C93&amp;ssl=1 300w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-05-at-4.54.22-PM.png?resize=1024%2C317&amp;ssl=1 1024w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-05-at-4.54.22-PM.png?resize=768%2C238&amp;ssl=1 768w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-05-at-4.54.22-PM.png?resize=1536%2C476&amp;ssl=1 1536w, https://i0.wp.com/semiengineering.com/wp-content/uploads/2026/10/Screenshot-2026-10-05-at-4.54.22-PM.png?resize=600%2C186&amp;ssl=1 600w" sizes="auto, (max-width: 1000px) 100vw, 1000px" /><br />
+<strong>Fig. 1: (L-R): Teradyne’s Griffin; Keysight’s Yamaguchi; ISE Labs’ Armstrong; Advantest’s Leventhal.</strong></p>
+<p><strong>SE:</strong> <strong>Some people liken the testing of optical devices to testing electronic devices several decades ago. What are the most significant challenges associated with testing photonic devices?</strong></p>
+<p><strong>Griffin</strong>: There are two key changes we&#8217;re making to the test cells to support co-packaged optics. One is the optical instrumentation itself at the wafer, optical engine, or package level. The second is the automation. So how do I optically interface with the device under test (DUT)? That could be a fiber alignment at wafer, a connector alignment, or receptacle alignment at the package or optical engine level. This is what needs to change to enable high volume. Some of the photonics engineers will say, ‘Well, what&#8217;s the big deal? I&#8217;ve been testing optical transceivers for 20 years. I&#8217;ve been designing optical transceivers for 20 years.’ The difference is the scale of going to high-volume manufacturing, where you&#8217;re deploying many testers on a test floor. You want to support high-volume software, data analysis, and test programming capabilities, so it&#8217;s not as simple as bringing rack-and-stack instrumentation onto a test cell or designing your own custom optical alignment system like you would in your characterization lab. That is really where the challenges lie.</p>
+<p><strong>Leventhal</strong>: It really comes down to maturity level, and if we wind the clock back 40 years, with each generation of electronics, there&#8217;s some new capability being added. In the beginning of my career, ATE was strictly digital test. But we kept getting greater levels of integration, bringing together digital, analog, mixed-signal, RF, and now millimeter wave, in a single package. Photonics is yet another progression of new technology. There’s a less mature ecosystem for the optical part of the test content, and that needs to mature to enable us to truly bring up this technology at scale. For example, customers are still trying to determine which connection technologies they&#8217;re going to use and what laser sources they&#8217;re going to use. A lot is still evolving. I don&#8217;t see this as a fundamentally different challenge, but the signal is optical and not electronic, so electrical engineers are looking at things like polarization extinction ratio, for example, so it takes that next level of learning to evolve this to HVM.</p>
+<p><strong>Armstrong</strong>: Ira hit on an important point. A lot of what we&#8217;re doing harkens back to the old days of digital logic before we had scan test. At that time, a lot of people were trying to take rack-and-stack or bench equipment and use it for production test, which tended to be clunky, cumbersome, and slow. Then we got design for testability (DFT) integrated into the logic. We haven&#8217;t done DFT for optical. People are trying to deploy some PRBS (pseudo-random binary sequence) type approaches, which have existed in logic devices for a while, but in large part we don&#8217;t have DFT, so we have to test each waveguide component, ring, modulator, etc., one at a time, and it is slow and laborious. There&#8217;s a lot of different perspectives on what needs to be tested and how to test it, and I&#8217;d say one of the biggest challenges is, as Matt alluded, we don&#8217;t have a hybrid engineer. We&#8217;ve got two different camps of people who have a hard time learning each other&#8217;s core capability, so we have to get people on the same page, educated similarly both for electrical and optical, with similar standards in place.</p>
+<p><strong>Yamaguchi</strong>: Optical alignment must be extremely precise and can slow down testing. For this reason, using an optical probe card would be ideal but is difficult — not only because of the non-contact mechanical implementation, but also because optical calibration is needed to make reliable and traceable measurements. The multi-channel optical connectivity with the FAU has design variation from unit-to-unit and channel-to-channel, resulting in channel-performance uncertainty. For example, a measurement on channel 1 of a waveguide is different from the same measurement on channel 2. A slight offset due to pitch and x,y mismatch causes an optical alignment offset, which is more impactful than a similar offset at electrical probe.</p>
+<p><strong>SE: How does the addition of photonics change test flows?</strong></p>
+<p><strong>Armstrong</strong>: We all share a very similar view of insertions. Insertion one is for PIC (photonics IC) testing. Insertion two is wafer-level optical engine testing. Insertion three is die-level optical engine. Insertion four is module test, and insertion five is system-level test. You can add insertion 1.5, wafer-level burn-in, a stability bake of your optical components, and it&#8217;s a must for lasers to get rid of infant mortality. PIC testing is certainly done broadly today, although some people who have the most experience in the market say it may not need to be done in the future. Optical engine testing is a must, and that&#8217;s where most of the effort is. So insertions two, three, and four feel like a must for the hyperscalers, which feels like a follow-on effort to what hyperscalers have been doing for years with a large ATE high-power test of the heterogeneous integration.</p>
+<p><strong>Griffin</strong>: I&#8217;ve been working in this space for about ten years, and almost every insertion has felt like the most important one at some point, depending on which customer or which part of the market you&#8217;re talking to. Our goal is to provide test solutions across all insertions and give our customers the flexibility to shift coverage as they gain more insight into the volume manufacturing flow and where they need to optimize. One critical insertion happens before you attach the optical engine to your high-performance compute device, because you don&#8217;t want to package lower-cost optical engines with an extremely high-value ASIC and cause yield loss on that entire package. At some point, customers want to do a full functional mission-mode test of that entire CPO module, and we see some variation between customers wanting to do it on ATE versus SLT, or possibly both. You have to optically connect to the device, potentially between 4 and 32 connectors. We’re seeing test requirements at 1 to 8 kW for the center die and 10 to 30 W for each optical engine. So thermal management of that device is critical for customers.</p>
+<p><strong>Yamaguchi</strong>: Much of what we measure is already defined by industry standards, and those standards are being written right now, in parallel with the CPO/NPO manufacturing test discussions. I agree with Matt that each customer decides where coverage sits in the flow, based on their own technology and manufacturing experience. But the fundamental test parameters and compliance metrics are largely the same ones used for optical transceivers for years. What changes with CPO and NPO is which insertion performs them, and how early.</p>
+<p><strong>Leventhal</strong>: It’s important to identify what things are being tested right now due to a lack of maturity of the ecosystem versus tests that are fundamental to understanding whether technology is working the way it&#8217;s supposed to. As electro-optical systems and packages mature, we&#8217;re going to see steps go away over time because the processes are getting dialed in. Matt talked about the amount of power, which is huge and just getting bigger. But you also have warpage of large-scale packages. If you&#8217;re coming in with a connection mechanism and the part is warped, that connector is not going to be where you expect it to be, and you can shear the connector off. That&#8217;s an example of something that will get dialed in. But you will have more burn-in insertions because things are not optimized from a manufacturing and test standpoint. As tests go away, it may be replaced by other ways of getting to the important information, like DFT, which is critical for that. We&#8217;re not going to get to maturity without it.</p>
+<p><strong>SE:</strong> <strong>Do there appear to be certain leading connector designs?</strong></p>
+<p><strong>Griffin</strong>: That&#8217;s probably more of a question for the package designers. I think a handful of customers will go to volume and drive specific connector designs over the next one to two years. That should give us a better sense of what propagates in the market.</p>
+<p><strong>Leventhal</strong>: As test system providers, we have to work with whatever our customer ends up using. But we definitely see a wide disparity in terms of the types of connector designs, and they all have their pros and cons. Certain connector companies have put a lot more focus on the repeatability and reliability of that connection. Other customers have put more focus on securing the best optical performance. Another consideration is the flexibility of the connector in terms of the FAUs that it can work with, because there are predictions about FAU companies not being able to keep up with the capacity demands of the industry, and people will need second sources. If that second-source FAU uses a different connector type, that becomes really messy.</p>
+<p><strong>Armstrong</strong>: It&#8217;s definitely a moving target problem, no question. And keeping up with where the industry is going, I&#8217;m now seeing people ask about two-row fiber FAUs. We&#8217;re seeing customers talking about implementing hundreds of fibers in a single FAU. It&#8217;s kind of scary in terms of how it&#8217;s ramping up before we have figured out the last challenge. Additionally, if we&#8217;re talking about testing in production, I should talk about cleaning. Each cleaning of the setup is going to generate a certain amount of dust, and dust is the enemy in optical testing. Having a way to effectively clean the optical connector FAU in an automated fashion is critical.</p>
+<p>The post <a href="https://semiengineering.com/cpo-testing-faces-a-moving-target-problem/">CPO Testing Faces A Moving Target Problem</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://semiengineering.com/cpo-testing-faces-a-moving-target-problem/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">24282422</post-id>	</item>
+		<item>
+		<title>Perspectives On Test: System Level Test For AI &#038; Data Centers</title>
+		<link>https://semiengineering.com/perspectives-on-test-system-level-test-for-ai-data-centers/</link>
+					<comments>https://semiengineering.com/perspectives-on-test-system-level-test-for-ai-data-centers/#respond</comments>
+		
+		<dc:creator><![CDATA[Ben Mitchel]]></dc:creator>
+		<pubDate>Thu, 08 Oct 2026 07:01:27 +0000</pubDate>
+				<category><![CDATA[Blogs - PTES]]></category>
+		<category><![CDATA[Next-Generation Test]]></category>
+		<category><![CDATA[Test, Measurement and Analytics]]></category>
+		<category><![CDATA[SLT]]></category>
+		<category><![CDATA[system-level test]]></category>
+		<category><![CDATA[Teradyne]]></category>
+		<category><![CDATA[test]]></category>
+		<guid isPermaLink="false">https://semiengineering.com/?p=24282518</guid>
+
+					<description><![CDATA[<p>Testing every device under real-world conditions has never been more important.</p>
+<p>The post <a href="https://semiengineering.com/perspectives-on-test-system-level-test-for-ai-data-centers/">Perspectives On Test: System Level Test For AI &#038; Data Centers</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>As AI and data center devices grow in complexity, with multi-chiplet designs and power envelopes in the thousands of watts, testing every device under real-world conditions has never been more important.</p>
+<p>Ben Mitchel, senior director of product management and business development for integrated systems test, discusses why system-level test is now mission-critical in high-volume manufacturing and how Teradyne’s Titan HP platform delivers the power, thermal management, and throughput that AI and cloud infrastructure devices require.</p>
+<p><iframe loading="lazy" class="wistia_embed" title="Teradyne Perspectives on Test - SLT for Data Center - FINAL Video" src="https://fast.wistia.net/embed/iframe/xjmgaculof?dnt=1" name="wistia_embed" width="480" height="270" frameborder="0" scrolling="no"></iframe></p>
+<p>The post <a href="https://semiengineering.com/perspectives-on-test-system-level-test-for-ai-data-centers/">Perspectives On Test: System Level Test For AI &#038; Data Centers</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://semiengineering.com/perspectives-on-test-system-level-test-for-ai-data-centers/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">24282518</post-id>	</item>
+		<item>
+		<title>Hyper-NA EUV: The Next Extension Beyond High NA Lithography (Carl Zeiss, ASML)</title>
+		<link>https://semiengineering.com/hyper-na-euv-the-next-extension-beyond-high-na-lithography-carl-zeiss-asml/</link>
+					<comments>https://semiengineering.com/hyper-na-euv-the-next-extension-beyond-high-na-lithography-carl-zeiss-asml/#respond</comments>
+		
+		<dc:creator><![CDATA[Technical Paper Link]]></dc:creator>
+		<pubDate>Wed, 07 Oct 2026 19:47:59 +0000</pubDate>
+				<category><![CDATA[Lithography]]></category>
+		<category><![CDATA[Manufacturing]]></category>
+		<category><![CDATA[Technical Papers]]></category>
+		<category><![CDATA[advanced process nodes]]></category>
+		<category><![CDATA[ASML]]></category>
+		<category><![CDATA[Carl Zeiss SMT]]></category>
+		<category><![CDATA[EUV]]></category>
+		<category><![CDATA[extreme ultraviolet lithography]]></category>
+		<category><![CDATA[high-NA EUV]]></category>
+		<category><![CDATA[Hyper-NA]]></category>
+		<category><![CDATA[lithography]]></category>
+		<category><![CDATA[mask 3D effects]]></category>
+		<category><![CDATA[numerical aperture]]></category>
+		<category><![CDATA[optical systems]]></category>
+		<category><![CDATA[patterning]]></category>
+		<category><![CDATA[polarization]]></category>
+		<category><![CDATA[projection optics]]></category>
+		<category><![CDATA[reticles]]></category>
+		<guid isPermaLink="false">https://semiengineering.com/?p=24282503</guid>
+
+					<description><![CDATA[<p>Researchers at Carl Zeiss SMT and ASML published a technical paper titled “Hyper-NA: a system with a numerical aperture of at least 0.75.” Abstract Summary: The researchers examine Hyper-NA EUV lithography with a numerical aperture of at least 0.75 as a path beyond current 0.55-NA High-NA systems, including the optical architecture, resolution potential, reticle 3D... <a class="read_more" href="https://semiengineering.com/hyper-na-euv-the-next-extension-beyond-high-na-lithography-carl-zeiss-asml/">&#187; read more</a></p>
+<p>The post <a href="https://semiengineering.com/hyper-na-euv-the-next-extension-beyond-high-na-lithography-carl-zeiss-asml/">Hyper-NA EUV: The Next Extension Beyond High NA Lithography (Carl Zeiss, ASML)</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></description>
+										<content:encoded><![CDATA[<p>Researchers at <strong>Carl Zeiss SMT</strong> and <strong>ASML</strong> published a technical paper titled “Hyper-NA: a system with a numerical aperture of at least 0.75.”</p>
+<p><strong>Abstract Summary:</strong></p>
+<p>The researchers examine Hyper-NA EUV lithography with a numerical aperture of at least 0.75 as a path beyond current 0.55-NA High-NA systems, including the optical architecture, resolution potential, reticle 3D effects, polarization, and requirements for extending the existing EUV ecosystem.</p>
+<p><a href="https://www.spiedigitallibrary.org/journals/journal-of-micro-nanopatterning-materials-and-metrology/volume-25/issue-4/041807/Hyper-NA-a-system-with-a-numerical-aperture-of-at-least-0-75/10.1117%2F1.JMM.25.4.041807.full">Find the technical paper here</a>. October 2026.</p>
+<p>Patra, Michael, Heiko Feldmann, Jens Timo Neumann, and Gerardo Bottiglieri. “Hyper-NA: a system with a numerical aperture of at least 0.75.” Journal of Micro/Nanopatterning, Materials, and Metrology 25, no. 4 (2026): 041807. https://doi.org/10.1117/1.JMM.25.4.041807</p>
+<p>&nbsp;</p>
+<p>The post <a href="https://semiengineering.com/hyper-na-euv-the-next-extension-beyond-high-na-lithography-carl-zeiss-asml/">Hyper-NA EUV: The Next Extension Beyond High NA Lithography (Carl Zeiss, ASML)</a> appeared first on <a href="https://semiengineering.com">Semiconductor Engineering</a>.</p>
+]]></content:encoded>
+					
+					<wfw:commentRss>https://semiengineering.com/hyper-na-euv-the-next-extension-beyond-high-na-lithography-carl-zeiss-asml/feed/</wfw:commentRss>
+			<slash:comments>0</slash:comments>
+		
+		
+		<post-id xmlns="com-wordpress:feed-additions:1">24282503</post-id>	</item>
+	</channel>
+</rss>

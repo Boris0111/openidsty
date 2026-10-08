@@ -1,0 +1,210 @@
+[
+  {
+    "title": "康舒攜手 OmniOn 參展 OCP，秀 100kW 高功率電源與液冷技術",
+    "body": "隨 AI 資料中心電力需求持續攀升，電源解決方案廠商康舒科技將於 10 月 13 日至 15 日參加美國聖荷西 […]",
+    "url": "https://technews.tw/2026/10/08/acbel-omnioon-ocp-showcases-100kw-high-power-supply-liquid-cooling-tech/",
+    "kind": "industry_news",
+    "segments": [
+      "thermal",
+      "power",
+      "datacenter"
+    ],
+    "themes": [
+      "liquid-cooling"
+    ],
+    "negative": false
+  },
+  {
+    "title": "反映 HBM 供應持續吃緊，上修 2027 年 HBM 價格展望、預估 ASP 年增達 121%",
+    "body": "根據 TrendForce 最新研究顯示，AI 伺服器需求持續擴張，HBM 與 conventional DR […]",
+    "url": "https://technews.tw/2026/09/29/2027-hbm-price-outlook-revised-upward/",
+    "kind": "industry_news",
+    "segments": [
+      "memory"
+    ],
+    "themes": [],
+    "negative": false
+  },
+  {
+    "title": "TPCA Show 2026 規模創新高！攜手 IMPACT 深度串聯 PCB 與先進封裝，聚焦AI 新局",
+    "body": "AI 需求引爆，PCB 產業迎接新機遇！隨著 AI 算力爆發引發硬體架構革新，台灣電路板協會（TPCA）年度盛 […]",
+    "url": "https://technews.tw/2026/10/08/tpca-show-2026-impact-pcb/",
+    "kind": "industry_news",
+    "segments": [
+      "pcb",
+      "advanced-packaging"
+    ],
+    "themes": [],
+    "negative": false
+  },
+  {
+    "title": "CPO Testing Faces A Moving Target Problem",
+    "body": "Test vendors are adapting to changing connector architectures and extreme alignment tolerances as co-packaged optics heads toward mainstream. The post CPO Testing Faces A Moving Target Problem appeared first on Semiconductor Engineering .",
+    "url": "https://semiengineering.com/cpo-testing-faces-a-moving-target-problem/",
+    "kind": "industry_news",
+    "segments": [
+      "interconnect",
+      "networking"
+    ],
+    "themes": [
+      "cpo-silicon-photonics"
+    ],
+    "negative": false
+  },
+  {
+    "title": "台積電 2 奈米加持，AMD Zen 6 架構 Venice EPYC 處理器 2027 年產能售罄",
+    "body": "隨著全球人工智慧（AI）產業加速轉向代理人（Agentic）工作，資料中心對高效能CPU的需求急劇暴增。根據最 […]",
+    "url": "https://finance.technews.tw/2026/10/01/amds-zen-6-architecture-venice-epyc-processors-have-sold-out-for-2027/",
+    "kind": "industry_news",
+    "segments": [
+      "foundry"
+    ],
+    "themes": [
+      "advanced-node-2nm"
+    ],
+    "negative": false
+  },
+  {
+    "title": "經濟安全考量  半導體設備商 TOWA 擬在日本蓋新廠",
+    "body": "經濟安全考量，日本半導體製造設備商 TOWA 將在日本國內興建新工廠，預計 2029 年投產，生產半導體封裝設 […]",
+    "url": "https://technews.tw/2026/10/07/towa-plans-new-plant-in-japan/",
+    "kind": "industry_news",
+    "segments": [
+      "equipment"
+    ],
+    "themes": [],
+    "negative": false
+  },
+  {
+    "title": "小摩唱多探針卡巨頭特諾本  看好晶片測試需求",
+    "body": "義大利半導體測試大廠、探針卡巨頭特諾本（Technoprobe）首度獲摩根大通（J.P. Morgan，小摩） […]",
+    "url": "https://finance.technews.tw/2026/10/07/jpmorgan-bullish-on-technoprobe/",
+    "kind": "industry_news",
+    "segments": [
+      "test"
+    ],
+    "themes": [],
+    "negative": false
+  },
+  {
+    "title": "Wolfspeed 獲美國 15 億美元貸款承諾，盤後大漲近二成",
+    "body": "美國持續強化本土第三類半導體供應鏈。碳化矽（SiC）大廠 Wolfspeed 宣布，獲美國戰爭部（DoW）最高 […]",
+    "url": "https://technews.tw/2026/10/08/wolfspeed-1-5-billion-loan-strengthens-us-semiconductor-supply-chain/",
+    "kind": "industry_news",
+    "segments": [
+      "power-discrete"
+    ],
+    "themes": [],
+    "negative": false
+  },
+  {
+    "title": "AI 電源迎 800VDC 升級潮！外資挺台達、光寶目標價大升至 315 元",
+    "body": "AI 伺服器電力架構加速朝 800 VDC 發展，台達電、光寶科也成為主要受惠廠商。美系外資最新報告指出，80 […]",
+    "url": "https://technews.tw/2026/10/07/ai-power-supplies-800-vdc-upgrade-foreign-investors-bullish-delta-liteon-target-prices-nt315/",
+    "kind": "industry_news",
+    "segments": [
+      "power"
+    ],
+    "themes": [
+      "800vdc"
+    ],
+    "negative": false
+  },
+  {
+    "title": "美 AI 資料中心缺電 34%  大摩：輝達、博通不怕",
+    "body": "美國資料中心供電瓶頸持續升高，但分析人士認為，輝達（Nvidia）與博通（Broadcom）相對不受影響，目前 […]",
+    "url": "https://technews.tw/2026/10/06/nvidia-broadcom-shielded-as-ai-power-crunch-hits-chip-supply-chain/",
+    "kind": "industry_news",
+    "segments": [
+      "datacenter",
+      "power"
+    ],
+    "themes": [
+      "power-bottleneck"
+    ],
+    "negative": false
+  },
+  {
+    "title": "AI GPU 與 ASIC 測試介面需求帶動，外資花旗與大和都給予穎崴買進評等",
+    "body": "測試介面廠商穎崴公布 2026 年 9 月合併營收，金額為新台幣 12.5 億元，雖月減 26.7%，但年增達 […]",
+    "url": "https://finance.technews.tw/2026/10/07/foreign-investors-citigroup-and-daiwa-both-gave-yingwei-a-buy-rating/",
+    "kind": "industry_news",
+    "segments": [
+      "compute"
+    ],
+    "themes": [
+      "custom-asic-vs-gpu"
+    ],
+    "negative": false
+  },
+  {
+    "title": "加強供應市場 HBM4 需求，三星滿載 4 奈米製程至少 50% 產能提供生產基礎晶片",
+    "body": "韓國三星晶圓代工部門已將其 4 奈米製程產能的 50% 以上，正式分配予第六代高頻寬記憶體（HBM4）用基礎晶 […]",
+    "url": "https://technews.tw/2026/09/08/samsung-is-utilizing-at-least-50-of-its-4nm-process-capacity-to-produce-base-chips/",
+    "kind": "industry_news",
+    "segments": [
+      "memory",
+      "foundry"
+    ],
+    "themes": [
+      "hbm4"
+    ],
+    "negative": false
+  },
+  {
+    "title": "環球晶布局先進封裝與矽光子，徐秀蘭強調兩年內營運成長值得期待",
+    "body": "半導體矽晶圓大廠環球晶（GlobalWafers）在先進技術與產能布局上展現強勁成長動能。董事長徐秀蘭指出，受 […]",
+    "url": "https://finance.technews.tw/2026/09/01/globalwafers-is-strategically-positioning-itself-in-advanced-packaging-and-silicon-photonics/",
+    "kind": "industry_news",
+    "segments": [
+      "materials",
+      "advanced-packaging",
+      "networking"
+    ],
+    "themes": [
+      "cpo-silicon-photonics"
+    ],
+    "negative": false
+  },
+  {
+    "title": "AI 不搶飯碗？新思攜手 OpenAI、亞馬遜  股價飆",
+    "body": "美國電子設計自動化（EDA）軟體商新思科技（Synopsys）在投資者日（Investor Day）宣布成功與 […]",
+    "url": "https://technews.tw/2026/10/02/openai-and-synopsys-announce-gpt-synopsys/",
+    "kind": "industry_news",
+    "segments": [
+      "eda-ip"
+    ],
+    "themes": [],
+    "negative": false
+  },
+  {
+    "title": "Meta 團隊提出 CRAM 記憶體壓縮技術，不靠 swap 效能快 452 倍",
+    "body": "一款名為「CRAM」（Compressed RAM）的全新壓縮模型，為記憶體壓縮技術開闢了一條截然不同的道路。 […]",
+    "url": "https://technews.tw/2026/10/08/a-compressed-ram-service/",
+    "kind": "industry_news",
+    "segments": [],
+    "themes": [],
+    "negative": true
+  },
+  {
+    "title": "年增 93.95%！力積電 9 月營收衝上 76.65 億元，料年底迎高峰",
+    "body": "力積電今（8 日）公布 9 月營收為 76.65 億元，月增 9.36%、年增 93.95%；累計前 9 個月 […]",
+    "url": "https://technews.tw/2026/10/08/psmc-2026-09-revenue/",
+    "kind": "industry_news",
+    "segments": [],
+    "themes": [],
+    "negative": true
+  },
+  {
+    "title": "AI驅動高階載板升級，2026全球載板產值增幅3成，估達195.1億美元",
+    "body": "隨著生成式AI、高效能運算（HPC）與資料中心建置需求持續升溫，全球半導體載板產業正進入高階產品規格升級、關鍵材料供應吃緊與先進封裝技術競逐並行的新階段。台灣電路板協會（TPCA）與工研院產科國際所最新觀察指出，2025年全球載板產值規模達147.5億美元，年增18.5%；2026年在AI伺服器、高速交換器、ASIC、GPU與高階記憶體應用帶動下，全球載板產值估達195.1億美元，年增32.3%，顯示高階載板已成為AI運算與先進封裝供應鏈中的關鍵環節。 AI與HPC推升載板規格升級 2025年全球載板市場回到成長軌道，其中BT載板產值約70.3億美元，年增18.2%；ABF載板產值約77.2億美元，年增18.6%。TPCA觀察，本波市場成長不僅來自終端需求回溫，更重要的是AI與高效能運算推動載板產品規格升級。隨著AI伺服器需求快速擴張，GPU、ASIC與高速網路交換晶片對高階ABF載板需求持續升溫，加上晶片效能提升帶動載板尺寸放大、層數增加與製程複雜度提高，進一步推升高階載板市場價值。 2026年AI運算需求持續由模型訓練延伸至大規模推論與代理式AI（Agentic AI），大型雲端服務供應商仍擴大AI基礎建設投資。Gartner預估，2026年全球伺服器出貨量約1,400萬台，年增11.6%；其中AI伺服器約370萬台，年增55.9%，將持續支撐高階ABF載板需求。相較之下，智慧手機與個人電腦市場雖受惠換機需求與新產品週期啟動，但受記憶體價格上漲、零組件成本增加及總體經濟不確定性影響，需求復甦力道相對溫和，載板市場將呈現AI與高效能應用需求強勁、消費性電子應用成長相對受限的分化格局。 台灣ABF載板市占居全球首位 從全球競爭格局觀察，若以企業總部所在地為統計基準，2025年台灣載板業者合計市占率達35.6%，位居全球首位；南韓與日本則分別以27.9%及22.7%分居第二、第三。進一步觀察ABF載板市場，台灣業者合計市占率達41.3%，同樣位居全球首位，顯示台灣在高階載板、AI晶片封裝與高效能運算供應鏈中具備關鍵地位。BT載板方面，南韓受惠於手機與記憶體產業基礎，業者合計市占率達36.4%，位居全球第一；台灣則以29.4%位居第二。 儘管AI需求強勁，高階載板供給面仍面臨關鍵材料瓶頸。TPCA指出，高階載板所需的Low CTE玻纖布供應持續吃緊，新增產能投產與爬坡仍需時間，新供應商導入亦須經過客戶認證，短期內供給能力難以明顯增加。由於AI晶片所需高階ABF載板持續朝大尺寸、高層數與高密度方向發展，製程複雜度與生產週期同步提高，加上良率、材料供應及客戶認證等限制，供給擴張速度相對有限。在需求持續成長、供給彈性有限的情況下，高階載板產品價格可望維持相對高檔，價格效應亦將成為推升今年載板市場產值成長的重要因素。 玻璃基板成先進封裝中長期方向 在先進封裝技術方面，A",
+    "url": "https://www.tpca.org.tw/web/news_detail.php?menu_no=182&mod_no=5&news_no=500440",
+    "kind": "industry_news",
+    "segments": [
+      "substrate",
+      "odm"
+    ],
+    "themes": [],
+    "negative": false
+  }
+]

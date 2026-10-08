@@ -1,0 +1,133 @@
+name: industryflow
+
+x-app: &app
+  image: industryflow-api:local
+  build:
+    context: .
+    dockerfile: backend/Dockerfile
+  environment: &app-env
+    DATABASE_URL: postgresql+psycopg://industry:${POSTGRES_PASSWORD:?Run scripts/setup-env.ps1 first}@db:5432/${APP_DATABASE:-industry}
+    SEC_USER_AGENT: ${SEC_USER_AGENT:-}
+    PREFECT_API_URL: http://prefect:4200/api
+    PREFECT_SERVER_ANALYTICS_ENABLED: "false"
+  init: true
+  networks: [app]
+
+services:
+  db:
+    image: postgres:16.15-trixie
+    environment:
+      POSTGRES_USER: industry
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run scripts/setup-env.ps1 first}
+      POSTGRES_DB: ${APP_DATABASE:-industry}
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./docker/db-init.sh:/docker-entrypoint-initdb.d/01-prefect.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U industry -d industry"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+    networks: [app]
+
+  initialize:
+    <<: *app
+    command: [sh, -c, "alembic upgrade head && python -m app.import_map && python -m app.ingest --reclassify --only-stale"]
+    depends_on:
+      db: {condition: service_healthy}
+
+  api:
+    <<: *app
+    ports: ["${APP_BIND:-127.0.0.1}:${API_PORT:-8010}:8000"]
+    depends_on:
+      initialize: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  web:
+    image: industryflow-web:local
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    environment:
+      API_ORIGIN: http://api:8000
+    ports: ["${APP_BIND:-127.0.0.1}:${WEB_PORT:-3010}:3010"]
+    depends_on:
+      api: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://localhost:3010/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    init: true
+    restart: unless-stopped
+    networks: [app]
+
+  prefect:
+    <<: *app
+    environment:
+      <<: *app-env
+      PREFECT_API_DATABASE_CONNECTION_URL: postgresql+asyncpg://industry:${POSTGRES_PASSWORD}@db:5432/prefect
+      PREFECT_UI_API_URL: http://localhost:${PREFECT_PORT:-4201}/api
+      PREFECT_UI_STATIC_DIRECTORY: /home/app/.prefect/ui
+      PREFECT_SERVER_DOCKET_URL: memory://
+    command: [prefect, server, start, --host, 0.0.0.0]
+    ports: ["127.0.0.1:${PREFECT_PORT:-4201}:4200"]
+    depends_on:
+      db: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:4200/api/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      start_period: 40s
+      retries: 20
+    restart: unless-stopped
+
+  deploy:
+    <<: *app
+    command: [python, -m, app.deploy]
+    depends_on:
+      prefect: {condition: service_healthy}
+      initialize: {condition: service_completed_successfully}
+
+  worker:
+    <<: *app
+    command: [prefect, worker, start, --pool, industryflow, --type, process, --limit, "1"]
+    depends_on:
+      deploy: {condition: service_completed_successfully}
+    restart: unless-stopped
+
+  ingestion:
+    <<: *app
+    profiles: [tools]
+    command: [python, -m, app.ingest]
+    depends_on:
+      initialize: {condition: service_completed_successfully}
+
+  caddy:
+    image: caddy:2.11-alpine
+    profiles: [public]
+    environment:
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:-localhost}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    ports: ["80:80", "443:443", "443:443/udp"]
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      web: {condition: service_healthy}
+    networks: [app]
+    restart: unless-stopped
+
+volumes:
+  pg-data:
+  caddy-data:
+  caddy-config:
+networks:
+  app:

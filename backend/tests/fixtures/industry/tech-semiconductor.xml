@@ -1,0 +1,702 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>半導體 &#8211; TechNews 科技新報</title>
+	<atom:link href="https://technews.tw/category/semiconductor/feed/" rel="self" type="application/rss+xml" />
+	<link>https://technews.tw</link>
+	<description>市場和業內人士關心的趨勢、內幕與新聞</description>
+	<lastBuildDate>Thu, 08 Oct 2026 08:50:10 +0000</lastBuildDate>
+	<language>zh-TW</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=4.7.2</generator>
+	<item>
+		<title>年增 93.95%！力積電 9 月營收衝上 76.65 億元，料年底迎高峰</title>
+		<link>https://technews.tw/2026/10/08/psmc-2026-09-revenue/</link>
+		<pubDate>Thu, 08 Oct 2026 08:08:21 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[9 月營收]]></category>
+		<category><![CDATA[力積電]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626684</guid>
+		<description><![CDATA[力積電今（8 日）公布 9 月營收為 76.65 億元，月增 9.36%、年增 93.95%；累計前 9 個月 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>Meta 團隊提出 CRAM 記憶體壓縮技術，不靠 swap 效能快 452 倍</title>
+		<link>https://technews.tw/2026/10/08/a-compressed-ram-service/</link>
+		<pubDate>Thu, 08 Oct 2026 07:59:37 +0000</pubDate>
+		<dc:creator><![CDATA[陳 冠榮]]></dc:creator>
+				<category><![CDATA[Meta]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[Linux]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626562</guid>
+		<description><![CDATA[一款名為「CRAM」（Compressed RAM）的全新壓縮模型，為記憶體壓縮技術開闢了一條截然不同的道路。 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>大立光 Q3 毛利率創 13 年新低！林恩平：11 月拉貨動能轉弱，FA 產品已通過認證</title>
+		<link>https://technews.tw/2026/10/08/largan-2026-q3-financial-report/</link>
+		<pubDate>Thu, 08 Oct 2026 07:56:43 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[CPO]]></category>
+		<category><![CDATA[光通訊]]></category>
+		<category><![CDATA[光通訊元件]]></category>
+		<category><![CDATA[FA]]></category>
+		<category><![CDATA[FAU]]></category>
+		<category><![CDATA[Q3 法說會]]></category>
+		<category><![CDATA[大立光]]></category>
+		<category><![CDATA[林恩平]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626573</guid>
+		<description><![CDATA[大立光今（8 日）召開第三季法說會，大立光董事長林恩平預期，10 月拉貨力道與 9 月相當，11 月將開始下滑 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>成本壓力轉向需求端，2027 年筆電市場恐面臨出貨、價格雙重衝擊</title>
+		<link>https://technews.tw/2026/10/08/cost-pressures-shift-demand-side-2027-laptop-market-dual-impact-shipments-prices/</link>
+		<pubDate>Thu, 08 Oct 2026 07:40:33 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews]]></dc:creator>
+				<category><![CDATA[儲存設備]]></category>
+		<category><![CDATA[國際貿易]]></category>
+		<category><![CDATA[筆記型電腦]]></category>
+		<category><![CDATA[處理器]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[電腦]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[NAND Flash]]></category>
+		<category><![CDATA[中國]]></category>
+		<category><![CDATA[先進製程]]></category>
+		<category><![CDATA[筆電市場]]></category>
+		<category><![CDATA[製造成本]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626500</guid>
+		<description><![CDATA[根據 TrendForce 最新筆電產業研究，2027 年筆電市場的主要風險將由供應限制轉向成本上升對需求的衝 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>群聯 9 月營收年增 370%，前三季合併營收年增 290% 創新高</title>
+		<link>https://finance.technews.tw/2026/10/08/phisons-september-revenue-increased-by-370-year-on-year/</link>
+		<pubDate>Thu, 08 Oct 2026 07:30:06 +0000</pubDate>
+		<dc:creator><![CDATA[Atkinson]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[財報]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[控制晶片]]></category>
+		<category><![CDATA[潘健成]]></category>
+		<category><![CDATA[群聯]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626510</guid>
+		<description><![CDATA[NAND 控制晶片暨 AI 應用儲存解決方案廠商群聯公布了 2026 年 9 月份營運結果，單月合併營收達新台 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>漢測 9 月營收年增 150.33%，前 9 個月累計營收年增 129.06%</title>
+		<link>https://finance.technews.tw/2026/10/08/hances-revenue-in-september-increased-by-150-33-year-on-year/</link>
+		<pubDate>Thu, 08 Oct 2026 06:40:16 +0000</pubDate>
+		<dc:creator><![CDATA[Atkinson]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶圓]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[財報]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[CPO]]></category>
+		<category><![CDATA[半導體測試]]></category>
+		<category><![CDATA[漢測]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626373</guid>
+		<description><![CDATA[半導體晶圓測試解決方案廠商漢測公布 2026 年 9 月營收，金額為新台幣 5.14 億元，較 2025 年同 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>AI 才到第 3 局  華爾街知名科技多頭唱旺輝達生態系</title>
+		<link>https://technews.tw/2026/10/08/mega-bull-dan-ives-debuts-his-new-tech-coverage/</link>
+		<pubDate>Thu, 08 Oct 2026 06:30:00 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[GPU]]></category>
+		<category><![CDATA[Nvidia]]></category>
+		<category><![CDATA[國際觀察]]></category>
+		<category><![CDATA[AI 基礎設施]]></category>
+		<category><![CDATA[AI 支出]]></category>
+		<category><![CDATA[輝達]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626309</guid>
+		<description><![CDATA[華爾街知名科技股多頭分析師 Dan Ives 指出，人工智慧（AI）基礎設施供給至少到 2027 年仍將吃緊， [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>六大領導廠商押注 VCSEL NPO，2031 年 VCSEL 市場上看 6.5 億顆</title>
+		<link>https://technews.tw/2026/10/08/vcsel-npo-2031/</link>
+		<pubDate>Thu, 08 Oct 2026 06:20:55 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews]]></dc:creator>
+				<category><![CDATA[CPO]]></category>
+		<category><![CDATA[光通訊]]></category>
+		<category><![CDATA[光電科技]]></category>
+		<category><![CDATA[ams OSRAM]]></category>
+		<category><![CDATA[Coherent]]></category>
+		<category><![CDATA[Lumentum]]></category>
+		<category><![CDATA[VCSEL NPO]]></category>
+		<category><![CDATA[博通]]></category>
+		<category><![CDATA[古河電氣工業]]></category>
+		<category><![CDATA[海思半導體]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626286</guid>
+		<description><![CDATA[TrendForce 最新《 2027 紅外線感測與光通訊市場趨勢》指出， 資料中心垂直擴展（Scale-Up [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>台積電 9 月營收雖月減但仍創同期新高，第三季 1.49 兆元突破財測高標</title>
+		<link>https://finance.technews.tw/2026/10/08/tsmcs-september-revenue-declined-month-on-month-but-still-hit-a-new-high-for-the-same-period/</link>
+		<pubDate>Thu, 08 Oct 2026 06:20:19 +0000</pubDate>
+		<dc:creator><![CDATA[Atkinson]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶圓]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[財報]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[台積電]]></category>
+		<category><![CDATA[晶圓代工]]></category>
+		<category><![CDATA[魏哲家]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626333</guid>
+		<description><![CDATA[晶圓代工龍頭台積電公布 2026 年 9 月合併營收，金額為新台幣 5,118.57 億元，雖然較上月微幅減少 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>世界先進 9 月營收 59.04 億元，月增 15.9％、年增 15.5%</title>
+		<link>https://technews.tw/2026/10/08/vanguard-2026-09-revenue/</link>
+		<pubDate>Thu, 08 Oct 2026 06:18:23 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶圓]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[9 月營收]]></category>
+		<category><![CDATA[世界先進]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626312</guid>
+		<description><![CDATA[世界先進今（8 日）日公布 9 月合併營收約為新台幣（下同）59.04 億元，較去年同月的 51.11 億元增 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>專訪》AI 營收明年占比拚 15%，強茂押中壓 MOSFET 搶攻 CSP 商機</title>
+		<link>https://technews.tw/2026/10/08/strongmao-aims-15-ai-revenue-share-betting-medium-voltage-mosfets-capture-csp-opportunities/</link>
+		<pubDate>Thu, 08 Oct 2026 06:00:34 +0000</pubDate>
+		<dc:creator><![CDATA[蘇 子芸]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[mosfet]]></category>
+		<category><![CDATA[TVS]]></category>
+		<category><![CDATA[二極體]]></category>
+		<category><![CDATA[功率半導體]]></category>
+		<category><![CDATA[強茂]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625613</guid>
+		<description><![CDATA[AI 需求正逐步改變強茂產品結構。強茂營運長陳佐銘表示，今年 AI 相關應用營收占比預估約 12%，隨 AI  [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>華碩 ProArt P14、P16 搭載 RTX Spark，主打地端 AI 與 Agent 工作流</title>
+		<link>https://technews.tw/2026/10/08/asus-proart-p14-p16-rtx-spark/</link>
+		<pubDate>Thu, 08 Oct 2026 05:46:02 +0000</pubDate>
+		<dc:creator><![CDATA[邱 倢芯]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[筆記型電腦]]></category>
+		<category><![CDATA[處理器]]></category>
+		<category><![CDATA[ProArt P14]]></category>
+		<category><![CDATA[ProArt P16]]></category>
+		<category><![CDATA[RTX Spark]]></category>
+		<category><![CDATA[RTX Spark 筆電]]></category>
+		<category><![CDATA[華碩]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626267</guid>
+		<description><![CDATA[華碩宣布推出新一代 ProArt P14 與 ProArt P16，兩款筆電皆搭載 NVIDIA RTX Sp [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>TPCA Show 2026 規模創新高！攜手 IMPACT 深度串聯 PCB 與先進封裝，聚焦AI 新局</title>
+		<link>https://technews.tw/2026/10/08/tpca-show-2026-impact-pcb/</link>
+		<pubDate>Thu, 08 Oct 2026 05:00:42 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[PCB]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[IMPACT 2026]]></category>
+		<category><![CDATA[TPCA 2026]]></category>
+		<category><![CDATA[TPCA 台灣電路板協會]]></category>
+		<category><![CDATA[先進封裝]]></category>
+		<category><![CDATA[異質整合]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625711</guid>
+		<description><![CDATA[AI 需求引爆，PCB 產業迎接新機遇！隨著 AI 算力爆發引發硬體架構革新，台灣電路板協會（TPCA）年度盛 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>荷封裝設備商貝思半導體遭降評  股價重挫</title>
+		<link>https://technews.tw/2026/10/08/besi-downgraded-stock-plunges/</link>
+		<pubDate>Thu, 08 Oct 2026 04:00:14 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[CPO]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[封裝測試]]></category>
+		<category><![CDATA[先進封裝]]></category>
+		<category><![CDATA[半導體設備]]></category>
+		<category><![CDATA[混合鍵合設備]]></category>
+		<category><![CDATA[貝思半導體]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625845</guid>
+		<description><![CDATA[荷蘭先進封裝設備大廠貝思半導體（BE Semiconductor Industries，BESI）接連遭瑞銀（ [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>AI 需求暢旺！三星估 Q3 獲利大飆 783%「破百兆韓圜」，創科技業單季新高</title>
+		<link>https://technews.tw/2026/10/08/samsung-profit-on-ai-boom/</link>
+		<pubDate>Thu, 08 Oct 2026 03:25:46 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[Samsung]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[三星]]></category>
+		<category><![CDATA[法說會]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625961</guid>
+		<description><![CDATA[受惠 AI 基礎設施需求持續爆發，記憶體晶片價格與出貨同步走強，三星今年第三季獲利可望創下科技業史上新高。三星 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>DDR4 缺貨延至 2027 年！大和讚南亞科獲利，上修目標價至 700 元</title>
+		<link>https://technews.tw/2026/10/08/daiwa-see-nanya-technology-2026-09-revenue/</link>
+		<pubDate>Thu, 08 Oct 2026 03:06:49 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[9 月營收]]></category>
+		<category><![CDATA[南亞科]]></category>
+		<category><![CDATA[外資報告]]></category>
+		<category><![CDATA[大和]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625897</guid>
+		<description><![CDATA[南亞科近期公布 9 月營收，單月營收首度突破 450 億元，亮眼表現引發市場關注。日系外資大和出具最新報告指出 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>馬來西亞也要打造「矽島」，大舉布局半導體與 AI 產業版圖</title>
+		<link>https://finance.technews.tw/2026/10/08/malaysia-builds-a-new-silicon-island-to-house-its-ai-ambitions/</link>
+		<pubDate>Thu, 08 Oct 2026 02:50:50 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews 編輯台]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[科技政策]]></category>
+		<category><![CDATA[金融政策]]></category>
+		<category><![CDATA[檳城]]></category>
+		<category><![CDATA[矽島]]></category>
+		<category><![CDATA[馬來西亞]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625777</guid>
+		<description><![CDATA[馬來西亞正於檳城南方打造一座全新的人工島「矽島」，以支撐人工智慧與半導體產業的長期布局。現場可見挖土機在海面持 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>家登 9 月營收創單月新高，先進封裝載具接獲韓系客戶大單</title>
+		<link>https://finance.technews.tw/2026/10/08/gudengs-september-revenue-hit-a-new-monthly-high/</link>
+		<pubDate>Thu, 08 Oct 2026 02:45:53 +0000</pubDate>
+		<dc:creator><![CDATA[Atkinson]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[材料、設備]]></category>
+		<category><![CDATA[財報]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[先進封裝]]></category>
+		<category><![CDATA[光罩盒]]></category>
+		<category><![CDATA[家登]]></category>
+		<category><![CDATA[晶圓盒]]></category>
+		<category><![CDATA[耗材]]></category>
+		<category><![CDATA[邱銘乾]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625833</guid>
+		<description><![CDATA[半導體耗材商家登精密公布 2026 年 9 月營收報告，集團合併總營收約為新台幣 9.9 億元，再創歷史單月新 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>蘇姿丰訪韓固樁 AI 記憶體產能，結盟三星、SK 海力士展開長期戰略合作</title>
+		<link>https://technews.tw/2026/10/08/lisa-su-south-korea-deepens-ai-chip-cooperation/</link>
+		<pubDate>Thu, 08 Oct 2026 02:30:25 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews 編輯台]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[國際貿易]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[AI 晶片]]></category>
+		<category><![CDATA[AMD]]></category>
+		<category><![CDATA[SK 海力士]]></category>
+		<category><![CDATA[三星電子]]></category>
+		<category><![CDATA[蘇姿丰]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625755</guid>
+		<description><![CDATA[超微（AMD）執行長蘇姿丰 7 日於首爾表示，面對人工智慧（AI）晶片需求持續飆升以及記憶體供應吃緊的挑戰，A [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>Wolfspeed 獲美國 15 億美元貸款承諾，盤後大漲近二成</title>
+		<link>https://technews.tw/2026/10/08/wolfspeed-1-5-billion-loan-strengthens-us-semiconductor-supply-chain/</link>
+		<pubDate>Thu, 08 Oct 2026 02:12:26 +0000</pubDate>
+		<dc:creator><![CDATA[蘇 子芸]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶圓]]></category>
+		<category><![CDATA[GaN]]></category>
+		<category><![CDATA[SiC]]></category>
+		<category><![CDATA[Wolfspeed]]></category>
+		<category><![CDATA[第三類半導體]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625704</guid>
+		<description><![CDATA[美國持續強化本土第三類半導體供應鏈。碳化矽（SiC）大廠 Wolfspeed 宣布，獲美國戰爭部（DoW）最高 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>美光沒漲完？缺貨＋庫藏股  券商喊目標價 3 千美元</title>
+		<link>https://finance.technews.tw/2026/10/08/microns-ridiculously-cheap-stock-could-triple-from-here/</link>
+		<pubDate>Thu, 08 Oct 2026 02:05:34 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[AI 模型]]></category>
+		<category><![CDATA[美光]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625706</guid>
+		<description><![CDATA[記憶體大廠美光（Micron）喜獲 DA Davidson 看好 AI 帶動記憶體需求將推升成長前景，目標價也 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>台積電獲利升溫動能將持續強勁，外資花旗目標價看到 4,000 元</title>
+		<link>https://finance.technews.tw/2026/10/08/tsmcs-profit-growth-momentum-is-expected-to-remain-strong/</link>
+		<pubDate>Thu, 08 Oct 2026 02:00:14 +0000</pubDate>
+		<dc:creator><![CDATA[Atkinson]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[國際貿易]]></category>
+		<category><![CDATA[證券]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[CoWoS]]></category>
+		<category><![CDATA[中介層]]></category>
+		<category><![CDATA[先進封裝]]></category>
+		<category><![CDATA[台積電]]></category>
+		<category><![CDATA[晶圓代工]]></category>
+		<category><![CDATA[股價]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625768</guid>
+		<description><![CDATA[外資花旗環球證券在最新研究報告中看好強勁的先進製程與 AI 晶片需求，預期台積電獲利升溫動能將持續強勁，因此重 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>華為：基本擺脫對美技術依賴；昇騰中市占超越輝達</title>
+		<link>https://technews.tw/2026/10/08/huawei-broken-free-us-tech-reliance-ascend-market-share-surpasses-nvidia/</link>
+		<pubDate>Thu, 08 Oct 2026 01:50:31 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[中國觀察]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[余承東]]></category>
+		<category><![CDATA[昇騰]]></category>
+		<category><![CDATA[華為]]></category>
+		<category><![CDATA[鴻蒙]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625740</guid>
+		<description><![CDATA[綜合中媒報導，華為常務董事、終端 BG 董事長余承東近日於國際媒體圓桌會議上回顧了華為在外部封鎖下突圍的歷程表 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>Marvell 新品成威脅？大摩力挺信驊：短期難撼動 BMC 地位、目標價上看 24,000 元</title>
+		<link>https://technews.tw/2026/10/08/aspeed-technology-marvell/</link>
+		<pubDate>Thu, 08 Oct 2026 01:21:56 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[IC 設計]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[Marvell]]></category>
+		<category><![CDATA[信驊]]></category>
+		<category><![CDATA[外資報告]]></category>
+		<category><![CDATA[大摩]]></category>
+		<category><![CDATA[摩根士丹利]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625719</guid>
+		<description><![CDATA[美系外資摩根士丹利（大摩）出具最新報告，針對 Marvell 近期推出的新一代 AI 基礎設施管理處理器進行分 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>台股憑完整 AI 供應鏈穩坐今年全球投資熱點，狠甩韓股幾條街</title>
+		<link>https://finance.technews.tw/2026/10/08/taiwan-dethrones-korea-atop-world-markets-as-ai-trade-widens/</link>
+		<pubDate>Thu, 08 Oct 2026 00:10:19 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews 編輯台]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[證券]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[AI 股]]></category>
+		<category><![CDATA[台灣半導體]]></category>
+		<category><![CDATA[台股]]></category>
+		<category><![CDATA[記憶體股]]></category>
+		<category><![CDATA[韓股]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625493</guid>
+		<description><![CDATA[今年全球股市已進入關鍵收官階段，台灣 AI 交易熱潮地位持續升溫，並超越韓國，成為市場眼中更具吸引力的 AI  [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>IBM 量子電腦再創里程碑，19 秒輾壓超級電腦 110 年算力</title>
+		<link>https://technews.tw/2026/10/08/ibm-quantum-computing-milestone/</link>
+		<pubDate>Thu, 08 Oct 2026 00:00:42 +0000</pubDate>
+		<dc:creator><![CDATA[Peggy Tseng]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[尖端科技]]></category>
+		<category><![CDATA[科技趣聞]]></category>
+		<category><![CDATA[處理器]]></category>
+		<category><![CDATA[量子電腦]]></category>
+		<category><![CDATA[IBM]]></category>
+		<category><![CDATA[世紀難題]]></category>
+		<category><![CDATA[超級電腦]]></category>
+		<category><![CDATA[量子位元]]></category>
+		<category><![CDATA[量子處理器]]></category>
+		<category><![CDATA[量子運算]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1624246</guid>
+		<description><![CDATA[根據最新研究報告，研究人員利用 IBM 最新的量子處理器完成了極度複雜的運算任務，整個過程僅耗時 19 秒。研 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>博通傳籌資 300 億美元，助 OpenAI 採購客製化 AI 晶片</title>
+		<link>https://technews.tw/2026/10/08/broadcom-reportedly-raising-30-billion-to-fund-openai-custom-ai-chip-procurement/</link>
+		<pubDate>Wed, 07 Oct 2026 23:34:27 +0000</pubDate>
+		<dc:creator><![CDATA[蘇 子芸]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[ChatGPT]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[OpenAI]]></category>
+		<category><![CDATA[博通]]></category>
+		<category><![CDATA[融資]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625679</guid>
+		<description><![CDATA[隨 AI 基礎設施投資規模持續擴大，科技企業開始透過大型債務融資支應晶片採購需求。根據外電報導，博通正初步洽談 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>跨界與重構：智駕晶片的車載 AI 時代角力賽</title>
+		<link>https://technews.tw/2026/10/08/crossover-restructuring-competition-smart-driving-chips-automotive-ai-era/</link>
+		<pubDate>Wed, 07 Oct 2026 23:00:23 +0000</pubDate>
+		<dc:creator><![CDATA[TrendForce 集邦科技]]></dc:creator>
+				<category><![CDATA[技術分析]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[會員專區]]></category>
+		<category><![CDATA[汽車科技]]></category>
+		<category><![CDATA[自駕車]]></category>
+		<category><![CDATA[AI 車載]]></category>
+		<category><![CDATA[智駕晶片]]></category>
+		<category><![CDATA[特斯拉]]></category>
+		<category><![CDATA[車用晶片]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1623362</guid>
+		<description><![CDATA[新車銷售量停滯且電動化轉型放緩之際，智駕系統已成為車企競爭的核心焦點。2026 年全球新車市場的 L2 滲透率 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>Surface Laptop Ultra 筆電展開預購，RTX Spark 晶片、磁吸式 USB-C 充電成亮點</title>
+		<link>https://ccc.technews.tw/2026/10/08/surface-laptop-ultra-and-surface-rtx-spark-dev-box-now-available-for-pre-order/</link>
+		<pubDate>Wed, 07 Oct 2026 20:29:31 +0000</pubDate>
+		<dc:creator><![CDATA[陳 冠榮]]></dc:creator>
+				<category><![CDATA[3C]]></category>
+		<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[Microsoft]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[筆記型電腦]]></category>
+		<category><![CDATA[電腦]]></category>
+		<category><![CDATA[Microsoft Surface]]></category>
+		<category><![CDATA[nvidia]]></category>
+		<category><![CDATA[RTX Spark]]></category>
+		<category><![CDATA[微軟]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625670</guid>
+		<description><![CDATA[微軟揭曉 Surface Laptop Ultra 數個月過後，7 日宣布這款搭載 RTX Spark 晶片的 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>旺宏 9 月營收再創新高，前三季營收同步締造新高紀錄</title>
+		<link>https://finance.technews.tw/2026/10/08/macronixs-september-revenue-hit-a-new-high/</link>
+		<pubDate>Wed, 07 Oct 2026 16:00:40 +0000</pubDate>
+		<dc:creator><![CDATA[Atkinson]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[財報]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[NAND Flash]]></category>
+		<category><![CDATA[NOR Flash]]></category>
+		<category><![CDATA[旺宏]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625666</guid>
+		<description><![CDATA[記憶體大廠旺宏公布 9 月營收，單月合併營收達新台幣 83.67 億元，較 8 月份增加 2.7%、較 202 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>馬斯克否認台積電將參與 Terafab，稱將自建自營</title>
+		<link>https://technews.tw/2026/10/07/musk-denies-tsmc-terafab-self-build-operate/</link>
+		<pubDate>Wed, 07 Oct 2026 09:50:59 +0000</pubDate>
+		<dc:creator><![CDATA[中央社]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[國際貿易]]></category>
+		<category><![CDATA[晶圓]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[AI 晶片]]></category>
+		<category><![CDATA[SpaceX]]></category>
+		<category><![CDATA[TeraFab]]></category>
+		<category><![CDATA[台積電]]></category>
+		<category><![CDATA[特斯拉]]></category>
+		<category><![CDATA[英特爾]]></category>
+		<category><![CDATA[馬斯克]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625629</guid>
+		<description><![CDATA[美國電動車廠特斯拉與美國太空探索科技公司（SpaceX）執行長馬斯克今天表示，兩公司合作的人工智慧（AI）晶片 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>華為 LogicFolding 技術引關注，分析師看散熱仍成最大考驗</title>
+		<link>https://technews.tw/2026/10/07/huawei-logicfolding/</link>
+		<pubDate>Wed, 07 Oct 2026 09:45:10 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[中國觀察]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[LogicFolding]]></category>
+		<category><![CDATA[散熱]]></category>
+		<category><![CDATA[華為]]></category>
+		<category><![CDATA[邏輯摺疊技術]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625633</guid>
+		<description><![CDATA[隨著高通與華為達成廣泛專利交叉授權協議，市場對華為的「邏輯摺疊」（LogicFolding）技術關注迅速升溫。 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>GaN 滿載、SiC 迎 V 型反彈，漢磊明年 AI 營收占比上看二成</title>
+		<link>https://technews.tw/2026/10/07/episil-targets-10-20-ai-revenue-share-2027-gan-sic-dual-growth-engines/</link>
+		<pubDate>Wed, 07 Oct 2026 08:42:29 +0000</pubDate>
+		<dc:creator><![CDATA[蘇 子芸]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶圓]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[GaN]]></category>
+		<category><![CDATA[SiC]]></category>
+		<category><![CDATA[漢磊]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625526</guid>
+		<description><![CDATA[AI 資料中心帶動第三類半導體需求加速成長。漢磊總經理劉燦文表示，今年上半年 AI 相關營收占比約 5%，隨  [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>Windows 11 26H2 瘦身有感，搭配 Rufus 工具大幅降低記憶體占用</title>
+		<link>https://technews.tw/2026/10/07/windows-11-consumes-only-16-percent-of-ram-on-a-16gb-system/</link>
+		<pubDate>Wed, 07 Oct 2026 08:24:23 +0000</pubDate>
+		<dc:creator><![CDATA[陳 冠榮]]></dc:creator>
+				<category><![CDATA[Microsoft]]></category>
+		<category><![CDATA[Windows]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[電腦]]></category>
+		<category><![CDATA[Rufus]]></category>
+		<category><![CDATA[Windows 11]]></category>
+		<category><![CDATA[微軟]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625596</guid>
+		<description><![CDATA[微軟 9 月底釋出的 Windows 11 26H2 版本更新，成功朝著降低整體記憶體用量又再邁進一步。一名來 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>美光桃園工會宣布，透過會員投票取得罷工權</title>
+		<link>https://technews.tw/2026/10/07/new-developments-in-the-micron-taiwan-strike-case/</link>
+		<pubDate>Wed, 07 Oct 2026 08:00:24 +0000</pubDate>
+		<dc:creator><![CDATA[Atkinson]]></dc:creator>
+				<category><![CDATA[人力資源]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[分潤]]></category>
+		<category><![CDATA[工會]]></category>
+		<category><![CDATA[罷工]]></category>
+		<category><![CDATA[美光]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625032</guid>
+		<description><![CDATA[台灣美光 mttw 工會於 7 日宣布，經過會員 6 天投票與開票作業，已正式高票取得罷工及設置罷工糾察線的權 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>應材、英特爾深化合作，加速 AI 晶片製造技術創新</title>
+		<link>https://technews.tw/2026/10/07/applied-material-intel-epic-center/</link>
+		<pubDate>Wed, 07 Oct 2026 06:50:18 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[晶圓]]></category>
+		<category><![CDATA[材料、設備]]></category>
+		<category><![CDATA[EPIC 中心]]></category>
+		<category><![CDATA[應材]]></category>
+		<category><![CDATA[英特爾]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625506</guid>
+		<description><![CDATA[應用材料今（7 日）宣布與英特爾攜手合作，加速新一代電晶體、互連與先進封裝技術的晶片製造創新。此次合作將結合應 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>小摩唱多探針卡巨頭特諾本  看好晶片測試需求</title>
+		<link>https://finance.technews.tw/2026/10/07/jpmorgan-bullish-on-technoprobe/</link>
+		<pubDate>Wed, 07 Oct 2026 04:00:17 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[封裝測試]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[Technoprobe]]></category>
+		<category><![CDATA[探針卡]]></category>
+		<category><![CDATA[特諾本]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625261</guid>
+		<description><![CDATA[義大利半導體測試大廠、探針卡巨頭特諾本（Technoprobe）首度獲摩根大通（J.P. Morgan，小摩） [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>經濟安全考量  半導體設備商 TOWA 擬在日本蓋新廠</title>
+		<link>https://technews.tw/2026/10/07/towa-plans-new-plant-in-japan/</link>
+		<pubDate>Wed, 07 Oct 2026 03:50:57 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[材料、設備]]></category>
+		<category><![CDATA[TOWA]]></category>
+		<category><![CDATA[半導體設備]]></category>
+		<category><![CDATA[封裝設備]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625225</guid>
+		<description><![CDATA[經濟安全考量，日本半導體製造設備商 TOWA 將在日本國內興建新工廠，預計 2029 年投產，生產半導體封裝設 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>台積電投資亞利桑那州創美國史上最大規模，引發中國不滿與警告</title>
+		<link>https://finance.technews.tw/2026/10/07/tsmcs-investment-in-arizona-creates-the-largest-impact-in-us-history/</link>
+		<pubDate>Wed, 07 Oct 2026 03:50:12 +0000</pubDate>
+		<dc:creator><![CDATA[Atkinson]]></dc:creator>
+				<category><![CDATA[半導體]]></category>
+		<category><![CDATA[國際貿易]]></category>
+		<category><![CDATA[國際金融]]></category>
+		<category><![CDATA[晶圓]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[中國]]></category>
+		<category><![CDATA[亞利桑那州]]></category>
+		<category><![CDATA[台積電]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625345</guid>
+		<description><![CDATA[台積電（TSMC）在美國亞利桑那州鳳凰城持續擴建半導體廠，累計投資金額高達 2,650 億美元，創下美國史上最 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>智邦 9 月營收寫歷史次高！大摩讚明年成長動能增，目標價喊上 3,500 元</title>
+		<link>https://technews.tw/2026/10/07/accton-technology-2026-09-revenue/</link>
+		<pubDate>Wed, 07 Oct 2026 03:45:30 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[光通訊]]></category>
+		<category><![CDATA[光通訊元件]]></category>
+		<category><![CDATA[矽光子]]></category>
+		<category><![CDATA[9 月營收]]></category>
+		<category><![CDATA[外資報告]]></category>
+		<category><![CDATA[大摩]]></category>
+		<category><![CDATA[摩根士丹利]]></category>
+		<category><![CDATA[智邦]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625338</guid>
+		<description><![CDATA[網通大廠智邦近期公布 9 月營收，美系外資摩根士丹利（大摩）出具最新外資報告指出，智邦 9 月營收有望成為推動 [&#8230;]]]></description>
+		</item>
+	</channel>
+</rss>
+
+
+<!-- Performance optimized by W3 Total Cache. Learn more: https://www.w3-edge.com/products/
+
+
+
+Page Caching using disk: enhanced
+
+
+
+ Served from: technews.tw @ 2026-10-08 16:55:41 by W3 Total Cache -->

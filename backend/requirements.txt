@@ -1,0 +1,10 @@
+fastapi==0.139.0
+uvicorn==0.42.0
+SQLAlchemy==2.0.48
+alembic==1.18.4
+psycopg[binary]==3.3.3
+httpx==0.28.1
+PyYAML==6.0.3
+beautifulsoup4==4.14.3
+prefect==3.8.8
+pytest==9.0.2

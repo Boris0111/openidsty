@@ -1,0 +1,730 @@
+<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	>
+
+<channel>
+	<title>伺服器 &#8211; TechNews 科技新報</title>
+	<atom:link href="https://technews.tw/category/pcnotebook/%E4%BC%BA%E6%9C%8D%E5%99%A8/feed/" rel="self" type="application/rss+xml" />
+	<link>https://technews.tw</link>
+	<description>市場和業內人士關心的趨勢、內幕與新聞</description>
+	<lastBuildDate>Thu, 08 Oct 2026 08:50:10 +0000</lastBuildDate>
+	<language>zh-TW</language>
+	<sy:updatePeriod>hourly</sy:updatePeriod>
+	<sy:updateFrequency>1</sy:updateFrequency>
+	<generator>https://wordpress.org/?v=4.7.2</generator>
+	<item>
+		<title>Meta 團隊提出 CRAM 記憶體壓縮技術，不靠 swap 效能快 452 倍</title>
+		<link>https://technews.tw/2026/10/08/a-compressed-ram-service/</link>
+		<pubDate>Thu, 08 Oct 2026 07:59:37 +0000</pubDate>
+		<dc:creator><![CDATA[陳 冠榮]]></dc:creator>
+				<category><![CDATA[Meta]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[Linux]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1626562</guid>
+		<description><![CDATA[一款名為「CRAM」（Compressed RAM）的全新壓縮模型，為記憶體壓縮技術開闢了一條截然不同的道路。 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>AI 需求增 村田傳增設產線、擴產 MLCC 原料</title>
+		<link>https://technews.tw/2026/10/08/murata-plans-to-expand-mlcc-material-production/</link>
+		<pubDate>Thu, 08 Oct 2026 03:30:26 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[材料、設備]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[AI 資料中心]]></category>
+		<category><![CDATA[MLCC]]></category>
+		<category><![CDATA[村田製作所]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625817</guid>
+		<description><![CDATA[AI 相關需求增加，MLCC（積層陶瓷電容）龍頭村田製作所（Murata Manufacturing）傳將投資 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>奇鋐 Q3 營收創高，外資看好液冷動能延續至 2027 年</title>
+		<link>https://finance.technews.tw/2026/10/08/2027-avc/</link>
+		<pubDate>Thu, 08 Oct 2026 02:08:18 +0000</pubDate>
+		<dc:creator><![CDATA[邱 倢芯]]></dc:creator>
+				<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[AI Trainium]]></category>
+		<category><![CDATA[AI 伺服器散熱]]></category>
+		<category><![CDATA[NVIDIA Vera Rubin]]></category>
+		<category><![CDATA[奇鋐]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625763</guid>
+		<description><![CDATA[奇鋐第三季營收表現優於預期，外資同步看好後續液冷與 AI 伺服器需求。花旗與大和最新報告皆指出，奇鋐 9 月與 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>美資料中心建設支出大飆 73%！年化達 850 億美元，四個月來增速加快</title>
+		<link>https://technews.tw/2026/10/07/us-spending-on-data-center-buildings/</link>
+		<pubDate>Wed, 07 Oct 2026 08:40:52 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[能源科技]]></category>
+		<category><![CDATA[AI 資料中心]]></category>
+		<category><![CDATA[電力]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625602</guid>
+		<description><![CDATA[AI 基礎建設需求持續升溫，美國資料中心建設支出也同步創下新高。根據美國人口普查局（U.S. Census B [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>第三季營收年增大幅成長 297%，美銀、大摩維持川湖買進投資評等</title>
+		<link>https://finance.technews.tw/2026/10/07/bank-of-america-and-morgan-stanley-maintain-their-buy-rating-on-chuanhu/</link>
+		<pubDate>Wed, 07 Oct 2026 02:30:41 +0000</pubDate>
+		<dc:creator><![CDATA[Atkinson]]></dc:creator>
+				<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[證券]]></category>
+		<category><![CDATA[財報]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[電腦]]></category>
+		<category><![CDATA[大摩]]></category>
+		<category><![CDATA[川湖]]></category>
+		<category><![CDATA[美銀]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1625201</guid>
+		<description><![CDATA[伺服器導軌龍頭川湖公布最新財報，2026 年 9 月單月營收受高基期與部分零組件短缺影響，月減 31% 至新台 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>電力與審核雙重受阻，甲骨文 AI 資料中心擴建計畫恐面臨延期</title>
+		<link>https://technews.tw/2026/10/05/ai-data-center-debt-hits-roadblocks-as-lenders-demand-tougher-terms/</link>
+		<pubDate>Mon, 05 Oct 2026 03:40:32 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews 編輯台]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[環境科學]]></category>
+		<category><![CDATA[能源科技]]></category>
+		<category><![CDATA[AI 基建]]></category>
+		<category><![CDATA[AI 資料中心]]></category>
+		<category><![CDATA[Project Jupiter]]></category>
+		<category><![CDATA[Project Lighthouse]]></category>
+		<category><![CDATA[甲骨文]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1623770</guid>
+		<description><![CDATA[甲骨文（Oracle）擴張人工智慧基礎設施的計畫，近日因電力與監管進度受阻而再度引發市場關注。最新消息，甲骨文 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>Arm 機櫃級伺服器已超越 x86，Arm 攜手 NVIDIA 搶代理 AI 商機</title>
+		<link>https://technews.tw/2026/10/01/arm-talk-about-agentic-ai/</link>
+		<pubDate>Thu, 01 Oct 2026 09:33:06 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[處理器]]></category>
+		<category><![CDATA[Arm]]></category>
+		<category><![CDATA[代理 AI]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1622776</guid>
+		<description><![CDATA[人工智慧（AI）基礎設施正在加速向 Arm 架構轉移，基於 Arm 架構的機櫃級伺服器目前已超越 x86，成為 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>AI 供電授權夯  Vicor 兩週內二度上修財測、盤後嗨</title>
+		<link>https://finance.technews.tw/2026/10/01/vicor-raises-guidance-for-second-time-in-two-weeks/</link>
+		<pubDate>Thu, 01 Oct 2026 07:10:48 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[Vicor]]></category>
+		<category><![CDATA[垂直供電]]></category>
+		<category><![CDATA[資料中心]]></category>
+		<category><![CDATA[電源供應器]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1622574</guid>
+		<description><![CDATA[美國電源供應器製造商 Vicor Corporation 上週才剛以權利金收入為由大幅上調第三季營收成長展望， [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>傳騰訊砸 70 億美元，向甲骨文租用 10 萬顆 AI 晶片</title>
+		<link>https://technews.tw/2026/10/01/tencent-7-billion-lease-100000-ai-chips-oracle/</link>
+		<pubDate>Thu, 01 Oct 2026 06:00:53 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[中國觀察]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[AI 晶片]]></category>
+		<category><![CDATA[甲骨文]]></category>
+		<category><![CDATA[資料中心]]></category>
+		<category><![CDATA[騰訊]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1622613</guid>
+		<description><![CDATA[綜合港媒及中媒引用英國《金融時報》報導，據知情人士透露，騰訊已同意租用甲骨文（Oracle）位於東南亞的多座資 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>台積電 2 奈米加持，AMD Zen 6 架構 Venice EPYC 處理器 2027 年產能售罄</title>
+		<link>https://finance.technews.tw/2026/10/01/amds-zen-6-architecture-venice-epyc-processors-have-sold-out-for-2027/</link>
+		<pubDate>Thu, 01 Oct 2026 00:00:48 +0000</pubDate>
+		<dc:creator><![CDATA[Atkinson]]></dc:creator>
+				<category><![CDATA[IC 設計]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[國際觀察]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[處理器]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[電腦]]></category>
+		<category><![CDATA[2 奈米]]></category>
+		<category><![CDATA[AMD]]></category>
+		<category><![CDATA[Arm]]></category>
+		<category><![CDATA[EPYC]]></category>
+		<category><![CDATA[伺服器處理器]]></category>
+		<category><![CDATA[台積電]]></category>
+		<category><![CDATA[英特爾]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1622368</guid>
+		<description><![CDATA[隨著全球人工智慧（AI）產業加速轉向代理人（Agentic）工作，資料中心對高效能CPU的需求急劇暴增。根據最 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>AI 伺服器新增需求支撐 4Q26 記憶體合約價漲勢，消費端壓力未減</title>
+		<link>https://technews.tw/2026/09/30/ai-server-incremental-demand-supports-4q26-memory-contract-price-increase-consumer-pressure-unabated/</link>
+		<pubDate>Wed, 30 Sep 2026 06:25:00 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[國際貿易]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[dram]]></category>
+		<category><![CDATA[NAND Flash]]></category>
+		<category><![CDATA[代理式 AI]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1622115</guid>
+		<description><![CDATA[根據 TrendForce 最新記憶體產業研究，2026 年第四季 DRAM 原廠持續將先進製程投入生產 se [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>Nvidia 首推 AI 工廠散熱認證，CDU 首波僅三家上榜</title>
+		<link>https://finance.technews.tw/2026/09/29/nvidia-dsx-ready/</link>
+		<pubDate>Tue, 29 Sep 2026 07:38:41 +0000</pubDate>
+		<dc:creator><![CDATA[邱 倢芯]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[AI 工廠散熱認證]]></category>
+		<category><![CDATA[NVIDIA DSX Ready]]></category>
+		<category><![CDATA[奇鋐]]></category>
+		<category><![CDATA[雙鴻]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1621644</guid>
+		<description><![CDATA[隨著 AI 資料中心功耗持續攀升，散熱與供電已成為 AI 工廠能否順利建置的重要關鍵。Nvidia 日前推出全 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>緩解 AI 算力荒，中國傳擬放行字節跳動與阿里巴巴採購輝達 RTX Pro 5500</title>
+		<link>https://technews.tw/2026/09/29/nvidia-influence-trump-ai-policy/</link>
+		<pubDate>Tue, 29 Sep 2026 07:00:08 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews 編輯台]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[Nvidia]]></category>
+		<category><![CDATA[中國觀察]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[國際貿易]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[AI 模型]]></category>
+		<category><![CDATA[AI 算力]]></category>
+		<category><![CDATA[RTX Pro 5500]]></category>
+		<category><![CDATA[中國]]></category>
+		<category><![CDATA[字節跳動]]></category>
+		<category><![CDATA[川習會]]></category>
+		<category><![CDATA[輝達]]></category>
+		<category><![CDATA[阿里巴巴]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1621587</guid>
+		<description><![CDATA[據外媒報導，中國政府正考慮允許部分本土科技巨頭採購輝達（Nvidia）的 RTX Pro 5500 晶片，顯示 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>反映 HBM 供應持續吃緊，上修 2027 年 HBM 價格展望、預估 ASP 年增達 121%</title>
+		<link>https://technews.tw/2026/09/29/2027-hbm-price-outlook-revised-upward/</link>
+		<pubDate>Tue, 29 Sep 2026 06:20:07 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews]]></dc:creator>
+				<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[dram]]></category>
+		<category><![CDATA[HBM]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1621559</guid>
+		<description><![CDATA[根據 TrendForce 最新研究顯示，AI 伺服器需求持續擴張，HBM 與 conventional DR [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>華為、阿里巴巴接連推出新晶片與超大 AI 模型，角逐中國最大算力企業</title>
+		<link>https://technews.tw/2026/09/29/huawei-and-alibaba-tout-progress-in-ai-chips-clusters-and-models/</link>
+		<pubDate>Tue, 29 Sep 2026 03:50:04 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews 編輯台]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[中國觀察]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[倚天 720]]></category>
+		<category><![CDATA[倚天 730]]></category>
+		<category><![CDATA[昇騰 970]]></category>
+		<category><![CDATA[昇騰 980]]></category>
+		<category><![CDATA[泰山 950]]></category>
+		<category><![CDATA[真武 V900]]></category>
+		<category><![CDATA[華為]]></category>
+		<category><![CDATA[阿里巴巴]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1621411</guid>
+		<description><![CDATA[中國兩大科技業者華為與阿里巴巴最近相繼公布人工智慧布局新進展，從晶片、叢集到模型訓練規模都明顯升級，顯示雙方競 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>字節跳動包辦中國 20% 資料中心容量，AI 基礎設施規模超越歐非中東總和</title>
+		<link>https://technews.tw/2026/09/29/bytedance-grabs-one-fifth-of-chinas-data-centre-capacity-as-ai-drives-infrastructure-boom/</link>
+		<pubDate>Tue, 29 Sep 2026 03:00:03 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews 編輯台]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[中國觀察]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[雲端]]></category>
+		<category><![CDATA[AI]]></category>
+		<category><![CDATA[中國資料中心]]></category>
+		<category><![CDATA[字節跳動]]></category>
+		<category><![CDATA[百度]]></category>
+		<category><![CDATA[華為]]></category>
+		<category><![CDATA[阿里巴巴]]></category>
+		<category><![CDATA[騰訊]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1621375</guid>
+		<description><![CDATA[研究機構 SemiAnalysis 最新估算，字節跳動已占中國約 20% 已交付資料中心容量，成為中國最大資料 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>AI 伺服器液冷需求升溫、奇鋐一路旺到年底，外資喊目標價 4,513 元</title>
+		<link>https://finance.technews.tw/2026/09/29/ai-server-liquid-cooling-avc-2/</link>
+		<pubDate>Tue, 29 Sep 2026 01:29:35 +0000</pubDate>
+		<dc:creator><![CDATA[邱 倢芯]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[AI 液冷]]></category>
+		<category><![CDATA[奇鋐]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1621309</guid>
+		<description><![CDATA[受惠於 GPU 與 ASIC 新型 AI 伺服器對液冷散熱技術的需求急遽升溫，散熱大廠奇鋐營運動能持續轉強。據 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>AI 推論雲端新創 Gimlet Labs 獲 a16z 領投 3 億美元，主打「異質晶片配對」重塑資料中心</title>
+		<link>https://technews.tw/2026/09/28/ai-startup-gimlet-labs/</link>
+		<pubDate>Mon, 28 Sep 2026 02:30:36 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews 編輯台]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[新創]]></category>
+		<category><![CDATA[晶片]]></category>
+		<category><![CDATA[雲端]]></category>
+		<category><![CDATA[a16z]]></category>
+		<category><![CDATA[Gimlet Labs]]></category>
+		<category><![CDATA[異質晶片]]></category>
+		<category><![CDATA[融資]]></category>
+		<category><![CDATA[資料中心]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1619482</guid>
+		<description><![CDATA[Gimlet Labs 正以顛覆傳統雲端業者的策略快速擴展版圖。該公司近日宣布完成由 Andreessen H [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>Dell 點名 HDD 缺貨，硬碟供應持續吃緊</title>
+		<link>https://technews.tw/2026/09/26/dell-highlights-hdd-shortage-hard-drive-supply-remains-tight/</link>
+		<pubDate>Sat, 26 Sep 2026 08:55:25 +0000</pubDate>
+		<dc:creator><![CDATA[蘇 子芸]]></dc:creator>
+				<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[記憶體]]></category>
+		<category><![CDATA[電腦]]></category>
+		<category><![CDATA[Dell]]></category>
+		<category><![CDATA[HDD]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1621153</guid>
+		<description><![CDATA[AI 基礎設施需求持續擴大，帶動 HBM、DRAM 及 HDD 等關鍵零組件需求升溫。市場消息傳出，Dell  [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>AI 帶旺，台灣 PCB 產值全年有望首度破兆元</title>
+		<link>https://technews.tw/2026/09/25/ai-drives-taiwan-full-year-pcb-output-value-surpass-trillion-first-time/</link>
+		<pubDate>Fri, 25 Sep 2026 00:40:46 +0000</pubDate>
+		<dc:creator><![CDATA[中央社]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[PCB]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[AI 基礎建設]]></category>
+		<category><![CDATA[台灣]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1620943</guid>
+		<description><![CDATA[台灣電路板協會（TPCA）公布，AI 基礎建設需求擴張，帶動 2026 年第 2 季台灣 PCB 製造強勁成長 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>搶電搶水惹議  德州暫停核發 AI 資料中心環境許可</title>
+		<link>https://technews.tw/2026/09/22/texas-suspends-environmental-permits-for-ai-data-centers/</link>
+		<pubDate>Tue, 22 Sep 2026 03:10:50 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[能源科技]]></category>
+		<category><![CDATA[AI 用電]]></category>
+		<category><![CDATA[德州]]></category>
+		<category><![CDATA[資料中心]]></category>
+		<category><![CDATA[電費]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1619382</guid>
+		<description><![CDATA[全美各地狂蓋 AI 資料中心引爆民怨，德州政府再踩煞車。州長艾波特（Greg Abbott）21 日下令，在德 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>AI 需求推升 PFAS 產能，資料中心冷卻技術恐成「永久化學物質」污染新源頭</title>
+		<link>https://technews.tw/2026/09/22/data-centers-are-swapping-water-for-forever-chemicals-to-keep-ai-cool/</link>
+		<pubDate>Mon, 21 Sep 2026 23:40:48 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews 編輯台]]></dc:creator>
+				<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[材料、設備]]></category>
+		<category><![CDATA[環境科學]]></category>
+		<category><![CDATA[AI 資料中心]]></category>
+		<category><![CDATA[Arkema]]></category>
+		<category><![CDATA[Chemours]]></category>
+		<category><![CDATA[PFAS]]></category>
+		<category><![CDATA[大金]]></category>
+		<category><![CDATA[資料中心污染]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1618542</guid>
+		<description><![CDATA[化學監督組織 ChemSec 最新報告指出，人工智慧基礎設施快速擴張，全球多家主要 PFAS 生產商也加速擴產 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>微軟在台資料中心擴建至四座，卞志祥：兩三年內算力供不應求</title>
+		<link>https://technews.tw/2026/09/21/microsoft-taiwan-data-center-expansion-4-bian-zhixiang-computing-power-shortage-2-3-years/</link>
+		<pubDate>Mon, 21 Sep 2026 07:10:41 +0000</pubDate>
+		<dc:creator><![CDATA[中央社]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[Microsoft]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[微軟]]></category>
+		<category><![CDATA[算力]]></category>
+		<category><![CDATA[資料中心]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1619026</guid>
+		<description><![CDATA[台灣微軟今天在台北舉辦 DevDays Asia 2026 亞太技術年會，台灣微軟總經理卞志祥表示，未來 2  [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>三星強攻 AI 散熱  光州 HVAC 暖通空調產線今動土</title>
+		<link>https://technews.tw/2026/09/21/samsung-electronics-breaks-ground-on-240-billion-won-hvac-plant-in-gwangju/</link>
+		<pubDate>Mon, 21 Sep 2026 06:10:18 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[Samsung]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[AI 資料中心]]></category>
+		<category><![CDATA[FläktGroup]]></category>
+		<category><![CDATA[HVAC]]></category>
+		<category><![CDATA[三星電子]]></category>
+		<category><![CDATA[散熱系統]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1618952</guid>
+		<description><![CDATA[AI 伺服器功耗持續攀升，帶動高階散熱系統需求爆發。三星電子看準 AI 散熱商機，斥資 2,400 億韓圜（約 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>四大核心動能支撐營收，高盛給緯穎 3,777 元目標價</title>
+		<link>https://finance.technews.tw/2026/09/21/goldman-sachs-gives-wiwin-a-target-price-of-3777-yuan/</link>
+		<pubDate>Mon, 21 Sep 2026 01:30:01 +0000</pubDate>
+		<dc:creator><![CDATA[Atkinson]]></dc:creator>
+				<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[證券]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[電腦]]></category>
+		<category><![CDATA[人工智慧]]></category>
+		<category><![CDATA[緯穎]]></category>
+		<category><![CDATA[高盛]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1618695</guid>
+		<description><![CDATA[外資券商高盛（Goldman Sachs）發布最新研究報告指出，伺服器大廠緯穎因受惠於全球主要雲端服務供應商（ [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>從開天價搶地到全美九州喊卡，AI 資料中心掀起的投資風險與政治警訊</title>
+		<link>https://finance.technews.tw/2026/09/20/developers-pay-10-times-market-price-data-centers-land-rush-ai-investment-risk/</link>
+		<pubDate>Sun, 20 Sep 2026 02:00:07 +0000</pubDate>
+		<dc:creator><![CDATA[商業周刊]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[國際觀察]]></category>
+		<category><![CDATA[國際貿易]]></category>
+		<category><![CDATA[房地產]]></category>
+		<category><![CDATA[能源科技]]></category>
+		<category><![CDATA[AI 熱潮]]></category>
+		<category><![CDATA[地價]]></category>
+		<category><![CDATA[居民]]></category>
+		<category><![CDATA[建商]]></category>
+		<category><![CDATA[投資風險]]></category>
+		<category><![CDATA[搶地]]></category>
+		<category><![CDATA[水資源]]></category>
+		<category><![CDATA[用電需求]]></category>
+		<category><![CDATA[美國]]></category>
+		<category><![CDATA[資料中心]]></category>
+		<category><![CDATA[電費]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1617927</guid>
+		<description><![CDATA[今年 7 月，德州農業廳長米勒（Sid Miller）站上一場抗議資料中心的集會，說出許多美國農民的心聲：「開 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>美媒：蘋果計劃推出 AI 伺服器，考慮採輝達 NVLink 技術</title>
+		<link>https://technews.tw/2026/09/17/apple-considers-return-to-server-market-has-talked-with-nvidia-to-use-network-tech/</link>
+		<pubDate>Thu, 17 Sep 2026 00:25:24 +0000</pubDate>
+		<dc:creator><![CDATA[中央社]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[Apple]]></category>
+		<category><![CDATA[Nvidia]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[M8 Ultra]]></category>
+		<category><![CDATA[蘋果]]></category>
+		<category><![CDATA[輝達]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1617592</guid>
+		<description><![CDATA[美國媒體 The Information 報導，蘋果公司計劃推出人工智慧（AI）推論伺服器來重返伺服器市場，並 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>2026 年全球資料中心用電需求估年增 31%，電網供應缺口自 2028 年擴大</title>
+		<link>https://technews.tw/2026/09/16/global-data-center-electricity-demand-projected-increase-31-annually-2026-power-grid-supply-gap-expand-2028/</link>
+		<pubDate>Wed, 16 Sep 2026 07:10:15 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[能源科技]]></category>
+		<category><![CDATA[電力儲存]]></category>
+		<category><![CDATA[AI]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[供電]]></category>
+		<category><![CDATA[散熱]]></category>
+		<category><![CDATA[資料中心]]></category>
+		<category><![CDATA[雲端服務供應商]]></category>
+		<category><![CDATA[電力]]></category>
+		<category><![CDATA[電網]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1617366</guid>
+		<description><![CDATA[根據 TrendForce 最新 AI server 產業研究，為滿足遽增的 AI 應用需求，雲端服務供應商（ [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>夏普攜手鴻海供應鏈，進軍 AI 伺服器市場</title>
+		<link>https://technews.tw/2026/09/16/sharp-takes-orders-for-ai-servers-backed-by-foxconns-supply-chain/</link>
+		<pubDate>Wed, 16 Sep 2026 05:40:09 +0000</pubDate>
+		<dc:creator><![CDATA[中央社]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[國際貿易]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[夏普]]></category>
+		<category><![CDATA[鴻海]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1617287</guid>
+		<description><![CDATA[夏普公司（Sharp Corp.）表示，公司已開始接受人工智慧（AI）伺服器訂單。這項新業務是與台灣母公司鴻海 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>MLCC 滲透 AI 伺服器仍處早期！大摩點名村田、三星、國巨成最大贏家</title>
+		<link>https://finance.technews.tw/2026/09/16/overweight-mlcc/</link>
+		<pubDate>Wed, 16 Sep 2026 01:26:20 +0000</pubDate>
+		<dc:creator><![CDATA[姚 惠茹]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[PCB]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[材料、設備]]></category>
+		<category><![CDATA[證券]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[MLCC]]></category>
+		<category><![CDATA[三星]]></category>
+		<category><![CDATA[國巨]]></category>
+		<category><![CDATA[村田]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1616987</guid>
+		<description><![CDATA[隨著 AI 伺服器與資料中心的建置需求持續大爆發，被動元件 MLCC（積層陶瓷電容）正迎來強勁的結構性成長週期 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>華碩全球 AI Tech 高峰會前進韓國，攜手 NVIDIA 加速 AI 工廠落地</title>
+		<link>https://technews.tw/2026/09/15/asus-ai-tech-korea-nvidia/</link>
+		<pubDate>Tue, 15 Sep 2026 07:50:24 +0000</pubDate>
+		<dc:creator><![CDATA[TechNews]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[AI GPU]]></category>
+		<category><![CDATA[ai software stack]]></category>
+		<category><![CDATA[AI Token]]></category>
+		<category><![CDATA[asus]]></category>
+		<category><![CDATA[nvidia]]></category>
+		<category><![CDATA[Physical AI]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1616746</guid>
+		<description><![CDATA[AI 基礎設施走向全新階段，隨著 AI 營運從實驗階段走向自主程度日益升高，支撐這些 AI 工作負載的系統越趨 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>戴爾護城河難撼動 RBC 喊買  股價受激大漲 12%</title>
+		<link>https://technews.tw/2026/09/14/dell-stock-jumps-on-rbc-initiation/</link>
+		<pubDate>Mon, 14 Sep 2026 04:00:03 +0000</pubDate>
+		<dc:creator><![CDATA[MoneyDJ]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[國際貿易]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[供應鏈]]></category>
+		<category><![CDATA[戴爾]]></category>
+		<category><![CDATA[輝達]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1616096</guid>
+		<description><![CDATA[受惠 AI 伺服器需求爆發，美國科技大廠戴爾股價一路水漲船高。加拿大皇家銀行資本市場（RBC Capital  [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>Google 晶片大神降臨 SEMICON Taiwan 開示：瓶頸每天都不同，台廠人人有機會當主角</title>
+		<link>https://technews.tw/2026/09/12/google-amin-vahdat-interview/</link>
+		<pubDate>Sat, 12 Sep 2026 02:00:04 +0000</pubDate>
+		<dc:creator><![CDATA[商業周刊]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[Google]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[AI 資料中心]]></category>
+		<category><![CDATA[Amin Vahdat]]></category>
+		<category><![CDATA[TPU 8i]]></category>
+		<category><![CDATA[TPU 8t]]></category>
+		<category><![CDATA[動態散熱]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1615036</guid>
+		<description><![CDATA[AI 發展的瓶頸是什麼？未來會有更多客製化晶片嗎？又，下一個可能改變 AI 發展的關鍵技術突破會是什麼？ Go [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>AI 雙雄決戰台灣！輝達與 Google 爭搶供應鏈，台廠迎左右逢源新商機</title>
+		<link>https://technews.tw/2026/09/12/ai-supply-chain-rivalry-heats-up-taiwan-firms-opportunities/</link>
+		<pubDate>Sat, 12 Sep 2026 01:00:14 +0000</pubDate>
+		<dc:creator><![CDATA[財訊]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[半導體]]></category>
+		<category><![CDATA[ASIC 伺服器]]></category>
+		<category><![CDATA[Google]]></category>
+		<category><![CDATA[SEMICON TAIWAN 2026]]></category>
+		<category><![CDATA[TPU 晶片]]></category>
+		<category><![CDATA[輝達]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1615485</guid>
+		<description><![CDATA[全球科技巨頭的 AI 競賽加劇，從輝達與 Google 最近動作頻頻，足以說明台灣正成為 AI 巨頭爭相卡位的 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>GPU 競賽走向 Token 效率！AIDC 迎三大課題，MIC 揭台供應鏈新商機</title>
+		<link>https://technews.tw/2026/09/11/mic-see-aidc-trend/</link>
+		<pubDate>Fri, 11 Sep 2026 09:57:06 +0000</pubDate>
+		<dc:creator><![CDATA[林 妤柔]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[國際觀察]]></category>
+		<category><![CDATA[AIDC]]></category>
+		<category><![CDATA[mic]]></category>
+		<category><![CDATA[資料中心]]></category>
+		<category><![CDATA[資策會]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1615827</guid>
+		<description><![CDATA[資策會產業情報研究所（MIC）近期觀察到 AIDC 三大趨勢，首先是 Token 產能與變現能力改變 AIDC [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>淺談 NVIDIA PAIR：串聯地端算力成為趨勢</title>
+		<link>https://technews.tw/2026/09/11/nvidia-pair/</link>
+		<pubDate>Thu, 10 Sep 2026 23:50:02 +0000</pubDate>
+		<dc:creator><![CDATA[朱熹]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[GPU]]></category>
+		<category><![CDATA[Nvidia]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[AI 叢集]]></category>
+		<category><![CDATA[AI 算力]]></category>
+		<category><![CDATA[PAIR]]></category>
+		<category><![CDATA[RTX Spark]]></category>
+		<category><![CDATA[串聯堆疊]]></category>
+		<category><![CDATA[地端 AI]]></category>
+		<category><![CDATA[輝達]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1613613</guid>
+		<description><![CDATA[今年 IFA 時 NVIDIA 除了再次強調 RTX Spark Windows PC 將在 10 月上市，另 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>緯穎「畸零股」2,345 元變 10 元！金管會收逾百件陳情揪經濟部檢討</title>
+		<link>https://finance.technews.tw/2026/09/10/abnormal-stocks/</link>
+		<pubDate>Thu, 10 Sep 2026 09:32:49 +0000</pubDate>
+		<dc:creator><![CDATA[姚 惠茹]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[證券]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[金融政策]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[畸零股]]></category>
+		<category><![CDATA[經濟部]]></category>
+		<category><![CDATA[緯穎]]></category>
+		<category><![CDATA[金管會]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1615238</guid>
+		<description><![CDATA[台股千金股緯穎近期因發放股票股利，產生大量極度接近整股（0.982 股）的畸零股，卻依近 30 年的舊有函釋僅 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>AI 水冷 CDU 單月出貨上千台！榮惠 8 月營收狂飆 85% 再創高</title>
+		<link>https://finance.technews.tw/2026/09/10/cdu/</link>
+		<pubDate>Thu, 10 Sep 2026 07:15:59 +0000</pubDate>
+		<dc:creator><![CDATA[姚 惠茹]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[PCB]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[財報]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[零組件]]></category>
+		<category><![CDATA[冷卻分配單元]]></category>
+		<category><![CDATA[榮惠-KY]]></category>
+		<category><![CDATA[水冷快接頭]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1615040</guid>
+		<description><![CDATA[榮惠-KY 今日公布 8 月營收 2.42 億元，月增 31.04％，年增 84.99％，再創單月歷史新高，主 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>緯創 AI 伺服器出貨翻倍，美銀喊目標價 265 元</title>
+		<link>https://finance.technews.tw/2026/09/10/wistron-ai-server-2/</link>
+		<pubDate>Thu, 10 Sep 2026 05:58:55 +0000</pubDate>
+		<dc:creator><![CDATA[邱 倢芯]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[AI 伺服器]]></category>
+		<category><![CDATA[緯創]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1614880</guid>
+		<description><![CDATA[緯創 8 月營收在 AI 伺服器需求帶動下明顯升溫，美銀證券最新報告指出，緯創 8 月營收達 4,600 億元 [&#8230;]]]></description>
+		</item>
+		<item>
+		<title>奇鋐大擴液冷產能，大和喊目標價 4,465 元</title>
+		<link>https://finance.technews.tw/2026/09/10/avc-gb300-asic-cold-plate/</link>
+		<pubDate>Thu, 10 Sep 2026 02:17:57 +0000</pubDate>
+		<dc:creator><![CDATA[邱 倢芯]]></dc:creator>
+				<category><![CDATA[AI 人工智慧]]></category>
+		<category><![CDATA[伺服器]]></category>
+		<category><![CDATA[財經]]></category>
+		<category><![CDATA[AI ASIC]]></category>
+		<category><![CDATA[AI 液冷]]></category>
+		<category><![CDATA[GB300]]></category>
+		<category><![CDATA[大和證券]]></category>
+		<category><![CDATA[奇鋐]]></category>
+
+		<guid isPermaLink="false">https://technews.tw/?p=1614634</guid>
+		<description><![CDATA[AI 伺服器液冷需求持續升溫，散熱大廠奇鋐後市再獲外資看好。大和證券最新報告指出，受惠 GB300、ASIC  [&#8230;]]]></description>
+		</item>
+	</channel>
+</rss>
+
+
+<!-- Performance optimized by W3 Total Cache. Learn more: https://www.w3-edge.com/products/
+
+
+
+Page Caching using disk: enhanced
+
+
+
+ Served from: technews.tw @ 2026-10-08 16:55:41 by W3 Total Cache -->

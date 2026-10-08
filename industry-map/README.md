@@ -98,7 +98,9 @@ market_coverage:
 
 市場代碼：`TW` `US` `KR` `JP` `HK` `DE` `NL`。
 
-`none` 是正當的答案。EDA 工具環節在台股沒有實質玩家，就寫 `tw: none`，並在散文的「玩家格局」說明設計服務業者（創意、世芯）屬於不同環節。
+`none` 是正當的答案。現有清單以 `datacenter.tw: none`（無對等台股大型雲端需求主體）與 `substrate.us: none`（未列美股實質載板製造玩家）示範，並在各檔「玩家格局」交代邊界。這是依目前供應角色與清單範圍表態，不是永遠沒有任何相關公司。
+
+`eda-ip` 同時包含工具與矽智財，力旺及 M31 的 IP 授權角色使合併環節為 `tw: present`；EDA 工具子類未列台股對等供應商。創意、世芯提供整顆客製 ASIC 設計服務，歸 `compute`。不要為了表達工具子類的缺席，把整個 `eda-ip.tw` 改為 `none`。
 
 ---
 
@@ -185,6 +187,10 @@ milestones:                      # 必填，至少一筆
 
 `milestones` 的 `evidence` 欄位必填，因為「有人在談」與「有訂單佐證」是兩回事 —— 不寫清楚用什麼確認，狀態判定就無法稽核。
 
+里程碑日期是查核或預期時間，**不代表事件已完成**。未來事件寫成「待確認」或「追蹤」，證據寫明要查的具名文件、出貨或收入；回顧已發生事件則在散文保留查核日期、來源期間與連結。財報年度不能直接當曆年季度。
+
+狀態按可核對的證據判定：原型展示及合作名單不等於客戶驗證，總營收不等於題材收入。已出現局部商業出貨但缺少可辨別題材的量化財務資料時，保留 `validating` 並明寫此證據限制，不宣稱完全沒有商業出貨。`beneficiaries` 是需持續查核的受惠候選，不表示每家都已取得訂單；散文須交代供應角色、推論與可能的負向影響。
+
 ### 題材與環節雙向一致
 
 題材的 `segments` 含 S，則 S 的 `themes` 必須含該題材，反之亦然。驗證器強制檢查。
@@ -192,6 +198,62 @@ milestones:                      # 必填，至少一筆
 ### 題材檔散文
 
 必須包含 `## 狀態判定依據` 段落，寫明為何目前是這個狀態。其餘段落自由。
+
+---
+
+## 來源註冊表
+
+`sources.yaml` 是一般 YAML，沒有 Markdown frontmatter 或散文。最外層依市場分組，目前使用 `tw`、`us`；市場表示研究入口的分類，不限制網站語言或其報導的公司國籍。第二層固定使用下列資料類型，其下為來源條目的陣列：
+
+| 分組／`type` | 用途 |
+|---|---|
+| `filings` | 公司公開申報、年報、季報、財報附件 |
+| `earnings_call` | 公司免費法說會、簡報、逐字稿或 webcast 入口 |
+| `industry_media` | 免費公開的產業文章、協會新聞稿；只收可直接閱讀的部分 |
+| `official_stats` | 政府／官方統計報告、表格與公開查詢網頁 |
+
+### 來源欄位與完整範例
+
+| 欄位 | 必填 | 規範 |
+|---|---|---|
+| `id` | 是 | 穩定且全表唯一 kebab-case，runtime 與研究入口共用 |
+| `provider` | 否 | 跨 feed 提供者識別，例如 `technews`；不同提供者不按標題合併 |
+| `name` | 是 | 能辨識提供者及來源範圍的文字名稱 |
+| `url` | 是 | 免費公開網頁或文件的完整 HTTPS 位址；不包含憑證、API key 或登入後專屬連結 |
+| `type` | 是 | 上表四值之一，必須等於所在第二層分組 |
+| `access` | 是 | 只允許 `free`；需付費、私有憑證或 API key 的來源不得加入 |
+| `reachability` | 是 | `verified` 或 `unverified`，判定方式見下方流程 |
+| `checked` | 是 | 最後實際查核日期，`YYYY-MM-DD`，加引號保留為字串 |
+| `segments` | 否 | 環節識別碼陣列，每筆須能解析；一般全市場申報入口可省略，不表示沒有覆蓋 |
+| `themes` | 否 | 題材識別碼陣列，每筆須能解析；設定涵蓋不表示已取得直接事件 |
+| `ingestion` | 否 | 自動擷取設定；省略等同 manual。`adapter` 可為 manual／tw／tsmc／delta／nvidia／microsoft／sec-submissions／sec-facts／rss／tpca／moea／census／eia；`url`、`fallback` 為 HTTPS；`max_pages` 1–200；`paged` 表示 RSS 支援頁碼；`kind` 為 tw 的 announcements／revenue／financials；`per_company` 將 SEC URL 的 `{cik}` 展開為有 CIK 的公司 |
+| `notes` | 否 | 說明免費內容邊界、查核方法／結果、未驗證原因及統計口徑；為維護者閱讀用文字 |
+
+下例可獨立解析；若加入既有檔案，只把條目併入既有 `us.filings` 陣列，**不要重複建立 `us:` 或 `filings:` 鍵**。名稱與 URL 的用途須人工確認，驗證器不會證明頁面真的免費或內容正確。
+
+```yaml
+us:
+  filings:
+    - id: aaon-liquid-cooling-filing
+      name: AAON 液冷產品財報附件
+      url: "https://www.sec.gov/Archives/edgar/data/824142/000082414225000197/aaonq32025pressreleaseexs.htm"
+      type: filings
+      access: free
+      reachability: unverified
+      checked: "2026-10-07"
+      segments: [thermal]
+      notes: "範例展示欄位；實際新增時自行查核可讀性並更新日期與狀態。"
+```
+
+### 新增或更新來源的流程
+
+1. 選市場與資料類型，確認來源可不用付費、登入憑證或 API key 閱讀。沿用公開資訊觀測站、SEC EDGAR 與公司 IR 等公開入口；研究 skill 中的券商報告或付費逐字稿不在本表範圍。
+2. 用瀏覽器、web open 或一般 HTTP GET **唯讀**檢查位址，辨認重新導向及實際內容。HTTP 200 若只回 JavaScript 外殼、登入／驗證頁，仍標 `unverified`；讀到目標公開頁面才標 `verified`。阻擋、逾時、404 或尚未完成可讀性確認時保留 `unverified`，在 `notes` 記錄原因，並填本次實際查核日期。
+3. 依上例併入條目，讓 `type` 與分組一致。媒體或協會網站如混有會員內容，只登錄免費公開區並在 `notes` 明確排除收費子頁；EIA 等網站的公開表格與需金鑰的 API 是不同入口。
+4. 若來源聚焦特定環節，以檔名／`segment` 的識別碼填 `segments`，不要填中文名稱、題材名或 ticker。來源可跨環節，無須在環節檔反向宣告。
+5. 執行 `python scripts/validate_map.py` 全量模式。修正欄位、分組或引用錯誤後再跑一次；人工再確認免費範圍與查核紀錄，將檔案納入 git diff 審閱。測試新增範例可在地圖副本執行 `python scripts/validate_map.py --map-dir <副本路徑>`。
+
+`verified` 只表示該查核日的指定公開入口可讀，不保證所有子頁或未來存取。若之後失效，改為 `unverified` 並更新日期與原因，保留入口供重試。runtime 依 ingestion 設定執行，`/api/sources` 的 status／last_attempt／last_success 與此人工查核分開；保留實際回補範圍與限制。題材網站投影保存完整散文，checked 從原文「查核日期」擷取，不以匯入日取代。
 
 ---
 
@@ -234,14 +296,14 @@ python tests/run_validator_tests.py
 ### 第 2 則：台廠液冷進入結構性成長，新世代機櫃帶動快接頭、電源、PCB/CCL 升級
 
 - **歸屬環節**：`thermal`（新聞點名的 AVC 即 `3017.TW` 奇鋐）
-- **往上游**：`thermal` → `interconnect`，推導出嘉澤、貿聯、信邦、安費諾 —— 對應新聞提到的快接頭
+- **往上游**：由 `thermal.upstream` 取得 `interconnect`，推導出嘉澤、貿聯、信邦、安費諾等介面候選；安費諾有快接頭產品證據，其他玩家須按料號查核，不能將整份清單都當快接頭供應商
 - **經題材橫向擴散**：`thermal.themes` → `liquid-cooling.segments` 含 `power`，推導出台達電、光寶科 —— 對應新聞提到的電源升級
 - **兩跳取得 PCB**：新聞提到 PCB/CCL，但 `pcb` 不是 `thermal` 的鄰居。經由共同下游 `odm` 可達（`odm.upstream` 含 `pcb`），取得台光電、台燿、金像電
 
 ### 第 3 則：台積電 CoWoS 擴產，面板級封裝推進
 
 - **歸屬環節**：`advanced-packaging`
-- **往上游**（擴產的受惠方向）：`materials` 環球晶、中美晶；`equipment` 弘塑、辛耘；`substrate` 欣興、南電、景碩；`test` 京元電、旺矽
+- **往上游**（擴產的候選影響方向）：`materials` 環球晶、中美晶；`equipment` 弘塑、辛耘；`substrate` 欣興、南電、景碩；`test` 京元電、旺矽
 - **非顯而易見的收穫**：新聞完全沒提 ABF 載板，但 `advanced-packaging.upstream` 含 `substrate`，地圖自動把載板三雄帶出來
 - **訊號命中**：`advanced-packaging.signals` 的「封裝技術世代轉換（中介層轉面板級）」直接對應新聞的面板級封裝進展
 
@@ -254,3 +316,37 @@ python tests/run_validator_tests.py
 3. **共同下游的手足環節** —— 由 X 的下游 D 反查 `D.upstream`，取得與 X 並列供應同一客戶的環節（第 2 則取得 `pcb` 的唯一路徑）
 
 第 3 種最容易被忽略。只實作第 1 種的話，第 2 則就會漏掉整個 PCB/CCL 族群。
+
+---
+
+## 整體驗收記錄（2026-10-07）
+
+### 實際零組件定位與市場覆蓋
+
+| 零組件 | 環節 | 台股角色 | 美股或無玩家標記 | 判讀邊界 |
+|---|---|---|---|---|
+| 冷板 | `thermal` | 雙鴻 `3324.TW`，液冷冷板 | Vertiv `VRT`，熱管理／CDU | 美股條目支持環節覆蓋，不表示 Vertiv 與冷板廠具有相同收入邊界；Boyd 另以非上市鍵列入冷板供應 |
+| ABF 載板 | `substrate` | 欣興 `3037.TW`，載板 | `market_coverage.us: none` | 日本主導玩家與台廠並列，不能拿美國客戶或上游材料商填成美股載板廠 |
+| switch ASIC | `networking` | 智邦 `2345.TW`，交換器系統 | 博通 `AVGO`，交換器 ASIC | 台廠的系統組裝與美廠的 ASIC 設計屬不同子角色；不能由環節覆蓋宣稱台廠製造同一晶片 |
+
+三項皆能定位，且各環節清楚表態台股／美股。抽查讀取 frontmatter 的 `companies`、`role` 與 `market_coverage`，不依中文別名推測 ticker。
+
+### 散文與結構一致性
+
+逐檔複核「玩家格局」的公司皆在同檔 `companies`，並檢查傳導鏈與題材引用。核對上市身分後將辛耘改為 `3583.TW`、嘉晶改為 `3016.TW`；新光電氣工業下市後改用 `PRIVATE:shinko`。滑軌以川湖 `2059.TW` 的實際供應角色補入 `interconnect`，安費諾角色明列已有產品證據的液冷快接頭，其他公司的快接頭適配仍須逐案確認。
+
+地圖只提供影響範圍與供應角色。`tier` 不等同精確市佔；沿關聯找到公司，不表示它已取得訂單或一定受惠。量產、平台 roadmap、客戶驗證及推論均於散文分開說明，指標未寫入當下股價、營收或滲透率數字。
+
+### 三則既有新聞案例重跑
+
+以「Schema 可查詢性實測記錄」的原始案例為輸入，僅讀 frontmatter 重走路徑，再對照散文判讀。此處驗收的是原記錄的環節與列名公司能否取得，不把測試標題當作查詢當下的新消息。
+
+| 案例 | 重跑結果 | 散文的必要條件 |
+|---|---|---|
+| HBM4 供給與認證 | `memory → advanced-packaging → odm → datacenter → compute` 取得原記錄五個節點，回到封裝時由 visited set 停止；封裝三家、ODM 六家台廠均保留 | 傳統 DRAM 與儲存玩家仍進入影響範圍，但排擠、價格及受惠方向列為推論；送樣不能代替認證／量產 |
+| 液冷與整櫃升級 | 上游取得 `interconnect`，經 `liquid-cooling` 取得 `power`，經共同下游 `odm.upstream` 取得 `pcb`；原列名公司皆可解析 | 沿上游遍歷不代表液冷系統出售連接器；需分辨供應方向與影響方向。PCB 升級須平台規格支持，滑軌與快接頭也不混用 |
+| CoWoS 擴產與面板級 | 封裝六個上游仍為材料、設備、測試、載板、記憶體及運算；原材料／設備／載板／測試列名公司可取得，面板級訊號仍存在 | 公司角色、實際料號與訂單決定受惠；晶圓轉面板的研發／試產不等於量產，也不等於玻璃核心載板已替換所有載板 |
+
+三條原推導結論與結構一致。新增的川湖是機構滑軌角色，擴充候選清單而不改變原路徑；新光下市及兩家台廠的上市後綴修正只改正識別，未更動原上下游邊。題材的受惠候選與狀態調整不會把尚未核實的訂單變成既定事實。
+
+全量結構檢查通過；驗證器自身以合法基準的 full／skip-prose 兩種模式與 22 類失敗案例確認檢查行為。此結果不代表市佔、客戶歸屬或股價反應已驗證，這些仍依各檔來源與信心標籤查核。
