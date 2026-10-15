@@ -12,6 +12,8 @@ from __future__ import annotations
 import argparse
 import re
 import sys
+from datetime import date as calendar_date
+from urllib.parse import urlsplit
 from pathlib import Path
 
 import yaml
@@ -268,6 +270,7 @@ def load_themes(errors: Errors):
 
 
 def check_milestones(path: Path, data: dict, errors: Errors) -> None:
+    identifiers = set()
     for index, entry in enumerate(check_list(path, data, "milestones", errors, min_len=1)):
         label = "milestones[{}]".format(index)
         if not isinstance(entry, dict):
@@ -279,6 +282,166 @@ def check_milestones(path: Path, data: dict, errors: Errors) -> None:
         date = entry.get("date")
         if date is not None and not DATE_RE.match(str(date)):
             errors.add(path, "{}.date 須為 YYYY、YYYY-Qn 或 YYYY-MM，目前為 {!r}".format(label, date))
+        if 'id' in entry:
+            identifier = entry['id']
+            if not isinstance(identifier, str) or not ID_RE.fullmatch(identifier):
+                errors.add(path, f'{label}.id 須為 kebab-case')
+            elif identifier in identifiers:
+                errors.add(path, f'{label}.id 里程碑識別碼重複')
+            else:
+                identifiers.add(identifier)
+
+
+def check_assessments(segments: dict, themes: dict, errors: Errors, skip_prose=False) -> None:
+    """References and shape only; source content and economic reasoning need review."""
+    source_ids = set()
+    try:
+        registry = yaml.safe_load((MAP_DIR / SOURCES_FILE).read_text(encoding='utf-8'))
+        if isinstance(registry, dict):
+            for groups in registry.values():
+                if isinstance(groups, dict):
+                    for entries in groups.values():
+                        if isinstance(entries, list):
+                            source_ids.update(e['id'] for e in entries if isinstance(e, dict) and isinstance(e.get('id'), str))
+    except (OSError, yaml.YAMLError):
+        pass  # check_sources reports the registry error.
+    confidence = {'well-supported', 'inference', 'needs-verification'}
+    for theme in themes.values():
+        if 'assessment' not in theme:
+            continue
+        path, assessment = theme['_path'], theme['assessment']
+        if not isinstance(assessment, dict):
+            errors.add(path, 'assessment 須為對應表'); continue
+
+        def text(value, label):
+            if not isinstance(value, str) or not value.strip():
+                errors.add(path, f'assessment.{label} 須為非空文字')
+
+        def day(value, label, nullable=False):
+            if value is None and nullable:
+                return
+            try:
+                if not isinstance(value, str) or not CHECKED_RE.fullmatch(value):
+                    raise ValueError()
+                calendar_date.fromisoformat(value)
+            except ValueError:
+                errors.add(path, f'assessment.{label} 須為有效 YYYY-MM-DD')
+
+        def items(key, minimum=0):
+            value = assessment.get(key)
+            if not isinstance(value, list) or len(value) < minimum:
+                errors.add(path, f'assessment.{key} 須為陣列且至少 {minimum} 筆')
+                return []
+            return value
+
+        def identified(key, minimum=0):
+            result = {}
+            for i, value in enumerate(items(key, minimum)):
+                label = f'{key}[{i}]'
+                if not isinstance(value, dict):
+                    errors.add(path, f'assessment.{label} 須為對應表'); continue
+                identifier = value.get('id')
+                if not isinstance(identifier, str) or not ID_RE.fullmatch(identifier):
+                    errors.add(path, f'assessment.{label}.id 須為 kebab-case'); continue
+                if identifier in result:
+                    errors.add(path, f'assessment.{label}.id 識別碼重複'); continue
+                result[identifier] = value
+            return result
+
+        def refs(value, known, label, minimum=1):
+            if not isinstance(value, list) or len(value) < minimum:
+                errors.add(path, f'assessment.{label} 須為陣列且至少 {minimum} 筆'); return
+            for reference in value:
+                if not isinstance(reference, str) or reference not in known:
+                    errors.add(path, f'assessment.{label} 引用不存在的識別碼: {reference}')
+
+        text(assessment.get('summary'), 'summary')
+        if not isinstance(assessment.get('confidence'), str) or assessment['confidence'] not in confidence:
+            errors.add(path, 'assessment.confidence 不合法')
+        day(assessment.get('reviewed'), 'reviewed')
+        checked = re.search(r'查核日期[：:]\s*(\d{4}-\d{2}-\d{2})', theme['_body'])
+        if not skip_prose and (not checked or checked[1] != assessment.get('reviewed')):
+            errors.add(path, 'assessment.reviewed 與散文查核日期不一致')
+        for key, minimum in [('conditions', 1), ('gaps', 0)]:
+            for i, value in enumerate(items(key, minimum)):
+                text(value, f'{key}[{i}]')
+        for i, value in enumerate(items('next_checks', 1)):
+            if not isinstance(value, dict):
+                errors.add(path, f'assessment.next_checks[{i}] 須為對應表'); continue
+            for key in ('question', 'evidence_required'):
+                text(value.get(key), f'next_checks[{i}].{key}')
+        evidence = identified('evidence', 1)
+        for identifier, value in evidence.items():
+            label = f'evidence.{identifier}'
+            if not isinstance(value.get('source_id'), str) or value['source_id'] not in source_ids:
+                errors.add(path, f'assessment.{label}.source_id 引用不存在的來源')
+            try:
+                url = urlsplit(value.get('url', ''))
+                valid_url = url.scheme == 'https' and bool(url.hostname) and not url.username and not url.password
+            except (ValueError, TypeError, AttributeError):
+                valid_url = False
+            if not valid_url:
+                errors.add(path, f'assessment.{label}.url 須為完整 HTTPS')
+            for key in ('excerpt', 'period'):
+                text(value.get(key), f'{label}.{key}')
+            day(value.get('published'), f'{label}.published', nullable=True)
+        claims = identified('claims', 1)
+        for identifier, value in claims.items():
+            label = f'claims.{identifier}'
+            text(value.get('statement'), f'{label}.statement')
+            if value.get('stance') not in ('supporting', 'counter') or not isinstance(value.get('confidence'), str) or value['confidence'] not in confidence:
+                errors.add(path, f'assessment.{label} stance／confidence 不合法')
+            refs(value.get('evidence_ids'), evidence, f'{label}.evidence_ids')
+        for identifier, value in identified('paths').items():
+            label = f'paths.{identifier}'
+            text(value.get('mechanism'), f'{label}.mechanism')
+            if value.get('direction') not in ('positive', 'negative', 'mixed', 'unknown'):
+                errors.add(path, f'assessment.{label}.direction 不合法')
+            if not isinstance(value.get('conditions'), list) or not value['conditions']:
+                errors.add(path, f'assessment.{label}.conditions 至少一筆')
+            else:
+                for condition in value['conditions']: text(condition, f'{label}.conditions')
+            refs(value.get('claim_ids'), claims, f'{label}.claim_ids')
+            steps = value.get('steps')
+            if not isinstance(steps, list) or not steps:
+                errors.add(path, f'assessment.{label}.steps 至少一筆'); continue
+            previous = None
+            for i, step in enumerate(steps):
+                valid = isinstance(step, dict)
+                if valid:
+                    origin, target, kind, via = (step.get(k) for k in ('from', 'to', 'type', 'via'))
+                    valid = isinstance(origin, str) and isinstance(target, str) and origin in segments and target in segments and origin != target
+                if valid and previous is not None and origin != previous: valid = False
+                if valid:
+                    if kind in ('upstream', 'downstream'):
+                        valid = target in (segments[origin].get(kind) or [])
+                    elif kind == 'theme':
+                        valid = isinstance(via, str) and via in themes and origin in (themes[via].get('segments') or []) and target in (themes[via].get('segments') or [])
+                    elif kind == 'sibling':
+                        valid = isinstance(via, str) and via in segments and via in segments[origin]['downstream'] and target in segments[via]['upstream']
+                    else: valid = False
+                if not valid:
+                    errors.add(path, f'assessment.{label}.steps[{i}] 傳導步驟不符合宣告關係')
+                previous = step.get('to') if isinstance(step, dict) else None
+        milestone_ids = {m['id'] for m in theme.get('milestones', []) if isinstance(m, dict) and isinstance(m.get('id'), str)}
+        reviewed_milestones = set()
+        for i, value in enumerate(items('milestone_reviews')):
+            label = f'milestone_reviews[{i}]'
+            if not isinstance(value, dict):
+                errors.add(path, f'assessment.{label} 須為對應表'); continue
+            milestone_id = value.get('milestone_id')
+            if not isinstance(milestone_id, str) or milestone_id not in milestone_ids or milestone_id in reviewed_milestones:
+                errors.add(path, f'assessment.{label}.milestone_id 無法解析或重複')
+            if isinstance(milestone_id, str): reviewed_milestones.add(milestone_id)
+            state = value.get('state')
+            if state not in ('unconfirmed', 'confirmed', 'contradicted'):
+                errors.add(path, f'assessment.{label}.state 不合法')
+            text(value.get('note'), f'{label}.note')
+            day(value.get('reviewed'), f'{label}.reviewed')
+            day(value.get('occurred'), f'{label}.occurred', nullable=True)
+            refs(value.get('evidence_ids'), evidence, f'{label}.evidence_ids', 1 if state in ('confirmed', 'contradicted') else 0)
+        if 'change_reason' in assessment:
+            text(assessment['change_reason'], 'change_reason')
 
 
 def check_cross_refs(segments: dict, themes: dict, errors: Errors) -> None:
@@ -374,7 +537,7 @@ def check_sources(segments: dict, themes: dict, errors: Errors) -> int:
                     errors.add(path, '{}.url 須為 HTTPS'.format(label))
                 ingestion = entry.get('ingestion')
                 if ingestion is not None:
-                    adapters = {'manual','tw','tsmc','delta','nvidia','microsoft','sec-submissions','sec-facts','rss','tpca','moea','census','eia'}
+                    adapters = {'manual','tw','tsmc','delta','nvidia','microsoft','sec-submissions','sec-facts','rss','tpca','moea','census','eia','aaon-metrics','tsmc-metrics'}
                     if not isinstance(ingestion, dict) or ingestion.get('adapter') not in adapters:
                         errors.add(path, '{}.ingestion adapter 不合法'.format(label))
                     else:
@@ -384,6 +547,11 @@ def check_sources(segments: dict, themes: dict, errors: Errors) -> int:
                         pages = ingestion.get('max_pages',1)
                         if type(pages) is not int or not 1 <= pages <= 200:
                             errors.add(path, '{}.ingestion.max_pages 須為 1–200'.format(label))
+                        if ingestion['adapter'] in ('aaon-metrics','tsmc-metrics'):
+                            if type(ingestion.get('max_reports',8)) is not int or not 1<=ingestion.get('max_reports',8)<=8:
+                                errors.add(path, '{}.ingestion.max_reports 須為 1–8'.format(label))
+                            if type(ingestion.get('history_days',730)) is not int or not 1<=ingestion.get('history_days',730)<=730:
+                                errors.add(path, '{}.ingestion.history_days 須為 1–730'.format(label))
                 if entry.get("type") not in (None, source_type):
                     errors.add(
                         path,
@@ -436,6 +604,7 @@ def main() -> int:
     themes = load_themes(errors)
     check_cross_refs(segments, themes, errors)
     source_count = check_sources(segments, themes, errors)
+    check_assessments(segments, themes, errors, skip_prose=args.skip_prose)
 
     if not args.skip_prose:
         for seg in segments.values():

@@ -1,0 +1,42 @@
+﻿[
+    {
+        "id":  "ir-delta",
+        "status":  "success",
+        "last_attempt":  "2026-10-14T08:07:19.746498+00:00",
+        "last_success":  "2026-10-14T08:07:21.070138+00:00",
+        "new_count":  0,
+        "error":  null
+    },
+    {
+        "id":  "ir-microsoft",
+        "status":  "success",
+        "last_attempt":  "2026-10-14T08:07:33.758068+00:00",
+        "last_success":  "2026-10-14T08:07:34.932412+00:00",
+        "new_count":  0,
+        "error":  null
+    },
+    {
+        "id":  "ir-nvidia",
+        "status":  "failed",
+        "last_attempt":  "2026-10-14T08:15:32.663456+00:00",
+        "last_success":  null,
+        "new_count":  0,
+        "error":  "ValueError: HTTP 擷取失敗：HTTPStatusError HTTP 403"
+    },
+    {
+        "id":  "ir-tsmc",
+        "status":  "failed",
+        "last_attempt":  "2026-10-14T08:15:32.545219+00:00",
+        "last_success":  null,
+        "new_count":  0,
+        "error":  "ValueError: HTTP 擷取失敗：HTTPStatusError HTTP 403"
+    },
+    {
+        "id":  "sec-facts-nvda",
+        "status":  "configuration_required",
+        "last_attempt":  "2026-10-14T08:15:32.656355+00:00",
+        "last_success":  null,
+        "new_count":  0,
+        "error":  "ValueError: 需設定 SEC_USER_AGENT：專案名稱與維護者聯絡 email"
+    }
+]

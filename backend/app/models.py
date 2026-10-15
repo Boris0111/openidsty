@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
-from sqlalchemy import String, JSON, DateTime, ForeignKey, UniqueConstraint, Text, Integer, Float, Boolean
+from sqlalchemy import String, JSON, DateTime, Date, Numeric, ForeignKey, UniqueConstraint, Text, Integer, Float, Boolean
+from datetime import date
+from decimal import Decimal
 from sqlalchemy.orm import Mapped, mapped_column
 from .db import Base
 
@@ -21,6 +23,19 @@ class Theme(Base):
     data: Mapped[dict] = mapped_column(JSON)
     prose: Mapped[str] = mapped_column(Text, default='')
     checked: Mapped[str | None] = mapped_column(String(10))
+    active: Mapped[bool] = mapped_column(Boolean,default=True,server_default='true')
+
+class ThemeAssessmentVersion(Base):
+    __tablename__ = 'theme_assessment_versions'
+    __table_args__ = (UniqueConstraint('theme_id','version_number',name='uq_theme_version'),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    theme_id: Mapped[str] = mapped_column(ForeignKey('themes.id'),index=True)
+    version_number: Mapped[int] = mapped_column(Integer)
+    payload: Mapped[dict] = mapped_column(JSON)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    reviewed: Mapped[str | None] = mapped_column(String(10))
+    recorded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True),default=now)
+    reason: Mapped[str] = mapped_column(Text)
 
 class Company(Base):
     __tablename__ = 'companies'
@@ -125,3 +140,49 @@ class IngestionRun(Base):
     started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     results: Mapped[dict] = mapped_column(JSON, default=dict)
+
+class Indicator(Base):
+    __tablename__ = 'indicators'
+    id: Mapped[str] = mapped_column(String(100), primary_key=True)
+    name: Mapped[str] = mapped_column(String(150))
+    kind: Mapped[str] = mapped_column(String(20))
+    unit: Mapped[str] = mapped_column(String(40))
+    frequency: Mapped[str] = mapped_column(String(20))
+    basis: Mapped[str] = mapped_column(String(40))
+    data: Mapped[dict] = mapped_column(JSON)
+
+class ThemeIndicator(Base):
+    __tablename__ = 'theme_indicators'
+    theme_id: Mapped[str] = mapped_column(ForeignKey('themes.id'), primary_key=True)
+    indicator_id: Mapped[str] = mapped_column(ForeignKey('indicators.id'), primary_key=True)
+
+class IndicatorObservation(Base):
+    __tablename__ = 'indicator_observations'
+    __table_args__ = (UniqueConstraint('identity', 'revision', name='uq_indicator_revision'),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    indicator_id: Mapped[str] = mapped_column(ForeignKey('indicators.id'), index=True)
+    source_id: Mapped[str] = mapped_column(ForeignKey('sources.id'))
+    identity: Mapped[str] = mapped_column(String(64), index=True)
+    document_identity: Mapped[str] = mapped_column(String(500))
+    dataset: Mapped[str] = mapped_column(String(100))
+    entity: Mapped[str] = mapped_column(String(100))
+    original_period: Mapped[str] = mapped_column(String(150))
+    period_start: Mapped[date] = mapped_column(Date)
+    period_end: Mapped[date] = mapped_column(Date, index=True)
+    basis: Mapped[str] = mapped_column(String(40))
+    scope: Mapped[str] = mapped_column(Text)
+    unit: Mapped[str] = mapped_column(String(40))
+    currency: Mapped[str | None] = mapped_column(String(10))
+    value: Mapped[Decimal] = mapped_column(Numeric(28, 8))
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    reported_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    published_precision: Mapped[str] = mapped_column(String(20), default='unknown')
+    date_semantics: Mapped[str] = mapped_column(String(30), default='unknown')
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    url: Mapped[str] = mapped_column(Text)
+    raw_excerpt: Mapped[str] = mapped_column(Text)
+    raw: Mapped[dict] = mapped_column(JSON)
+    revision: Mapped[int] = mapped_column(Integer)
+    content_hash: Mapped[str] = mapped_column(String(64))
+    valid: Mapped[bool] = mapped_column(Boolean, default=True)
+    invalid_reason: Mapped[str | None] = mapped_column(Text)

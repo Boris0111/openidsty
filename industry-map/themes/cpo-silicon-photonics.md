@@ -2,23 +2,101 @@
 theme: cpo-silicon-photonics
 name_zh: 共同封裝光學與矽光子
 status: validating
-segments: [networking, advanced-packaging, compute]
+segments:
+- networking
+- advanced-packaging
+- compute
 beneficiaries:
-  - "AVGO"
-  - "MRVL"
-  - "2330.TW"
-  - "3081.TWO"
-  - "4979.TWO"
+- AVGO
+- MRVL
+- 2330.TW
+- 3081.TWO
+- 4979.TWO
 milestones:
-  - date: 2026
-    event: 核對商用 CPO 交換器及具名採用者的導入階段
-    evidence: NVIDIA 2026-05-31 公告列出 Spectrum-X Photonics 生產與 CoreWeave、Lambda、Oracle 採用者；逐案補客戶驗收及實際部署資料
-  - date: 2026-Q4
-    event: 待確認 CPO 封裝的量產訂單與出貨量化
-    evidence: 封裝廠財報或法說會明確區分 CPO 訂單、出貨或收入；僅有產能投入不足以視為完成
-  - date: 2027
-    event: 觀察可插拔光模組與 CPO 的方案分工
-    evidence: 具名雲端業者採購規格、光學連接距離及光模組廠產品收入，需對照相同平台與使用場景
+- date: 2026
+  event: 核對商用 CPO 交換器及具名採用者的導入階段
+  evidence: NVIDIA 2026-05-31 公告列出 Spectrum-X Photonics 生產與 CoreWeave、Lambda、Oracle 採用者；逐案補客戶驗收及實際部署資料
+  id: commercial-adoption
+- date: 2026-Q4
+  event: 待確認 CPO 封裝的量產訂單與出貨量化
+  evidence: 封裝廠財報或法說會明確區分 CPO 訂單、出貨或收入；僅有產能投入不足以視為完成
+  id: packaging-volume
+- date: 2027
+  event: 觀察可插拔光模組與 CPO 的方案分工
+  evidence: 具名雲端業者採購規格、光學連接距離及光模組廠產品收入，需對照相同平台與使用場景
+  id: optics-mix
+assessment:
+  summary: 商用 CPO 產品已出貨及生產；原 validating 表示量化放量證據仍有限，不能把商業出貨描述成純研究，也不能以 AI 網路總收入升級狀態。
+  confidence: well-supported
+  evidence:
+  - id: broadcom-shipping
+    source_id: broadcom-cpo-release
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-announces-tomahawkr-6-davisson-industrys-first-1024
+    excerpt: now shipping Tomahawk® 6 – Davisson
+    period: Broadcom TH6-Davisson 商用 CPO 交換器公告
+    published: '2025-10-08'
+  - id: nvidia-production
+    source_id: nvidia-photonics-release
+    url: https://nvidianews.nvidia.com/news/vera-rubin-full-production-agentic-ai-factory
+    excerpt: NVIDIA Spectrum-X Ethernet Photonics — now in production
+    period: NVIDIA 2026-05-31 生產／採用公告，非 CPO 獨立收入
+    published: '2026-05-31'
+  claims:
+  - id: commercial-cpo
+    statement: Broadcom 公告出貨、NVIDIA 公告生產，支持已有商業產品；尚不能推出所有採用者已完成現場驗收或量化大規模部署。
+    stance: supporting
+    confidence: well-supported
+    evidence_ids:
+    - broadcom-shipping
+    - nvidia-production
+  conditions:
+  - 具名客戶的實際驗收與部署可確認
+  - 平台距離、功耗、良率及維修條件適配
+  - 財報或法說會能區分 CPO 訂單／出貨與其他網路產品
+  gaps:
+  - 未取得可分辨 CPO 的量化財報收入或放量訂單
+  - 候選光通訊公司的實際產品適配與得標尚待核實
+  - 未取得具名客戶轉回可插拔方案的可核對反向證據
+  next_checks:
+  - question: 生產公告是否轉為具名客戶量化部署？
+    evidence_required: 客戶驗收、部署量與可區分 CPO 的收入／出貨
+  paths:
+  - id: optics-to-packaging
+    steps:
+    - from: networking
+      to: advanced-packaging
+      type: theme
+      via: cpo-silicon-photonics
+    mechanism: 光學引擎靠近封裝可能增加整合需求，同時改變可插拔產品分工。
+    direction: mixed
+    conditions:
+    - 採用共同封裝方案
+    - 封裝供應商取得真實訂單
+    claim_ids:
+    - commercial-cpo
+  reviewed: '2026-10-07'
+  change_reason: 首次將既有查核基準結構化，保留證據期間與未取得項目。
+  milestone_reviews:
+  - milestone_id: commercial-adoption
+    state: unconfirmed
+    reviewed: '2026-10-07'
+    note: 已有產品生產公告，但逐案客戶驗收及實際部署仍未核對。
+    evidence_ids:
+    - broadcom-shipping
+    - nvidia-production
+    occurred: null
+  - milestone_id: packaging-volume
+    state: unconfirmed
+    reviewed: '2026-10-07'
+    note: 產能投入與生產公告不等於封裝收入量化。
+    evidence_ids: []
+    occurred: null
+  - milestone_id: optics-mix
+    state: unconfirmed
+    reviewed: '2026-10-07'
+    note: 需同平台與距離口徑的採購及產品收入。
+    evidence_ids: []
+    occurred: null
 ---
 
 ## 題材範圍

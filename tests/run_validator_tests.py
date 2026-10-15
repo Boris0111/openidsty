@@ -14,6 +14,8 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
+import copy
+import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 BASELINE = ROOT / "tests" / "fixtures" / "valid"
@@ -163,6 +165,58 @@ CASES = [
 ]
 
 
+ASSESSMENT = {
+    'summary': '具來源的條件式判讀', 'confidence': 'inference', 'reviewed': '2026-10-07',
+    'conditions': ['需有實際採購'], 'gaps': ['尚未取得反向證據'],
+    'next_checks': [{'question': '是否交付', 'evidence_required': '具名客戶紀錄'}],
+    'evidence': [{'id': 'source-one', 'source_id': 'sample-filings', 'url': 'https://example.invalid/filing', 'excerpt': '測試摘錄', 'period': '2026-Q1', 'published': None}],
+    'claims': [{'id': 'claim-one', 'stance': 'supporting', 'confidence': 'well-supported', 'statement': '只限來源揭露對象', 'evidence_ids': ['source-one']}],
+    'paths': [
+        {'id': 'upstream-path', 'steps': [{'from': 'mid-part', 'to': 'support-part', 'type': 'upstream'}], 'mechanism': '採購', 'direction': 'positive', 'conditions': ['實際下單'], 'claim_ids': ['claim-one']},
+        {'id': 'theme-path', 'steps': [{'from': 'mid-part', 'to': 'support-part', 'type': 'theme', 'via': 'sample-theme'}], 'mechanism': '題材橫向', 'direction': 'mixed', 'conditions': ['規格相符'], 'claim_ids': ['claim-one']},
+        {'id': 'sibling-path', 'steps': [{'from': 'upstream-part', 'to': 'support-part', 'type': 'sibling', 'via': 'mid-part'}], 'mechanism': '共同採購', 'direction': 'unknown', 'conditions': ['共同客戶'], 'claim_ids': ['claim-one']},
+    ],
+    'milestone_reviews': [{'milestone_id': 'first-delivery', 'state': 'unconfirmed', 'reviewed': '2026-10-07', 'note': '尚未確認', 'evidence_ids': []}],
+}
+
+
+def assessment_fixture(map_dir, mutate=None):
+    path = map_dir / THEME
+    _, header, body = path.read_text(encoding='utf-8').split('---', 2)
+    data = yaml.safe_load(header)
+    data['segments'].append('support-part')
+    data['milestones'][0]['id'] = 'first-delivery'
+    data['assessment'] = copy.deepcopy(ASSESSMENT)
+    if mutate: mutate(data)
+    path.write_text('---\n' + yaml.safe_dump(data, allow_unicode=True, sort_keys=False) + '---\n' + body + '\n查核日期：2026-10-07\n', encoding='utf-8')
+    support = map_dir / 'semiconductor/support-part.md'
+    support.write_text(support.read_text(encoding='utf-8').replace('themes: []', 'themes: [sample-theme]'), encoding='utf-8')
+
+
+def assessment_mutation(mutate):
+    return lambda map_dir: assessment_fixture(map_dir, mutate)
+
+
+CASES += [
+    ('判讀重複識別', assessment_mutation(lambda d: d['assessment']['evidence'].append(dict(d['assessment']['evidence'][0]))), '識別碼重複', True),
+    ('里程碑重複識別', assessment_mutation(lambda d: d['milestones'].append(dict(d['milestones'][0]))), '里程碑識別碼重複', True),
+    ('失效來源引用', assessment_mutation(lambda d: d['assessment']['evidence'][0].update(source_id='nope')), 'source_id 引用不存在', True),
+    ('失效證據引用', assessment_mutation(lambda d: d['assessment']['claims'][0].update(evidence_ids=['nope'])), 'evidence_ids 引用不存在', True),
+    ('失效論點引用', assessment_mutation(lambda d: d['assessment']['paths'][0].update(claim_ids=['nope'])), 'claim_ids 引用不存在', True),
+    ('失效里程碑引用', assessment_mutation(lambda d: d['assessment']['milestone_reviews'][0].update(milestone_id='nope')), 'milestone_id 無法解析', True),
+    ('查核日期錯誤', assessment_mutation(lambda d: d['assessment'].update(reviewed='2026-02-30')), '有效 YYYY-MM-DD', True),
+    ('原查核基準不一致', assessment_mutation(lambda d: d['assessment'].update(reviewed='2026-10-08')), '與散文查核日期不一致', False),
+    ('判讀支持程度錯誤', assessment_mutation(lambda d: d['assessment'].update(confidence=['unsupported'])), 'confidence 不合法', True),
+    ('證據 URL 不合法', assessment_mutation(lambda d: d['assessment']['evidence'][0].update(url='http://example.invalid')), '完整 HTTPS', True),
+    ('缺少證據期間', assessment_mutation(lambda d: d['assessment']['evidence'][0].update(period='')), 'period 須為非空文字', True),
+    ('影響方向錯誤', assessment_mutation(lambda d: d['assessment']['paths'][0].update(direction='profit')), 'direction 不合法', True),
+    ('非法線性步驟', assessment_mutation(lambda d: d['assessment']['paths'][0]['steps'][0].update(to='end-part')), '傳導步驟不符合', True),
+    ('非法題材步驟', assessment_mutation(lambda d: d['assessment']['paths'][1]['steps'][0].update(via='missing-theme')), '傳導步驟不符合', True),
+    ('非法手足步驟', assessment_mutation(lambda d: d['assessment']['paths'][2]['steps'][0].update(via='end-part')), '傳導步驟不符合', True),
+    ('已確認卻沒有證據', assessment_mutation(lambda d: d['assessment']['milestone_reviews'][0].update(state='confirmed')), 'evidence_ids 須為陣列且至少 1 筆', True),
+]
+
+
 def main() -> int:
     if not BASELINE.is_dir():
         print("找不到基準 fixture: {}".format(BASELINE), file=sys.stderr)
@@ -178,6 +232,16 @@ def main() -> int:
             print("  FAIL  合法基準（{}）".format(label))
         else:
             print("  ok    合法基準（{}）".format(label))
+
+    with tempfile.TemporaryDirectory() as tmp:
+        map_dir = Path(tmp) / 'industry-map'
+        shutil.copytree(BASELINE, map_dir)
+        assessment_fixture(map_dir)
+        code, output = run_validator(map_dir)
+        if code:
+            failures.append(f'合法判讀基準未通過: {output}')
+        else:
+            print('  ok    合法判讀（含三種傳導與未知日期）')
 
     # 失敗案例：每個突變都必須被攔下，且訊息需指出具體問題。
     for name, mutate, expected, caught_in_skip_prose in CASES:

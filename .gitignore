@@ -38,7 +38,10 @@ node_modules/
 dist/
 build/
 .next/
-coverage/
+/coverage/
+/frontend/coverage/
+/backend/coverage/
+/tests/coverage/
 *.tsbuildinfo
 
 # --- Python ---

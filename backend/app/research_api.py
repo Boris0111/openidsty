@@ -44,7 +44,8 @@ def event_payloads(session, events, raw=False):
     return [dict(columns(e,() if raw else ('raw',)),segments=segments[e.id],themes=themes[e.id]) for e in events]
 
 def theme_payload(theme):
-    return dict(theme.data,prose=theme.prose,checked=theme.checked)
+    from .assessments import assessment_summary
+    return dict(theme.data,prose=theme.prose,checked=theme.checked,assessment_summary=assessment_summary(theme))
 
 def coverage(session, reference=None):
     reference=reference or datetime.now(timezone.utc)
@@ -60,12 +61,14 @@ def coverage(session, reference=None):
     rows=[]
     for group, model in [('segment',Segment),('theme',Theme)]:
         for item in session.scalars(select(model).order_by(model.id)):
+            if group=='theme' and not item.active:continue
             scope='segments' if group=='segment' else 'themes'
             configured=[s for s in sources if item.id in s.data.get(scope,[]) and s.data.get('adapter')!='manual']
             related=links[group][item.id]
             def utc(dt): return dt.replace(tzinfo=dt.tzinfo or timezone.utc) if dt else None
             def recent(e, cutoff): return e.lifecycle=='published' and e.published_at and cutoff<=utc(e.published_at)<=reference
             direct=[events[l.event_id] for l in related if l.relevance=='direct' and not events[l.event_id].routine and recent(events[l.event_id],cutoff90)]
+            direct30=[e for e in direct if recent(e,cutoff30)]
             background=[events[l.event_id] for l in related if l.relevance=='background' and recent(events[l.event_id],cutoff90)]
             unknown=[events[l.event_id] for l in related if events[l.event_id].published_at is None]
             companies=roles[item.id] if group=='segment' else set(item.data.get('beneficiaries',[]))
@@ -79,12 +82,26 @@ def coverage(session, reference=None):
             if not item.prose: gaps.append('尚無研究散文')
             if not configured: gaps.append('尚無自動來源設定')
             if not successes: gaps.append('本輪來源尚未成功')
+            pending=sum(s.status=='configuration_required' for s in configured)
+            failed=sum(s.status=='failed' for s in configured)
+            if pending: gaps.append(f'{pending} 個來源待設定')
+            if failed: gaps.append(f'{failed} 個來源取得失敗')
+            if not direct30: gaps.append('近 30 日尚無可確認發布日的直接事件')
             if not direct: gaps.append('近 90 日尚無可確認發布日的直接事件')
+            indicator_data=None
+            if group=='theme':
+                from .indicator_api import indicators_payload
+                indicator_data=indicators_payload(session,item,reference=reference.date())
             rows.append({'id':item.id,'kind':group,'name':item.name if group=='segment' else item.data['name_zh'],
                 'layer':item.layer if group=='segment' else None,'research_available':bool(item.prose),
                 'checked':item.checked if group=='theme' else None,'sources':source_payload,
                 'configured_sources':len(configured),'successful_sources':len(successes),'last_updated':newest,
-                'direct_30d':sum(bool(recent(e,cutoff30)) for e in direct),'direct_90d':len(direct),
+                'assessment_available':bool(item.data.get('assessment')) if group=='theme' else None,
+                'assessment_checked':(item.data.get('assessment') or {}).get('reviewed') if group=='theme' else None,
+                'indicator_count':len(indicator_data['indicators']) if indicator_data else None,
+                'available_indicator_count':sum(i['latest'] is not None for i in indicator_data['indicators']) if indicator_data else None,
+                'indicator_gaps':(indicator_data['gaps']+[f'{i["name"]} ({i["kind"]})：{g}' for i in indicator_data['indicators'] for g in i['gaps']]) if indicator_data else [],
+                'direct_30d':len(direct30),'direct_90d':len(direct),
                 'background_90d':len(background),'unknown_date':len(unknown),'routine_90d':routines,
                 'company_mentions_90d':mention_count,'samples':event_payloads(session,sample),'gaps':gaps})
     return {'as_of':reference,'window_start':cutoff90,'rules_version':rules()['version'],'rows':rows,
@@ -96,6 +113,10 @@ def coverage_markdown(data):
         '|---|---|---|---|---|---|---|---|']
     for r in data['rows']:
         text.append(f'| {r["kind"]} | {r["name"]} ({r["id"]}) | {"有" if r["research_available"] else "無"} | {r["configured_sources"]}／{r["successful_sources"]} | {r["direct_30d"]}／{r["direct_90d"]} | {r["background_90d"]} | {r["unknown_date"]} | {"；".join(r["gaps"]) or "—"} |')
+    text+=['','## 題材判讀與指標覆蓋','','| 題材 | 判讀 | 原查核基準 | 指標設定／取得 | 指標缺口 |','|---|---|---|---|---|']
+    for r in data['rows']:
+        if r['kind']=='theme':
+            text.append(f'| {r["name"]} ({r["id"]}) | {"可讀" if r["assessment_available"] else "尚未整理"} | {r["assessment_checked"] or "未提供"} | {r["indicator_count"]}／{r["available_indicator_count"]} | {"；".join(r["indicator_gaps"]) or "—"} |')
     text+=['','## 真實分類樣本','']
     for r in data['rows']:
         text.append(f'### {r["name"]} ({r["id"]})')

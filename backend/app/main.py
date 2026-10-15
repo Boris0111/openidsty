@@ -14,7 +14,7 @@ def columns(row, exclude=()):
 
 def require(session, model, key):
     row = session.get(model, key)
-    if row is None:
+    if row is None or (model is Theme and not row.active):
         raise HTTPException(404, '找不到這筆資料')
     return row
 
@@ -31,7 +31,7 @@ def company_detail(session, ticker):
 async def cache_headers(request, call_next):
     response = await call_next(request)
     if request.method=='GET' and response.status_code==200:
-        response.headers['Cache-Control'] = 'no-store' if request.url.path in ('/api/health','/api/sources','/api/coverage','/api/coverage/report') else 'public, max-age=30'
+        response.headers['Cache-Control'] = 'no-store' if request.url.path in ('/api/health','/api/sources','/api/coverage','/api/coverage/report','/api/theme-updates') else 'public, max-age=30'
     response.headers['X-Content-Type-Options'] = 'nosniff'
     if response.headers.get('Content-Type') == 'application/json':
         response.headers['Content-Type'] = 'application/json; charset=utf-8'
@@ -63,13 +63,13 @@ def segment_list(industry:str|None=None,session:DbSession=Depends(get_session)):
 def segment(sid:str, session:DbSession=Depends(get_session)):
     s = require(session,Segment,sid)
     neighbors={n:require(session,Segment,n) for n in s.data['upstream']+s.data['downstream']}
-    return dict(s.data, prose=s.prose, themes_detail=[theme_payload(require(session,Theme,t)) for t in s.data['themes']],
+    return dict(s.data, prose=s.prose, themes_detail=[theme_payload(t) for key in s.data['themes'] if (t:=session.get(Theme,key)) and t.active],
         neighbors=[{'id':n,'name':v.name,'layer':v.layer} for n,v in neighbors.items()],
         events=event_payloads(session,list(session.scalars(event_query(segment=sid).limit(8)))))
 
 @app.get('/api/themes')
 def themes(session:DbSession=Depends(get_session)):
-    return [theme_payload(t) for t in session.scalars(select(Theme).order_by(Theme.id))]
+    return [theme_payload(t) for t in session.scalars(select(Theme).where(Theme.active.is_(True)).order_by(Theme.id))]
 
 @app.get('/api/themes/{tid}')
 def theme(tid:str,session:DbSession=Depends(get_session)):
@@ -78,6 +78,45 @@ def theme(tid:str,session:DbSession=Depends(get_session)):
     return dict(theme_payload(t),segments_detail=[{'id':s.id,'name':s.name,'layer':s.layer} for s in segments],
         events=event_payloads(session,list(session.scalars(event_query(theme=tid).limit(20)))))
 
+@app.get('/api/themes/{tid}/assessment')
+def theme_assessment(tid:str,session:DbSession=Depends(get_session)):
+    from .assessments import assessment_payload
+    return assessment_payload(session,require(session,Theme,tid))
+
+@app.get('/api/themes/{tid}/indicators')
+def theme_indicators(tid:str,limit:int=Query(12,ge=1,le=36),session:DbSession=Depends(get_session)):
+    from .indicator_api import indicators_payload
+    return indicators_payload(session,require(session,Theme,tid),limit)
+
+@app.get('/api/themes/{tid}/assessment/versions')
+def assessment_versions(tid:str,limit:int=Query(20,ge=1,le=100),offset:int=Query(0,ge=0),session:DbSession=Depends(get_session)):
+    from .assessment_versions import latest_version,version_payload
+    from .models import ThemeAssessmentVersion
+    from sqlalchemy import func
+    require(session,Theme,tid);current=latest_version(session,tid)
+    query=select(ThemeAssessmentVersion).where(ThemeAssessmentVersion.theme_id==tid).order_by(ThemeAssessmentVersion.version_number.desc())
+    rows=list(session.scalars(query.limit(limit).offset(offset)))
+    return {'theme_id':tid,'current_version_id':current.id if current else None,'total':session.scalar(select(func.count()).select_from(ThemeAssessmentVersion).where(ThemeAssessmentVersion.theme_id==tid)),'versions':[version_payload(row) for row in rows]}
+
+def require_version(session,tid,version_id):
+    from .models import ThemeAssessmentVersion
+    row=require(session,ThemeAssessmentVersion,version_id)
+    if row.theme_id!=tid:raise HTTPException(404,'版本不屬於此題材')
+    return row
+
+@app.get('/api/themes/{tid}/assessment/versions/{version_id}')
+def assessment_version(tid:str,version_id:int,session:DbSession=Depends(get_session)):
+    from .assessment_versions import version_payload
+    require(session,Theme,tid)
+    return version_payload(require_version(session,tid,version_id),True)
+
+@app.get('/api/themes/{tid}/assessment/compare')
+def assessment_compare(tid:str,from_version:int=Query(...,ge=1),to_version:int=Query(...,ge=1),session:DbSession=Depends(get_session)):
+    from .assessment_versions import version_payload,diff_values
+    require(session,Theme,tid)
+    before=require_version(session,tid,from_version);after=require_version(session,tid,to_version)
+    return {'from':version_payload(before,True),'to':version_payload(after,True),'changes':diff_values(before.payload,after.payload)}
+
 @app.get('/api/search')
 def search(q:str=Query('',max_length=100),session:DbSession=Depends(get_session)):
     needle=q.strip().casefold(); results=[]
@@ -85,7 +124,7 @@ def search(q:str=Query('',max_length=100),session:DbSession=Depends(get_session)
     for s in session.scalars(select(Segment).order_by(Segment.position)):
         if needle in s.name.casefold() or needle in s.id.casefold():
             results.append({'kind':'segment','id':s.id,'name':s.name,'url':f'/?layer={s.layer}&segment={s.id}'})
-    for t in session.scalars(select(Theme).order_by(Theme.id)):
+    for t in session.scalars(select(Theme).where(Theme.active.is_(True)).order_by(Theme.id)):
         if needle in t.id.casefold() or needle in t.data['name_zh'].casefold():
             results.append({'kind':'theme','id':t.id,'name':t.data['name_zh'],'url':f'/themes/{t.id}'})
     from urllib.parse import quote
@@ -93,6 +132,13 @@ def search(q:str=Query('',max_length=100),session:DbSession=Depends(get_session)
         if any(needle in a.casefold() for a in c.aliases):
             results.append({'kind':'company','id':c.ticker,'name':c.name,'url':f'/companies/{quote(c.ticker,safe="")}'})
     return results[:30]
+
+@app.get('/api/theme-updates')
+def theme_updates(ids:str=Query('',max_length=2000),session:DbSession=Depends(get_session)):
+    from .theme_updates import updates_payload
+    selected=list(dict.fromkeys(t.strip() for t in ids.split(',') if t.strip()))
+    if len(selected)>20:raise HTTPException(422,'最多查詢 20 個不同題材')
+    return updates_payload(session,selected)
 
 @app.get('/api/coverage')
 def data_coverage(session:DbSession=Depends(get_session)):

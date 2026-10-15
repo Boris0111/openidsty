@@ -27,6 +27,9 @@ companies:
   MU:
     cik: '723125'
     aliases: [Micron]
+  VRT:
+    cik: '1674101'
+    aliases: [Vertiv]
   '2330.TW':
     aliases: [台積電, 臺積電, TSMC, Taiwan Semiconductor]
   '2308.TW':

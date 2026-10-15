@@ -1,6 +1,31 @@
 # 唯一來源註冊表；入口可讀性與 runtime 擷取狀態分開。
 tw:
   filings:
+  - id: tsmc-node-metrics
+    name: 台積電季度製程營收占比
+    url: https://investor.tsmc.com/english/quarterly-results
+    type: filings
+    access: free
+    reachability: unverified
+    checked: '2026-10-14'
+    segments: [foundry]
+    themes: [advanced-node-2nm]
+    ingestion:
+      adapter: tsmc-metrics
+      max_pages: 8
+      max_reports: 8
+      history_days: 730
+    notes: 一般 GET 目前 403；季度索引與最多兩年／8 季官方新聞稿擷取，與 ir-tsmc 獨立保存狀態。離線原文樣本不代表正式流程已取得值。
+  - id: tsmc-quarterly-pr
+    name: 台積電季度財報新聞稿研究依據
+    url: https://pr.tsmc.com/japanese/news/3326
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-14'
+    segments: [foundry]
+    themes: [advanced-node-2nm]
+    notes: 本輪 web open 可讀當季 2nm 占比及期別；一般 HTTP GET 回 403，與原 ir-tsmc 的 runtime 失敗分開。本條為研究入口，不宣稱自動取得成功。
   - name: 公開資訊觀測站（MOPS）
     url: https://mops.twse.com.tw/?lang=tw
     type: filings
@@ -261,6 +286,71 @@ tw:
       max_pages: 1
 us:
   filings:
+  - id: aaon-earnings-metrics
+    name: AAON 季度液冷產品收入
+    url: https://investors.aaon.com/investor-news
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-14'
+    segments: [thermal]
+    themes: [liquid-cooling]
+    ingestion:
+      adapter: aaon-metrics
+      max_pages: 5
+      max_reports: 8
+      history_days: 730
+    notes: 索引及 Q4 2025／Q1 2026 公告一般 HTTPS GET 可讀；初次最多兩年／8 季，不將混合 BASX 收入、累計或預估當成液冷數值。
+  - id: aaon-liquid-cooling-filing
+    name: AAON 液冷產品財報附件
+    url: https://www.sec.gov/Archives/edgar/data/824142/000082414225000197/aaonq32025pressreleaseexs.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-14'
+    segments: [thermal]
+    themes: [liquid-cooling]
+    notes: 一般 HTTPS GET 讀到 2025 Q3 BASX-branded liquid cooling product sales；此為具名產品口徑，不代表所有散熱候選公司。
+  - id: micron-earnings-research
+    name: Micron 財報公告研究依據
+    url: https://investors.micron.com/news/press-release/2026/Micron-Technology-Inc--Reports-Record-Results-for-the-Third-Quarter-of-Fiscal-2026/default.aspx
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-14'
+    segments: [memory]
+    themes: [hbm4]
+    notes: web open 可讀 FY2026 Q3 公告及 HBM4 高量出貨；本機一般 HTTP 回 403，本條為手動研究入口。
+  - id: micron-hbm4-remarks
+    name: Micron FY2026 Q3 法說會量化依據
+    url: https://investors.micron.com/static-files/631b1a32-5537-46ae-8f40-82e42fc79dfe
+    type: filings
+    access: free
+    reachability: unverified
+    checked: '2026-10-14'
+    segments: [memory]
+    themes: [hbm4]
+    notes: 原 PDF 本機 HTTP 403，web open 轉向 IR 首頁；官方來源搜尋仍可核對 2026-06-24 HBM4 收入原段落。本輪未取得 PDF 位元組，保留原研究基準與文件入口限制，不宣稱已完成 PDF 轉換。
+  - id: sk-hynix-earnings-research
+    name: SK hynix 財報研究依據
+    url: https://news.skhynix.com/en/q2-2026-business-results/
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-14'
+    segments: [memory]
+    themes: [hbm4]
+    notes: 一般 HTTPS GET 讀到 Q2 2026 HBM4 商業出貨；其他世代與供應分配仍需另查。
+  - id: broadcom-earnings-research
+    name: Broadcom 財報研究依據
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-third-quarter-fiscal-year-2026-financial
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-14'
+    segments: [compute, networking]
+    themes: [custom-asic-vs-gpu]
+    notes: 一般 HTTPS GET 可讀 FY2026 Q3 已實現 AI 半導體收入；口徑包含客製加速器與網路，不等於純 ASIC 收入。
   - name: SEC EDGAR 公開申報搜尋
     url: https://www.sec.gov/edgar/search/
     type: filings
@@ -329,6 +419,46 @@ us:
     ingestion:
       adapter: microsoft
   industry_media:
+  - id: broadcom-cpo-release
+    name: Broadcom 商用 CPO 公告
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-announces-tomahawkr-6-davisson-industrys-first-1024
+    type: industry_media
+    access: free
+    reachability: verified
+    checked: '2026-10-14'
+    segments: [networking]
+    themes: [cpo-silicon-photonics]
+    notes: 一般 HTTPS GET 可讀 2025-10-08 商用品出貨公告；不是題材收入統計。
+  - id: nvidia-photonics-release
+    name: NVIDIA 光學交換器生產與採用公告
+    url: https://nvidianews.nvidia.com/news/vera-rubin-full-production-agentic-ai-factory
+    type: industry_media
+    access: free
+    reachability: verified
+    checked: '2026-10-14'
+    segments: [networking, compute]
+    themes: [cpo-silicon-photonics]
+    notes: 一般 HTTPS GET 可讀 2026-05-31 生產與具名採用資訊；合作及客戶驗收不能混為一談。
+  - id: nvidia-power-roadmap
+    name: NVIDIA 800VDC 架構與 roadmap
+    url: https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-generation-of-ai-factories/
+    type: industry_media
+    access: free
+    reachability: verified
+    checked: '2026-10-14'
+    segments: [power, datacenter]
+    themes: [800vdc]
+    notes: 一般 HTTPS GET 可讀 2025-05-20 技術文章，2027 是平台計畫，不代表客戶現場已投產。
+  - id: delta-800vdc-release
+    name: 台達電 800VDC 展示與方案公告
+    url: https://www.deltaww.com/en-US/press/40334
+    type: industry_media
+    access: free
+    reachability: verified
+    checked: '2026-10-14'
+    segments: [power, thermal]
+    themes: [800vdc]
+    notes: 一般 HTTPS GET 可讀 2026-05-28 方案展示，未以原型展示認定終端客戶認證或產品收入。
   - name: Semiconductor Engineering 公開文章
     url: https://semiengineering.com/
     type: industry_media

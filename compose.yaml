@@ -33,7 +33,7 @@ services:
 
   initialize:
     <<: *app
-    command: [sh, -c, "alembic upgrade head && python -m app.import_map && python -m app.ingest --reclassify --only-stale"]
+    command: [sh, -c, "alembic upgrade head && python -m app.import_map && python -m app.ingest --reclassify --only-stale && python -m app.financial_indicators"]
     depends_on:
       db: {condition: service_healthy}
 

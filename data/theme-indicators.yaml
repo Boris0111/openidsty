@@ -1,0 +1,129 @@
+version: theme-indicators-v1
+# 定義與口徑，無觀測數字；自動來源的 URL／上限只在 sources.yaml 宣告。
+indicators:
+  - id: aaon-liquid-cooling-revenue
+    name: AAON 液冷產品單季收入
+    kind: direct
+    themes: [liquid-cooling]
+    entity: AAON
+    scope: BASX-branded liquid cooling sales，具名公司特定產品
+    limitations: 不代表全市場滲透率，也不代表其他冷板／CDU 供應商收入
+    unit: amount
+    currency: USD
+    frequency: quarterly
+    basis: quarterly
+    source_id: aaon-earnings-metrics
+    dataset: aaon-liquid-cooling-sales
+    measure: liquid-cooling-sales
+  - id: avc-monthly-revenue
+    name: 奇鋐單月總營收
+    kind: proxy
+    themes: [liquid-cooling]
+    entity: 3017.TW
+    scope: 公司整體單月營收
+    limitations: 包含氣冷等業務，不等於液冷產品收入
+    unit: amount
+    currency: TWD
+    frequency: monthly
+    basis: monthly
+    source_id: twse-revenue
+    dataset: tw-monthly-revenue
+    measure: revenue
+  - id: micron-quarterly-revenue
+    name: Micron 單季總營收
+    kind: proxy
+    themes: [hbm4]
+    entity: MU
+    scope: 公司整體單季營收，保留原財報起迄
+    limitations: 含不同 DRAM／NAND 業務，不等於 HBM4 收入
+    unit: amount
+    currency: USD
+    frequency: quarterly
+    basis: quarterly
+    source_id: sec-facts
+    dataset: sec-quarterly-revenue
+    measure: revenue
+  - id: landmark-monthly-revenue
+    name: 聯亞單月總營收
+    kind: proxy
+    themes: [cpo-silicon-photonics]
+    entity: 3081.TWO
+    scope: 公司整體單月營收
+    limitations: 不區分 CPO 與其他光通訊產品，不代表 CPO 訂單
+    unit: amount
+    currency: TWD
+    frequency: monthly
+    basis: monthly
+    source_id: tpex-revenue
+    dataset: tw-monthly-revenue
+    measure: revenue
+  - id: tsmc-2nm-wafer-revenue-share
+    name: 台積電 2nm 晶圓營收占比
+    kind: direct
+    themes: [advanced-node-2nm]
+    entity: 2330.TW
+    scope: 當季已實現 2nm 收入占晶圓營收的比例
+    limitations: 非公司全部收入占比、非市占率，也不表示每個客戶良率
+    unit: percent
+    currency: null
+    frequency: quarterly
+    basis: quarterly
+    source_id: tsmc-node-metrics
+    dataset: tsmc-node-revenue-share
+    measure: wafer-share
+  - id: tsmc-monthly-revenue
+    name: 台積電單月總營收
+    kind: proxy
+    themes: [advanced-node-2nm]
+    entity: 2330.TW
+    scope: 公司整體單月營收
+    limitations: 含不同製程與業務，不等於 2nm 收入
+    unit: amount
+    currency: TWD
+    frequency: monthly
+    basis: monthly
+    source_id: twse-revenue
+    dataset: tw-monthly-revenue
+    measure: revenue
+  - id: broadcom-quarterly-revenue
+    name: Broadcom 單季總營收
+    kind: proxy
+    themes: [custom-asic-vs-gpu]
+    entity: AVGO
+    scope: 公司整體單季營收，保留原財報起迄
+    limitations: 含軟體及網路業務，不等於純 ASIC 或 AI 半導體收入
+    unit: amount
+    currency: USD
+    frequency: quarterly
+    basis: quarterly
+    source_id: sec-facts
+    dataset: sec-quarterly-revenue
+    measure: revenue
+  - id: delta-monthly-revenue
+    name: 台達電單月總營收
+    kind: proxy
+    themes: [800vdc]
+    entity: 2308.TW
+    scope: 公司整體單月營收
+    limitations: 包含其他電源與業務，不等於 800VDC 商業收入
+    unit: amount
+    currency: TWD
+    frequency: monthly
+    basis: monthly
+    source_id: twse-revenue
+    dataset: tw-monthly-revenue
+    measure: revenue
+  - id: vertiv-quarterly-revenue
+    name: Vertiv 單季總營收
+    kind: proxy
+    themes: [power-bottleneck]
+    entity: VRT
+    scope: 公司整體單季營收
+    limitations: 包含熱管理與服務，不等於純供電收入或瓶頸解除程度
+    unit: amount
+    currency: USD
+    frequency: quarterly
+    basis: quarterly
+    source_id: sec-facts
+    dataset: sec-quarterly-revenue
+    measure: revenue

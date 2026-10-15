@@ -1,4 +1,4 @@
-version: industry-rules-2026-10-08-v1
+version: industry-rules-2026-10-14-v2
 # 只匹配內容技術詞。名稱／代號使用另一組 aliases；來源範圍不是分類證據。
 segments:
   compute: {terms: [GPU, ASIC, AI accelerator, 運算晶片, 加速器晶片, 客製化晶片, 客製晶片]}
@@ -10,7 +10,7 @@ segments:
   power: {terms: [電源供應, 供電架構, 電力架構, 高功率電源, 電力需求, 供電瓶頸, 電網接入, power supply, power delivery, power grid, 800V, 800 V, 800VDC, 800 VDC, HVDC]}
   interconnect: {terms: [連接器, 高速線纜, 高速連接, connector, copper cable, twinax, PCIe, PCI Express]}
   networking: {terms: [CPO, silicon photonics, 矽光子, 光收發, 網路交換器, Ethernet, InfiniBand, 光通訊, optical interconnect]}
-  odm: {terms: [伺服器代工, 伺服器組裝, server ODM, AI伺服器, AI 伺服器, AI server, 機櫃出貨], context: [代工, 組裝, 出貨, 製造, ODM, assembly, shipments, manufacturing]}
+  odm: {terms: [伺服器代工, 伺服器組裝, server ODM, AI伺服器, AI 伺服器, AI server, 機櫃出貨], context: [伺服器代工, 伺服器組裝, 伺服器製造, 伺服器訂單, 伺服器出貨, 機櫃出貨, server ODM, server assembly, server manufacturing, server shipments, server orders]}
   datacenter: {terms: [資料中心, 數據中心, data center, data centre, datacenter, hyperscaler]}
   eda-ip: {terms: [EDA, 電子設計自動化, 半導體設計自動化, 矽智財, silicon IP, electronic design automation]}
   foundry: {terms: [晶圓代工, foundry, foundries, 2nm, 2 nm, 二奈米, 2奈米, 2 奈米, N2, wafer fabrication]}

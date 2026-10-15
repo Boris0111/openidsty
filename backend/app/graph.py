@@ -19,7 +19,7 @@ def industry_graph(session, layer):
 
 def impact_paths(session, seeds, max_depth=3):
     segments = {s.id:s for s in session.scalars(select(Segment))}
-    themes = {t.id:t.data['segments'] for t in session.scalars(select(Theme))}
+    themes = {t.id:t.data['segments'] for t in session.scalars(select(Theme).where(Theme.active.is_(True)))}
     results, visited = [], set(seeds)
     queue = deque((sid, [sid], 0) for sid in seeds if sid in segments)
     while queue:

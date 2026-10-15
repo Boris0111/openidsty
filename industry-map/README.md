@@ -199,9 +199,40 @@ milestones:                      # 必填，至少一筆
 
 必須包含 `## 狀態判定依據` 段落，寫明為何目前是這個狀態。其餘段落自由。
 
+### Optional 結構化判讀
+
+題材可在 frontmatter 新增 `assessment`。無此欄位的舊檔仍合法；有此欄位時，下面欄位必須齊備。判讀與研究均由此 Markdown 維護，匯入到 Theme JSON；事件與動態指標不自動改寫判讀。里程碑可新增集合內唯一、穩定 kebab-case `id`，供核對引用；日期仍是預期時間。
+
+| 欄位 | 規則 |
+|---|---|
+| summary | 非空文字，說明有條件結論及適用範圍 |
+| confidence | well-supported／inference／needs-verification，支持程度而非報酬機率 |
+| reviewed | 加引號的有效 YYYY-MM-DD，full 驗證須等於散文「查核日期」 |
+| evidence | 至少一筆；每筆 id 為集合內唯一 kebab-case，source_id 引用 sources.yaml canonical ID，url 為完整 HTTPS；excerpt／period 必須非空，published 是有效日日期或 null |
+| claims | 至少一筆；穩定唯一 id、statement、stance（supporting／counter）、confidence、至少一筆可解析 evidence_ids |
+| conditions／gaps | 非空文字陣列，conditions 至少一筆；gaps 可空，未取得反證需明示，不能杜撰 |
+| next_checks | 至少一筆，question／evidence_required 為非空文字 |
+| paths | 可空；每筆穩定唯一 id、mechanism、direction（positive／negative／mixed／unknown）、至少一筆 conditions 與 claim_ids，及連續有序 steps；傳導均為 inference |
+| milestone_reviews | 可空；每筆 milestone_id 引用 milestones 的 id 且不重複；state 為 unconfirmed／confirmed／contradicted，reviewed 為日日期、note 非空、evidence_ids 陣列；confirmed／contradicted 至少一筆證據，occurred 可空 |
+| change_reason | optional 非空文字；版本功能建立後，實質修改必須有原因，由匯入端核對 |
+
+steps 每步 `{from, to, type, via?}` 都引用既存環節。upstream／downstream 須有顯式關係；theme 的 via 必須為同時包含兩端的題材；sibling 的 via 必須為共同下游。前一步 to 必須等於下一步 from。結構通過不證明經濟因果；來源對象、成立條件、正負影響仍由研究查核。
+
+例如一筆證據可寫 `{id: product-sales, source_id: aaon-liquid-cooling-filing, url: "https://www.sec.gov/Archives/edgar/data/824142/000082414225000197/aaonq32025pressreleaseexs.htm", excerpt: "來源的必要摘錄", period: "2025 Q3", published: null}`。source_id 必須已登錄；未知期間寫明「原文未提供」而不補數字。此為欄位範例，不代表已驗證網址或業務事實。
+
+`--skip-prose` 可暫略散文查核基準比對，其餘判讀結構仍檢查；交付與匯入必須 full 通過。來源的 verified／runtime 成功只是網頁或擷取狀態，不表示論點剛被重新查核。詳細維護操作見 `docs/theme-assessments.md`。
+
 ---
 
 ## 來源註冊表
+
+### 題材指標定義
+
+`data/theme-indicators.yaml` 是獨立定義檔，最外層 version 文字與 indicators 陣列。每項有唯一 kebab-case id、name、themes（至少一筆可解析題材）、entity（衡量對象）、scope、limitations、source_id（canonical 來源）、dataset（穩定資料集識別）、measure、unit／currency、frequency 及 basis。文字欄位不得為空。
+
+kind 為 direct／proxy／background；unit 為 amount／percent，amount 需 USD／TWD，percent 的 currency 為 null。首輪 frequency 與 basis 都為 monthly 或 quarterly 且一致；measure 為 revenue／liquid-cooling-sales／wafer-share。proxy 的 entity 必須是地圖公司 ticker，direct 可衡量地圖外具名公司的特定產品。定義檔禁止 value／observations／period_start／period_end；動態數字保存在 DB，kpis／signals 繼續只寫要監測什麼。
+
+`python -m app.indicator_definitions`（在 backend 執行）驗證所有欄位、來源／題材／公司引用後才匯入；不因定義存在而宣稱已取得值。其具體升級與數值投影操作見 `docs/theme-indicators.md`。新定義匯入會更新目前關聯，不刪除未關聯的歷史觀測。
 
 `sources.yaml` 是一般 YAML，沒有 Markdown frontmatter 或散文。最外層依市場分組，目前使用 `tw`、`us`；市場表示研究入口的分類，不限制網站語言或其報導的公司國籍。第二層固定使用下列資料類型，其下為來源條目的陣列：
 
@@ -226,7 +257,7 @@ milestones:                      # 必填，至少一筆
 | `checked` | 是 | 最後實際查核日期，`YYYY-MM-DD`，加引號保留為字串 |
 | `segments` | 否 | 環節識別碼陣列，每筆須能解析；一般全市場申報入口可省略，不表示沒有覆蓋 |
 | `themes` | 否 | 題材識別碼陣列，每筆須能解析；設定涵蓋不表示已取得直接事件 |
-| `ingestion` | 否 | 自動擷取設定；省略等同 manual。`adapter` 可為 manual／tw／tsmc／delta／nvidia／microsoft／sec-submissions／sec-facts／rss／tpca／moea／census／eia；`url`、`fallback` 為 HTTPS；`max_pages` 1–200；`paged` 表示 RSS 支援頁碼；`kind` 為 tw 的 announcements／revenue／financials；`per_company` 將 SEC URL 的 `{cik}` 展開為有 CIK 的公司 |
+| `ingestion` | 否 | 自動擷取設定；省略等同 manual。`adapter` 可為 manual／tw／tsmc／delta／nvidia／microsoft／sec-submissions／sec-facts／rss／tpca／moea／census／eia／aaon-metrics／tsmc-metrics；`url`、`fallback` 為 HTTPS；`max_pages` 1–200；`paged` 表示 RSS 支援頁碼；`kind` 為 tw 的 announcements／revenue／financials；`per_company` 將 SEC URL 的 `{cik}` 展開為有 CIK 的公司；兩個指標 adapter 另有 `max_reports` 1–8、`history_days` 1–730，首次受限回補，其後核對最新兩季 |
 | `notes` | 否 | 說明免費內容邊界、查核方法／結果、未驗證原因及統計口徑；為維護者閱讀用文字 |
 
 下例可獨立解析；若加入既有檔案，只把條目併入既有 `us.filings` 陣列，**不要重複建立 `us:` 或 `filings:` 鍵**。名稱與 URL 的用途須人工確認，驗證器不會證明頁面真的免費或內容正確。

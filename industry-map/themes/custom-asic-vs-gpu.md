@@ -2,22 +2,97 @@
 theme: custom-asic-vs-gpu
 name_zh: 客製 ASIC 與通用 GPU 的路線競爭
 status: scaling
-segments: [compute, eda-ip, networking]
+segments:
+- compute
+- eda-ip
+- networking
 beneficiaries:
-  - "AVGO"
-  - "MRVL"
-  - "3661.TW"
-  - "3443.TW"
+- AVGO
+- MRVL
+- 3661.TW
+- 3443.TW
 milestones:
-  - date: 2026
-    event: 核對客製加速器的商業收入及客戶部署
-    evidence: Broadcom FY2026 Q3 財報量化 AI 半導體收入並說明客製加速器需求；自研部署占比另需雲端客戶揭露
-  - date: 2026-Q2
-    event: 待核實設計服務廠的新案歸屬與 tape-out
-    evidence: 具名專案公告、客戶確認及 NRE／量產收入；供應鏈傳聞與設計洽談不足以確認得標
-  - date: 2027
-    event: 比較特定工作負載下 GPU／ASIC 的採購與總成本
-    evidence: 同工作負載、軟體及利用率口徑的性能／能耗與具名採購組合；供應商毛利率不能代替客戶 TCO
+- date: 2026
+  event: 核對客製加速器的商業收入及客戶部署
+  evidence: Broadcom FY2026 Q3 財報量化 AI 半導體收入並說明客製加速器需求；自研部署占比另需雲端客戶揭露
+  id: custom-commercial-sales
+- date: 2026-Q2
+  event: 待核實設計服務廠的新案歸屬與 tape-out
+  evidence: 具名專案公告、客戶確認及 NRE／量產收入；供應鏈傳聞與設計洽談不足以確認得標
+  id: design-projects
+- date: 2027
+  event: 比較特定工作負載下 GPU／ASIC 的採購與總成本
+  evidence: 同工作負載、軟體及利用率口徑的性能／能耗與具名採購組合；供應商毛利率不能代替客戶 TCO
+  id: workload-tco
+assessment:
+  summary: Broadcom 量化已實現 AI 半導體收入並連結客製加速器需求，支持原放量基準；ASIC 與 GPU 可同時擴張，個別設計服務商得標及成本優勢仍待核對。
+  confidence: well-supported
+  evidence:
+  - id: broadcom-ai-revenue
+    source_id: broadcom-earnings-research
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-third-quarter-fiscal-year-2026-financial
+    excerpt: Q3 AI semiconductor revenue of $16.7 billion
+    period: Broadcom FY2026 Q3，截至 2026-08-02；包含網路
+    published: '2026-09-02'
+  - id: broadcom-custom-demand
+    source_id: broadcom-earnings-research
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-inc-announces-third-quarter-fiscal-year-2026-financial
+    excerpt: Demand for our custom AI accelerators and networking continues to be very strong.
+    period: Broadcom FY2026 Q3，管理層對客製加速器與網路的需求描述
+    published: '2026-09-02'
+  claims:
+  - id: commercial-custom-ai
+    statement: 量化 AI 半導體收入及客製加速器需求支持已有商業採購；收入包含網路，不宣稱全額是純 ASIC 收入。
+    stance: supporting
+    confidence: well-supported
+    evidence_ids:
+    - broadcom-ai-revenue
+    - broadcom-custom-demand
+  conditions:
+  - 相同工作負載下具有可核對的軟體、利用率及 TCO 優勢
+  - 客戶專案實際完成 tape-out 與量產採購
+  - 設計服務、NRE 與量產收入分開
+  gaps:
+  - 缺少各雲端 ASIC／GPU 實際採購分配與台廠具名得標資料
+  - 尚未取得同口徑專案取消或量產延後的反向證據
+  next_checks:
+  - question: 客製需求是否轉成具名專案與量產收入？
+    evidence_required: 客戶確認、NRE／量產收入與可比較工作負載成本
+  paths:
+  - id: accelerator-to-ip
+    steps:
+    - from: compute
+      to: eda-ip
+      type: upstream
+    mechanism: 新 ASIC 專案可能先產生 IP／EDA 需求，再進入量產。
+    direction: positive
+    conditions:
+    - 真實客戶專案啟動
+    - 供應商授權與設計收入可核對
+    claim_ids:
+    - commercial-custom-ai
+  reviewed: '2026-10-07'
+  change_reason: 首次將既有查核基準結構化，保留證據期間與未取得項目。
+  milestone_reviews:
+  - milestone_id: custom-commercial-sales
+    state: unconfirmed
+    reviewed: '2026-10-07'
+    note: AI 半導體收入已量化，但 ASIC／網路分項及客戶部署占比未完整取得。
+    evidence_ids:
+    - broadcom-ai-revenue
+    occurred: null
+  - milestone_id: design-projects
+    state: unconfirmed
+    reviewed: '2026-10-07'
+    note: 洽談或供應鏈傳聞不足以確認台廠得標與 tape-out。
+    evidence_ids: []
+    occurred: null
+  - milestone_id: workload-tco
+    state: unconfirmed
+    reviewed: '2026-10-07'
+    note: 須同工作負載、利用率、軟體與採購口徑。
+    evidence_ids: []
+    occurred: null
 ---
 
 ## 題材範圍

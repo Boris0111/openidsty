@@ -125,6 +125,30 @@ docker compose exec -T api python -m app.verify_runtime
 
 測試 fixtures 只用於離線測試，不會被 runtime 載入。整合驗收記錄見 [verification](docs/verification.md)。
 
+## 乾淨 checkout 與離線交付
+
+`.github/workflows/verify.yml` 在 push／PR 使用 Python 3.12、Node.js 24 與鎖定依賴，檢查地圖、驗證器、後端離線測試、前端型別／production build 與公開導覽。資料覆蓋頁必須存在於 Git；測試 `coverage` 產物只忽略根目錄及 frontend／backend／tests 的產物目錄，不能忽略 `frontend/app/coverage/`。
+
+在新的 checkout（不複製 `.env`、`.next` 或未追蹤檔）執行下列流程；不需要啟動 Docker 或外部資料來源。套件與 Chromium 首次安裝需要網路，測試本身使用離線回應。
+
+```powershell
+# repo 根目錄；先依「Python 3.12 離線測試環境」安裝 backend/requirements.txt
+$env:PYTHONUTF8 = '1'
+git ls-files --error-unmatch frontend/app/coverage/page.tsx
+.\.venv\Scripts\python.exe scripts/validate_map.py
+.\.venv\Scripts\python.exe tests/run_validator_tests.py
+cd backend
+..\.venv\Scripts\python.exe -m pytest tests -q
+cd ..\frontend
+npm.cmd ci
+npm.cmd run typecheck
+npm.cmd run build
+npx.cmd playwright install chromium
+npm.cmd run test:e2e:offline
+```
+
+離線 suite 使用獨立 config，啟動本次 build 於 `127.0.0.1:3011`，API_ORIGIN 指向不可用的本機位址；只在瀏覽器攔截必要 API。未知測試 API 會失敗，不借用現有 3010／8010 服務。回應檔僅位於 `frontend/tests/offline/`，正式 app／ingestion 不匯入，資料庫不載入。原 `npm.cmd run test:e2e` 仍只執行 live suite，需另行啟動真實服務；兩種驗證不可互相代替。P0 本機交付結果見 [本次驗收紀錄](docs/theme-assessments-verification.md)。
+
 ## 更新、備份與還原
 
 ```powershell
@@ -177,3 +201,5 @@ openspec.cmd validate refocus-industry-explorer --type change --strict
 ```
 
 新工作一律在此 repo；舊 `financeinfost` 只供參考。Codex 可用 `$openspec-propose`／`$openspec-apply-change`／`$openspec-archive-change`；歸檔須另行啟動。
+
+題材判讀與指標：研究維護見 [theme-assessments](docs/theme-assessments.md)，指標／來源更新見 [theme-indicators](docs/theme-indicators.md) 與 [metric-source-operations](docs/metric-source-operations.md)。版本修改／還原見 [theme-version-operations](docs/theme-version-operations.md)，此裝置關注見 [theme-watchlist](docs/theme-watchlist.md)。七題材實測與缺口見 [交付矩陣](docs/theme-delivery-matrix.md)，驗收結果見 [驗證紀錄](docs/theme-assessments-verification.md)。initialize 在 migration、研究及來源註冊後匯入指標設定與既有財報投影；新安裝不用等待下一個 hourly 才看見指標設定。

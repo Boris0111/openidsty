@@ -35,3 +35,32 @@ SEC 依 [官方存取規範](https://www.sec.gov/about/developer-resources) 要�
 IR 收錄的是法說日期與官方文件連結／正文節錄，不宣稱 PDF 或影片已轉錄。TSMC datePublished 的 1970 占位值不得採用。只有活動預告或部分季度遭封鎖會明示 preview／partial。主要公司來自官方 issuer，提及公司與地圖 inference 分開。
 
 `backend/tests/fixtures` 全是離線測試資料，runtime 不讀取該目錄。來源失敗時保留歷史資料與 last_success，last_attempt／error 另行更新；來源頁不 cache。
+
+## 單來源排查與恢復
+
+先讀 `/api/sources` 的實際 runtime 狀態，不能把 sources.yaml 的 verified 當成擷取成功。最後一次失敗另有 `data.last_error_kind` 與 `data.last_http_status`，既有失敗在下一次重試後取得此分類；欄位尚未存在時仍可讀 error。來源重新註冊保留診斷與歷史回補資訊，成功重試才清除該次失敗診斷。
+
+| 狀態／診斷 | 操作與結果判斷 |
+|---|---|
+| configuration_required／configuration | `.env` 填專案名稱與維護者實際 email 的 SEC_USER_AGENT；未提供就保留待設定，不使用 Git email 或假聯絡人 |
+| failed／http，403 | 記錄封鎖，稍後單來源重試；官方替代入口獨立宣告、獨立查核，不把原來源改成成功 |
+| failed／timeout 或 network | 核對 DNS／連線與實際端點，重試仍失敗保留原數據及最後成功時間 |
+| failed／parse | 回到 URL 檢查必要欄位、期間、登入或 JavaScript 外殼；HTTP 200 本身不是資料取得成功 |
+| partial | 核對 error、fetch_meta warnings 與取得範圍，不能宣稱完整回補 |
+
+在已初始化的服務上，`--no-deps` 避免單來源重試另啟動 initialize 或其他服務。每次 tools 容器會讀目前 `.env`；排程 worker 使用新設定前需重新建立該 worker，不需重置 API／DB／Prefect。
+
+```powershell
+# SEC 聯絡設定由維護者自行填入已忽略的 .env，不要提交或印出內容
+docker compose up -d --no-deps --force-recreate worker
+docker compose run --rm --no-deps ingestion python -m app.ingest --source sec-facts-nvda
+docker compose run --rm --no-deps ingestion python -m app.ingest --source ir-tsmc
+$sources = Invoke-RestMethod http://localhost:8010/api/sources
+$sources.sources | Where-Object id -eq 'ir-tsmc' | Select-Object id,status,last_attempt,last_success,new_count,error,data
+```
+
+確認 last_attempt 是本次、status／error 是真實結果，成功時再核對 last_success 及實際事件／財報內容；`new_count=0` 可以是重跑，但不能單獨證明成功。若回 skipped_overlap，原更新仍持有防重疊鎖，等該輪 finished_at 有值後再重試；不要清除 Prefect 歷史或停其他專案。網站保持唯讀，不開放公開觸發擷取。
+
+2026-10-14 P0 重試：SEC 仍缺真實聯絡設定；TSMC／NVIDIA IR 仍回 403。新 image 已重新核對三來源，JSON 診斷分別為 configuration 與 http／403；台達／微軟原成功保留。詳見 [驗收結果](theme-assessments-verification.md)。ODM 規則依 [12 筆真實核對](odm-classification-audit.md) 更新，重分類保留事件 identity／取得時間與既有財報；完整正文與已取得短摘錄不同，未取得的供應角色不能靠公司名稱補判。
+
+指標直接來源、受限發現範圍、重試與修訂核對見 [指標來源操作](metric-source-operations.md)；實際期別見 [live 矩陣](theme-indicator-live-matrix.md)。

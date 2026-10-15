@@ -9,6 +9,7 @@ from .connectors import OfficialHttp, source_definitions, fetch_source
 from .classify import classify_event, rules
 from .event_dates import normalize_dates
 from .industry_connectors import canonical_url
+from .source_diagnostics import failure_details
 
 def mentioned_companies(text,companies,primary):
     found=[]
@@ -34,7 +35,7 @@ def register_sources(session):
         if not row:
             row=Source(id=d['id'],status='not_run',new_count=0)
             session.add(row)
-        row.name=d['name']; row.url=d['url']; row.data=dict(d, **{k:v for k,v in (row.data or {}).items() if k in ('fetch_meta','backfill_meta','backfill_completed_at')})
+        row.name=d['name']; row.url=d['url']; row.data=dict(d, **{k:v for k,v in (row.data or {}).items() if k in ('fetch_meta','backfill_meta','backfill_completed_at','last_error_kind','last_http_status')})
         if d['adapter']=='manual': row.status='manual'
     session.commit()
     return definitions
@@ -104,6 +105,7 @@ def ingest_one(session,definition,http,companies,fetcher=fetch_source):
         warnings=list(dict.fromkeys(w for e in events for w in e['raw'].get('adapter_warnings',[])))
         source.status='partial' if warnings else 'success'
         source.error='；'.join(warnings)[:1200] if warnings else None
+        source.data=dict(source.data,last_error_kind='partial' if warnings else None,last_http_status=None)
         source.last_success=now(); source.new_count=count
         meta=definition.get('_fetch_meta')
         if meta:
@@ -116,7 +118,9 @@ def ingest_one(session,definition,http,companies,fetcher=fetch_source):
     except Exception as exc:
         session.rollback()
         source=session.get(Source,sid)
-        source.status='configuration_required' if 'SEC_USER_AGENT' in str(exc) else 'failed'
+        details=failure_details(exc)
+        source.status='configuration_required' if details['last_error_kind']=='configuration' else 'failed'
+        source.data=dict(source.data,**details)
         source.error=f'{type(exc).__name__}: {str(exc)}'[:1200]
         source.new_count=0
         session.commit()
@@ -143,7 +147,13 @@ def run_ingestion(only=None,backfill_days=None):
             return {'status':'skipped_overlap'}
         with Session() as session:
             definitions=register_sources(session)
+            from .indicator_definitions import import_definitions
+            from .financial_indicators import project_financials
+            from .metric_ingest import ingest_metric_source
+            import_definitions(session);session.commit()
             definitions=[d for d in definitions if d['adapter']!='manual']
+            # Preserve serial old-source ingestion, then add metrics under the same lock.
+            definitions.sort(key=lambda d:d['adapter'] in ('aaon-metrics','tsmc-metrics'))
             if only:
                 definitions=[d for d in definitions if d['id'] in only]
                 if not definitions:
@@ -156,8 +166,18 @@ def run_ingestion(only=None,backfill_days=None):
                     source=session.get(Source,d['id'])
                     d['_backfill']=backfill_days is not None or not source.data.get('backfill_completed_at')
                     d['_backfill_days']=backfill_days or 90
-                    results[d['id']]=ingest_one(session,d,http,companies)
+                    d['_requested_backfill_days']=backfill_days
+                    if d['adapter'] in ('aaon-metrics','tsmc-metrics'):
+                        results[d['id']]=ingest_metric_source(session,d,http)
+                    else:
+                        results[d['id']]=ingest_one(session,d,http,companies)
                     print(json.dumps({'source':d['id'],**results[d['id']]},ensure_ascii=False),flush=True)
+                try:
+                    count=project_financials(session);session.commit()
+                    results['financial-indicator-projection']={'status':'success','new_count':count,'error':None}
+                except Exception as exc:
+                    session.rollback()
+                    results['financial-indicator-projection']={'status':'failed','new_count':0,'error':f'{type(exc).__name__}: {exc}'[:1200]}
                 run.finished_at=now(); run.results=results; session.commit()
             finally:
                 http.close()

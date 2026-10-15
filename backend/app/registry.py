@@ -3,6 +3,10 @@ from pathlib import Path
 import yaml
 from .config import MAP_DIR
 
+def canonical_sources(path: Path = MAP_DIR / 'sources.yaml'):
+    registry = yaml.safe_load(path.read_text(encoding='utf-8'))
+    return [dict(entry, market=market) for market, groups in registry.items() for entries in groups.values() for entry in entries]
+
 def source_definitions(companies, path: Path = MAP_DIR / 'sources.yaml'):
     registry = yaml.safe_load(path.read_text(encoding='utf-8'))
     definitions = []

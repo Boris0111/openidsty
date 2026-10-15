@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest, context: {params: Promise<{path: string[]}>}) {
   const {path} = await context.params;
-  const allowed = ['industries','segments','themes','search','coverage','companies','compare','events','sources','health'];
+  const allowed = ['industries','segments','themes','theme-updates','search','coverage','companies','compare','events','sources','health'];
   if (!allowed.includes(path[0])) return Response.json({detail:'找不到 API'}, {status:404});
   try {
     const origin = process.env.API_ORIGIN || 'http://127.0.0.1:8010';

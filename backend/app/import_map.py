@@ -5,7 +5,7 @@ import sys
 import re
 from pathlib import Path
 import yaml
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select,update
 from .config import ROOT, MAP_DIR, DATA_DIR
 from .models import Company, Segment, Theme, Role, Relation
 
@@ -33,7 +33,7 @@ def validate_research(data, tickers):
         if r['review_status'] == 'confirmed' and r['evidence'] == 'inference':
             raise ValueError('推論證據不得直接升格為已確認關係')
 
-def import_map(session, map_dir: Path = MAP_DIR, research_path: Path = DATA_DIR / 'company-research.yaml'):
+def _import_map(session, map_dir: Path, research_path: Path):
     result = subprocess.run([sys.executable, '-X', 'utf8', str(ROOT/'scripts/validate_map.py'), '--map-dir', str(map_dir)], capture_output=True, text=True, encoding='utf-8')
     if result.returncode:
         raise ValueError(result.stdout + result.stderr)
@@ -41,12 +41,21 @@ def import_map(session, map_dir: Path = MAP_DIR, research_path: Path = DATA_DIR 
     research = yaml.safe_load(research_path.read_text(encoding='utf-8')) if research_path.exists() else {}
     tickers = {c['ticker'] for d, _ in docs for c in d['companies']}
     validate_research(research, tickers)
+    from .assessment_versions import prepare_version
+    theme_docs=[]
+    for p in sorted((map_dir/'themes').glob('*.md')):
+        d,prose=read_doc(p)
+        checked=re.search(r'查核日期[：:]\s*(\d{4}-\d{2}-\d{2})',prose)
+        checked=checked[1] if checked else None
+        session.scalar(select(Theme).where(Theme.id==d['theme']).with_for_update())
+        theme_docs.append((d,prose,checked,prepare_version(session,d['theme'],d,checked)))
     for d, prose in docs:
         session.merge(Segment(id=d['segment'], layer=d['layer'], name=d['name_zh'], position=d['position'], data=d, prose=prose))
-    for p in sorted((map_dir/'themes').glob('*.md')):
-        d, prose = read_doc(p)
-        checked = re.search(r'查核日期[：:]\s*(\d{4}-\d{2}-\d{2})', prose)
-        session.merge(Theme(id=d['theme'], data=d, prose=prose, checked=checked[1] if checked else None))
+    for d,prose,checked,version in theme_docs:
+        session.merge(Theme(id=d['theme'],data=d,prose=prose,checked=checked,active=True))
+    session.flush()
+    for _,_,_,version in theme_docs:
+        if version:session.add(version)
     session.flush()
     for d, _ in docs:
         for c in d['companies']:
@@ -69,11 +78,20 @@ def import_map(session, map_dir: Path = MAP_DIR, research_path: Path = DATA_DIR 
     # Remove stale structure, while keeping companies referenced by historical events.
     session.execute(delete(Segment).where(Segment.id.not_in([d['segment'] for d, _ in docs])))
     theme_ids = [read_doc(p)[0]['theme'] for p in (map_dir/'themes').glob('*.md')]
-    session.execute(delete(Theme).where(Theme.id.not_in(theme_ids)))
-    session.commit()
+    session.execute(update(Theme).where(Theme.id.not_in(theme_ids)).values(active=False))
     return {'segments': len(docs), 'companies': len(tickers), 'relations': len(research.get('relations', []))}
 
+def import_map(session,map_dir:Path=MAP_DIR,research_path:Path=DATA_DIR/'company-research.yaml'):
+    try:
+        result=_import_map(session,map_dir,research_path);session.commit();return result
+    except Exception:
+        session.rollback();raise
+
 if __name__ == '__main__':
-    from .db import Session
-    with Session() as session:
-        print(json.dumps(import_map(session), ensure_ascii=False))
+    from .db import Session,engine
+    from .ingest import ingestion_lock
+    with ingestion_lock(engine) as acquired:
+        if not acquired:print(json.dumps({'status':'skipped_overlap'}))
+        else:
+            with Session() as session:
+                print(json.dumps(import_map(session),ensure_ascii=False))
