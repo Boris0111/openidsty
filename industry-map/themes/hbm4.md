@@ -102,6 +102,29 @@ assessment:
     note: 需晶圓配置與其他 DRAM 供給／價格交叉核對。
     evidence_ids: []
     occurred: null
+technical-profile:
+  product-boundary: HBM DRAM 堆疊、base die、封裝與主機介面分層；UCIe 不等於 HBM 介面規範。
+  adoption-conditions:
+  - 須同時確認平台指定的堆疊、功耗／散熱、base die、共同封裝及客戶認證。
+  - 不同世代及堆疊高度的認證不能互相代用，供應商分配以同口徑收入與出貨核對。
+  bottlenecks:
+  - 堆疊與共同封裝良率、散熱、測試及產能會共同限制可交付數量。
+  substitution-limits:
+  - 不同廠商與世代並非不經驗證即可替換；MOU 或整體 HBM 市佔不能證明特定 HBM4 平台份額。
+  claims:
+  - id: base-die-planning
+    statement: SK hynix 與 TSMC 的 2024 合作公告交代 HBM4 base die 與封裝合作計畫；本段僅支持分工與計畫。
+    confidence: well-supported
+    evidence:
+    - source-id: skhynix-hbm-technical
+      url: https://news.skhynix.com/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/
+      locator: 2024-04-19 MOU／base die and CoWoS
+      read-scope: 已讀指定公開段落；未取得客戶設計、認證或量產測試文件。
+  evidence-gaps:
+  - 未取得 JEDEC 個別標準全文、逐平台堆疊／介面與認證資料；商業化依據仍引用原 assessment 的較新財報，不能由 2024 計畫取代。
+  assessment-claim-ids:
+  - commercial-hbm4
+  reviewed: '2026-10-16'
 ---
 
 ## 題材範圍

@@ -1,0 +1,52 @@
+{
+  "reference": "2026-10-15T16:00:00+00:00",
+  "fingerprints_preserved": true,
+  "tokens_exactly_preserved": true,
+  "coverage_metrics_preserved": true,
+  "samples_preserved": true,
+  "counts_before": {
+    "companies": 95,
+    "indicators": 9,
+    "ingestion_runs": 119,
+    "segments": 17,
+    "sources": 53,
+    "themes": 7,
+    "events": 2915,
+    "financials": 147,
+    "indicator_observations": 11,
+    "relations": 5,
+    "roles": 100,
+    "theme_assessment_versions": 7,
+    "theme_indicators": 9,
+    "event_segments": 1420,
+    "event_themes": 225
+  },
+  "counts_after": {
+    "companies": 95,
+    "indicators": 9,
+    "ingestion_runs": 119,
+    "segments": 17,
+    "sources": 73,
+    "themes": 7,
+    "events": 2915,
+    "financials": 147,
+    "indicator_observations": 11,
+    "relations": 5,
+    "roles": 100,
+    "technical_documents": 8,
+    "theme_assessment_versions": 7,
+    "theme_indicators": 9,
+    "event_segments": 1420,
+    "event_themes": 225,
+    "technical_observations": 8,
+    "technical_reviews": 8
+  },
+  "sql_counts_before": {
+    "coverage": 76,
+    "updates": 116
+  },
+  "sql_counts_after": {
+    "coverage": 20,
+    "updates": 7
+  }
+}

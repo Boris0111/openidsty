@@ -38,6 +38,68 @@ kpis:
 signals:
   - 供電架構世代轉換的規格定案
   - 備援電池模組規格變動
+downstream-relations:
+  odm:
+    kind: supply
+    summary: 電源與供電架構至系統組裝與機櫃整合：PSU／power shelf、板級轉換與備援等不同供電子系統。
+    items:
+    - PSU／power shelf、板級轉換與備援等不同供電子系統
+    dependencies:
+    - AC／DC 配電、控制、保護及負載瞬變
+    conditions:
+    - 所選拓樸與額定／瞬態負載、安全及整機驗證相容
+    confidence: inference
+    evidence: []
+    gaps:
+    - 未取得指定平台 PSU、BBU、DC/DC 的負載規範、冗餘及保護協調驗證，不把各子系統收入直接相加。
+    reviewed: '2026-10-16'
+  datacenter:
+    kind: supply
+    summary: 電源與供電架構至資料中心與雲端業者：機櫃供電、配電與備援整合所需設備。
+    items:
+    - 機櫃供電、配電與備援整合所需設備
+    dependencies:
+    - 設施供電、UPS／BBU 責任、接地及保護協調
+    conditions:
+    - 實際場址通過供電與備援驗收且有設備採購
+    confidence: inference
+    evidence: []
+    gaps:
+    - 尚缺場址單線圖、備援時數、認證與驗收資料；功率需求成長不等於特定供應商已取得訂單。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: PSU／power shelf 處理系統供電，板端 DC/DC 供晶片所需電壓；BBU、電容與設施 UPS／儲能依位置與時間尺度分工。800VDC
+    為架構，並非 GPU 工作電壓。
+  adoption-conditions:
+  - 採用前需確認轉換位置、負載曲線、隔離／過流保護、接地、插拔維修及既有設施相容。
+  - 逐案核對峰值與瞬態、備援目標及實際場址驗收；原型與合作名單不足以證明量產。
+  bottlenecks:
+  - 較少轉換級數仍須滿足故障隔離與保護協調，不能只比較元件效率峰值。
+  - 不同時間尺度的負載變動需要不同儲能安排；電壓提高本身不能消除波動。
+  substitution-limits:
+  - 集中 AC/DC 轉換會改變 PSU 與設施設備的收入位置，不能把所有原有供電元件視為等比例受惠。
+  - BBU、UPS 與設施儲能的功能與持續時間不能直接互替；安全條文及認證須按場址另查。
+  claims:
+  - id: conversion-boundary
+    statement: NVIDIA 公開架構將 AC/DC 轉換位置與機櫃內 DC/DC 分開，屬廠商架構說明及計畫。
+    confidence: well-supported
+    evidence:
+    - source-id: nvidia-power-roadmap
+      url: https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-generation-of-ai-factories/
+      locator: Grid to power room／IT rack implementation
+      read-scope: 已讀指定公開段落，未取得完整設計／認證檔
+  - id: storage-timescales
+    statement: NVIDIA 生態系文章把負載波動與多時間尺度儲能另列；不是電壓提高就完成解決。
+    confidence: well-supported
+    evidence:
+    - source-id: nvidia-power-roadmap
+      url: https://developer.nvidia.com/blog/building-the-800-vdc-ecosystem-for-efficient-scalable-ai-factories/
+      locator: Reducing the swings with multi-timescale energy storage
+      read-scope: 已讀指定公開段落，未取得完整設計／認證檔
+  evidence-gaps:
+  - 未取得具名客戶的完整單線圖、瞬態負載規格與保護協調／安全認證報告。
+  - ORv3 BBU Shelf rev1.1 本機 GET 403，未以其索引或舊電壓規格核實 800VDC 認證。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

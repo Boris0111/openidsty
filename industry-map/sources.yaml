@@ -529,3 +529,253 @@ us:
       max_pages: 3
     themes:
     - power-bottleneck
+global:
+  technical-documents:
+  - id: ocp-cold-plate
+    name: OCP 冷板與液冷公開技術文件
+    url: https://www.opencompute.org/projects/cooling-environments/cold-plate/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal, interconnect, odm, datacenter]
+    themes: [liquid-cooling]
+    notes: 已讀公開 Scope、Active Workstreams 與 Accepted Contributions；個別文件須分別查核，不能把索引成功當全文已讀。目前人工核對，待指定文件 parser 驗證後才啟用監測。
+    ingestion:
+      adapter: technical-documents
+      document-ids:
+      - ocp-cold-plate-requirements
+      allowed-hosts:
+      - www.opencompute.org
+      max-pages: 2
+      max-documents: 10
+      html-bytes: 2097152
+      document-bytes: 15728640
+      timeout-seconds: 20
+      interval-hours: 24
+  - id: ocp-rack-power
+    name: OCP 機櫃與電力公開技術文件
+    url: https://www.opencompute.org/projects/rack-and-power/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [power, interconnect, odm, datacenter, power-discrete]
+    themes: [800vdc, power-bottleneck]
+    notes: 已讀公開 Scope 與專案介紹；機櫃供電轉換、儲能、控制及機構支撐分開，尚未據索引核實特定規格或客戶採用。
+  - id: oif-technical
+    name: OIF 介面協議與公開技術文件
+    url: https://www.oiforum.com/technical-work/implementation-agreements-ias/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [networking, interconnect, advanced-packaging]
+    themes: [cpo-silicon-photonics]
+    notes: 已讀官方 IA／Informative 分類及版本索引；CMIS 與 CPO 等文件須逐份核對版號、章節及可讀性，不能把 framework 當 normative IA。目前人工核對。
+    ingestion:
+      adapter: technical-documents
+      document-ids:
+      - oif-cpo-module
+      - oif-cmis
+      allowed-hosts:
+      - www.oiforum.com
+      max-pages: 2
+      max-documents: 10
+      html-bytes: 2097152
+      document-bytes: 15728640
+      timeout-seconds: 20
+      interval-hours: 24
+  - id: ucie-public
+    name: UCIe 公開規格介紹
+    url: https://www.uciexpress.org/specifications
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [advanced-packaging, compute, test, eda-ip]
+    themes: [custom-asic-vs-gpu]
+    notes: 已讀公開 1.0／1.1／2.0／3.0 介紹；全文為 REQUEST，未送申請、未取得規格全文。可引用者只有公開介紹，不能宣稱核對合規條文。
+  - id: ieee-irds-public
+    name: IEEE IRDS 公開路線圖入口
+    url: https://irds.ieee.org/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [compute, memory, foundry, materials, equipment, test, eda-ip, advanced-packaging]
+    themes: [advanced-node-2nm, hbm4]
+    notes: 已讀 What is the IRDS 與路線圖目的；屬預測與研究協調，未讀各 edition／chapter 全文，不能當強制規範或量產承諾。
+  - id: jedec-public
+    name: JEDEC 公開文件搜尋入口
+    url: https://www.jedec.org/standards-documents
+    type: technical-documents
+    access: free
+    reachability: unverified
+    checked: '2026-10-16'
+    segments: [memory, advanced-packaging, substrate]
+    themes: [hbm4]
+    notes: web 工具回報 robots 拒絕；本機 HTTP GET 200 已讀 Standards & Documents Search 的公開分類、搜尋與下載導覽。未取得個別規格全文；不登入、不使用付費內容，也不將搜尋頁當成規格條文。
+  - id: tsmc-public-technology
+    name: 台積電公開製程與封裝技術
+    url: https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/3DFabric.htm
+    segments:
+    - advanced-packaging
+    - foundry
+    - compute
+    - substrate
+    themes:
+    - advanced-node-2nm
+    - custom-asic-vs-gpu
+    notes: 已讀公開 3DFabric 與 CoWoS-S/R/L 技術說明；PDK、良率、客戶設計及成本資料未公開，不把廠商能力介紹當客戶採用。
+    reachability: verified
+    type: technical-documents
+    access: free
+    checked: '2026-10-16'
+  - id: nvidia-networking-technical
+    name: NVIDIA 公開網路架構與介面介紹
+    url: https://www.nvidia.com/en-us/networking/
+    segments:
+    - networking
+    - compute
+    - interconnect
+    - odm
+    themes:
+    - cpo-silicon-photonics
+    - custom-asic-vs-gpu
+    notes: 已讀 scale-up／scale-out／scale-across 分工與 NVLink 介紹；產品宣稱、preliminary 規格及客戶實測分開，不引用行銷比較數字當一般保證。
+    reachability: verified
+    type: technical-documents
+    access: free
+    checked: '2026-10-16'
+  - id: kingslide-mechanical
+    name: 川湖 MGX 機構滑軌公開說明
+    url: https://www.kingslide.com/blog/post/news/identifier/company-news-018-jp/
+    segments:
+    - interconnect
+    - odm
+    themes: []
+    notes: 官方搜尋摘要可讀 2026-05-29 rail solutions 說明；全文 GET 逾時／502，未重新核對完整型錄、承重或料號。僅以摘要辨認機構角色，不推定高壓母排或快接頭供應。
+    reachability: unverified
+    type: technical-documents
+    access: free
+    checked: '2026-10-16'
+  - id: skhynix-hbm-technical
+    name: SK hynix HBM 製程合作公開說明
+    url: https://news.skhynix.com/en/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - memory
+    - foundry
+    - advanced-packaging
+    themes:
+    - hbm4
+    notes: 2024-04-19 合作公告已讀；計畫、base die 與 DRAM 分工不等於目前全部客戶量產驗證。
+  - id: ibiden-substrate-technical
+    name: Ibiden IC 封裝載板產品說明
+    url: https://www.ibiden.com/product/electronics/merchandise/fliptippkg/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - substrate
+    - advanced-packaging
+    themes: []
+    notes: 已讀 IC package substrate、SAP 與 micro-via 能力說明；沒有客戶良率或成本。
+  - id: entegris-materials-technical
+    name: Entegris 材料與污染控制說明
+    url: https://www.entegris.com/en/home/our-science/by-solution-area/contamination-control.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - materials
+    - foundry
+    - advanced-packaging
+    themes:
+    - advanced-node-2nm
+    notes: 已讀 purification／filtration 與 contamination control 範圍；廠商能力描述不等於指定客戶材料認證。
+  - id: asml-euv-technical
+    name: ASML EUV／High-NA 產品說明
+    url: https://www.asml.com/en/products/euv-lithography-systems
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - equipment
+    - foundry
+    themes:
+    - advanced-node-2nm
+    notes: 已讀 NXE／EXE 及 numerical aperture 分工；預期時程不是每家晶圓廠已驗收證據。
+  - id: teradyne-slt-technical
+    name: Teradyne 系統層測試公開說明
+    url: https://www.teradyne.com/2026/08/24/slt-in-the-ai-era-validating-reliability-at-scale/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - test
+    - advanced-packaging
+    themes: []
+    notes: 已讀 SLT 與 ATE 互補、電力／熱與互連失效範圍；未核實所有廠商客戶或收入。
+  - id: m31-ip-technical
+    name: M31 公開 IP 產品入口
+    url: https://www.m31tech.com/products/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - eda-ip
+    - compute
+    - networking
+    themes:
+    - custom-asic-vs-gpu
+    notes: 公開產品入口可讀；本輪不據入口推定特定 PDK 的 silicon-proven 狀態或授權條款。
+  - id: infineon-power-technical
+    name: Infineon AI 供電技術分工
+    url: https://www.infineon.com/technology/ai/we-power-ai
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - power-discrete
+    - power
+    themes:
+    - 800vdc
+    notes: 已讀 Si／SiC／GaN hybrid approach 段落；不當成所有電壓區間的替代保證。
+  - id: supermicro-rack-technical
+    name: Supermicro 整櫃與液冷技術說明
+    url: https://www.supermicro.com/en/solutions/liquid-cooling
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - odm
+    - thermal
+    - datacenter
+    themes:
+    - liquid-cooling
+    notes: 已讀 system／rack、in-row、site infrastructure 範圍及組件清單；原廠名目能力不等於客戶場址驗收。
+  - id: iea-energy-ai-technical
+    name: IEA 能源與 AI 公開研究摘要
+    url: https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - datacenter
+    - power
+    themes:
+    - power-bottleneck
+    notes: 已讀 grid bottlenecks、connection queues 與系統彈性建議；摘要非個別場址併網證明，也未核讀報告全文。

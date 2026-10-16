@@ -1,0 +1,629 @@
+{
+  "as_of": "2026-10-15T19:34:39.527737+00:00",
+  "origin": "http://127.0.0.1:3013",
+  "host": "Windows-11-10.0.26200-SP0",
+  "readers": 10,
+  "warmup_seconds": 60,
+  "measured_seconds": 300.1667188999709,
+  "requested_seconds": 300,
+  "acceptance_run": true,
+  "segment_ids": [
+    "memory",
+    "substrate",
+    "pcb",
+    "interconnect",
+    "power",
+    "compute",
+    "networking",
+    "thermal",
+    "advanced-packaging",
+    "odm",
+    "datacenter",
+    "equipment",
+    "eda-ip",
+    "materials",
+    "power-discrete",
+    "foundry",
+    "test"
+  ],
+  "theme_ids": [
+    "800vdc",
+    "advanced-node-2nm",
+    "cpo-silicon-photonics",
+    "custom-asic-vs-gpu",
+    "hbm4",
+    "liquid-cooling",
+    "power-bottleneck"
+  ],
+  "workload": [
+    [
+      "graph",
+      "/api/industries/ai-server/graph"
+    ],
+    [
+      "graph",
+      "/api/industries/semiconductor/graph"
+    ],
+    [
+      "segment",
+      "/api/segments/memory"
+    ],
+    [
+      "segment",
+      "/api/segments/substrate"
+    ],
+    [
+      "segment",
+      "/api/segments/pcb"
+    ],
+    [
+      "segment",
+      "/api/segments/interconnect"
+    ],
+    [
+      "segment",
+      "/api/segments/power"
+    ],
+    [
+      "segment",
+      "/api/segments/compute"
+    ],
+    [
+      "segment",
+      "/api/segments/networking"
+    ],
+    [
+      "segment",
+      "/api/segments/thermal"
+    ],
+    [
+      "segment",
+      "/api/segments/advanced-packaging"
+    ],
+    [
+      "segment",
+      "/api/segments/odm"
+    ],
+    [
+      "segment",
+      "/api/segments/datacenter"
+    ],
+    [
+      "segment",
+      "/api/segments/equipment"
+    ],
+    [
+      "segment",
+      "/api/segments/eda-ip"
+    ],
+    [
+      "segment",
+      "/api/segments/materials"
+    ],
+    [
+      "segment",
+      "/api/segments/power-discrete"
+    ],
+    [
+      "segment",
+      "/api/segments/foundry"
+    ],
+    [
+      "segment",
+      "/api/segments/test"
+    ],
+    [
+      "theme",
+      "/api/themes/800vdc"
+    ],
+    [
+      "assessment",
+      "/api/themes/800vdc/assessment"
+    ],
+    [
+      "indicators",
+      "/api/themes/800vdc/indicators"
+    ],
+    [
+      "theme",
+      "/api/themes/advanced-node-2nm"
+    ],
+    [
+      "assessment",
+      "/api/themes/advanced-node-2nm/assessment"
+    ],
+    [
+      "indicators",
+      "/api/themes/advanced-node-2nm/indicators"
+    ],
+    [
+      "theme",
+      "/api/themes/cpo-silicon-photonics"
+    ],
+    [
+      "assessment",
+      "/api/themes/cpo-silicon-photonics/assessment"
+    ],
+    [
+      "indicators",
+      "/api/themes/cpo-silicon-photonics/indicators"
+    ],
+    [
+      "theme",
+      "/api/themes/custom-asic-vs-gpu"
+    ],
+    [
+      "assessment",
+      "/api/themes/custom-asic-vs-gpu/assessment"
+    ],
+    [
+      "indicators",
+      "/api/themes/custom-asic-vs-gpu/indicators"
+    ],
+    [
+      "theme",
+      "/api/themes/hbm4"
+    ],
+    [
+      "assessment",
+      "/api/themes/hbm4/assessment"
+    ],
+    [
+      "indicators",
+      "/api/themes/hbm4/indicators"
+    ],
+    [
+      "theme",
+      "/api/themes/liquid-cooling"
+    ],
+    [
+      "assessment",
+      "/api/themes/liquid-cooling/assessment"
+    ],
+    [
+      "indicators",
+      "/api/themes/liquid-cooling/indicators"
+    ],
+    [
+      "theme",
+      "/api/themes/power-bottleneck"
+    ],
+    [
+      "assessment",
+      "/api/themes/power-bottleneck/assessment"
+    ],
+    [
+      "indicators",
+      "/api/themes/power-bottleneck/indicators"
+    ],
+    [
+      "updates",
+      "/api/theme-updates?ids=800vdc%2Cadvanced-node-2nm%2Ccpo-silicon-photonics%2Ccustom-asic-vs-gpu%2Chbm4%2Cliquid-cooling%2Cpower-bottleneck"
+    ],
+    [
+      "coverage",
+      "/api/coverage"
+    ]
+  ],
+  "cold": [
+    {
+      "category": "graph",
+      "path": "/api/industries/ai-server/graph",
+      "ms": 22.73850003257394,
+      "bytes": 23240,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "graph",
+      "path": "/api/industries/semiconductor/graph",
+      "ms": 19.65050003491342,
+      "bytes": 15215,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/memory",
+      "ms": 50.765000050887465,
+      "bytes": 28128,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/substrate",
+      "ms": 27.247800026088953,
+      "bytes": 27699,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/pcb",
+      "ms": 26.134599931538105,
+      "bytes": 24451,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/interconnect",
+      "ms": 28.19850016385317,
+      "bytes": 29009,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/power",
+      "ms": 31.473300186917186,
+      "bytes": 51328,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/compute",
+      "ms": 31.27370006404817,
+      "bytes": 43704,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/networking",
+      "ms": 30.89409996755421,
+      "bytes": 39885,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/thermal",
+      "ms": 50.649299984797835,
+      "bytes": 35486,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/advanced-packaging",
+      "ms": 30.63819999806583,
+      "bytes": 38950,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/odm",
+      "ms": 31.627600081264973,
+      "bytes": 46814,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/datacenter",
+      "ms": 31.94630006328225,
+      "bytes": 42020,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/equipment",
+      "ms": 28.889399953186512,
+      "bytes": 30634,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/eda-ip",
+      "ms": 26.395399821922183,
+      "bytes": 27096,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/materials",
+      "ms": 29.697399819269776,
+      "bytes": 32598,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/power-discrete",
+      "ms": 26.339299976825714,
+      "bytes": 25449,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/foundry",
+      "ms": 31.151399947702885,
+      "bytes": 33144,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "segment",
+      "path": "/api/segments/test",
+      "ms": 43.60529989935458,
+      "bytes": 26542,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "theme",
+      "path": "/api/themes/800vdc",
+      "ms": 57.83029994927347,
+      "bytes": 63843,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "assessment",
+      "path": "/api/themes/800vdc/assessment",
+      "ms": 55.10820006020367,
+      "bytes": 15536,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "indicators",
+      "path": "/api/themes/800vdc/indicators",
+      "ms": 44.50489999726415,
+      "bytes": 6181,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "theme",
+      "path": "/api/themes/advanced-node-2nm",
+      "ms": 32.94910001568496,
+      "bytes": 53929,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "assessment",
+      "path": "/api/themes/advanced-node-2nm/assessment",
+      "ms": 109.58490008488297,
+      "bytes": 8750,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "indicators",
+      "path": "/api/themes/advanced-node-2nm/indicators",
+      "ms": 29.261399991810322,
+      "bytes": 7232,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "theme",
+      "path": "/api/themes/cpo-silicon-photonics",
+      "ms": 46.57699982635677,
+      "bytes": 58138,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "assessment",
+      "path": "/api/themes/cpo-silicon-photonics/assessment",
+      "ms": 53.08729992248118,
+      "bytes": 19411,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "indicators",
+      "path": "/api/themes/cpo-silicon-photonics/indicators",
+      "ms": 22.800999926403165,
+      "bytes": 6207,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "theme",
+      "path": "/api/themes/custom-asic-vs-gpu",
+      "ms": 32.71390008740127,
+      "bytes": 65696,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "assessment",
+      "path": "/api/themes/custom-asic-vs-gpu/assessment",
+      "ms": 33.73349993489683,
+      "bytes": 5757,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "indicators",
+      "path": "/api/themes/custom-asic-vs-gpu/indicators",
+      "ms": 33.670400036498904,
+      "bytes": 1152,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "theme",
+      "path": "/api/themes/hbm4",
+      "ms": 26.318900054320693,
+      "bytes": 39188,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "assessment",
+      "path": "/api/themes/hbm4/assessment",
+      "ms": 30.996799934655428,
+      "bytes": 4902,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "indicators",
+      "path": "/api/themes/hbm4/indicators",
+      "ms": 36.15079983137548,
+      "bytes": 1099,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "theme",
+      "path": "/api/themes/liquid-cooling",
+      "ms": 29.05729995109141,
+      "bytes": 47979,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "assessment",
+      "path": "/api/themes/liquid-cooling/assessment",
+      "ms": 32.47670014388859,
+      "bytes": 10791,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "indicators",
+      "path": "/api/themes/liquid-cooling/indicators",
+      "ms": 31.754900002852082,
+      "bytes": 15854,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "theme",
+      "path": "/api/themes/power-bottleneck",
+      "ms": 24.89080000668764,
+      "bytes": 24557,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "assessment",
+      "path": "/api/themes/power-bottleneck/assessment",
+      "ms": 31.01020003668964,
+      "bytes": 3911,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "indicators",
+      "path": "/api/themes/power-bottleneck/indicators",
+      "ms": 33.31249998882413,
+      "bytes": 1122,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "updates",
+      "path": "/api/theme-updates?ids=800vdc%2Cadvanced-node-2nm%2Ccpo-silicon-photonics%2Ccustom-asic-vs-gpu%2Chbm4%2Cliquid-cooling%2Cpower-bottleneck",
+      "ms": 81.60839998163283,
+      "bytes": 7145,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "coverage",
+      "path": "/api/coverage",
+      "ms": 290.97629990428686,
+      "bytes": 349088,
+      "status": 200,
+      "error": null
+    }
+  ],
+  "summary": {
+    "graph": {
+      "samples": 544,
+      "errors": 0,
+      "p50_ms": 145.66150004975498,
+      "p95_ms": 225.0781999900937,
+      "p99_ms": 263.3732999674976,
+      "throughput": 1.8123261699152111,
+      "mean_bytes": 19227.5,
+      "target_ms": 500,
+      "passed": true
+    },
+    "segment": {
+      "samples": 4640,
+      "errors": 0,
+      "p50_ms": 232.74090001359582,
+      "p95_ms": 341.12969995476305,
+      "p99_ms": 404.45299982093275,
+      "throughput": 15.458076155159153,
+      "mean_bytes": 34286.78706896552,
+      "target_ms": 500,
+      "passed": true
+    },
+    "theme": {
+      "samples": 1908,
+      "errors": 0,
+      "p50_ms": 223.25850022025406,
+      "p95_ms": 332.915399922058,
+      "p99_ms": 387.59870012290776,
+      "throughput": 6.356467522423204,
+      "mean_bytes": 50467.235849056604,
+      "target_ms": 500,
+      "passed": true
+    },
+    "indicators": {
+      "samples": 1907,
+      "errors": 0,
+      "p50_ms": 230.1755000371486,
+      "p95_ms": 352.2272000554949,
+      "p99_ms": 422.79490013606846,
+      "throughput": 6.3531360404932125,
+      "mean_bytes": 5542.609858416361,
+      "target_ms": 500,
+      "passed": true
+    },
+    "assessment": {
+      "samples": 1906,
+      "errors": 0,
+      "p50_ms": 316.3368001114577,
+      "p95_ms": 441.0296999849379,
+      "p99_ms": 503.6912001669407,
+      "throughput": 6.349804558563221,
+      "mean_bytes": 9854.569779643232,
+      "target_ms": 500,
+      "passed": true
+    },
+    "updates": {
+      "samples": 272,
+      "errors": 0,
+      "p50_ms": 274.78220011107624,
+      "p95_ms": 372.9322000872344,
+      "p99_ms": 420.7673000637442,
+      "throughput": 0.9061630849576056,
+      "mean_bytes": 7145.0,
+      "target_ms": 500,
+      "passed": true
+    },
+    "coverage": {
+      "samples": 271,
+      "errors": 0,
+      "p50_ms": 696.4630000293255,
+      "p95_ms": 832.549599930644,
+      "p99_ms": 879.3368998449296,
+      "throughput": 0.9028316030276143,
+      "mean_bytes": 349088.0,
+      "target_ms": 1000,
+      "passed": true
+    }
+  },
+  "new_document_baseline": "N/A",
+  "node_version": "24.21.0",
+  "environment_match": true,
+  "eligible_for_final_acceptance": true
+}

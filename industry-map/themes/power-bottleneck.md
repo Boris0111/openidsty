@@ -97,6 +97,30 @@ assessment:
     note: 技術建議不足以證明正式標案採購。
     evidence_ids: []
     occurred: null
+technical-profile:
+  product-boundary: 電網併接、設施供電、機櫃電源與 IT 上線是不同交付節點；PPA 簽約不是即時可用電力。
+  adoption-conditions:
+  - 逐案核對許可、併網排程、備援、設備交付與實際 IT 上線容量。
+  - 負載彈性與儲能須符合電網及場址條件，技術建議尚需轉為採購與操作要求。
+  bottlenecks:
+  - 電網排隊、變壓器／開關設備及施工交付均可能限制部署；雲端總容量限制不能全歸因於電力。
+  substitution-limits:
+  - 效率改善或提高配電電壓不能自動代替新增併網容量；發電、儲能與 PPA 的時間及許可條件不同。
+  claims:
+  - id: grid-and-flexibility
+    statement: IEA 公開摘要討論電網瓶頸與負載彈性，屬跨案分析及建議，不能證明個別機房已獲許可。
+    confidence: well-supported
+    evidence:
+    - source-id: iea-energy-ai-technical
+      url: https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary
+      locator: Grid bottlenecks and flexibility
+      read-scope: 已讀指定公開段落；未取得客戶設計、認證或量產測試文件。
+  evidence-gaps:
+  - 缺少同案公用事業併網、許可、交付與上線 IT 容量串接紀錄；設備總收入與單案限制分開。
+  assessment-claim-ids:
+  - equipment-commercial-context
+  - capacity-not-resolved
+  reviewed: '2026-10-16'
 ---
 
 ## 題材範圍

@@ -97,6 +97,38 @@ assessment:
     note: 需同平台與距離口徑的採購及產品收入。
     evidence_ids: []
     occurred: null
+technical-profile:
+  product-boundary: 交換 ASIC、DSP、光引擎／模組、封裝與系統整合分層；CPO 是整合路線，CMIS 是管理介面。
+  adoption-conditions:
+  - 按 scale-up／scale-out／跨機房的距離、拓樸與通道預算確認適用性。
+  - 核對熱介面、測試點、管理能力、維修策略及系統互通，不能只比光引擎耗電。
+  bottlenecks:
+  - 共同封裝良率、光纖連接、散熱與可維修性會限制整機交付；模組介面存在不是客戶驗收證明。
+  substitution-limits:
+  - 銅纜、可插拔、LPO 與 CPO 需比較完整鏈路及維護成本；不能由單一 CPO 出貨推定全體光模組被替代。
+  claims:
+  - id: cpo-interface-scope
+    statement: OIF 的 3.2T CPO IA 定義特定模組範圍與熱／測試介面；不是所有網路範圍的通用採用保證。
+    confidence: well-supported
+    evidence:
+    - document-id: oif-cpo-module
+      version-id: module-01-0
+      locator: module-scope
+    - document-id: oif-cpo-module
+      version-id: module-01-0
+      locator: thermal-interface
+  - id: cmis-is-management
+    statement: CMIS 的 Purpose and Scope 處理管理互動；不能替代光學、電氣與系統互通測試。
+    confidence: well-supported
+    evidence:
+    - document-id: oif-cmis
+      version-id: revision-5-4
+      locator: management-scope
+  evidence-gaps:
+  - 尚未取得候選平台的完整通道、良率、維修／互通報告與分產品量化收入；只核讀所列章節。
+  assessment-claim-ids:
+  - commercial-cpo
+  reviewed: '2026-10-16'
 ---
 
 ## 題材範圍

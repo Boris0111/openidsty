@@ -29,7 +29,7 @@ test('來源失敗不產生未讀，未知日期只標新收錄且可回到三�
   current={...current,source_warnings:[{source_id:'failed',kind:'failed',message:'HTTP 403'}]};await page.getByRole('button',{name:'重新檢查更新'}).click();
   await expect(page.getByText('判讀無變更')).toBeVisible();await expect(page.getByText('指標無變更')).toBeVisible();await expect(page.getByText('候選資訊無變更')).toBeVisible();
   await expect(page.getByText('不代表新發生',{exact:false})).toBeVisible();
-  await page.getByText('來源取得警示（不計未讀）').focus();await page.keyboard.press('Enter');await expect(page.getByText('failed：failed')).toBeVisible();
+  await page.getByText('來源取得警示（不計未讀）').focus();await page.keyboard.press('Enter');await expect(page.getByText('來源：取得失敗')).toBeVisible();
   await expect(page.getByRole('link',{name:'判讀無變更'})).toHaveAttribute('href',/from_version=1#versions$/);
   await expect(page.getByRole('link',{name:'指標無變更'})).toHaveAttribute('href',/#indicators$/);
   await expect(page.getByRole('link',{name:'候選資訊無變更'})).toHaveAttribute('href',/#candidates$/);
@@ -51,6 +51,6 @@ for(const method of ['getItem','setItem'])test(`storage ${method} 被拒絕仍�
 test('含未知與部分損壞項目時有效關注仍保留，無效題材可移除',async({page})=>{
   await installOfflineApi(page);await page.addInitScript(k=>localStorage.setItem(k,JSON.stringify({theme_ids:['liquid-cooling','missing',123],seen:{'liquid-cooling':{version_id:1,indicator_token:'i1',candidate_token:'c1'},missing:{version_id:null,indicator_token:'',candidate_token:''}}})),key);
   await page.goto('/watchlist');await expect(page.getByRole('heading',{name:'液冷',exact:true})).toBeVisible();await expect(page.getByText('題材已不可用')).toBeVisible();
-  await page.locator('.watch-card').filter({has:page.getByRole('heading',{name:'missing',exact:true})}).getByRole('button',{name:'移除關注'}).click();
+  await page.locator('.watch-card').filter({has:page.getByRole('heading',{name:'無法取得的題材',exact:true})}).getByRole('button',{name:'移除關注'}).click();
   await expect(page.getByText('題材已不可用')).toHaveCount(0);await expect(page.getByRole('heading',{name:'液冷',exact:true})).toBeVisible();
 });

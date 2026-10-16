@@ -9,7 +9,7 @@ export const source: Source = {
 };
 export const event: InfoEvent = {
   id: 1, title: '離線樣本：液冷設備需求', body: '此資料僅用於瀏覽器流程測試。',
-  ticker: null, kind: 'industry_news', lifecycle: 'published', source_id: source.id,
+  ticker: null, kind: 'industry_news', lifecycle: 'published', source_id: source.id, source_name: source.name,
   published_at: '2026-10-08T00:00:00Z', published_precision: 'day', reported_at: null,
   activity_at: null, date_semantics: 'publication', period: null, basis: null, routine: false,
   rules_version: 'offline', segments: [{id: 'thermal', relevance: 'direct', evidence: [{term: '液冷', matched: '液冷', excerpt: '離線測試摘錄'}]}],
@@ -86,6 +86,8 @@ export async function installOfflineApi(page: Page) {
     else if (path === '/api/events') data = url.searchParams.get('date_from') === '2099-01-01' ? [] : [event];
     else if (path === '/api/events/1') data = {...event, source, impact: {confidence: 'inference', seeds: ['thermal'], paths: []}, raw: {offline: true}};
     else if (path === '/api/coverage') data = coverage;
+    else if (path === '/api/technical-documents') data = {as_of:'2026-10-16T00:00:00Z',items:[],total:0,limit:10,offset:0};
+    else if (path === '/api/themes/liquid-cooling/assessment/versions/1') data = {version_id:1,version_number:1,theme_id:theme.theme,reviewed:'2026-10-07',recorded_at:'2026-10-14T00:00:00Z',reason:'首次保存基準'};
     else if (path === '/api/sources') data = {sources: [source], last_run: null};
     else if (path === '/api/companies/2330.TW') data = company;
     else if (path === '/api/search') {

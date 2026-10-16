@@ -38,6 +38,83 @@ kpis:
 signals:
   - 新節點量產時程與良率進展
   - 資本支出指引與擴廠地點
+downstream-relations:
+  compute:
+    kind: supply
+    summary: 晶圓代工至運算晶片：運算晶片的晶圓製造服務與待封裝 die。
+    items:
+    - 運算晶片的晶圓製造服務與待封裝 die
+    dependencies:
+    - 製程 PDK、良率、產能及後段封裝匹配
+    conditions:
+    - 設計在目標節點完成 tape-out、量產驗證與產能承諾
+    confidence: inference
+    evidence: []
+    gaps:
+    - 缺少個別 GPU／ASIC 的良率、晶圓投入及交付份額，不能從節點名稱推定性能或訂單。
+    reviewed: '2026-10-16'
+  networking:
+    kind: supply
+    summary: 晶圓代工至網通與光通訊：網路 ASIC／DSP 等晶片的晶圓製造服務。
+    items:
+    - 網路 ASIC／DSP 等晶片的晶圓製造服務
+    dependencies:
+    - 高速介面、PDK、熱設計及封裝整合
+    conditions:
+    - 特定晶片設計、製程與客戶驗證條件成立
+    confidence: inference
+    evidence: []
+    gaps:
+    - 未取得具名交換器 ASIC／DSP 的代工節點、產能及良率，不把系統廠視為同一晶片設計角色。
+    reviewed: '2026-10-16'
+  test:
+    kind: supply
+    summary: 晶圓代工至測試與探針：晶圓及 die 交付測試的作業介面。
+    items:
+    - 晶圓及 die 交付測試的作業介面
+    dependencies:
+    - 晶圓圖、測試程式、接觸介面與資料回饋
+    conditions:
+    - 測試流程、良品判準與製造責任已約定
+    confidence: inference
+    evidence: []
+    gaps:
+    - 缺少具名製程的 wafer map、test coverage 與測試委外合約；不由代工產能推定全部測試公司收入。
+    reviewed: '2026-10-16'
+  power-discrete:
+    kind: supply
+    summary: 晶圓代工至功率與分離式元件：功率／分離式元件所需晶圓製造能力。
+    items:
+    - 功率／分離式元件所需晶圓製造能力
+    dependencies:
+    - 材料、元件結構、特殊製程與可靠度要求
+    conditions:
+    - 具名元件與製程相容並完成認證
+    confidence: inference
+    evidence: []
+    gaps:
+    - 未取得各功率產品的實際代工／IDM 比例與晶圓材料，不把先進邏輯代工視為所有功率元件供應者。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 依客戶設計提供晶圓製造，先進邏輯、成熟及特殊製程分開；封裝服務即使由同公司提供，仍是另一供應角色。
+  adoption-conditions:
+  - 設計規則、PDK、IP 與製程版本需匹配，並核對實際 tape-out、良率與客戶驗收。
+  bottlenecks:
+  - 可交付良品受製程爬坡、材料設備、設施及封裝配套限制，不能只看名目晶圓產能。
+  substitution-limits:
+  - 不同廠商節點名稱不等於相同性能；新節點與背面供電等變體不能無條件互換設計。
+  claims:
+  - id: node-technology-scope
+    statement: 台積電官方技術入口將 N2 nanosheet 與後續 A 系列分開介紹；平台描述不揭露各客戶良率。
+    confidence: well-supported
+    evidence:
+    - source-id: tsmc-public-technology
+      url: https://www.tsmc.com/english/dedicatedFoundry/technology/logic/l_2nm
+      locator: 2nm Technology／N2 與後續技術入口
+      read-scope: 已讀指定公開說明；沒有取得客戶完整設計、測試或認證檔
+  evidence-gaps:
+  - 未取得各客戶、節點及廠區的良率、wafer starts 與成本；後續變體按實際驗收另核對。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

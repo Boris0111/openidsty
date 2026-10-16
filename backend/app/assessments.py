@@ -1,9 +1,8 @@
 """Authored research and newly classified information are separate read models."""
 import copy
-from datetime import date, timezone, timedelta
-from sqlalchemy import select
-from .models import Source, now
-from .registry import canonical_sources
+from datetime import date, datetime,time, timezone, timedelta
+from sqlalchemy import select,func
+from .models import Source,Event, now
 from .research_api import event_query, event_payloads
 
 TAIPEI = timezone(timedelta(hours=8))
@@ -19,23 +18,20 @@ def assessment_summary(theme):
     }
 
 
-def candidate_events(session, theme, reference=None):
+def candidate_query(theme, reference=None):
     reference = reference or now()
     reference = reference.replace(tzinfo=reference.tzinfo or timezone.utc)
     assessment = theme.data.get('assessment') or {}
     baseline = assessment.get('reviewed') or theme.checked
     baseline = date.fromisoformat(baseline) if baseline else None
-    candidates, unknown = [], []
-    for event in session.scalars(event_query(theme=theme.id)):
-        if event.lifecycle != 'published':
-            continue
-        if event.published_at is None:
-            unknown.append(event)
-            continue
-        published = event.published_at.replace(tzinfo=event.published_at.tzinfo or timezone.utc)
-        if baseline and published <= reference and published.astimezone(TAIPEI).date() > baseline:
-            candidates.append(event)
-    return candidates, unknown
+    q=event_query(theme=theme.id).where(Event.lifecycle=='published')
+    start=datetime.combine(baseline+timedelta(days=1),time.min,TAIPEI).astimezone(timezone.utc) if baseline else None
+    known=q.where(Event.published_at>=start,Event.published_at<=reference) if start else q.where(False)
+    return known,q.where(Event.published_at.is_(None))
+
+def candidate_events(session,theme,reference=None):
+    known,unknown=candidate_query(theme,reference)
+    return list(session.scalars(known)),list(session.scalars(unknown))
 
 
 def assessment_payload(session, theme):
@@ -43,8 +39,29 @@ def assessment_payload(session, theme):
     version=latest_version(session,theme.id)
     assessment = copy.deepcopy(theme.data.get('assessment'))
     available = isinstance(assessment, dict)
-    definitions = {entry['id']: entry for entry in canonical_sources()}
-    sources = list(session.scalars(select(Source)))
+    evidence_sources,warnings=source_evidence(session,assessment)
+    if assessment:
+        for path in assessment.get('paths', []):
+            path['confidence'] = 'inference'
+    known,undated=candidate_query(theme)
+    candidate_count=session.scalar(select(func.count()).select_from(known.order_by(None).subquery()))
+    unknown_count=session.scalar(select(func.count()).select_from(undated.order_by(None).subquery()))
+    candidates=list(session.scalars(known.limit(8)));unknown=list(session.scalars(undated.limit(8)))
+    return {
+        'available': available, 'status': theme.data['status'], 'checked': theme.checked,
+        'assessment': assessment, 'evidence_sources': evidence_sources, 'source_warnings': warnings,
+        'candidates': event_payloads(session, candidates), 'candidate_count': candidate_count,
+        'unknown_date_count': unknown_count, 'undated_candidates': event_payloads(session, unknown),
+        'current_version_id': version.id if version else None,
+    }
+
+
+def source_evidence(session,assessment):
+    if 'research_sources' not in session.info:
+        sources=list(session.scalars(select(Source)))
+        session.info['event_source_names']={source.id:source.name for source in sources}
+        session.info['research_sources']=({row.id:dict(row.data,name=row.name,url=row.url) for row in sources},sources)
+    definitions,sources=session.info['research_sources']
     evidence_sources, warnings = {}, []
     for sid in dict.fromkeys(e['source_id'] for e in (assessment or {}).get('evidence', [])):
         definition = definitions.get(sid, {})
@@ -59,14 +76,4 @@ def assessment_payload(session, theme):
         for row in runtime:
             if row.status in ('failed', 'partial', 'configuration_required'):
                 warnings.append({'source_id': sid, 'runtime_source_id': row.id, 'kind': row.status, 'message': row.error})
-    if assessment:
-        for path in assessment.get('paths', []):
-            path['confidence'] = 'inference'
-    candidates, unknown = candidate_events(session, theme)
-    return {
-        'available': available, 'status': theme.data['status'], 'checked': theme.checked,
-        'assessment': assessment, 'evidence_sources': evidence_sources, 'source_warnings': warnings,
-        'candidates': event_payloads(session, candidates[:8]), 'candidate_count': len(candidates),
-        'unknown_date_count': len(unknown), 'undated_candidates': event_payloads(session, unknown[:8]),
-        'current_version_id': version.id if version else None,
-    }
+    return evidence_sources,warnings

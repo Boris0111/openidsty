@@ -38,6 +38,41 @@ kpis:
 signals:
   - 擴產計畫與交期變化
   - 玻璃基板等替代技術的導入進度
+downstream-relations:
+  advanced-packaging:
+    kind: supply
+    summary: ABF 載板至先進封裝：封裝載板與電源／訊號路由承載。
+    items:
+    - 封裝載板與電源／訊號路由承載
+    dependencies:
+    - 中介層、封裝尺寸、翹曲與熱機械應力
+    conditions:
+    - 指定封裝與載板材料、線路及可靠度驗證相容
+    confidence: inference
+    evidence: []
+    gaps:
+    - 未取得各封裝平台的載板設計規則、材料認證與量產良率；載板與中介層不是同層替代品。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: IC 封裝載板提供封裝內路由與對外連接；ABF 膜、封裝載板、中介層及系統 PCB 是不同層次。
+  adoption-conditions:
+  - 線寬／線距、micro-via、對位、翹曲及可靠度需配合指定封裝認證。
+  bottlenecks:
+  - 大尺寸與多層載板的有效產出要扣除切割數、良率及客戶認證，不只看面積產能。
+  substitution-limits:
+  - 玻璃核心是材料與製程方案，不能由樣品或路線圖推定已替換既有有機載板。
+  claims:
+  - id: substrate-process-role
+    statement: Ibiden 公開產品說明將 IC package substrate、SAP 細線與 micro-via 能力連在一起；這是能力介紹，不是客戶良率。
+    confidence: well-supported
+    evidence:
+    - source-id: ibiden-substrate-technical
+      url: https://www.ibiden.com/product/electronics/merchandise/fliptippkg/
+      locator: What are IC Package Substrates／Feature
+      read-scope: 已讀指定公開說明；沒有取得客戶完整設計、測試或認證檔
+  evidence-gaps:
+  - 未取得各供應商指定產品的良率、設計規則、合格材料與玻璃核心客戶驗收。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

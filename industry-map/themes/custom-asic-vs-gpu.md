@@ -93,6 +93,29 @@ assessment:
     note: 須同工作負載、利用率、軟體與採購口徑。
     evidence_ids: []
     occurred: null
+technical-profile:
+  product-boundary: GPU、客製加速器、設計服務與 IP 是不同產品及收入角色；AI 半導體總收入不等於客製運算單一產品收入。
+  adoption-conditions:
+  - 比較必須固定工作負載、軟體、精度、利用率、網路及部署規模。
+  - 客製晶片須完成設計、IP／PDK、流片與系統軟體整合；洽談不等於得標或 tape-out。
+  bottlenecks:
+  - 軟體移植、開發攤提、HBM／封裝與互連會影響可用效能及交付時間。
+  substitution-limits:
+  - 特定工作負載的客製效益不能推定通用 GPU 需求全被替代；跨系統比較需計入開發及維運成本。
+  claims:
+  - id: network-domain-boundary
+    statement: NVIDIA 的公開網路介紹分開 GPU scale-up、scale-out 與跨站範圍；不能以單一互連數字代表完整加速器系統。
+    confidence: well-supported
+    evidence:
+    - source-id: nvidia-networking-technical
+      url: https://www.nvidia.com/en-us/networking/
+      locator: NVLink／Quantum／Spectrum-X／Spectrum-XGS domain descriptions
+      read-scope: 已讀指定公開段落；未取得客戶設計、認證或量產測試文件。
+  evidence-gaps:
+  - 缺少同工作負載獨立 TCO 與利用率資料；UCIe 全文未取得，不能據公開介紹宣稱任意 chiplet 可互換。
+  assessment-claim-ids:
+  - commercial-custom-ai
+  reviewed: '2026-10-16'
 ---
 
 ## 題材範圍

@@ -85,6 +85,29 @@ assessment:
     note: 後續變體及背面供電仍須逐節點交付／收入證據。
     evidence_ids: []
     occurred: null
+technical-profile:
+  product-boundary: 製程節點、PDK／IP、設備與產品流片是不同層次；N2 系列變體與後續路線不混為同一量產節點。
+  adoption-conditions:
+  - 設計需匹配特定 PDK、IP 與驗證規則，並完成良率、可靠度與客戶認證。
+  - 設備採購依實際製程步驟，不能以節點名稱直接推定一律使用 High-NA。
+  bottlenecks:
+  - 曝光、蝕刻、沉積、量測及設計成熟度共同影響良率；設備能力介紹不能量化個別晶圓廠產出。
+  substitution-limits:
+  - 節點更先進不保證同工作負載更低總成本；轉換需重做設計、IP 與資格驗證。
+  claims:
+  - id: euv-platform-scope
+    statement: ASML 的公開 EUV 介紹區分 NXE 與 EXE；產品平台能力不直接證明某客戶節點使用的設備組合。
+    confidence: well-supported
+    evidence:
+    - source-id: asml-euv-technical
+      url: https://www.asml.com/en/products/euv-lithography-systems
+      locator: NXE and EXE product families
+      read-scope: 已讀指定公開段落；未取得客戶設計、認證或量產測試文件。
+  evidence-gaps:
+  - 缺少逐客戶 PDK／設計、良率與設備配置；節點收入沿用原財報證據，不將技術 roadmap 當量產。
+  assessment-claim-ids:
+  - commercial-n2
+  reviewed: '2026-10-16'
 ---
 
 ## 題材範圍

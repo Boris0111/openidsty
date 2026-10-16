@@ -37,6 +37,76 @@ kpis:
 signals:
   - 機櫃內互連規格世代轉換
   - 銅纜方案延伸或被光學取代的進展
+downstream-relations:
+  thermal:
+    kind: supply
+    summary: 連接器、線材與滑軌至散熱：液路快接頭、流體接合與配管介面。
+    items:
+    - 液路快接頭、流體接合與配管介面
+    dependencies:
+    - 接頭幾何、壓降、密封材料與插拔空間
+    conditions:
+    - 在指定冷卻液、壓力、流量與維修條件下完成驗證
+    confidence: inference
+    evidence: []
+    gaps:
+    - 缺少特定快接頭與冷板／歧管組合的漏率、壽命及材料相容性測試；滑軌及一般插槽不視為快接頭。
+    reviewed: '2026-10-16'
+  odm:
+    kind: supply
+    summary: 連接器、線材與滑軌至系統組裝與機櫃整合：插槽、高速線束、電力連接及機構滑軌等不同子角色。
+    items:
+    - 插槽、高速線束、電力連接及機構滑軌等不同子角色
+    dependencies:
+    - 訊號損耗與阻抗、線路彎曲半徑、承重及抽換空間
+    conditions:
+    - 按實際子角色與料號取得平台設計導入和整機驗證
+    confidence: inference
+    evidence: []
+    gaps:
+    - 尚缺個別平台的線束、插槽、電力接頭及滑軌 BOM；不能把 rail 名稱直接配對到單一公司。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 高速訊號／電力接頭與線束、液路快接頭、機構滑軌是不同子角色。機構 rail 負責承重與抽換，power rail／busbar
+    是供電路徑；不因同名而配對公司。
+  adoption-conditions:
+  - 高速介面要按實際通道與距離核對損耗／串音；供電介面按額定、保護與插拔條件核對。
+  - 液路按流量壓降、密封與材料相容驗證；滑軌按承重、抽換空間及理線／配管干涉核對。
+  bottlenecks:
+  - 介面幾何、接觸／密封可靠度與維修空間會限制整機整合，不能用單一供應商大類替代料號驗證。
+  substitution-limits:
+  - 銅與光的取捨需包含整條通道、耗電、距離與維修；不能由 CPO 概念推定所有銅纜被替代。
+  - 滑軌不替代高壓母排，處理器插槽能力也不能證明供應快接頭。
+  claims:
+  - id: fluid-service-interface
+    statement: OCP 將快接頭作為服務維修介面，仍需連同流體與實際迴路驗證。
+    confidence: well-supported
+    evidence:
+    - document-id: ocp-cold-plate-requirements
+      version-id: revision-one
+      locator: serviceability
+    - document-id: ocp-cold-plate-requirements
+      version-id: revision-one
+      locator: materials-flow
+  - id: mechanical-rail-role
+    statement: 川湖官方可讀搜尋片段描述 MGX rail solutions，只能支持機構方案聲明，不能核實客戶料號或收入。
+    confidence: inference
+    evidence:
+    - source-id: kingslide-mechanical
+      url: https://www.kingslide.com/blog/post/news/identifier/company-news-018-jp/
+      locator: 2026-05-29 官方搜尋片段
+      read-scope: 官方搜尋摘要可讀；文章全文逾時／502，未讀型錄
+  - id: copper-optical-role
+    statement: OIF 指定 CPO Module IA 同時描述光模組與機械相容的銅纜附接形式；不能把它泛化成所有互連路線互替。
+    confidence: well-supported
+    evidence:
+    - document-id: oif-cpo-module
+      version-id: module-01-0
+      locator: module-scope
+  evidence-gaps:
+  - 尚缺嘉澤、貿聯、信邦、安費諾各料號與特定平台介面驗證，不能把全清單列為快接頭供應商。
+  - 川湖全文／型錄本次未重新取得；承重、壽命、行程及特定 MGX 料號仍須查核。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

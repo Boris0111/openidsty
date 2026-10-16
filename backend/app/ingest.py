@@ -140,7 +140,7 @@ def ingestion_lock(engine):
             if acquired:
                 connection.execute(text('SELECT pg_advisory_unlock(729310181)'))
 
-def run_ingestion(only=None,backfill_days=None):
+def run_ingestion(only=None,backfill_days=None,force_documents=False):
     from .db import engine
     with ingestion_lock(engine) as acquired:
         if not acquired:
@@ -169,6 +169,9 @@ def run_ingestion(only=None,backfill_days=None):
                     d['_requested_backfill_days']=backfill_days
                     if d['adapter'] in ('aaon-metrics','tsmc-metrics'):
                         results[d['id']]=ingest_metric_source(session,d,http)
+                    elif d['adapter']=='technical-documents':
+                        from .technical_monitor import ingest_documents
+                        results[d['id']]=ingest_documents(session,d,force=force_documents)
                     else:
                         results[d['id']]=ingest_one(session,d,http,companies)
                     print(json.dumps({'source':d['id'],**results[d['id']]},ensure_ascii=False),flush=True)
@@ -211,10 +214,11 @@ if __name__=='__main__':
     parser.add_argument('--backfill-days',type=int,choices=range(1,366),metavar='1..365',help='強制嘗試來源可提供的歷史回補')
     parser.add_argument('--reclassify',action='store_true',help='正規化既有事件日期並重新分類，不呼叫外部來源')
     parser.add_argument('--only-stale',action='store_true',help='重分類只處理缺少分類或規則版本過期的事件，供初始化使用')
+    parser.add_argument('--force-documents',action='store_true',help='手動核對指定文件，略過每日到期時間；不改研究')
     args=parser.parse_args()
     if args.only_stale and not args.reclassify:
         parser.error('--only-stale 需搭配 --reclassify')
     if args.reclassify:
         print(json.dumps(reclassify_events(args.only_stale),ensure_ascii=False))
     else:
-        print(json.dumps(run_ingestion(args.source,args.backfill_days),ensure_ascii=False))
+        print(json.dumps(run_ingestion(args.source,args.backfill_days,args.force_documents),ensure_ascii=False))

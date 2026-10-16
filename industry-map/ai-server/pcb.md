@@ -38,6 +38,42 @@ kpis:
 signals:
   - 新世代平台採用的材料等級升級
   - 銅價與樹脂等原材料成本變動
+downstream-relations:
+  odm:
+    kind: supply
+    summary: 印刷電路板與銅箔基板至系統組裝與機櫃整合：主板／交換器板與其他 PCB，CCL 是上游材料子角色。
+    items:
+    - 主板／交換器板與其他 PCB，CCL 是上游材料子角色
+    dependencies:
+    - 訊號完整性、層疊、散熱與板級供電
+    conditions:
+    - 指定板材、製程與整機電氣測試合格
+    confidence: inference
+    evidence: []
+    gaps:
+    - 缺少平台層疊、損耗預算及合格供應商清單，不能由高速升級推算各 CCL／PCB 公司份額。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: CCL 是板材、PCB 是成板；系統電路板承載整機訊號與供電，與晶片封裝內載板不同。
+  adoption-conditions:
+  - 材料與加工須共同符合實際層疊、阻抗、損耗、via 與可靠度條件。
+  bottlenecks:
+  - 高多層製程的對位、壓合與有效良率須另查，不由層數直接估收入。
+  substitution-limits:
+  - flyover 線纜或光互連可能改變板上走線，但不能由新技術發表推定所有板材被替代。
+  claims:
+  - id: board-material-verification
+    statement: TPCA 高速材料驗證入口可定位材料核對工作；僅有入口不能證明任何 CCL／PCB 料號滿足特定平台。
+    confidence: inference
+    evidence:
+    - source-id: tpca-news
+      url: https://www.tpca.org.tw/web/news_detail.php?menu_no=196&mod_no=32&news_no=15550
+      locator: Ultra Low-Loss 高速驗證資料更新（2023版）
+      read-scope: 已讀公開入口標題／範圍，未核讀所有下載資料
+  evidence-gaps:
+  - 未取得指定平台層疊、Dk／Df 測試方法、銅箔粗糙度與供應商資格對照。
+  - TPCA 入口的高速驗證資料與實際量測原檔需再核對，本輪沒有完整跨材料比較。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

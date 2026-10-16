@@ -203,3 +203,7 @@ openspec.cmd validate refocus-industry-explorer --type change --strict
 新工作一律在此 repo；舊 `financeinfost` 只供參考。Codex 可用 `$openspec-propose`／`$openspec-apply-change`／`$openspec-archive-change`；歸檔須另行啟動。
 
 題材判讀與指標：研究維護見 [theme-assessments](docs/theme-assessments.md)，指標／來源更新見 [theme-indicators](docs/theme-indicators.md) 與 [metric-source-operations](docs/metric-source-operations.md)。版本修改／還原見 [theme-version-operations](docs/theme-version-operations.md)，此裝置關注見 [theme-watchlist](docs/theme-watchlist.md)。七題材實測與缺口見 [交付矩陣](docs/theme-delivery-matrix.md)，驗收結果見 [驗證紀錄](docs/theme-assessments-verification.md)。initialize 在 migration、研究及來源註冊後匯入指標設定與既有財報投影；新安裝不用等待下一個 hourly 才看見指標設定。
+
+技術研究與文件：Markdown／YAML 是編輯來源，驗證後原子匯入 PostgreSQL 供網站唯讀查詢；外部文件觀測與待核對候選不會自動改寫研究。維護與核對流程見 [technical-document-operations](docs/technical-document-operations.md)，實際已讀範圍見 [來源查核](docs/technical-source-audit.md)，全圖缺口見 [17 環節／7 題材矩陣](docs/technical-research-matrix.md)。連線閱讀與快取契約見 [frontend](docs/frontend.md)，量測結果及限制見 [reading-performance](docs/reading-performance.md)。
+
+Docker 固定 Node 24.21.0，Python 的直接依賴與間接版本分別由 `backend/requirements.txt`、`backend/runtime-constraints.txt` 管理；新增的 PDF 解析器為 pypdf 6.20.1。更新執行環境時需重建 image 並重跑對應驗證及效能基準，避免把套件升版混入功能改善的比較。

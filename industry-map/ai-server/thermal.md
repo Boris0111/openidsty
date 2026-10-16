@@ -38,6 +38,54 @@ kpis:
 signals:
   - 機櫃世代的散熱架構轉換
   - 雲端業者新建案的液冷標案歸屬
+downstream-relations:
+  odm:
+    kind: supply
+    summary: 散熱至系統組裝與機櫃整合：散熱模組、冷板、CDU 與液路整合等不同熱管理子角色。
+    items:
+    - 散熱模組、冷板、CDU 與液路整合等不同熱管理子角色
+    dependencies:
+    - 機構接觸、水路、流量壓降與設施排熱責任
+    conditions:
+    - 指定熱負載、冷卻液及維修條件完成整機驗證
+    confidence: inference
+    evidence: []
+    gaps:
+    - 尚缺指定冷板／CDU 與平台的熱阻、壓降、材料相容及維修驗證，不能把全部熱管理收入視為冷板收入。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 冷板做晶片至流體熱交換，歧管分配流量，CDU 管理技術冷卻迴路與排熱交界；設施水路是另一責任層。快接頭歸互連子角色，整櫃與場址驗收另列。
+  adoption-conditions:
+  - 先核對熱負載、允許溫度、流量／壓降與冷卻液；CDU、歧管及冷板必須以同一迴路驗證。
+  - 材料接液相容、過濾及維修程序要符合實際安裝條件，不以單一元件型錄代替整體驗收。
+  bottlenecks:
+  - 壓降、流量分布、堵塞／污染與漏液會限制可用散熱能力；須核對冷板與泵浦／CDU 的共同工作點。
+  - 設施側排熱與水路未完成時，冷板製成不代表整櫃已能上線。
+  substitution-limits:
+  - 氣冷、單相冷板、兩相與浸沒涉及不同流體、材料及維修條件，不能只依 TDP 宣稱必然替代。
+  - 標準接頭外形相同不等於指定冷卻液、密封材料與壓力條件下可直接互換。
+  claims:
+  - id: tcs-fws-boundary
+    statement: OCP 需求文件區分 TCS 與 FWS，且不涵蓋 FWS；它不是完整設計規格。
+    confidence: well-supported
+    evidence:
+    - document-id: ocp-cold-plate-requirements
+      version-id: revision-one
+      locator: loop-boundary
+  - id: wetted-materials
+    statement: 材料相容與過濾需按實際迴路核對；不能把一般接液材料清單當相容認證。
+    confidence: well-supported
+    evidence:
+    - document-id: ocp-cold-plate-requirements
+      version-id: revision-one
+      locator: materials-flow
+    - document-id: ocp-cold-plate-requirements
+      version-id: revision-one
+      locator: serviceability
+  evidence-gaps:
+  - 缺少各候選供應商指定料號的熱阻／壓降曲線、冷卻液相容與壽命資料。
+  - OCP PDF 本機取得 403；已讀範圍為 web 擷取章節，未完成全部條文或客戶驗收核讀。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

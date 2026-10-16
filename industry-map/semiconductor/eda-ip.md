@@ -38,6 +38,54 @@ kpis:
 signals:
   - 新製程節點的工具與矽智財認證完成
   - 客製晶片專案啟動數量變化
+downstream-relations:
+  compute:
+    kind: supply
+    summary: EDA 工具與矽智財至運算晶片：設計、驗證、實體實現工具與可授權矽智財。
+    items:
+    - 設計、驗證、實體實現工具與可授權矽智財
+    dependencies:
+    - PDK、工具認證、IP 介面與 tape-out 流程
+    conditions:
+    - 工具與 IP 在目標製程、封裝及設計版本可用且授權成立
+    confidence: inference
+    evidence: []
+    gaps:
+    - 缺少指定晶片 tape-out 所用工具版本、IP 授權及認證證據；不以同環節名單推定所有工具可互替。
+    reviewed: '2026-10-16'
+  networking:
+    kind: supply
+    summary: EDA 工具與矽智財至網通與光通訊：網路晶片設計工具與 SerDes 等 IP 子角色。
+    items:
+    - 網路晶片設計工具與 SerDes 等 IP 子角色
+    dependencies:
+    - 協議、PDK、訊號完整性與驗證覆蓋
+    conditions:
+    - 目標網路晶片與介面在指定製程完成整合驗證
+    confidence: inference
+    evidence: []
+    gaps:
+    - 未取得具名網路 ASIC 的 IP 授權、工具認證與矽後測試，不能由規格發布推定 IP 收入。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 設計／驗證工具與可授權核心、記憶體／安全及高速介面 IP 分開；整顆 ASIC 設計交付服務在運算環節。
+  adoption-conditions:
+  - 需核對 PDK、工具版本、IP 實體介面、silicon-proven 條件與授權範圍。
+  bottlenecks:
+  - 設計收斂、認證與矽後驗證影響 tape-out；授權、NRE、訂閱及權利金的時點不同。
+  substitution-limits:
+  - 同一介面名稱不代表不同製程、版號及供應商 IP 可直接替換；設計成功不等於持續權利金。
+  claims:
+  - id: ip-scope-versus-adoption
+    statement: UCIe 公開介紹可界定封裝內互連與測試管理議題，但不能代替各家 IP 的製程認證或授權證據。
+    confidence: inference
+    evidence:
+    - document-id: ucie-public-specifications
+      version-id: public-overview-20261016
+      locator: package-interface
+  evidence-gaps:
+  - M31 公開產品入口未提供每個客戶 PDK 認證、授權條款與量產對照；力旺與高速介面 IP 的產品角色需分別查核。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

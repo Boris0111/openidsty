@@ -1,0 +1,976 @@
+{
+  "origin": "http://127.0.0.1:3013",
+  "checked": "2026-10-15T20:30:46.080Z",
+  "matrix": [
+    {
+      "id": "memory",
+      "name": "記憶體",
+      "url": "/?layer=ai-server&segment=memory",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://news.skhynix.com/en/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "substrate",
+      "name": "ABF 載板",
+      "url": "/?layer=ai-server&segment=substrate",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.ibiden.com/product/electronics/merchandise/fliptippkg/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "pcb",
+      "name": "印刷電路板與銅箔基板",
+      "url": "/?layer=ai-server&segment=pcb",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.tpca.org.tw/web/news_detail.php?menu_no=196&mod_no=32&news_no=15550"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "interconnect",
+      "name": "連接器、線材與滑軌",
+      "url": "/?layer=ai-server&segment=interconnect",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "ACS Liquid Cooling Cold Plate Requirements Document ↗",
+          "url": "https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf"
+        },
+        {
+          "text": "ACS Liquid Cooling Cold Plate Requirements Document ↗",
+          "url": "https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "power",
+      "name": "電源與供電架構",
+      "url": "/?layer=ai-server&segment=power",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-generation-of-ai-factories/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "compute",
+      "name": "運算晶片",
+      "url": "/?layer=ai-server&segment=compute",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/data-center/nvlink/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "networking",
+      "name": "網通與光通訊",
+      "url": "/?layer=ai-server&segment=networking",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/networking/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "thermal",
+      "name": "散熱",
+      "url": "/?layer=ai-server&segment=thermal",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "ACS Liquid Cooling Cold Plate Requirements Document ↗",
+          "url": "https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "advanced-packaging",
+      "name": "先進封裝",
+      "url": "/?layer=ai-server&segment=advanced-packaging",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "odm",
+      "name": "系統組裝與機櫃整合",
+      "url": "/?layer=ai-server&segment=odm",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.supermicro.com/en/solutions/liquid-cooling"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "datacenter",
+      "name": "資料中心與雲端業者",
+      "url": "/?layer=ai-server&segment=datacenter",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "equipment",
+      "name": "半導體設備",
+      "url": "/?layer=semiconductor&segment=equipment",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.asml.com/en/products/euv-lithography-systems"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "eda-ip",
+      "name": "EDA 工具與矽智財",
+      "url": "/?layer=semiconductor&segment=eda-ip",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "UCIe 公開規格介紹 ↗",
+          "url": "https://www.uciexpress.org/specifications"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "materials",
+      "name": "半導體材料",
+      "url": "/?layer=semiconductor&segment=materials",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.entegris.com/en/home/our-science/by-solution-area/contamination-control.html"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "power-discrete",
+      "name": "功率與分離式元件",
+      "url": "/?layer=semiconductor&segment=power-discrete",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.infineon.com/technology/ai/we-power-ai"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "foundry",
+      "name": "晶圓代工",
+      "url": "/?layer=semiconductor&segment=foundry",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.tsmc.com/english/dedicatedFoundry/technology/logic/l_2nm"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "test",
+      "name": "測試與探針",
+      "url": "/?layer=semiconductor&segment=test",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.teradyne.com/2026/08/24/slt-in-the-ai-era-validating-reliability-at-scale/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "800vdc",
+      "name": "高壓直流供電架構",
+      "url": "/themes/800vdc",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://developer.nvidia.com/blog/building-the-800-vdc-ecosystem-for-efficient-scalable-ai-factories/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "advanced-node-2nm",
+      "name": "先進製程節點推進",
+      "url": "/themes/advanced-node-2nm",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.asml.com/en/products/euv-lithography-systems"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "cpo-silicon-photonics",
+      "name": "共同封裝光學與矽光子",
+      "url": "/themes/cpo-silicon-photonics",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "Implementation Agreement for a 3.2Tb/s Co-Packaged (CPO) Module ↗",
+          "url": "https://www.oiforum.com/wp-content/uploads/OIF-Co-Packaging-3.2T-Module-01.0.pdf"
+        },
+        {
+          "text": "Implementation Agreement for a 3.2Tb/s Co-Packaged (CPO) Module ↗",
+          "url": "https://www.oiforum.com/wp-content/uploads/OIF-Co-Packaging-3.2T-Module-01.0.pdf"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "custom-asic-vs-gpu",
+      "name": "客製 ASIC 與通用 GPU 的路線競爭",
+      "url": "/themes/custom-asic-vs-gpu",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/networking/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "hbm4",
+      "name": "HBM4 世代轉換",
+      "url": "/themes/hbm4",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://news.skhynix.com/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "liquid-cooling",
+      "name": "液冷散熱",
+      "url": "/themes/liquid-cooling",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "ACS Liquid Cooling Cold Plate Requirements Document ↗",
+          "url": "https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "power-bottleneck",
+      "name": "資料中心電力瓶頸",
+      "url": "/themes/power-bottleneck",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "memory",
+      "name": "記憶體",
+      "url": "/?layer=ai-server&segment=memory",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://news.skhynix.com/en/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "substrate",
+      "name": "ABF 載板",
+      "url": "/?layer=ai-server&segment=substrate",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.ibiden.com/product/electronics/merchandise/fliptippkg/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "pcb",
+      "name": "印刷電路板與銅箔基板",
+      "url": "/?layer=ai-server&segment=pcb",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.tpca.org.tw/web/news_detail.php?menu_no=196&mod_no=32&news_no=15550"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "interconnect",
+      "name": "連接器、線材與滑軌",
+      "url": "/?layer=ai-server&segment=interconnect",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "ACS Liquid Cooling Cold Plate Requirements Document ↗",
+          "url": "https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf"
+        },
+        {
+          "text": "ACS Liquid Cooling Cold Plate Requirements Document ↗",
+          "url": "https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "power",
+      "name": "電源與供電架構",
+      "url": "/?layer=ai-server&segment=power",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-generation-of-ai-factories/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "compute",
+      "name": "運算晶片",
+      "url": "/?layer=ai-server&segment=compute",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/data-center/nvlink/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "networking",
+      "name": "網通與光通訊",
+      "url": "/?layer=ai-server&segment=networking",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/networking/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "thermal",
+      "name": "散熱",
+      "url": "/?layer=ai-server&segment=thermal",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "ACS Liquid Cooling Cold Plate Requirements Document ↗",
+          "url": "https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "advanced-packaging",
+      "name": "先進封裝",
+      "url": "/?layer=ai-server&segment=advanced-packaging",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "odm",
+      "name": "系統組裝與機櫃整合",
+      "url": "/?layer=ai-server&segment=odm",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.supermicro.com/en/solutions/liquid-cooling"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "datacenter",
+      "name": "資料中心與雲端業者",
+      "url": "/?layer=ai-server&segment=datacenter",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "equipment",
+      "name": "半導體設備",
+      "url": "/?layer=semiconductor&segment=equipment",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.asml.com/en/products/euv-lithography-systems"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "eda-ip",
+      "name": "EDA 工具與矽智財",
+      "url": "/?layer=semiconductor&segment=eda-ip",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "UCIe 公開規格介紹 ↗",
+          "url": "https://www.uciexpress.org/specifications"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "materials",
+      "name": "半導體材料",
+      "url": "/?layer=semiconductor&segment=materials",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.entegris.com/en/home/our-science/by-solution-area/contamination-control.html"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "power-discrete",
+      "name": "功率與分離式元件",
+      "url": "/?layer=semiconductor&segment=power-discrete",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.infineon.com/technology/ai/we-power-ai"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "foundry",
+      "name": "晶圓代工",
+      "url": "/?layer=semiconductor&segment=foundry",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.tsmc.com/english/dedicatedFoundry/technology/logic/l_2nm"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "test",
+      "name": "測試與探針",
+      "url": "/?layer=semiconductor&segment=test",
+      "type": "segment",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.teradyne.com/2026/08/24/slt-in-the-ai-era-validating-reliability-at-scale/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "800vdc",
+      "name": "高壓直流供電架構",
+      "url": "/themes/800vdc",
+      "type": "theme",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://developer.nvidia.com/blog/building-the-800-vdc-ecosystem-for-efficient-scalable-ai-factories/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "advanced-node-2nm",
+      "name": "先進製程節點推進",
+      "url": "/themes/advanced-node-2nm",
+      "type": "theme",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.asml.com/en/products/euv-lithography-systems"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "cpo-silicon-photonics",
+      "name": "共同封裝光學與矽光子",
+      "url": "/themes/cpo-silicon-photonics",
+      "type": "theme",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "Implementation Agreement for a 3.2Tb/s Co-Packaged (CPO) Module ↗",
+          "url": "https://www.oiforum.com/wp-content/uploads/OIF-Co-Packaging-3.2T-Module-01.0.pdf"
+        },
+        {
+          "text": "Implementation Agreement for a 3.2Tb/s Co-Packaged (CPO) Module ↗",
+          "url": "https://www.oiforum.com/wp-content/uploads/OIF-Co-Packaging-3.2T-Module-01.0.pdf"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "custom-asic-vs-gpu",
+      "name": "客製 ASIC 與通用 GPU 的路線競爭",
+      "url": "/themes/custom-asic-vs-gpu",
+      "type": "theme",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/networking/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "hbm4",
+      "name": "HBM4 世代轉換",
+      "url": "/themes/hbm4",
+      "type": "theme",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://news.skhynix.com/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "liquid-cooling",
+      "name": "液冷散熱",
+      "url": "/themes/liquid-cooling",
+      "type": "theme",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "ACS Liquid Cooling Cold Plate Requirements Document ↗",
+          "url": "https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    },
+    {
+      "id": "power-bottleneck",
+      "name": "資料中心電力瓶頸",
+      "url": "/themes/power-bottleneck",
+      "type": "theme",
+      "viewport": "390x844",
+      "default_reading": true,
+      "keyboard_tabs": true,
+      "technical_facets": 5,
+      "citations": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary"
+        }
+      ],
+      "tracking": true,
+      "maintenance_list_requests": 0,
+      "overflow": false
+    }
+  ],
+  "representative_layout": {
+    "before": [
+      {
+        "id": "thermal",
+        "main_height": 6975,
+        "advanced_count": 15,
+        "maintenance_lists": 1
+      },
+      {
+        "id": "liquid-cooling",
+        "main_height": 11041,
+        "advanced_count": 33,
+        "maintenance_lists": 1
+      }
+    ],
+    "after": [
+      {
+        "id": "thermal",
+        "main_height": 1572,
+        "advanced_count": 0,
+        "maintenance_lists": 0
+      },
+      {
+        "id": "liquid-cooling",
+        "main_height": 1538,
+        "advanced_count": 0,
+        "maintenance_lists": 0
+      }
+    ]
+  },
+  "deep_links": [
+    "#indicators",
+    "#candidates"
+  ],
+  "coverage_rows": 24,
+  "retained_citation": {
+    "id": "ocp-cold-plate-requirements",
+    "source_status": "not_run",
+    "version": "revision-one",
+    "locator": "loop-boundary"
+  },
+  "errors": []
+}

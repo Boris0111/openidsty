@@ -2,7 +2,7 @@
 import hashlib,json
 from decimal import Decimal,InvalidOperation
 from datetime import date
-from sqlalchemy import select
+from sqlalchemy import select,func
 from .models import Indicator,IndicatorObservation
 
 
@@ -39,8 +39,12 @@ def save_observation(session,data):
     return True
 
 
-def latest_observations(session,indicator_id):
-    rows=list(session.scalars(select(IndicatorObservation).where(IndicatorObservation.indicator_id==indicator_id).order_by(IndicatorObservation.period_end.desc(),IndicatorObservation.revision.desc(),IndicatorObservation.id.desc())))
-    latest={}
-    for row in rows:latest.setdefault(row.identity,row)
-    return sorted(latest.values(),key=lambda row:(row.period_end,row.id),reverse=True)
+def latest_query(indicator_ids=None):
+    ranked=select(IndicatorObservation.id,func.row_number().over(partition_by=IndicatorObservation.identity,order_by=(IndicatorObservation.revision.desc(),IndicatorObservation.id.desc())).label('rank'))
+    if indicator_ids is not None:ranked=ranked.where(IndicatorObservation.indicator_id.in_(indicator_ids))
+    ranked=ranked.subquery()
+    return select(IndicatorObservation).join(ranked,ranked.c.id==IndicatorObservation.id).where(ranked.c.rank==1).order_by(IndicatorObservation.period_end.desc(),IndicatorObservation.id.desc())
+
+def latest_observations(session,indicator_id,limit=None):
+    q=latest_query([indicator_id])
+    return list(session.scalars(q.limit(limit) if limit is not None else q))

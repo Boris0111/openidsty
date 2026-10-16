@@ -217,6 +217,61 @@ CASES += [
 ]
 
 
+def technical_fixture(map_dir, mutate=None):
+    """Synthetic schema examples only; never used by runtime ingestion."""
+    assessment_fixture(map_dir)
+    path=map_dir/MID
+    _,header,body=path.read_text(encoding='utf-8').split('---',2)
+    data=yaml.safe_load(header)
+    reference={'document-id':'sample-document','version-id':'public-overview','locator':'boundary'}
+    data['downstream-relations']={'end-part':{'kind':'supply','summary':'測試整合關係，不代表客戶交易','items':['測試元件'],'dependencies':['測試介面'],'conditions':['實際驗證'],'confidence':'inference','evidence':[reference],'gaps':['無客戶料號'],'reviewed':'2026-10-16'}}
+    data['technical-profile']={'product-boundary':'測試產品責任','adoption-conditions':['測試整合'],'bottlenecks':['測試限制'],'substitution-limits':['非同料號不能推定替代'],'claims':[{'id':'interface-scope','statement':'測試技術範圍','confidence':'well-supported','evidence':[reference]}],'evidence-gaps':['未取得測試客戶採用'],'reviewed':'2026-10-16'}
+    doc={'id':'sample-document','source-id':'sample-technical','title':'Synthetic schema fixture','publisher':'測試機構','doc-kind':'informative','segments':['mid-part'],'themes':['sample-theme'],'versions':[{'id':'public-overview','label':None,'url':'https://example.invalid/technical','published':None,'published-precision':'unknown','reviewed':'2026-10-16','read-scope':'僅測試介紹','access-limitations':'測試，未讀全文','scope':'不能推定採用','locators':[{'id':'boundary','section':'產品邊界','excerpt':'Synthetic test excerpt.'}]}],'reviews':[]}
+    manifest={'schema-version':'technical-documents-v1','documents':[doc]}
+    source={'id':'sample-technical','name':'測試技術入口','url':'https://example.invalid/technical','type':'technical-documents','access':'free','reachability':'verified','checked':'2026-10-16','segments':['mid-part'],'ingestion':{'adapter':'technical-documents','document-ids':['sample-document'],'allowed-hosts':['example.invalid']}}
+    if mutate:mutate(data,manifest,source)
+    path.write_text('---\n'+yaml.safe_dump(data,allow_unicode=True,sort_keys=False)+'---'+body,encoding='utf-8')
+    (map_dir/'technical-documents.yaml').write_text(yaml.safe_dump(manifest,allow_unicode=True,sort_keys=False),encoding='utf-8')
+    sources=yaml.safe_load((map_dir/SOURCES).read_text(encoding='utf-8'));sources['global']={'technical-documents':[source]}
+    (map_dir/SOURCES).write_text(yaml.safe_dump(sources,allow_unicode=True,sort_keys=False),encoding='utf-8')
+    theme_path=map_dir/THEME
+    _,theme_header,theme_body=theme_path.read_text(encoding='utf-8').split('---',2)
+    theme=yaml.safe_load(theme_header)
+    theme['technical-profile']=dict(data['technical-profile'],claims=[],**{'assessment-claim-ids':['claim-one']})
+    theme_path.write_text('---\n'+yaml.safe_dump(theme,allow_unicode=True,sort_keys=False)+'---'+theme_body,encoding='utf-8')
+
+
+def technical_mutation(mutate):
+    return lambda map_dir:technical_fixture(map_dir,mutate)
+
+
+CASES += [
+    ('關係型別錯誤',technical_mutation(lambda d,m,s:d['downstream-relations']['end-part'].update(kind='partner')),'kind 不合法',True),
+    ('不存在的下游說明',technical_mutation(lambda d,m,s:d['downstream-relations'].update({'upstream-part':d['downstream-relations']['end-part']})),'非實存下游邊',True),
+    ('關係缺少條件',technical_mutation(lambda d,m,s:d['downstream-relations']['end-part'].update(conditions=[])),'conditions 須為陣列且至少 1 筆',True),
+    ('關係無證據缺口',technical_mutation(lambda d,m,s:d['downstream-relations']['end-part'].update(evidence=[],gaps=[])),'至少需要證據或具體缺口',True),
+    ('關係無效查核日',technical_mutation(lambda d,m,s:d['downstream-relations']['end-part'].update(reviewed='2026-02-30')),'reviewed 須為有效',True),
+    ('技術來源失效',technical_mutation(lambda d,m,s:d['technical-profile']['claims'][0].update(evidence=[{'source-id':'missing','url':'https://example.invalid','locator':'介紹','read-scope':'摘要'}])),'source-id 引用不存在來源',True),
+    ('技術文件失效',technical_mutation(lambda d,m,s:d['technical-profile']['claims'][0]['evidence'][0].update(**{'document-id':'missing'})),'引用不存在文件版本',True),
+    ('技術版本失效',technical_mutation(lambda d,m,s:d['technical-profile']['claims'][0]['evidence'][0].update(**{'version-id':'latest'})),'引用不存在文件版本',True),
+    ('技術定位失效',technical_mutation(lambda d,m,s:d['technical-profile']['claims'][0]['evidence'][0].update(locator='missing')),'locator 引用不存在定位',True),
+    ('技術引用混填',technical_mutation(lambda d,m,s:d['technical-profile']['claims'][0]['evidence'][0].update(**{'source-id':'sample-technical'})),'不能混填來源身分',True),
+    ('技術論述重複',technical_mutation(lambda d,m,s:d['technical-profile']['claims'].append(copy.deepcopy(d['technical-profile']['claims'][0]))),'claims 識別碼重複',True),
+    ('技術日期錯誤',technical_mutation(lambda d,m,s:d['technical-profile'].update(reviewed='2026-13-01')),'reviewed 須為有效',True),
+    ('文件來源失效',technical_mutation(lambda d,m,s:m['documents'][0].update(**{'source-id':'missing'})),'source-id 引用不存在來源',True),
+    ('文件版本重複',technical_mutation(lambda d,m,s:m['documents'][0]['versions'].append(copy.deepcopy(m['documents'][0]['versions'][0]))),'versions 識別碼重複',True),
+    ('文件定位重複',technical_mutation(lambda d,m,s:m['documents'][0]['versions'][0]['locators'].append(copy.deepcopy(m['documents'][0]['versions'][0]['locators'][0]))),'locators 識別碼重複',True),
+    ('文件未知日偽造',technical_mutation(lambda d,m,s:m['documents'][0]['versions'][0].update(published='2026-10-16')),'未知精度必須 null',True),
+    ('文件發布月份錯誤',technical_mutation(lambda d,m,s:m['documents'][0]['versions'][0].update(published='2026-13',**{'published-precision':'month'})),'published 與精度不一致',True),
+    ('文件性質錯誤',technical_mutation(lambda d,m,s:m['documents'][0].update(**{'doc-kind':'commercial-proof'})),'doc-kind 不合法',True),
+    ('文件監測超量',technical_mutation(lambda d,m,s:s['ingestion'].update(**{'max-documents':11})),'max-documents 須為 1–10',True),
+    ('文件監測非明列',technical_mutation(lambda d,m,s:s['ingestion'].update(**{'document-ids':['missing']})),'document-ids 引用不存在',True),
+    ('文件監測非官方hostname',technical_mutation(lambda d,m,s:s['ingestion'].update(**{'allowed-hosts':['elsewhere.invalid']})),'allowed-hosts 未包含',True),
+    ('核對無採納版本',technical_mutation(lambda d,m,s:m['documents'][0]['reviews'].append({'content-hash':'a'*64,'official-version':None,'disposition':'adopted','reviewed':'2026-10-16','reason':'測試'})),'version-id 引用不存在版本',True),
+    ('技術重複YAML鍵',edit(MID,'downstream: [end-part]','downstream: [end-part]\ndownstream: [end-part]'),'重複 YAML 鍵',True),
+]
+
+
 def main() -> int:
     if not BASELINE.is_dir():
         print("找不到基準 fixture: {}".format(BASELINE), file=sys.stderr)
@@ -244,6 +299,13 @@ def main() -> int:
             print('  ok    合法判讀（含三種傳導與未知日期）')
 
     # 失敗案例：每個突變都必須被攔下，且訊息需指出具體問題。
+    with tempfile.TemporaryDirectory() as tmp:
+        map_dir=Path(tmp)/'industry-map';shutil.copytree(BASELINE,map_dir)
+        technical_fixture(map_dir)
+        for extra in [(),('--skip-prose',)]:
+            code,output=run_validator(map_dir,*extra)
+            if code:failures.append(f'合法技術擴充未通過: {output}')
+            else:print(f'  ok    合法技術擴充（固定版本／未知日／global／原判讀引用；{extra or "full"}）')
     for name, mutate, expected, caught_in_skip_prose in CASES:
         with tempfile.TemporaryDirectory() as tmp:
             map_dir = Path(tmp) / "industry-map"

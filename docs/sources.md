@@ -64,3 +64,8 @@ $sources.sources | Where-Object id -eq 'ir-tsmc' | Select-Object id,status,last_
 2026-10-14 P0 重試：SEC 仍缺真實聯絡設定；TSMC／NVIDIA IR 仍回 403。新 image 已重新核對三來源，JSON 診斷分別為 configuration 與 http／403；台達／微軟原成功保留。詳見 [驗收結果](theme-assessments-verification.md)。ODM 規則依 [12 筆真實核對](odm-classification-audit.md) 更新，重分類保留事件 identity／取得時間與既有財報；完整正文與已取得短摘錄不同，未取得的供應角色不能靠公司名稱補判。
 
 指標直接來源、受限發現範圍、重試與修訂核對見 [指標來源操作](metric-source-operations.md)；實際期別見 [live 矩陣](theme-indicator-live-matrix.md)。
+
+跨市場技術入口放在同一 registry 的 global／technical-documents；目前為 OCP 冷板與機櫃電力、OIF、UCIe、IEEE IRDS、JEDEC。實際可讀範圍與 web／本機 HTTP 差異見 [當次來源核對](technical-source-audit.md)；固定文件版本、已讀章節及 adopted／no-impact 維護見 [文件操作](technical-document-operations.md)。索引／來源存在、規範發布與商業採用是不同資訊，技術文件不計入直接新聞量。
+
+
+技術文件監測使用既有 worker 的每日到期分支，先處理 OCP／OIF 指定系列；其餘公開入口採人工核對。版本與人工處置見 [文件維護流程](technical-document-operations.md)，實際已讀範圍見 [來源查核](technical-source-audit.md)，逐環節／題材缺口見 [技術研究矩陣](technical-research-matrix.md)。文件候選不併入新聞或指標計數。

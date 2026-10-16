@@ -1,0 +1,868 @@
+{
+  "before": {
+    "at": "2026-10-15T19:01:00.967848+00:00",
+    "counts": {
+      "events": 2915,
+      "financials": 147,
+      "indicator_observations": 11,
+      "theme_assessment_versions": 7,
+      "technical_observations": 8,
+      "technical_reviews": 8
+    },
+    "tokens": [
+      {
+        "theme_id": "800vdc",
+        "current_version_id": 1,
+        "indicator_token": "47a3e6669589e0a179f412d92bf0a15cd89ea331e2f91f7aaaf977d8a4b9a97b",
+        "candidate_token": "fd5ed5d18196bb0303ecb7eef55978faa8fc797fd76b9d4a0f535beb8d87b256"
+      },
+      {
+        "theme_id": "advanced-node-2nm",
+        "current_version_id": 2,
+        "indicator_token": "380d6189d620baf0f77255099ad6f4c7120ba81a98474104e8bea0791c657765",
+        "candidate_token": "92e153865de083ea3c802de48b90af0d543c50c05662101c2224eb9b36f19b47"
+      },
+      {
+        "theme_id": "cpo-silicon-photonics",
+        "current_version_id": 3,
+        "indicator_token": "7989c3fe9856d7e1cfe6d04194a373326eeb12ef77925aaf885e31bbcb61e8a4",
+        "candidate_token": "d3c7be3faeb852552d6763328c4cb7b7e9dcca863beb4894f5bcecf67bae5893"
+      },
+      {
+        "theme_id": "custom-asic-vs-gpu",
+        "current_version_id": 4,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "528d3160e2de6c2a8f9b61b01d9b190add9ead0e90bb709587613c1ea983259d"
+      },
+      {
+        "theme_id": "hbm4",
+        "current_version_id": 5,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "theme_id": "liquid-cooling",
+        "current_version_id": 6,
+        "indicator_token": "84b728fe11eada8d61e96ce74f8c9d53238f1d32e2f2dacc219e6df4839f029d",
+        "candidate_token": "f90951e2cc27f25ab4615a0eb4ea862e5fd370ae5d3f07453579b696efc57802"
+      },
+      {
+        "theme_id": "power-bottleneck",
+        "current_version_id": 7,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    ],
+    "documents": [
+      {
+        "id": 1,
+        "document_id": "ocp-cold-plate-overview",
+        "official_version": null,
+        "hash": "230b59edefd7178894deb7a75947e8475cba76fb32ffceaff12269d5994fbdb1"
+      },
+      {
+        "id": 2,
+        "document_id": "ocp-rack-power-overview",
+        "official_version": null,
+        "hash": "574df557975b207d6f84a7697cb6345083519f335e3c58036c2d287b14ab446f"
+      },
+      {
+        "id": 3,
+        "document_id": "oif-document-categories",
+        "official_version": null,
+        "hash": "934f0406a8ce71c683bec614d135c8845e93f60f0f213f22f95a9e5a9ca27c78"
+      },
+      {
+        "id": 4,
+        "document_id": "ucie-public-specifications",
+        "official_version": null,
+        "hash": "b43283ec35c0e61e9724aee3857f4182c9fb22a56c64514cd92456b20946177f"
+      },
+      {
+        "id": 5,
+        "document_id": "ieee-irds-overview",
+        "official_version": null,
+        "hash": "23be577fcfca95484f03567758e7851246112a3ff829d8f46d9724a09854cae9"
+      },
+      {
+        "id": 6,
+        "document_id": "ocp-cold-plate-requirements",
+        "official_version": "1.0",
+        "hash": "7232e0c54af541304e8a4ea62d879106fdec61c246b58388c8bbe210f7af8de3"
+      },
+      {
+        "id": 7,
+        "document_id": "oif-cpo-module",
+        "official_version": "OIF-Co-Packaging-3.2T-Module-01.0",
+        "hash": "cc3e949493870e53d9088a1e53df332e8dc325ddcc335b8ccb3a1a026c700a44"
+      },
+      {
+        "id": 8,
+        "document_id": "oif-cmis",
+        "official_version": "5.4",
+        "hash": "ac97d14cac1935bb7bebed6ed3d4fb201ff8bbdbc3d5212b84bb31b466736bbb"
+      }
+    ],
+    "sources": [
+      {
+        "id": "ocp-cold-plate",
+        "status": "manual",
+        "last_success": null,
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "twse-revenue",
+        "status": "success",
+        "last_success": "2026-10-15 15:07:04.932549+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "tpca-news",
+        "status": "success",
+        "last_success": "2026-10-15 15:07:13.326356+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "aaon-earnings-metrics",
+        "status": "success",
+        "last_success": "2026-10-15 15:07:34.115069+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "oif-technical",
+        "status": "manual",
+        "last_success": null,
+        "error": null,
+        "new_count": 0
+      }
+    ]
+  },
+  "round1": {
+    "at": "2026-10-15T19:03:41.618123+00:00",
+    "counts": {
+      "events": 2915,
+      "financials": 147,
+      "indicator_observations": 11,
+      "theme_assessment_versions": 7,
+      "technical_observations": 8,
+      "technical_reviews": 8
+    },
+    "tokens": [
+      {
+        "theme_id": "800vdc",
+        "current_version_id": 1,
+        "indicator_token": "47a3e6669589e0a179f412d92bf0a15cd89ea331e2f91f7aaaf977d8a4b9a97b",
+        "candidate_token": "fd5ed5d18196bb0303ecb7eef55978faa8fc797fd76b9d4a0f535beb8d87b256"
+      },
+      {
+        "theme_id": "advanced-node-2nm",
+        "current_version_id": 2,
+        "indicator_token": "380d6189d620baf0f77255099ad6f4c7120ba81a98474104e8bea0791c657765",
+        "candidate_token": "92e153865de083ea3c802de48b90af0d543c50c05662101c2224eb9b36f19b47"
+      },
+      {
+        "theme_id": "cpo-silicon-photonics",
+        "current_version_id": 3,
+        "indicator_token": "7989c3fe9856d7e1cfe6d04194a373326eeb12ef77925aaf885e31bbcb61e8a4",
+        "candidate_token": "d3c7be3faeb852552d6763328c4cb7b7e9dcca863beb4894f5bcecf67bae5893"
+      },
+      {
+        "theme_id": "custom-asic-vs-gpu",
+        "current_version_id": 4,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "528d3160e2de6c2a8f9b61b01d9b190add9ead0e90bb709587613c1ea983259d"
+      },
+      {
+        "theme_id": "hbm4",
+        "current_version_id": 5,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "theme_id": "liquid-cooling",
+        "current_version_id": 6,
+        "indicator_token": "84b728fe11eada8d61e96ce74f8c9d53238f1d32e2f2dacc219e6df4839f029d",
+        "candidate_token": "f90951e2cc27f25ab4615a0eb4ea862e5fd370ae5d3f07453579b696efc57802"
+      },
+      {
+        "theme_id": "power-bottleneck",
+        "current_version_id": 7,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    ],
+    "documents": [
+      {
+        "id": 1,
+        "document_id": "ocp-cold-plate-overview",
+        "official_version": null,
+        "hash": "230b59edefd7178894deb7a75947e8475cba76fb32ffceaff12269d5994fbdb1"
+      },
+      {
+        "id": 2,
+        "document_id": "ocp-rack-power-overview",
+        "official_version": null,
+        "hash": "574df557975b207d6f84a7697cb6345083519f335e3c58036c2d287b14ab446f"
+      },
+      {
+        "id": 3,
+        "document_id": "oif-document-categories",
+        "official_version": null,
+        "hash": "934f0406a8ce71c683bec614d135c8845e93f60f0f213f22f95a9e5a9ca27c78"
+      },
+      {
+        "id": 4,
+        "document_id": "ucie-public-specifications",
+        "official_version": null,
+        "hash": "b43283ec35c0e61e9724aee3857f4182c9fb22a56c64514cd92456b20946177f"
+      },
+      {
+        "id": 5,
+        "document_id": "ieee-irds-overview",
+        "official_version": null,
+        "hash": "23be577fcfca95484f03567758e7851246112a3ff829d8f46d9724a09854cae9"
+      },
+      {
+        "id": 6,
+        "document_id": "ocp-cold-plate-requirements",
+        "official_version": "1.0",
+        "hash": "7232e0c54af541304e8a4ea62d879106fdec61c246b58388c8bbe210f7af8de3"
+      },
+      {
+        "id": 7,
+        "document_id": "oif-cpo-module",
+        "official_version": "OIF-Co-Packaging-3.2T-Module-01.0",
+        "hash": "cc3e949493870e53d9088a1e53df332e8dc325ddcc335b8ccb3a1a026c700a44"
+      },
+      {
+        "id": 8,
+        "document_id": "oif-cmis",
+        "official_version": "5.4",
+        "hash": "ac97d14cac1935bb7bebed6ed3d4fb201ff8bbdbc3d5212b84bb31b466736bbb"
+      }
+    ],
+    "sources": [
+      {
+        "id": "oif-technical",
+        "status": "success",
+        "last_success": "2026-10-15 19:01:23.285979+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "aaon-earnings-metrics",
+        "status": "success",
+        "last_success": "2026-10-15 19:01:44.594615+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "ocp-cold-plate",
+        "status": "failed",
+        "last_success": null,
+        "error": "官方索引：HTTPStatusError: Client error '403 Forbidden' for url 'https://www.opencompute.org/projects/cooling-environments/cold-plate/'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403；ocp-cold-plate-requirements: HTTPStatusError: Client error '403 Forbidden' for url 'https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403",
+        "new_count": 0
+      },
+      {
+        "id": "twse-revenue",
+        "status": "success",
+        "last_success": "2026-10-15 19:01:17.571515+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "tpca-news",
+        "status": "success",
+        "last_success": "2026-10-15 19:01:22.575959+00:00",
+        "error": null,
+        "new_count": 0
+      }
+    ]
+  },
+  "round2": {
+    "at": "2026-10-15T19:04:15.997082+00:00",
+    "counts": {
+      "events": 2915,
+      "financials": 147,
+      "indicator_observations": 11,
+      "theme_assessment_versions": 7,
+      "technical_observations": 8,
+      "technical_reviews": 8
+    },
+    "tokens": [
+      {
+        "theme_id": "800vdc",
+        "current_version_id": 1,
+        "indicator_token": "47a3e6669589e0a179f412d92bf0a15cd89ea331e2f91f7aaaf977d8a4b9a97b",
+        "candidate_token": "fd5ed5d18196bb0303ecb7eef55978faa8fc797fd76b9d4a0f535beb8d87b256"
+      },
+      {
+        "theme_id": "advanced-node-2nm",
+        "current_version_id": 2,
+        "indicator_token": "380d6189d620baf0f77255099ad6f4c7120ba81a98474104e8bea0791c657765",
+        "candidate_token": "92e153865de083ea3c802de48b90af0d543c50c05662101c2224eb9b36f19b47"
+      },
+      {
+        "theme_id": "cpo-silicon-photonics",
+        "current_version_id": 3,
+        "indicator_token": "7989c3fe9856d7e1cfe6d04194a373326eeb12ef77925aaf885e31bbcb61e8a4",
+        "candidate_token": "d3c7be3faeb852552d6763328c4cb7b7e9dcca863beb4894f5bcecf67bae5893"
+      },
+      {
+        "theme_id": "custom-asic-vs-gpu",
+        "current_version_id": 4,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "528d3160e2de6c2a8f9b61b01d9b190add9ead0e90bb709587613c1ea983259d"
+      },
+      {
+        "theme_id": "hbm4",
+        "current_version_id": 5,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "theme_id": "liquid-cooling",
+        "current_version_id": 6,
+        "indicator_token": "84b728fe11eada8d61e96ce74f8c9d53238f1d32e2f2dacc219e6df4839f029d",
+        "candidate_token": "f90951e2cc27f25ab4615a0eb4ea862e5fd370ae5d3f07453579b696efc57802"
+      },
+      {
+        "theme_id": "power-bottleneck",
+        "current_version_id": 7,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    ],
+    "documents": [
+      {
+        "id": 1,
+        "document_id": "ocp-cold-plate-overview",
+        "official_version": null,
+        "hash": "230b59edefd7178894deb7a75947e8475cba76fb32ffceaff12269d5994fbdb1"
+      },
+      {
+        "id": 2,
+        "document_id": "ocp-rack-power-overview",
+        "official_version": null,
+        "hash": "574df557975b207d6f84a7697cb6345083519f335e3c58036c2d287b14ab446f"
+      },
+      {
+        "id": 3,
+        "document_id": "oif-document-categories",
+        "official_version": null,
+        "hash": "934f0406a8ce71c683bec614d135c8845e93f60f0f213f22f95a9e5a9ca27c78"
+      },
+      {
+        "id": 4,
+        "document_id": "ucie-public-specifications",
+        "official_version": null,
+        "hash": "b43283ec35c0e61e9724aee3857f4182c9fb22a56c64514cd92456b20946177f"
+      },
+      {
+        "id": 5,
+        "document_id": "ieee-irds-overview",
+        "official_version": null,
+        "hash": "23be577fcfca95484f03567758e7851246112a3ff829d8f46d9724a09854cae9"
+      },
+      {
+        "id": 6,
+        "document_id": "ocp-cold-plate-requirements",
+        "official_version": "1.0",
+        "hash": "7232e0c54af541304e8a4ea62d879106fdec61c246b58388c8bbe210f7af8de3"
+      },
+      {
+        "id": 7,
+        "document_id": "oif-cpo-module",
+        "official_version": "OIF-Co-Packaging-3.2T-Module-01.0",
+        "hash": "cc3e949493870e53d9088a1e53df332e8dc325ddcc335b8ccb3a1a026c700a44"
+      },
+      {
+        "id": 8,
+        "document_id": "oif-cmis",
+        "official_version": "5.4",
+        "hash": "ac97d14cac1935bb7bebed6ed3d4fb201ff8bbdbc3d5212b84bb31b466736bbb"
+      }
+    ],
+    "sources": [
+      {
+        "id": "oif-technical",
+        "status": "success",
+        "last_success": "2026-10-15 19:04:01.087990+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "aaon-earnings-metrics",
+        "status": "success",
+        "last_success": "2026-10-15 19:04:12.752688+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "ocp-cold-plate",
+        "status": "failed",
+        "last_success": null,
+        "error": "官方索引：HTTPStatusError: Client error '403 Forbidden' for url 'https://www.opencompute.org/projects/cooling-environments/cold-plate/'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403；ocp-cold-plate-requirements: HTTPStatusError: Client error '403 Forbidden' for url 'https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403",
+        "new_count": 0
+      },
+      {
+        "id": "twse-revenue",
+        "status": "success",
+        "last_success": "2026-10-15 19:03:55.420942+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "tpca-news",
+        "status": "success",
+        "last_success": "2026-10-15 19:04:00.476161+00:00",
+        "error": null,
+        "new_count": 0
+      }
+    ]
+  },
+  "failure": {
+    "at": "2026-10-15T19:08:24.197178+00:00",
+    "counts": {
+      "events": 2915,
+      "financials": 147,
+      "indicator_observations": 11,
+      "theme_assessment_versions": 7,
+      "technical_observations": 8,
+      "technical_reviews": 8
+    },
+    "tokens": [
+      {
+        "theme_id": "800vdc",
+        "current_version_id": 1,
+        "indicator_token": "47a3e6669589e0a179f412d92bf0a15cd89ea331e2f91f7aaaf977d8a4b9a97b",
+        "candidate_token": "fd5ed5d18196bb0303ecb7eef55978faa8fc797fd76b9d4a0f535beb8d87b256"
+      },
+      {
+        "theme_id": "advanced-node-2nm",
+        "current_version_id": 2,
+        "indicator_token": "380d6189d620baf0f77255099ad6f4c7120ba81a98474104e8bea0791c657765",
+        "candidate_token": "92e153865de083ea3c802de48b90af0d543c50c05662101c2224eb9b36f19b47"
+      },
+      {
+        "theme_id": "cpo-silicon-photonics",
+        "current_version_id": 3,
+        "indicator_token": "7989c3fe9856d7e1cfe6d04194a373326eeb12ef77925aaf885e31bbcb61e8a4",
+        "candidate_token": "d3c7be3faeb852552d6763328c4cb7b7e9dcca863beb4894f5bcecf67bae5893"
+      },
+      {
+        "theme_id": "custom-asic-vs-gpu",
+        "current_version_id": 4,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "528d3160e2de6c2a8f9b61b01d9b190add9ead0e90bb709587613c1ea983259d"
+      },
+      {
+        "theme_id": "hbm4",
+        "current_version_id": 5,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "theme_id": "liquid-cooling",
+        "current_version_id": 6,
+        "indicator_token": "84b728fe11eada8d61e96ce74f8c9d53238f1d32e2f2dacc219e6df4839f029d",
+        "candidate_token": "f90951e2cc27f25ab4615a0eb4ea862e5fd370ae5d3f07453579b696efc57802"
+      },
+      {
+        "theme_id": "power-bottleneck",
+        "current_version_id": 7,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    ],
+    "documents": [
+      {
+        "id": 1,
+        "document_id": "ocp-cold-plate-overview",
+        "official_version": null,
+        "hash": "230b59edefd7178894deb7a75947e8475cba76fb32ffceaff12269d5994fbdb1"
+      },
+      {
+        "id": 2,
+        "document_id": "ocp-rack-power-overview",
+        "official_version": null,
+        "hash": "574df557975b207d6f84a7697cb6345083519f335e3c58036c2d287b14ab446f"
+      },
+      {
+        "id": 3,
+        "document_id": "oif-document-categories",
+        "official_version": null,
+        "hash": "934f0406a8ce71c683bec614d135c8845e93f60f0f213f22f95a9e5a9ca27c78"
+      },
+      {
+        "id": 4,
+        "document_id": "ucie-public-specifications",
+        "official_version": null,
+        "hash": "b43283ec35c0e61e9724aee3857f4182c9fb22a56c64514cd92456b20946177f"
+      },
+      {
+        "id": 5,
+        "document_id": "ieee-irds-overview",
+        "official_version": null,
+        "hash": "23be577fcfca95484f03567758e7851246112a3ff829d8f46d9724a09854cae9"
+      },
+      {
+        "id": 6,
+        "document_id": "ocp-cold-plate-requirements",
+        "official_version": "1.0",
+        "hash": "7232e0c54af541304e8a4ea62d879106fdec61c246b58388c8bbe210f7af8de3"
+      },
+      {
+        "id": 7,
+        "document_id": "oif-cpo-module",
+        "official_version": "OIF-Co-Packaging-3.2T-Module-01.0",
+        "hash": "cc3e949493870e53d9088a1e53df332e8dc325ddcc335b8ccb3a1a026c700a44"
+      },
+      {
+        "id": 8,
+        "document_id": "oif-cmis",
+        "official_version": "5.4",
+        "hash": "ac97d14cac1935bb7bebed6ed3d4fb201ff8bbdbc3d5212b84bb31b466736bbb"
+      }
+    ],
+    "sources": [
+      {
+        "id": "aaon-earnings-metrics",
+        "status": "success",
+        "last_success": "2026-10-15 19:04:12.752688+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "oif-technical",
+        "status": "failed",
+        "last_success": "2026-10-15 19:04:01.087990+00:00",
+        "error": "官方索引：ConnectError: [Errno 111] Connection refused；oif-cpo-module: ConnectError: [Errno 111] Connection refused；oif-cmis: ConnectError: [Errno 111] Connection refused",
+        "new_count": 0
+      },
+      {
+        "id": "ocp-cold-plate",
+        "status": "failed",
+        "last_success": null,
+        "error": "官方索引：HTTPStatusError: Client error '403 Forbidden' for url 'https://www.opencompute.org/projects/cooling-environments/cold-plate/'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403；ocp-cold-plate-requirements: HTTPStatusError: Client error '403 Forbidden' for url 'https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403",
+        "new_count": 0
+      },
+      {
+        "id": "twse-revenue",
+        "status": "success",
+        "last_success": "2026-10-15 19:03:55.420942+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "tpca-news",
+        "status": "success",
+        "last_success": "2026-10-15 19:04:00.476161+00:00",
+        "error": null,
+        "new_count": 0
+      }
+    ]
+  },
+  "recovered": {
+    "at": "2026-10-15T19:08:43.757197+00:00",
+    "counts": {
+      "events": 2915,
+      "financials": 147,
+      "indicator_observations": 11,
+      "theme_assessment_versions": 7,
+      "technical_observations": 8,
+      "technical_reviews": 8
+    },
+    "tokens": [
+      {
+        "theme_id": "800vdc",
+        "current_version_id": 1,
+        "indicator_token": "47a3e6669589e0a179f412d92bf0a15cd89ea331e2f91f7aaaf977d8a4b9a97b",
+        "candidate_token": "fd5ed5d18196bb0303ecb7eef55978faa8fc797fd76b9d4a0f535beb8d87b256"
+      },
+      {
+        "theme_id": "advanced-node-2nm",
+        "current_version_id": 2,
+        "indicator_token": "380d6189d620baf0f77255099ad6f4c7120ba81a98474104e8bea0791c657765",
+        "candidate_token": "92e153865de083ea3c802de48b90af0d543c50c05662101c2224eb9b36f19b47"
+      },
+      {
+        "theme_id": "cpo-silicon-photonics",
+        "current_version_id": 3,
+        "indicator_token": "7989c3fe9856d7e1cfe6d04194a373326eeb12ef77925aaf885e31bbcb61e8a4",
+        "candidate_token": "d3c7be3faeb852552d6763328c4cb7b7e9dcca863beb4894f5bcecf67bae5893"
+      },
+      {
+        "theme_id": "custom-asic-vs-gpu",
+        "current_version_id": 4,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "528d3160e2de6c2a8f9b61b01d9b190add9ead0e90bb709587613c1ea983259d"
+      },
+      {
+        "theme_id": "hbm4",
+        "current_version_id": 5,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "theme_id": "liquid-cooling",
+        "current_version_id": 6,
+        "indicator_token": "84b728fe11eada8d61e96ce74f8c9d53238f1d32e2f2dacc219e6df4839f029d",
+        "candidate_token": "f90951e2cc27f25ab4615a0eb4ea862e5fd370ae5d3f07453579b696efc57802"
+      },
+      {
+        "theme_id": "power-bottleneck",
+        "current_version_id": 7,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    ],
+    "documents": [
+      {
+        "id": 1,
+        "document_id": "ocp-cold-plate-overview",
+        "official_version": null,
+        "hash": "230b59edefd7178894deb7a75947e8475cba76fb32ffceaff12269d5994fbdb1"
+      },
+      {
+        "id": 2,
+        "document_id": "ocp-rack-power-overview",
+        "official_version": null,
+        "hash": "574df557975b207d6f84a7697cb6345083519f335e3c58036c2d287b14ab446f"
+      },
+      {
+        "id": 3,
+        "document_id": "oif-document-categories",
+        "official_version": null,
+        "hash": "934f0406a8ce71c683bec614d135c8845e93f60f0f213f22f95a9e5a9ca27c78"
+      },
+      {
+        "id": 4,
+        "document_id": "ucie-public-specifications",
+        "official_version": null,
+        "hash": "b43283ec35c0e61e9724aee3857f4182c9fb22a56c64514cd92456b20946177f"
+      },
+      {
+        "id": 5,
+        "document_id": "ieee-irds-overview",
+        "official_version": null,
+        "hash": "23be577fcfca95484f03567758e7851246112a3ff829d8f46d9724a09854cae9"
+      },
+      {
+        "id": 6,
+        "document_id": "ocp-cold-plate-requirements",
+        "official_version": "1.0",
+        "hash": "7232e0c54af541304e8a4ea62d879106fdec61c246b58388c8bbe210f7af8de3"
+      },
+      {
+        "id": 7,
+        "document_id": "oif-cpo-module",
+        "official_version": "OIF-Co-Packaging-3.2T-Module-01.0",
+        "hash": "cc3e949493870e53d9088a1e53df332e8dc325ddcc335b8ccb3a1a026c700a44"
+      },
+      {
+        "id": 8,
+        "document_id": "oif-cmis",
+        "official_version": "5.4",
+        "hash": "ac97d14cac1935bb7bebed6ed3d4fb201ff8bbdbc3d5212b84bb31b466736bbb"
+      }
+    ],
+    "sources": [
+      {
+        "id": "aaon-earnings-metrics",
+        "status": "success",
+        "last_success": "2026-10-15 19:04:12.752688+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "oif-technical",
+        "status": "success",
+        "last_success": "2026-10-15 19:08:27.512716+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "ocp-cold-plate",
+        "status": "failed",
+        "last_success": null,
+        "error": "官方索引：HTTPStatusError: Client error '403 Forbidden' for url 'https://www.opencompute.org/projects/cooling-environments/cold-plate/'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403；ocp-cold-plate-requirements: HTTPStatusError: Client error '403 Forbidden' for url 'https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403",
+        "new_count": 0
+      },
+      {
+        "id": "twse-revenue",
+        "status": "success",
+        "last_success": "2026-10-15 19:03:55.420942+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "tpca-news",
+        "status": "success",
+        "last_success": "2026-10-15 19:04:00.476161+00:00",
+        "error": null,
+        "new_count": 0
+      }
+    ]
+  },
+  "restarted": {
+    "at": "2026-10-15T19:11:03.571646+00:00",
+    "counts": {
+      "events": 2915,
+      "financials": 147,
+      "indicator_observations": 11,
+      "theme_assessment_versions": 7,
+      "technical_observations": 8,
+      "technical_reviews": 8
+    },
+    "tokens": [
+      {
+        "theme_id": "800vdc",
+        "current_version_id": 1,
+        "indicator_token": "47a3e6669589e0a179f412d92bf0a15cd89ea331e2f91f7aaaf977d8a4b9a97b",
+        "candidate_token": "fd5ed5d18196bb0303ecb7eef55978faa8fc797fd76b9d4a0f535beb8d87b256"
+      },
+      {
+        "theme_id": "advanced-node-2nm",
+        "current_version_id": 2,
+        "indicator_token": "380d6189d620baf0f77255099ad6f4c7120ba81a98474104e8bea0791c657765",
+        "candidate_token": "92e153865de083ea3c802de48b90af0d543c50c05662101c2224eb9b36f19b47"
+      },
+      {
+        "theme_id": "cpo-silicon-photonics",
+        "current_version_id": 3,
+        "indicator_token": "7989c3fe9856d7e1cfe6d04194a373326eeb12ef77925aaf885e31bbcb61e8a4",
+        "candidate_token": "d3c7be3faeb852552d6763328c4cb7b7e9dcca863beb4894f5bcecf67bae5893"
+      },
+      {
+        "theme_id": "custom-asic-vs-gpu",
+        "current_version_id": 4,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "528d3160e2de6c2a8f9b61b01d9b190add9ead0e90bb709587613c1ea983259d"
+      },
+      {
+        "theme_id": "hbm4",
+        "current_version_id": 5,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      {
+        "theme_id": "liquid-cooling",
+        "current_version_id": 6,
+        "indicator_token": "84b728fe11eada8d61e96ce74f8c9d53238f1d32e2f2dacc219e6df4839f029d",
+        "candidate_token": "f90951e2cc27f25ab4615a0eb4ea862e5fd370ae5d3f07453579b696efc57802"
+      },
+      {
+        "theme_id": "power-bottleneck",
+        "current_version_id": 7,
+        "indicator_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "candidate_token": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      }
+    ],
+    "documents": [
+      {
+        "id": 1,
+        "document_id": "ocp-cold-plate-overview",
+        "official_version": null,
+        "hash": "230b59edefd7178894deb7a75947e8475cba76fb32ffceaff12269d5994fbdb1"
+      },
+      {
+        "id": 2,
+        "document_id": "ocp-rack-power-overview",
+        "official_version": null,
+        "hash": "574df557975b207d6f84a7697cb6345083519f335e3c58036c2d287b14ab446f"
+      },
+      {
+        "id": 3,
+        "document_id": "oif-document-categories",
+        "official_version": null,
+        "hash": "934f0406a8ce71c683bec614d135c8845e93f60f0f213f22f95a9e5a9ca27c78"
+      },
+      {
+        "id": 4,
+        "document_id": "ucie-public-specifications",
+        "official_version": null,
+        "hash": "b43283ec35c0e61e9724aee3857f4182c9fb22a56c64514cd92456b20946177f"
+      },
+      {
+        "id": 5,
+        "document_id": "ieee-irds-overview",
+        "official_version": null,
+        "hash": "23be577fcfca95484f03567758e7851246112a3ff829d8f46d9724a09854cae9"
+      },
+      {
+        "id": 6,
+        "document_id": "ocp-cold-plate-requirements",
+        "official_version": "1.0",
+        "hash": "7232e0c54af541304e8a4ea62d879106fdec61c246b58388c8bbe210f7af8de3"
+      },
+      {
+        "id": 7,
+        "document_id": "oif-cpo-module",
+        "official_version": "OIF-Co-Packaging-3.2T-Module-01.0",
+        "hash": "cc3e949493870e53d9088a1e53df332e8dc325ddcc335b8ccb3a1a026c700a44"
+      },
+      {
+        "id": 8,
+        "document_id": "oif-cmis",
+        "official_version": "5.4",
+        "hash": "ac97d14cac1935bb7bebed6ed3d4fb201ff8bbdbc3d5212b84bb31b466736bbb"
+      }
+    ],
+    "sources": [
+      {
+        "id": "aaon-earnings-metrics",
+        "status": "success",
+        "last_success": "2026-10-15 19:04:12.752688+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "oif-technical",
+        "status": "success",
+        "last_success": "2026-10-15 19:08:27.512716+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "twse-revenue",
+        "status": "success",
+        "last_success": "2026-10-15 19:03:55.420942+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "tpca-news",
+        "status": "success",
+        "last_success": "2026-10-15 19:04:00.476161+00:00",
+        "error": null,
+        "new_count": 0
+      },
+      {
+        "id": "ocp-cold-plate",
+        "status": "failed",
+        "last_success": null,
+        "error": "官方索引：HTTPStatusError: Client error '403 Forbidden' for url 'https://www.opencompute.org/projects/cooling-environments/cold-plate/'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403；ocp-cold-plate-requirements: HTTPStatusError: Client error '403 Forbidden' for url 'https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403",
+        "new_count": 0
+      }
+    ]
+  },
+  "pg_advisory_lock": {
+    "first": true,
+    "second": false
+  },
+  "rollback": {
+    "resumed_tokens_preserved": true,
+    "themes": 7,
+    "rollback_health": {
+      "status": "ok",
+      "map_ready": true
+    },
+    "at": "2026-10-15T19:15:02.8079030Z",
+    "baseline_tokens_preserved": true
+  }
+}

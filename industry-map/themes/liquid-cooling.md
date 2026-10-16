@@ -121,6 +121,29 @@ assessment:
     note: 尚缺同口徑新建與改造案資料。
     evidence_ids: []
     occurred: null
+technical-profile:
+  product-boundary: 冷板、歧管、CDU 與設施側排熱是不同責任層；液冷產品收入不等於整個場址驗收完成。
+  adoption-conditions:
+  - 平台需交代 TCS／FWS 交界、冷卻液、流量壓降、允許入口溫度及維修隔離。
+  - L2L 需設施排熱路徑，L2A 也需確認環境與空氣排熱容量；改造與新建案分開比較。
+  bottlenecks:
+  - 材料相容、過濾、漏液與流量分布須按同一迴路驗證；零件名目能力不能相加成場址能力。
+  substitution-limits:
+  - 單相冷板、氣冷及其他液冷路線須比較同工作負載、場址與維護條件，不能由單一平台推出市場全轉換。
+  claims:
+  - id: cooling-loop-scope
+    statement: OCP 需求文件不涵蓋 FWS；冷板需求與設施交付需要分開核對。
+    confidence: well-supported
+    evidence:
+    - document-id: ocp-cold-plate-requirements
+      version-id: revision-one
+      locator: loop-boundary
+  evidence-gaps:
+  - 四家候選公司的指定料號、迴路測試及分產品收入尚未逐一齊備；OCP 只有列明章節的 web 擷取核讀。
+  assessment-claim-ids:
+  - commercial-product-sales
+  - growth-not-margin
+  reviewed: '2026-10-16'
 ---
 
 ## 題材範圍

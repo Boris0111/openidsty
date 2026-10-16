@@ -34,6 +34,54 @@ kpis:
 signals:
   - 擴產計畫與資本支出調整
   - 封裝技術世代轉換（中介層轉面板級）
+downstream-relations:
+  odm:
+    kind: supply
+    summary: 先進封裝至系統組裝與機櫃整合：封裝後運算／記憶體模組的整機整合介面。
+    items:
+    - 封裝後運算／記憶體模組的整機整合介面
+    dependencies:
+    - 封裝尺寸、散熱接觸、板級供電與訊號逃線
+    conditions:
+    - 封裝與整機平台完成共同驗證
+    confidence: inference
+    evidence: []
+    gaps:
+    - 缺少指定封裝料號與整機主板、散熱模組的驗收對照，不能推定每家封裝商都供應同一 ODM。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 中介層／RDL、封裝載板、D2D 與 HBM 控制／實體介面是不同層次；UCIe 封裝內介面不能替代全部封裝或記憶體標準。
+  adoption-conditions:
+  - 先核對 die／記憶體介面、封裝材料與製程、供電散熱及測試方案；互通需要指定版本與實測。
+  - 量產需同時有已知良品 die、封裝良率、可靠度、可交付產能與客戶驗收證據。
+  bottlenecks:
+  - 大型封裝的路由、翹曲、熱應力、測試可及性及材料／設備配置會共同限制整合，不能只看名目產能。
+  substitution-limits:
+  - CoWoS-S／R／L 的互連結構不同；晶圓轉面板是加工方式，玻璃核心是載板材料，不能當同一層必然互斥選項。
+  - 採用替代方案需重新核對設計規則、良率、可靠度與成本；roadmap 不能支持客戶已量產。
+  claims:
+  - id: packaging-layers
+    statement: 台積電公開 CoWoS 頁區分矽中介層及 R／L 等互連組合，支持產品層次區分，不提供每位客戶良率。
+    confidence: well-supported
+    evidence:
+    - source-id: tsmc-public-technology
+      url: https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm
+      locator: CoWoS-S／CoWoS-R／CoWoS-L
+      read-scope: 已讀指定公開段落，未取得完整設計／認證檔
+  - id: die-to-die-scope
+    statement: UCIe 公開介紹涉及封裝內 D2D 與測試管理；未取得全文，不能由介紹推定 HBM 相容或跨廠合規。
+    confidence: well-supported
+    evidence:
+    - document-id: ucie-public-specifications
+      version-id: public-overview-20261016
+      locator: package-interface
+    - document-id: ucie-public-specifications
+      version-id: public-overview-20261016
+      locator: test-manageability
+  evidence-gaps:
+  - 未取得具名封裝平台的良率分解、KGD 測試覆蓋、玻璃／面板替代的客戶認證與同口徑成本。
+  - UCIe 全文須 REQUEST；JEDEC 個別 HBM 規格未取得，不以公開介紹補成條文已核實。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

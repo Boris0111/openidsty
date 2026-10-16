@@ -5,7 +5,7 @@ test('tracked public routes work without a backend', async ({page, request}) => 
   const unexpected = await installOfflineApi(page), errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   // APIRequestContext bypasses browser interception: the test server really has no backend.
-  expect((await request.get('/api/health')).status()).toBe(503);
+  const failed=await request.get('/api/health');expect(failed.status()).toBe(503);expect(failed.headers()['cache-control']).toBe('no-store');
   await page.goto('/');
   await expect(page.locator('#segment-reading').getByRole('heading', {name: '運算晶片', exact: true})).toBeVisible();
   const nav = page.getByRole('navigation', {name: '主要導覽'});
@@ -13,7 +13,7 @@ test('tracked public routes work without a backend', async ({page, request}) => 
   await page.getByRole('link', {name: '液冷', exact: true}).click();
   await expect(page.getByRole('heading', {name: '液冷', exact: true})).toBeVisible();
   await expect(page.getByText('狀態查核 2026-10-07', {exact: false})).toBeVisible();
-  await expect(page.getByRole('heading', {name: '預期里程碑與查核點'})).toBeVisible();
+  await page.getByRole('tab',{name:'數據與追蹤'}).click();await expect(page.getByRole('heading', {name: '里程碑與實際進展'})).toBeVisible();
   await nav.getByRole('link', {name: '近期事件'}).click();
   await page.locator('.event-title').first().click();
   await expect(page.getByRole('heading', {name: '來源摘錄'})).toBeVisible();
@@ -51,7 +51,7 @@ test('mobile selection and keyboard search remain readable', async ({page}) => {
 test('loading failure, retry and empty events preserve navigation', async ({page}) => {
   const unexpected = await installOfflineApi(page);
   await page.route('**/api/themes', route => route.fulfill({status: 503, json: {detail: '離線測試服務失敗'}}));
-  await page.goto('/themes'); await expect(page.getByRole('main').getByRole('alert')).toContainText('離線測試服務失敗');
+  await page.goto('/themes'); await expect(page.getByRole('main').getByRole('alert')).toContainText('此區資料暫時無法取得');
   await page.unroute('**/api/themes');
   await page.getByRole('button', {name: '重新取得'}).click();
   await expect(page.getByRole('link', {name: '液冷', exact: true})).toBeVisible();

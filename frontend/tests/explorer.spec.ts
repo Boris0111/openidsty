@@ -50,21 +50,25 @@ test('all 17 segments and seven themes expose full research and evidence links',
     await page.goto(`/?layer=${s.layer}&segment=${s.id}`);
     await expect(heading(page,s.name)).toBeVisible();
     const reading=page.locator('#segment-reading');
-    await expect(reading.getByRole('heading',{name:'監測指標與轉折訊號'})).toBeVisible();
-    await expect(reading.getByRole('heading',{name:'代表公司'})).toBeAttached();
+    await expect(reading.getByRole('heading',{name:'供應與需求關係'})).toBeVisible();
+    await expect(reading.getByRole('heading',{name:'代表公司與供應角色'})).toBeVisible();
+    await reading.getByRole('tab',{name:'技術與限制'}).click();
+    await expect(reading.getByRole('heading',{name:'技術變數',exact:true})).toBeVisible();
     expect(await reading.locator('.prose a[href^="https://"]').count()).toBeGreaterThan(0);
-    await expect(reading.locator('details')).toHaveCount(0);
+    await reading.getByRole('tab',{name:'追蹤重點'}).click();
+    await expect(reading.getByRole('heading',{name:'監測指標與轉折訊號'})).toBeVisible();
   }
   await page.goto('/themes');await expect(page.locator('.theme-list article')).toHaveCount(7);
   const themes=await (await page.request.get('/api/themes')).json();
   for(const t of themes){
     await page.goto(`/themes/${t.theme}`);await expect(page.getByRole('heading',{name:t.name_zh,exact:true})).toBeVisible();
     await expect(page.getByText(`狀態查核 ${t.checked}`,{exact:false})).toBeVisible();
-    await expect(page.getByRole('heading',{name:'預期里程碑與查核點'})).toBeAttached();
-    await expect(page.getByRole('heading',{name:'已發布的相關事件'})).toBeAttached();
+    await page.getByRole('tab',{name:'數據與追蹤'}).click();
+    await expect(page.getByRole('heading',{name:'里程碑與實際進展'})).toBeVisible();
+    await expect(page.getByRole('heading',{name:'已發布的相關事件'})).toBeVisible();
     expect(await page.locator('.theme-research a[href^="https://"]').count()).toBeGreaterThan(0);
   }
-  await page.goto('/themes/liquid-cooling');await expect(page.getByRole('heading',{name:'預期里程碑與查核點'})).toBeAttached();await page.screenshot({path:'test-results/desktop-theme.png',fullPage:true});
+  await page.goto('/themes/liquid-cooling');await expect(page.getByRole('heading',{name:'目前判讀'})).toBeVisible();await page.screenshot({path:'test-results/desktop-theme.png',fullPage:true});
   await page.locator('.theme-tags a[href*="segment=thermal"]').click();await expect(heading(page,'散熱')).toBeVisible();
 });
 
