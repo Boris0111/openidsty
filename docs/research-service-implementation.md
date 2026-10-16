@@ -37,7 +37,7 @@ Backend 回歸：150 passed、8 skipped（需專用 PostgreSQL 的 6 項與既�
 
 從 `dad167a94fafe9499702356fc8842d6f79b858ce` 的 Git archive 編譯 119 個物件（17／7／95），兩次內容 hash 均為 `412609b03e6a66b7aa62da819f19487690c7ab48c13527f3053786d3a9a8a6a1`。在獨立 PostgreSQL 的 rollback-only transaction 逐筆核對實際 Markdown、metadata、日期與 hash，保留 7 份判讀、9 個指標定義、11 筆觀測及技術文件／觀測／核對各 8 筆，沒有將測試資料寫進 application DB。5 項編譯單元測試通過，含惡意 archive 路徑與 symlink 拒絕。
 
-Application DB 尚未建立研究 head；首條產品閱讀流程的內容備妥後才做一次 bootstrap。管理發布與後續切換不在本 bootstrap CLI 假裝完成。
+初期檢查時未建立 application head；首條內容提交後已從 `8480da4af6d6cac11c6f62836a1fcc2feced4012` 完成一次 bootstrap。Release 為 `03799774-3553-5ff6-9910-13a68468af15`，125 物件的內容 hash 為 `3d39adcbc033817b0d8d9da4cd0c6934a3c19cbd48c0bbc37acdb3a958caa0c6`。同一提交在 PostgreSQL rollback-only transaction 重建比對一致，原歷史筆數仍保留。管理發布與後續切換不在本 bootstrap CLI 假裝完成。
 
 ## V2 讀取契約
 
@@ -51,4 +51,10 @@ Typed graph 與三種 impact 加入後共 19 項 PostgreSQL／圖形契約通過
 
 `compose.research.yaml` 為獨立設定，經 Docker Compose 解析確認所有共用 app image 的服務都使用新版 tag，port 只綁 loopback，PG volume／network 使用新版 namespace，排程預設不啟動。額外注入五種不安全設定（舊 initialize image、公網 API bind、原 PG volume、external volume、取消 worker profile）皆被操作工具拒絕。
 
-`.env.research` 已獨立產生，DB／session 祕密不同且由 Git 忽略。啟停、設定核對與還原方法見 [research-lab](research-lab.md)；本段不代表後續 DB role、管理身分或私人網路 gateway 已完成。
+`.env.research` 已獨立產生，DB／session／reader／writer 祕密各自不同且由 Git 忽略。啟停、設定核對與還原方法見 [research-lab](research-lab.md)。DB roles 已另驗證；owner 管理與私人網路 gateway 尚待後續 tasks。
+
+## 首條流程的技術驗證與待回饋事項
+
+最新 backend 回歸 158 passed、21 skipped；新版的 19 項 PostgreSQL 契約另以真實 DB 驗證，連同 3 項圖形走法共 22 項通過。其餘 2 項既有 reading PG 情境本輪未重跑，留待完整整合驗收。既有 offline browser 36 項通過。新 live browser 6 項通過，涵蓋產品—公司—來源、固定版分享／返回、鍵盤搜尋、手機與文字連線、慢回應、圖解失敗仍可讀研究。Production build 與地圖 full 驗證通過（17／7、58 現行來源），validator 的 66 類突變及 18 項新測試通過。
+
+桌機與手機截圖在 `.work/first-flow-review/`，另以新手機 viewport 檢視公司頁，修正小圖自動排版將標籤縮得過小的問題。Task 3.4 仍需 Boris 的實際閱讀回饋；技術驗證與 agent 截圖不代替該驗收。回饋與走讀範圍見 [research-first-flow-review](research-first-flow-review.md)。本輪未展開 task 4 之後的完整管理、動態財務與 26 家全批深研，也沒有切換或合併 main。

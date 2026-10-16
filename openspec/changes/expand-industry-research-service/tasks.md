@@ -22,6 +22,8 @@
 - [x] 3.3 實作公司／產品／術語搜尋及 alias 索引；測試臺台中文別名、短中文、英文 token 邊界、ticker、同名候選與不同法律主體，保存 SQL 計畫與搜尋契約。
 - [ ] 3.4 以雙鴻及 Vertiv 的官方資料建立首條真實產品—公司—來源流程，放在 /next 供桌機／手機走讀；保留資料來源、畫面與 Boris 閱讀回饋，確認內容價值後再展開後續完整管理及全批深研。
 
+首條流程已提供於隔離預覽 3014；內容、來源、技術驗證與畫面見 `docs/research-first-flow-review.md`。此項尚待 Boris 實際走讀回饋，不能以 agent 截圖或技術測試代替，也不先展開後續完整管理／全批深研。
+
 ## 4. 管理登入、草稿及發布
 
 - [ ] 4.1 實作單一 owner 設定／重設、session、CSRF、Origin、到期與登入限流；測試匿名、跨站、過期及登出撤銷，文件說明 loopback 開發例外與 HTTPS 條件。
@@ -85,5 +87,5 @@
 
 ## Workflow follow-up
 
-- 正式切換、合併 main 與公開範圍依使用者後續指示進行；本次僅完成提案並保留現有服務。
+- 本 change 在獨立功能分支及隔離預覽實作，保留現有服務；正式切換、合併 main 與公開範圍依使用者後續指示進行。
 - 歸檔另啟動，依 add-evidence-based-theme-assessments → improve-industry-reading-and-technical-evidence → 本 change 的順序同步主 specs；本輪不修改前兩個 change。

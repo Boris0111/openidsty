@@ -11,6 +11,17 @@ export function ResearchNetwork({graph,onSelect}:{graph:ResearchGraph;onSelect:(
   const [selectedEdge,setSelectedEdge]=useState<string|null>(null);
   useEffect(()=>{
     if(!container.current)return;
+    const positions=new Map<string,{x:number;y:number}>();
+    if(graph.nodes.length<=8){
+      const remaining=new Set(graph.nodes.map(node=>node.id)),levels:string[][]=[];
+      while(remaining.size){
+        const next=[...remaining].filter(id=>!graph.edges.some(edge=>edge.target===id&&remaining.has(edge.source)));
+        if(!next.length)break;
+        levels.push(next);next.forEach(id=>remaining.delete(id));
+      }
+      if(!remaining.size)levels.forEach((ids,level)=>ids.forEach((id,index)=>positions.set(id,{x:(index-(ids.length-1)/2)*172,y:level*88})));
+      else graph.nodes.forEach((node,index)=>positions.set(node.id,{x:150*Math.cos(index*2*Math.PI/graph.nodes.length),y:110*Math.sin(index*2*Math.PI/graph.nodes.length)}));
+    }
     const style:StylesheetJson=[
       {selector:'node',style:{label:'data(name)',shape:'round-rectangle',width:148,height:58,'background-color':'#fff','border-width':1.5,'border-color':'#8ba4ad','font-family':'Microsoft JhengHei, PingFang TC, sans-serif','font-size':16,'text-wrap':'wrap','text-max-width':'132px','text-valign':'center',color:'#16343a'}},
       {selector:'node[kind="company"]',style:{'background-color':'#e7f2f4','border-color':'#267a97'}},
@@ -21,8 +32,9 @@ export function ResearchNetwork({graph,onSelect}:{graph:ResearchGraph;onSelect:(
       {selector:'edge[kind="segment-feedback"],edge[kind="demand-feedback"]',style:{'line-style':'dashed','line-color':'#c14c38','target-arrow-color':'#c14c38'}},
       {selector:'edge:selected',style:{width:4,'line-color':'#16343a','target-arrow-color':'#16343a'}}
     ];
-    const cy=cytoscape({container:container.current,style,elements:[...graph.nodes.map(node=>({data:node,classes:node.id===graph.root?'center':''})),...graph.edges.map(edge=>({data:edge}))],
-      layout:{name:'breadthfirst',directed:true,padding:32,spacingFactor:1.2},minZoom:.3,maxZoom:2.5,wheelSensitivity:.15});
+    const cy=cytoscape({container:container.current,style,elements:[...graph.nodes.map(node=>({data:node,position:positions.get(node.id),classes:node.id===graph.root?'center':''})),...graph.edges.map(edge=>({data:edge}))],
+      layout:positions.size?{name:'preset',padding:12}:{name:'breadthfirst',directed:true,padding:32,spacingFactor:1.2},minZoom:.3,maxZoom:2.5,wheelSensitivity:.15});
+    if(cy.zoom()>1.2){cy.zoom(1.2);cy.center()}
     instance.current=cy;setSelectedEdge(null);
     cy.on('tap','node',event=>select.current(event.target.id()));
     cy.on('tap','edge',event=>setSelectedEdge(event.target.id()));

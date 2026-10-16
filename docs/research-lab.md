@@ -25,3 +25,12 @@ python scripts/research_lab.py bootstrap --commit <完整commit>
 初始化執行 additive migrations、佈建 reader／writer login 及既有研究匯入。`setup` 為四個不同用途產生獨立隨機祕密，舊設定只補缺少的新 key、不改已存在的值。API 的 legacy pool 與新版 reader pool 使用 reader login；背景寫入使用 writer，僅 initializer 持有 bootstrap 權限。管理登入及私人網路 gateway 依後續 tasks 實作。不要手動對此預覽使用原 compose.yaml，也不要提前啟用 scheduler profile。
 
 `pg-check` 僅在新版 DB server 建立／遷移 `industry_research_test`，使用真實 reader／writer 連線執行 PostgreSQL 契約；合成 fixtures 不進 `industry_research`。參見 [研究資料模型與遷移](research-data-model.md)。
+
+首條實際讀取預覽位於 `/next`，首份 release 已建立，不要為了重建 UI 再初始化或刪除 DB。瀏覽器走讀命令（在 frontend 執行）：
+
+```powershell
+$env:PLAYWRIGHT_CHROME='1'
+$env:RESEARCH_E2E='1'
+$env:E2E_BASE_URL='http://127.0.0.1:3014'
+npx playwright test tests/research-service.spec.ts
+```
