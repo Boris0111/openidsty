@@ -21,14 +21,14 @@ def error_response(request, error):
         'retryable': error.retryable, **error.extra}), status_code=error.status)
     response.headers['Cache-Control'] = 'no-store'
     if error.retryable:
-        response.headers['Retry-After'] = '5'
+        response.headers['Retry-After'] = str(error.extra.get('retry_after', 5))
     return response
 
 
 def install(app):
     @app.middleware('http')
     async def request_identity(request, call_next):
-        if request.url.path.startswith('/api/v2/'):
+        if request.url.path.startswith(('/api/v2/', '/api/admin/')):
             request.state.request_id = uuid.uuid4().hex
         response = await call_next(request)
         if hasattr(request.state, 'request_id'):
@@ -41,19 +41,19 @@ def install(app):
 
     @app.exception_handler(RequestValidationError)
     async def invalid_request(request, error):
-        if request.url.path.startswith('/api/v2/'):
+        if request.url.path.startswith(('/api/v2/', '/api/admin/')):
             return error_response(request, ResearchError(422, 'invalid-request', '查詢格式不正確，請確認條件。'))
         return await request_validation_exception_handler(request, error)
 
     @app.exception_handler(StarletteHTTPException)
     async def http_error(request, error):
-        if request.url.path.startswith('/api/v2/'):
+        if request.url.path.startswith(('/api/v2/', '/api/admin/')):
             return error_response(request, ResearchError(error.status_code, 'not-found' if error.status_code == 404 else 'invalid-request',
                 '找不到這筆研究。' if error.status_code == 404 else '無法完成這個請求。'))
         return await http_exception_handler(request, error)
 
     @app.exception_handler(DBAPIError)
     async def database_error(request, error):
-        if request.url.path.startswith('/api/v2/'):
+        if request.url.path.startswith(('/api/v2/', '/api/admin/')):
             return error_response(request, ResearchError(503, 'database-unavailable', '目前無法讀取研究，請稍後再試。', True))
         return JSONResponse({'detail': '服務暫時無法使用'}, status_code=503)

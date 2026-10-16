@@ -25,7 +25,8 @@ def main():
     os.environ['RESEARCH_PG_WRITER_URL'] = make_url(os.environ['RESEARCH_WRITE_DATABASE_URL']).set(database='industry_research_test').render_as_string(hide_password=False)
     import pytest
     raise SystemExit(pytest.main(['-q', '-p', 'no:cacheprovider', 'tests/test_research_postgres.py',
-        'tests/test_research_v2.py', 'tests/test_research_graph_v2.py', 'tests/test_research_search.py']))
+        'tests/test_research_v2.py', 'tests/test_research_graph_v2.py', 'tests/test_research_search.py',
+        'tests/test_research_auth.py']))
 
 
 if __name__ == '__main__':

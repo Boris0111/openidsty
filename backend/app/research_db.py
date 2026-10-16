@@ -23,3 +23,22 @@ def get_research_session():
         with Session(bind=connection, expire_on_commit=False) as session:
             session.execute(text('SET TRANSACTION READ ONLY'))
             yield session
+
+
+@lru_cache(maxsize=1)
+def writer_engine():
+    """Only explicit research credentials may execute admin commands."""
+    url = os.environ.get('RESEARCH_WRITE_DATABASE_URL')
+    if not url:
+        raise ResearchError(503, 'admin-unavailable', '管理服務尚未完成設定。', True)
+    engine = create_engine(url, pool_pre_ping=True, pool_size=3, max_overflow=2, hide_parameters=True)
+    if (engine.url.username != 'research_writer_login' or engine.dialect.name != 'postgresql'
+            or engine.url.database not in ('industry_research', 'industry_research_test')):
+        engine.dispose()
+        raise ResearchError(503, 'admin-unavailable', '管理資料庫設定不正確。', True)
+    return engine
+
+
+def get_admin_connection():
+    with writer_engine().begin() as connection:
+        yield connection

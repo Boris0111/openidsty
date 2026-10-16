@@ -53,8 +53,12 @@ Typed graph 與三種 impact 加入後共 19 項 PostgreSQL／圖形契約通過
 
 `.env.research` 已獨立產生，DB／session／reader／writer 祕密各自不同且由 Git 忽略。啟停、設定核對與還原方法見 [research-lab](research-lab.md)。DB roles 已另驗證；owner 管理與私人網路 gateway 尚待後續 tasks。
 
-## 首條流程的技術驗證與待回饋事項
+## 首條流程的技術驗證與閱讀回饋
 
 最新 backend 回歸 158 passed、21 skipped；新版的 19 項 PostgreSQL 契約另以真實 DB 驗證，連同 3 項圖形走法共 22 項通過。其餘 2 項既有 reading PG 情境本輪未重跑，留待完整整合驗收。既有 offline browser 36 項通過。新 live browser 6 項通過，涵蓋產品—公司—來源、固定版分享／返回、鍵盤搜尋、手機與文字連線、慢回應、圖解失敗仍可讀研究。Production build 與地圖 full 驗證通過（17／7、58 現行來源），validator 的 66 類突變及 18 項新測試通過。
 
-桌機與手機截圖在 `.work/first-flow-review/`，另以新手機 viewport 檢視公司頁，修正小圖自動排版將標籤縮得過小的問題。Task 3.4 仍需 Boris 的實際閱讀回饋；技術驗證與 agent 截圖不代替該驗收。回饋與走讀範圍見 [research-first-flow-review](research-first-flow-review.md)。本輪未展開 task 4 之後的完整管理、動態財務與 26 家全批深研，也沒有切換或合併 main。
+桌機與手機截圖在 `.work/first-flow-review/`，另以新手機 viewport 檢視公司頁，修正小圖自動排版將標籤縮得過小的問題。2026-10-16 Boris 回覆「目前頁面操作體驗尚可，可依此模式繼續其他分析產出」，task 3.4 已完成。技術驗證與 agent 截圖仍與使用者回饋分開保存，不將繼續指示擴張成全部研究內容及完整導覽驗收。回饋與走讀範圍見 [research-first-flow-review](research-first-flow-review.md)；其關於新舊地圖操作關係的提問，現況與後續方向見 [research-navigation](research-navigation.md)。完整管理、動態財務、全鏈導覽與 26 家深研仍由後續 tasks 交付，沒有切換或合併 main。
+
+## Owner 實作與環境阻礙
+
+Task 4.1 的 owner 設定／重設、session、CSRF、Origin、到期與持久登入限流程式已加入；尚未通過真實 PostgreSQL 及瀏覽器驗證，checkbox 保持未完成。Docker 於 2026-10-16 23:41 發生 BuildKit history nil pointer panic，VM 隨後關閉，Desktop backend 殘留使重新開啟 UI 未恢復 engine。唯讀診斷、可信程度及恢復後的檢查順序見 [runtime incident](research-runtime-incident-20261017.md)。本輪未重設或刪除任何 Docker／WSL 資料。

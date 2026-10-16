@@ -13,6 +13,9 @@ x-app: &app
     PREFECT_SERVER_ANALYTICS_ENABLED: "false"
     SEC_USER_AGENT: ""
     RESEARCH_SESSION_SECRET: ${RESEARCH_SESSION_SECRET:?Run research_lab.py setup}
+    RESEARCH_ADMIN_MODE: loopback-http
+    RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3014,http://localhost:3014
+    RESEARCH_ADMIN_HOSTS: api:8000,127.0.0.1:8014,localhost:8014
   init: true
   networks: [app]
 
@@ -61,6 +64,7 @@ services:
       dockerfile: frontend/Dockerfile
     environment:
       API_ORIGIN: http://api:8000
+      RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3014,http://localhost:3014
     ports: ["127.0.0.1:3014:3010"]
     depends_on:
       api: {condition: service_healthy}
