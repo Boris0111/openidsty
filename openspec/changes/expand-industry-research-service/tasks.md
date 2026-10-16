@@ -35,7 +35,7 @@
 
 ## 5. 財務、事件及來源能力
 
-- [ ] 5.1 定義財務 metrics、原始 fact／canonical observation identity、來源優先與 Decimal 衍生；測試單季／累計／年度／期末、非曆年財季、不同範圍／幣別、EPS 禁止相減及修訂重跑一致，更新指標文件。
+- [x] 5.1 定義財務 metrics、原始 fact／canonical observation identity、來源優先與 Decimal 衍生；測試單季／累計／年度／期末、非曆年財季、不同範圍／幣別、EPS 禁止相減及修訂重跑一致，更新指標文件。
 - [ ] 5.2 擴充 TWSE／TPEx 月營收、損益及負債摘要 adapter，記錄每欄能力與歷史限制；以官方實際樣本及離線 fixtures 比對上市／上櫃、欄位別名、千元轉換、缺值／零及格式失敗。
 - [ ] 5.3 擴充 SEC 標準 taxonomy 財務 mapping，保留 accession／context／股別／申報日期；以官方樣本驗證重編、同值新申報不假更新、自訂 tag 缺口及 2 req/s 總限流，更新來源設定文件。
 - [ ] 5.4 實作官方財務 JSON／CSV 匯入預覽與 owner 確認，保存文件定位、payload hash 及稽核；測試缺少來源／期間／幣別被拒絕、確認重試冪等及錯誤值不覆寫有效資料，文件不承諾通用 PDF 自動解析。

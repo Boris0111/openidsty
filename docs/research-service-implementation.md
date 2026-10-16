@@ -84,3 +84,9 @@ Production build、typecheck 通過，13 項 live browser 全通過：6 項既�
 測試期間曾誤開兩個共用測試 DB 的程序，造成最後一個 projection 案例與另一輪 owner setup 互相干擾；該輪結果未採計為完整通過。已在測試入口加入 DB session advisory lock，鎖定遷移與整輪 pytest，隨後序列重跑 88 項通過。Application DB 另核對：head 仍為 `03799774-3553-5ff6-9910-13a68468af15`、owner 0、publish jobs 0。未把測試帳密、候選版本或合成內容放進 application DB。
 
 唯讀 gateway 使用相同 app image 的 opt-in reader profile，沒有 DB／session 憑證及持久 volumes；3 項原生安全測試、2 項真實 gateway browser 通過，研究、圖解與公司導覽可讀，管理／legacy 診斷／偽造 cookie／Host／寫入被拒絕。Gateway 測完已停止，仍只保留 web／API／DB。13 項管理及既有閱讀 browser 通過；管理寫入畫面採合成 API，真實 DB 行為由上述整合測試覆蓋。Build／typecheck 通過，未增加讀者端維護資料。跨裝置 TLS／私人網路設定尚未執行，條件見 [research-reader-entry](research-reader-entry.md)。
+
+## 財務基礎（task 5.1）
+
+新增 13 個明確口徑的 metric 定義（含毛利輔助值）、Decimal／Numeric(38,10)、raw fact／canonical group 雙身分、同值新申報只補 provenance、重編與晚到歷史、同日衝突核對、公式版本與 input lineage。基本／稀釋 EPS 及普通股／ADR 不互換，EPS／比率／期末值禁止相減；缺前期或相容申報時回缺口，不填零。Migration `0011` 保護 raw fact、group 與觀測值不被改寫，最新值依申報日而不是單看 revision。
+
+`pg-check --suite financial-core` 實際 35 passed（24 計算／身分、5 writer storage、6 原有 PG 模型／權限），包含千元倍率、有效零、同值新申報、重編後回到舊值、晚到歷史不蓋新值、非曆年 Q4、同日歧義及不可改寫。未抓取外部來源或填入合成 application 財務；指標與限制見 [research-financial-metrics](research-financial-metrics.md)。台美 adapter、官方補錄與查詢／比較仍按 tasks 5.2–5.6 接續。
