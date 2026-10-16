@@ -14,6 +14,8 @@ from .research_search import router as research_search_router
 from .research_assets import router as research_assets_router
 from .research_http import install as install_research_http
 from .research_auth import router as research_auth_router
+from .research_drafts import router as research_drafts_router
+app.include_router(research_drafts_router)
 app.include_router(research_auth_router)
 app.include_router(research_graph_router)
 app.include_router(research_search_router)

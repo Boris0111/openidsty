@@ -10,3 +10,4 @@ prefect==3.8.8
 pytest==9.0.2
 pypdf==6.20.1
 argon2-cffi==25.1.0
+markdown-it-py==4.2.0

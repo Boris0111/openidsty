@@ -9,18 +9,21 @@ from decimal import Decimal
 import hashlib
 import io
 import json
+import os
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
 import sys
 import tarfile
 import tempfile
+import threading
 import unicodedata
 import uuid
 from sqlalchemy import create_engine, text
 from .config import ROOT, DATABASE_URL
 
 SCHEMA = 'research-v1'
+COMPILE_LOCK = threading.RLock()
 
 
 def clean(value):
@@ -82,13 +85,14 @@ def compile_archive(content):
         if result.returncode:
             raise ValueError(result.stdout + result.stderr)
         errors = legacy.Errors()
-        previous = legacy.MAP_DIR
-        try:
-            legacy.MAP_DIR = map_dir
-            segments, themes = legacy.load_segments(errors), legacy.load_themes(errors)
-            research = validate_research(map_dir, segments, themes, errors, legacy.parse_doc, legacy.load_yaml)
-        finally:
-            legacy.MAP_DIR = previous
+        with COMPILE_LOCK:
+            previous = legacy.MAP_DIR
+            try:
+                legacy.MAP_DIR = map_dir
+                segments, themes = legacy.load_segments(errors), legacy.load_themes(errors)
+                research = validate_research(map_dir, segments, themes, errors, legacy.parse_doc, legacy.load_yaml)
+            finally:
+                legacy.MAP_DIR = previous
         if errors:
             raise ValueError(str(errors.items))
         snapshots = []
@@ -313,7 +317,7 @@ def project(connection, bundle, commit, publish=False, reason='Initial legacy mi
     for key, asset in bundle['assets'].items():
         if not any(key in s['data'].get('diagram-assets', []) for s in bundle['snapshots']):
             continue
-        storage = Path('/home/app/research-assets')
+        storage = Path(os.getenv('RESEARCH_ASSET_ROOT', '/home/app/research-assets'))
         storage.mkdir(parents=True, exist_ok=True)
         target = storage / asset['sha256']
         content = bytes.fromhex(bundle['asset_bytes'][key])

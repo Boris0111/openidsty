@@ -26,7 +26,7 @@ def main():
     import pytest
     raise SystemExit(pytest.main(['-q', '-p', 'no:cacheprovider', 'tests/test_research_postgres.py',
         'tests/test_research_v2.py', 'tests/test_research_graph_v2.py', 'tests/test_research_search.py',
-        'tests/test_research_auth.py']))
+        'tests/test_research_auth.py', 'tests/test_research_documents.py', 'tests/test_research_drafts.py']))
 
 
 if __name__ == '__main__':

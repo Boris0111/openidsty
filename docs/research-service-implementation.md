@@ -61,4 +61,16 @@ Typed graph 與三種 impact 加入後共 19 項 PostgreSQL／圖形契約通過
 
 ## Owner 實作與環境阻礙
 
-Task 4.1 的 owner 設定／重設、session、CSRF、Origin、到期與持久登入限流程式已加入；尚未通過真實 PostgreSQL 及瀏覽器驗證，checkbox 保持未完成。Docker 於 2026-10-16 23:41 發生 BuildKit history nil pointer panic，VM 隨後關閉，Desktop backend 殘留使重新開啟 UI 未恢復 engine。唯讀診斷、可信程度及恢復後的檢查順序見 [runtime incident](research-runtime-incident-20261017.md)。本輪未重設或刪除任何 Docker／WSL 資料。
+Task 4.1 的 owner 設定／重設、session、CSRF、Origin、到期與持久登入限流程式已加入。Docker 中斷當時尚未通過真實 PostgreSQL 及瀏覽器驗證，因此當時 checkbox 保持未完成；恢復後結果見下段。Docker 於 2026-10-16 23:41 發生 BuildKit history nil pointer panic，VM 隨後關閉，Desktop backend 殘留使重新開啟 UI 未恢復 engine。唯讀診斷、可信程度及恢復後的檢查順序見 [runtime incident](research-runtime-incident-20261017.md)。本輪未重設或刪除任何 Docker／WSL 資料。
+
+2026-10-17 恢復後，Boris 授權暫停不重要服務並繼續 apply；已停止原版與 Valuflow 的 7 個容器，僅保留新版研究環境。34 項真實 PostgreSQL／API 契約通過（含 12 項 owner），production build 通過，3 項管理代理與 6 項研究走讀共 9 項 live browser 通過，task 4.1 完成。沒有設定實際 owner 密碼或重新 bootstrap 研究。登入操作與安全設定見 [research-owner](research-owner.md)。
+
+## 草稿及 managed Git（tasks 4.2–4.3）
+
+`/admin` 提供表單／Markdown、修訂、diff、整份驗證及私有閱讀預覽；CLI 以原始研究檔案交換相同草稿，不保存登入憑證。預覽共用正式 detail／graph 與前端內容元件，在 savepoint rollback 臨時投影；正式 head 不動。Managed Git 僅在專用 volume 及臨時 worktree 寫入研究 allowlist，保留不可改寫的 release refs。資產先檢查內容／SVG，再以 hash 保存，讀者仍只能取得已發布版本引用的資產。操作範例見 [research-drafts](research-drafts.md)。
+
+2026-10-17 實際結果：71 項隔離 PostgreSQL／Linux 容器測試全部通過，含真實研究編譯、表單／檔案同結果、修訂衝突、預覽無殘留、匿名管理拒絕、資產、symlink、managed worktree 與開發 index 不變。Windows 同樣實跑 managed worktree／index 及 CLI，原先往返測試揭露 CRLF 自動轉換，已改成保留 bytes 並以 LF／CRLF 案例驗證；Windows 不具建立 symlink 的權限，因此該項在 Linux 容器實跑，未宣稱 Windows 已跑過。唯一現有 warning 為 Starlette 的 httpx 測試介面棄用提示。
+
+Production build、typecheck 通過，13 項 live browser 全通過：6 項既有讀者、3 項 session proxy、4 項草稿桌機／手機／入口／資產邊界。編輯情境採合成 API 回應，真實寫入／驗證／預覽另由 PostgreSQL 整合測試覆蓋；未在 application DB 設定合成密碼。桌機／手機截圖已檢視，保存在忽略的 `.work/editor-review/`，不視為 Boris 對管理 UI 的使用者驗收。
+
+本輪已初始化 managed clone 並保護目前發布 commit；公開研究仍是原 bootstrap release。原版／Valuflow 仍停止，只運行研究版 web、API、DB。Task 4.4 的持久發布與恢復、4.5 還原及同步、4.6 完整管理流程尚未完成，不把草稿功能當成發布交付。

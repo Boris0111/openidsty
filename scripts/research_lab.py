@@ -24,7 +24,7 @@ SECRET_KEYS = ('RESEARCH_POSTGRES_PASSWORD', 'RESEARCH_SESSION_SECRET',
 def run(args, **kwargs):
     result = subprocess.run(args, capture_output=True, check=False, **kwargs)
     if result.returncode:
-        message = result.stderr
+        message = result.stdout + result.stderr
         if isinstance(message, bytes):
             message = message.decode('utf-8', errors='replace')
         if ENV_FILE.exists():
@@ -33,7 +33,7 @@ def run(args, **kwargs):
                     value = line.split('=', 1)[1]
                     if value:
                         message = message.replace(value, '[REDACTED]')
-        raise RuntimeError(f'{args[0]} {args[1]} failed (exit {result.returncode}): {message[-4000:]}')
+        raise RuntimeError(f'{args[0]} {args[1]} failed (exit {result.returncode}): {message[-12000:]}')
     return result.stdout
 
 
@@ -180,13 +180,32 @@ def restore(source, database):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['setup', 'check', 'up', 'stop', 'start', 'restore', 'pg-check', 'rebuild-check', 'bootstrap'])
+    parser.add_argument('action', choices=['setup', 'check', 'up', 'stop', 'start', 'restore', 'pg-check', 'rebuild-check', 'bootstrap', 'seed-git'])
     parser.add_argument('--commit', default='HEAD')
     parser.add_argument('--source-container', default='industryflow-reading-db')
     parser.add_argument('--source-database', default='industry_reading')
     args = parser.parse_args()
     report = check()
-    if args.action in {'rebuild-check', 'bootstrap'}:
+    if args.action == 'seed-git':
+        before = protected_snapshot()
+        if args.commit != 'HEAD' and not re.fullmatch('[0-9a-f]{40,64}', args.commit):
+            raise ValueError('Use HEAD or a full Git commit')
+        commit = run(['git', 'rev-parse', '--verify', args.commit + '^{commit}'], cwd=ROOT, text=True).strip()
+        folder = ROOT / '.work/research-lab'
+        folder.mkdir(parents=True, exist_ok=True)
+        bundle = folder / ('seed-' + commit + '.bundle')
+        # HEAD is a named ref and retains the selected ancestor; a bare object ID
+        # by itself is not a valid bundle inclusion ref on every Git version.
+        if run(['git', 'merge-base', '--is-ancestor', commit, 'HEAD'], cwd=ROOT) != b'':
+            raise ValueError('Seed commit must be reachable from HEAD')
+        run(['git', 'bundle', 'create', str(bundle), 'HEAD'], cwd=ROOT)
+        compose('build', 'api')
+        output = compose('run', '--rm', '--no-deps', '-T', 'initialize', 'python', '-m', 'app.research_git',
+                         'seed', '--commit', commit, input=bundle.read_bytes())
+        report['managed_git'] = output.decode().strip()
+        verify_protected(before)
+        report['protected_services_unchanged'] = True
+    elif args.action in {'rebuild-check', 'bootstrap'}:
         before = protected_snapshot()
         if args.commit != 'HEAD' and not re.fullmatch('[0-9a-f]{40,64}', args.commit):
             raise ValueError('Use HEAD or a full Git commit')

@@ -2,24 +2,14 @@
 import {useEffect,useRef,useState} from 'react';
 import {useRouter,useSearchParams} from 'next/navigation';
 import Link from 'next/link';
-import Markdown from 'react-markdown';
-import {useResearch,ResearchClaim,ResearchDetail,ResearchGraph,ResearchPage} from '@/lib/research-api';
+import {useResearch,ResearchDetail,ResearchGraph,ResearchPage} from '@/lib/research-api';
 import {ResearchNetwork} from './ResearchNetwork';
+import {ResearchDetailContent} from './ResearchDetailContent';
 
 const collections:Record<string,string>={company:'companies',product:'products',segment:'segments',theme:'themes',role:'roles',concept:'concepts',application:'applications',research:'research'};
 const kindNames:Record<string,string>={company:'公司',product:'產品',segment:'環節',theme:'題材',role:'供應角色',concept:'術語',application:'應用',research:'研究'};
-const confidenceNames:Record<string,string>={'well-supported':'有明確證據支持',inference:'有條件推論','needs-verification':'仍待核實'};
 const initialFocus='product-cold-plate';
 const firstFlow=new Set([initialFocus,'product-liquid-to-liquid-cdu','company-auras','company-vertiv','concept-liquid-cooling-loop','application-ai-rack-cooling','role-chip-heat-capture','role-coolant-distribution']);
-
-function SourceClaims({claims}:{claims:ResearchClaim[]}) {
-  if(!claims.length)return null;
-  return <section className="rs-claims" aria-label="判斷與來源"><h3>這個判斷的依據</h3>{claims.map(claim=><article key={claim.id}>
-    <span className="rs-confidence" data-confidence={claim.confidence}>{confidenceNames[claim.confidence]||'仍待核實'}</span><p>{claim.statement}</p>
-    {claim.conditions.map(condition=><p className="rs-condition" key={condition}>{condition}</p>)}
-    {claim.evidence.map((source,index)=><div className="rs-citation" key={source.revision_id+index}><a href={source.url} target="_blank" rel="noreferrer">{source.title}</a><span>{source.applicable_period}</span></div>)}
-  </article>)}</section>;
-}
 
 function Search({release,href}:{release:string;href:(id:string)=>string}) {
   const [query,setQuery]=useState(''),[debounced,setDebounced]=useState('');
@@ -78,19 +68,7 @@ export function ResearchExplorer() {
         <p className="rs-scope-note">本輪走讀：雙鴻冷板與 Vertiv 液對液 CDU。這是已核對案例，並非完整供應商名單。</p>
       </section>}
       <article className="rs-detail" ref={panel} tabIndex={-1} aria-label="選中研究內容" aria-busy={detail.loading}>
-        {detail.loading?<p role="status">正在讀取這份研究…</p>:item&&<><div className="rs-detail-top"><span>{kindNames[item.kind]}</span>{item.reviewed&&<span>內容查核 {item.reviewed}</span>}</div><h2>{item.name}</h2><p className="rs-summary">{item.summary}</p>
-          {item.content.listings&&item.content.listings.length>0&&<p className="rs-listings">{item.content.listings.map(listing=><span key={listing.ticker}>{({TW:'台灣',US:'美國'} as Record<string,string>)[listing.market]||listing.market}　{listing.ticker}</span>)}</p>}
-          {item.content.boundary&&<section className="rs-boundary"><h3>交付邊界</h3><p>{item.content.boundary}</p></section>}
-          {item.kind==='company'&&<div className="rs-prose"><Markdown skipHtml components={{h2:({children})=><h3>{children}</h3>,h3:({children})=><h4>{children}</h4>,a:({href:destination,children})=>destination?.startsWith('/next?focus=')?<Link href={href(new URLSearchParams(destination.split('?')[1]).get('focus')||initialFocus)}>{children}</Link>:<a href={destination} target="_blank" rel="noreferrer">{children}</a>}}>{item.markdown}</Markdown></div>}
-          {item.content.adoption_conditions&&<section className="rs-conditions"><h3>採用前要核對</h3><ul>{[...item.content.adoption_conditions,...(item.content.bottlenecks||[])].map(condition=><li key={condition}>{condition}</li>)}</ul></section>}
-          {item.content.substitution_limits&&<section><h3>替代與比較限制</h3><ul>{item.content.substitution_limits.map(condition=><li key={condition}>{condition}</li>)}</ul></section>}
-          {companies.length>0&&<section className="rs-company-links"><h3>本輪有產品證據的公司</h3>{companies.map(company=><Link key={company.id} href={href(company.id)}><strong>{company.name}</strong><span>閱讀產品範圍與證據</span></Link>)}</section>}
-          {products.length>0&&<section className="rs-company-links"><h3>已核對的產品角色</h3>{products.map(product=><Link key={product.id} href={href(product.id)}><strong>{product.name}</strong><span>{product.summary}</span></Link>)}</section>}
-          <SourceClaims claims={item.claims}/>
-          {item.content.gaps?.length?<section className="rs-gaps"><h3>判斷到哪裡為止</h3>{item.content.gaps.map(gap=><p key={gap}>{gap}</p>)}</section>:null}
-          {item.kind!=='company'&&item.kind!=='product'&&<div className="rs-prose"><Markdown skipHtml>{item.markdown}</Markdown></div>}
-          {item.truncated&&<p>部分關聯超過單次顯示範圍，可透過目錄繼續閱讀。</p>}
-        </>}
+        {detail.loading?<p role="status">正在讀取這份研究…</p>:item&&<ResearchDetailContent item={item} href={href} companies={companies} products={products}/>}
       </article>
       <div className="rs-network-area">{graph.data?<ResearchNetwork graph={graph.data.data} onSelect={navigate}/>:graph.error?<p role="alert">{graph.error}</p>:<p role="status">正在讀取關係…</p>}</div>
     </div>}

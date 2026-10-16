@@ -1,5 +1,6 @@
 """Only published, cited, content-addressed illustration files are readable."""
 import hashlib
+import os
 from pathlib import Path
 import re
 import uuid
@@ -21,7 +22,7 @@ def asset(sha256: str, release_id: uuid.UUID | None = None, session=Depends(get_
     row = session.execute(text('''SELECT a.media_type,a.byte_size FROM research.assets a
         JOIN research.release_assets ra USING(sha256) WHERE ra.release_id=:r AND a.sha256=:sha LIMIT 1'''),
         {'r': release['release_id'], 'sha': sha256}).mappings().first()
-    path = Path('/home/app/research-assets') / sha256
+    path = Path(os.getenv('RESEARCH_ASSET_ROOT', '/home/app/research-assets')) / sha256
     if not row:
         raise ResearchError(404, 'asset-not-found', '找不到這份研究的圖解。')
     if path.is_symlink() or not path.is_file() or path.stat().st_size != row['byte_size'] or hashlib.sha256(path.read_bytes()).hexdigest() != sha256:

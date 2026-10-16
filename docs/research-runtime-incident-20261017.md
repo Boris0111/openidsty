@@ -21,7 +21,7 @@
 
 依據：[Docker WSL 架構與條件](https://docs.docker.com/desktop/features/wsl/)、[官方故障排查](https://docs.docker.com/desktop/troubleshoot-and-support/troubleshoot/)。目前日誌顯示 Desktop 4.65.0；[官方 release notes](https://docs.docker.com/desktop/release-notes/#4650) 另記錄部分 4.56–4.65 Windows MSI 更新問題及移除資料的風險，因此不直接以解除安裝作為此輪修復步驟。
 
-## 實作影響
+## 中斷當時的實作影響
 
 `expand-industry-research-service` 仍為 11/52，task 4.1 未勾選。Owner/session 程式及測試已寫入功能 worktree；TypeScript 先前檢查通過，2 項不需 DB 的安全測試通過，10 項實際 PostgreSQL 情境尚未執行。新 image build 中斷，實際代理及讀者回歸尚待環境恢復；不以 skip 或已寫好程式視為完成。
 
@@ -40,3 +40,15 @@ Boris 指示儲存目前工作進度。將首條流程回饋、導覽說明、�
 5. 4.1 的行為與實際驗證全部通過後，才核對 task checkbox 位置、勾選並重跑 apply instructions。接續 4.2 草稿／diff／預覽／CLI，之後依 tasks 交付；不要越過尚未完成的驗收。
 
 此 Git 保存不包含 DB、VHDX、`.env.research`、`.work` 內的備份或原始 log；這些本機資料仍留在原處，不能將程式 commit 宣稱為資料庫備份。
+
+## 恢復與資源調整
+
+2026-10-17 Windows 重新啟動後，Docker Desktop／docker-desktop WSL 已恢復 running；新版 web／API／DB 正常，研究 head、17／7／95 與 125 個 release 物件仍與中斷前一致。Desktop 仍是 4.65.0、Engine 29.2.1，這代表恢復運作，未宣稱 BuildKit 缺陷已根除。
+
+Boris 隨後明確指示「暫停不重要的程序，接續 apply」。為保留新版開發資源，已正常停止 `industryflow-worker-1`、`industryflow-prefect-1`、`industryflow-web-1`、`industryflow-api-1`、`industryflow-db-1`、`valuflow-redis-1`、`valuflow-db-1`；原 reading 預覽原已停止。沒有刪除容器／volumes、改 restart policy 或關閉桌面程式。新版三個服務保持運作，可用 RAM 約 3 GiB。
+
+此次停止原服務是使用者後續授權的資源調整，與先前不碰原服務的預設隔離不同；後續驗證以停止後的容器狀態作比對，不宣稱它們持續在線。要恢復時可依上列名稱執行 `docker start`，或按各專案正常啟動方式恢復。
+
+重新執行隔離 `pg-check` 已通過 34 項，含全部 12 項 owner 安全契約；其餘實際代理與閱讀回歸依 task 4.1 繼續。
+
+隨後重建新版 web／API，production build 通過；3 項 Next 管理代理加 6 項既有研究 live browser 共 9 項全部通過。Task 4.1 已核對 checkbox 後完成，接續 4.2；未設定實際 owner 密碼，也沒有改變研究 head。後續進度以 OpenSpec CLI 為準。

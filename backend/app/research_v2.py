@@ -195,6 +195,12 @@ def detail(collection: str, entity_id: str, release_id: uuid.UUID | None = None,
     row = entity(session, release, entity_id)
     if row['kind'] != COLLECTIONS[collection]:
         raise ResearchError(404, 'entity-not-found', '找不到這筆研究。')
+    return envelope(release, detail_payload(session, release, row))
+
+
+def detail_payload(session, release, row):
+    """Same curated reader contract for published content and owner-only previews."""
+    entity_id = row['entity_id']
     data = row['data']
     fields = ('definition', 'purpose', 'boundary', 'adoption-conditions', 'bottlenecks', 'substitution-limits',
               'scope', 'comparisons', 'related-ids', 'diagram-assets', 'gaps', 'aliases', 'listings',
@@ -218,7 +224,7 @@ def detail(collection: str, entity_id: str, release_id: uuid.UUID | None = None,
             {'r': release['release_id'], 'ids': data['diagram-assets']}).mappings().all()
         assets = [{'id': asset['asset_id'], 'url': '/api/v2/assets/' + asset['sha256'] + '?release_id=' + str(release['release_id']),
                    'alt': asset['metadata']['alt'], 'attribution': asset['metadata']['attribution']} for asset in rows]
-    return envelope(release, {**summary(row), 'markdown': row['markdown'], 'content': content, 'claims': claims,
+    return {**summary(row), 'markdown': row['markdown'], 'content': content, 'claims': claims,
         'assets': assets,
         'related': [summary(item) for item in related[:100]], 'truncated': truncated or len(related) > 100,
-        'content_version': row['semantic_hash']})
+        'content_version': row['semantic_hash']}

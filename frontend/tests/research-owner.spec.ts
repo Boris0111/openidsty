@@ -26,7 +26,7 @@ test('代理拒絕跨站與匿名寫入，不回顯密碼',async({request,baseUR
   const logout=await request.delete('/api/admin/session',{headers:{Origin:baseURL!}});
   expect(logout.status()).toBe(401);
   const hidden=await request.get('/api/admin/drafts');
-  expect(hidden.status()).toBe(404);
+  expect(hidden.status()).toBe(401);
 });
 
 test('登入 body 大小有限制，研究入口持續可讀',async({request,baseURL,page})=>{

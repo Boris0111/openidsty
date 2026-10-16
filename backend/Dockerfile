@@ -1,10 +1,11 @@
 FROM python:3.12.14-slim-bookworm
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONUTF8=1 PROJECT_ROOT=/workspace PREFECT_HOME=/home/app/.prefect
 WORKDIR /workspace/backend
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
 COPY backend/requirements.txt backend/runtime-constraints.txt /tmp/
 RUN pip install --no-cache-dir -r /tmp/requirements.txt -c /tmp/runtime-constraints.txt
 RUN useradd --create-home --uid 10001 app
-RUN mkdir /home/app/research-assets && chown app:app /home/app/research-assets
+RUN mkdir /home/app/research-assets /home/app/research-git && chown app:app /home/app/research-assets /home/app/research-git
 COPY --chown=app:app backend /workspace/backend
 COPY --chown=app:app industry-map /workspace/industry-map
 COPY --chown=app:app data /workspace/data

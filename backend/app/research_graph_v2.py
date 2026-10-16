@@ -53,6 +53,10 @@ def graph(root: str = Query(..., max_length=200),
           max_edges: int = Query(400, ge=1, le=1000), release_id: uuid.UUID | None = None,
           session=Depends(get_research_session)):
     release = require_release(session, release_id)
+    return envelope(release, graph_payload(session, release, root, scope, depth, max_nodes, max_edges))
+
+
+def graph_payload(session, release, root, scope=None, depth=1, max_nodes=200, max_edges=400):
     center = entity(session, release, root)
     nodes, frontier, edges = {root}, {root}, {}
     reasons, continuation = set(), set()
@@ -89,10 +93,10 @@ def graph(root: str = Query(..., max_length=200),
             continuation.update({outside[0]['source'], outside[0]['target']} - nodes)
     rows = session.execute(text('SELECT entity_id,kind,name,summary,reviewed FROM research.entity_snapshots WHERE release_id=:r AND entity_id=ANY(CAST(:ids AS text[])) ORDER BY entity_id LIMIT :limit'),
                            {'r': release['release_id'], 'ids': sorted(nodes), 'limit': max_nodes}).mappings().all()
-    return envelope(release, {'root': root, 'scope': scope or (center['kind'] if center['kind'] in ('application', 'segment', 'product', 'company', 'theme') else 'product'),
+    return {'root': root, 'scope': scope or (center['kind'] if center['kind'] in ('application', 'segment', 'product', 'company', 'theme') else 'product'),
         'depth': depth, 'nodes': [summary(row) for row in rows], 'edges': list(edges.values()),
         'truncated': bool(reasons), 'truncation_reasons': sorted(reasons),
-        'continue_from': sorted(continuation)[:20], 'list_url': '/api/v2/catalog?release_id=' + str(release['release_id'])})
+        'continue_from': sorted(continuation)[:20], 'list_url': '/api/v2/catalog?release_id=' + str(release['release_id'])}
 
 
 def impact_moves(segment_id, segments, themes, mode):

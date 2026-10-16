@@ -26,9 +26,9 @@
 
 ## 4. 管理登入、草稿及發布
 
-- [ ] 4.1 實作單一 owner 設定／重設、session、CSRF、Origin、到期與登入限流；測試匿名、跨站、過期及登出撤銷，文件說明 loopback 開發例外與 HTTPS 條件。
-- [ ] 4.2 實作表單／Markdown 草稿、修訂、diff、預覽及 CLI export/import/validate；同一內容由兩入口取得相同驗證與預覽，stale revision 回 409，文件提供可重現編輯範例。
-- [ ] 4.3 實作 managed clone、研究路徑 allowlist、資產處理及 release refs；測試 Windows host 與容器內 worktree 路徑、symlink／路徑穿越／惡意資產拒絕，開發 repo index 不被修改。
+- [x] 4.1 實作單一 owner 設定／重設、session、CSRF、Origin、到期與登入限流；測試匿名、跨站、過期及登出撤銷，文件說明 loopback 開發例外與 HTTPS 條件。
+- [x] 4.2 實作表單／Markdown 草稿、修訂、diff、預覽及 CLI export/import/validate；同一內容由兩入口取得相同驗證與預覽，stale revision 回 409，文件提供可重現編輯範例。
+- [x] 4.3 實作 managed clone、研究路徑 allowlist、資產處理及 release refs；測試 Windows host 與容器內 worktree 路徑、symlink／路徑穿越／惡意資產拒絕，開發 repo index 不被修改。
 - [ ] 4.4 實作持久 publish jobs、Prefect enqueue／reconciliation、候選投影及 active head 啟用交易；注入 Git／asset／projection／啟用前後失敗，驗證舊版可讀及重啟後能繼續。
 - [ ] 4.5 實作基準衝突、idempotency、還原、發布稽核及 research/published 索引同步；測試重複 key／不同 payload、晚到同步不倒退分支、還原不回退財務／事件。
 - [ ] 4.6 完成 admin 發布／來源健康／核對畫面與操作文件；整合走完檔案及表單兩條發布路徑、失敗重試與還原，私人讀者入口均無法取得管理資料。
