@@ -24,12 +24,14 @@ class Client:
         self.csrf = None
         self.opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(http.cookiejar.CookieJar()), NoRedirect())
 
-    def request(self, path, method='GET', data=None, revision=None, media=None):
+    def request(self, path, method='GET', data=None, revision=None, media=None, idempotency_key=None):
         headers = {'Origin': self.base, 'Accept': 'application/json'}
         if self.csrf:
             headers['X-CSRF-Token'] = self.csrf
         if revision is not None:
             headers['If-Match'] = '"' + str(revision) + '"'
+        if idempotency_key:
+            headers['Idempotency-Key'] = idempotency_key
         content = data if media else json.dumps(data, ensure_ascii=False).encode() if data is not None else None
         if content is not None:
             headers['Content-Type'] = media or 'application/json'
@@ -119,28 +121,45 @@ def import_directory(directory):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--base-url', default='http://127.0.0.1:3014')
-    parser.add_argument('action', choices=['create', 'export', 'import', 'validate', 'preview', 'upload-asset'])
+    parser.add_argument('action', choices=['create', 'export', 'import', 'validate', 'preview', 'upload-asset', 'publish', 'status'])
     parser.add_argument('--draft')
     parser.add_argument('--directory', type=Path)
     parser.add_argument('--entity')
     parser.add_argument('--file', type=Path)
     parser.add_argument('--asset-path')
     parser.add_argument('--media-type')
+    parser.add_argument('--reason')
+    parser.add_argument('--idempotency-key')
+    parser.add_argument('--job')
     args = parser.parse_args()
     client = Client(args.base_url)
-    if args.action not in ('create', 'upload-asset') and not args.draft:
+    if args.action not in ('create', 'upload-asset', 'status') and not args.draft:
         parser.error('--draft is required')
     key = str(uuid.UUID(args.draft)) if args.draft else None
-    if args.action in ('export', 'import') and args.directory is None:
+    if args.action in ('export', 'import', 'publish') and args.directory is None:
         parser.error('--directory is required')
     if args.action == 'preview' and not args.entity:
         parser.error('--entity is required')
     if args.action == 'upload-asset' and not all((args.file, args.asset_path, args.media_type)):
         parser.error('--file, --asset-path and --media-type are required')
+    if args.action == 'publish' and not all((args.reason, args.idempotency_key)):
+        parser.error('--reason and --idempotency-key are required')
+    if args.action == 'status' and not args.job:
+        parser.error('--job is required')
     client.login()
     try:
         path = 'drafts/' + key if key else 'drafts'
-        if args.action == 'upload-asset':
+        if args.action == 'status':
+            print(json.dumps(client.request('jobs/' + str(uuid.UUID(args.job))), ensure_ascii=False, indent=2))
+        elif args.action == 'publish':
+            data = import_directory(args.directory)
+            if data['draft_id'] != key:
+                raise ValueError('檔案不屬於指定草稿。')
+            result = client.request(path + '/publish', 'POST',
+                {'base_release_id':data['base_release_id'], 'revision':data['revision'], 'reason':args.reason},
+                idempotency_key=args.idempotency_key)
+            print('發布作業 ' + result['job_id'] + '，狀態 ' + result['status'])
+        elif args.action == 'upload-asset':
             safe_path(args.asset_path, asset=True, write=True)
             if args.file.is_symlink() or args.file.stat().st_size > 10 * 1024 * 1024:
                 raise ValueError('資產不得使用 symlink 或超過 10 MiB。')

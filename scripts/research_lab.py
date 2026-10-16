@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROJECT = 'industryflow-research'
 ENV_FILE = ROOT / '.env.research'
 APP_SERVICES = ('initialize', 'api', 'prefect', 'deploy', 'worker', 'ingestion')
-PORTS = {'api': (8014, 8000), 'web': (3014, 3010), 'prefect': (4204, 4200)}
+PORTS = {'api': (8014, 8000), 'web': (3014, 3010), 'prefect': (4204, 4200), 'reader': (3015, 8000)}
 PROTECTED = ('industryflow-', 'industryflow-reading-')
 SECRET_KEYS = ('RESEARCH_POSTGRES_PASSWORD', 'RESEARCH_SESSION_SECRET',
                'RESEARCH_READER_PASSWORD', 'RESEARCH_WRITER_PASSWORD')
@@ -63,7 +63,7 @@ def validate_config(config):
     if config.get('name') != PROJECT:
         raise ValueError('Unexpected Compose project')
     services = config['services']
-    if set(services) != {*APP_SERVICES, 'db', 'web'}:
+    if set(services) != {*APP_SERVICES, 'db', 'web', 'reader'}:
         raise ValueError('Unexpected preview services')
     for name in APP_SERVICES:
         if services[name]['image'] != 'industryflow-research-api:dev':
@@ -79,6 +79,11 @@ def validate_config(config):
             raise ValueError('Unexpected database privilege for ' + name)
     if services['web']['image'] != 'industryflow-research-web:dev':
         raise ValueError('Unsafe web image')
+    reader = services['reader']
+    if (reader['image'] != 'industryflow-research-api:dev' or reader.get('profiles') != ['reader']
+        or reader.get('volumes') or not reader.get('read_only') or reader.get('cap_drop') != ['ALL']
+        or set(reader.get('environment', {})) != {'READER_ALLOWED_HOSTS'}):
+        raise ValueError('Reader gateway must be credential-free, isolated and opt-in')
     for name, service in services.items():
         if 'container_name' in service or service.get('network_mode'):
             raise ValueError('Fixed container name or host networking forbidden')
@@ -110,7 +115,7 @@ def validate_config(config):
 
 def check():
     setup()
-    return validate_config(json.loads(compose('--profile', 'scheduler', '--profile', 'tools',
+    return validate_config(json.loads(compose('--profile', 'scheduler', '--profile', 'tools', '--profile', 'reader',
                                               'config', '--format', 'json')))
 
 
@@ -180,13 +185,22 @@ def restore(source, database):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['setup', 'check', 'up', 'stop', 'start', 'restore', 'pg-check', 'rebuild-check', 'bootstrap', 'seed-git'])
+    parser.add_argument('action', choices=['setup', 'check', 'up', 'stop', 'start', 'restore', 'pg-check', 'rebuild-check', 'bootstrap', 'seed-git', 'reader-start', 'reader-stop'])
     parser.add_argument('--commit', default='HEAD')
     parser.add_argument('--source-container', default='industryflow-reading-db')
     parser.add_argument('--source-database', default='industry_reading')
+    parser.add_argument('--suite', choices=['all', 'admin-read', 'publication-restart', 'publication-interfaces'], default='all')
     args = parser.parse_args()
     report = check()
-    if args.action == 'seed-git':
+    if args.action in ('reader-start','reader-stop'):
+        before = protected_snapshot()
+        if args.action == 'reader-start':
+            compose('--profile','reader','up','-d','--no-build','--wait','reader')
+        else:
+            compose('--profile','reader','stop','reader')
+        verify_protected(before)
+        report['protected_services_unchanged'] = True
+    elif args.action == 'seed-git':
         before = protected_snapshot()
         if args.commit != 'HEAD' and not re.fullmatch('[0-9a-f]{40,64}', args.commit):
             raise ValueError('Use HEAD or a full Git commit')
@@ -236,7 +250,7 @@ def main():
         before = protected_snapshot()
         compose('build', 'api')
         output = compose('run', '--rm', '--no-deps', '-T', 'initialize',
-                         'python', '-m', 'app.research_pg_checks')
+                         'python', '-m', 'app.research_pg_checks', '--suite', args.suite)
         print(output.decode('utf-8', errors='replace'))
         verify_protected(before)
         report['protected_services_unchanged'] = True

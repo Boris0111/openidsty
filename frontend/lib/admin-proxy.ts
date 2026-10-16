@@ -10,7 +10,7 @@ function failure(status:number,code:string,message:string) {
 export async function proxyAdmin(request:NextRequest,path:string[]) {
   const resource=path.join('/');
   const uuid='[0-9a-fA-F-]{36}';
-  const permitted=resource==='session'?['GET','POST','DELETE']:resource==='drafts'?['GET','POST']:['drafts/render-document','drafts/asset-upload'].includes(resource)?['POST']:new RegExp(`^drafts/${uuid}$`).test(resource)?['GET','PATCH']:new RegExp(`^drafts/${uuid}/(export|document|diff|preview)$`).test(resource)?['GET']:new RegExp(`^drafts/${uuid}/(import|validate)$`).test(resource)?['POST']:new RegExp(`^drafts/${uuid}/assets/[0-9a-f]{64}$`).test(resource)?['GET']:[];
+  const permitted=resource==='session'?['GET','POST','DELETE']:resource==='drafts'?['GET','POST']:['releases','sources','audit'].includes(resource)?['GET']:['drafts/render-document','drafts/asset-upload'].includes(resource)?['POST']:new RegExp(`^drafts/${uuid}$`).test(resource)?['GET','PATCH']:new RegExp(`^drafts/${uuid}/(export|document|diff|preview)$`).test(resource)?['GET']:new RegExp(`^drafts/${uuid}/(import|validate|publish)$`).test(resource)?['POST']:new RegExp(`^drafts/${uuid}/assets/[0-9a-f]{64}$`).test(resource)?['GET']:new RegExp(`^jobs/${uuid}$`).test(resource)?['GET']:new RegExp(`^jobs/${uuid}/retry$`).test(resource)||new RegExp(`^releases/${uuid}/restore$`).test(resource)?['POST']:[];
   if(!permitted.includes(request.method))return failure(404,'admin-resource-not-found','找不到這項管理功能。');
   const allowed=(process.env.RESEARCH_ADMIN_ORIGINS||'').split(',').filter(Boolean);
   if(!allowed.length)return failure(503,'admin-unavailable','管理入口尚未完成設定。');
@@ -21,7 +21,7 @@ export async function proxyAdmin(request:NextRequest,path:string[]) {
     return failure(403,'admin-origin-denied','此來源無法使用管理入口。');
   }
   const headers=new Headers({'Origin':origin});
-  for(const name of ['Content-Type','X-CSRF-Token','Sec-Fetch-Site','If-Match']) {
+  for(const name of ['Content-Type','X-CSRF-Token','Sec-Fetch-Site','If-Match','Idempotency-Key']) {
     const value=request.headers.get(name);if(value)headers.set(name,value);
   }
   const cookies=(request.headers.get('cookie')||'').split(';').map(value=>value.trim())

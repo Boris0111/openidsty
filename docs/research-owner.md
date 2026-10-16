@@ -47,3 +47,5 @@ Session 行為依據：[OWASP Session Management](https://cheatsheetseries.owasp
 2026-10-17 實際驗證：34 項隔離 PostgreSQL／API 契約全部通過（含 12 項 owner 測試），另有 3 項真實 Next 管理代理測試與 6 項既有研究走讀通過。新 web production build 通過，容器更新後來源、版本、手機與鍵盤閱讀仍可用。原版及 Valuflow 依本輪使用者資源調整指示保持停止，檢查期間未重新啟動；後台編輯與發布 UI 仍依後續 tasks 交付。
 
 後續同日 tasks 4.2–4.3 已加入 `/admin` 草稿編輯頁與明列的草稿代理，整體擴充為 71 項 PostgreSQL／容器與 13 項 live browser 通過。草稿操作見 [research-drafts](research-drafts.md)；完整發布流程仍待 tasks 4.4–4.6。實際 owner 密碼仍由 Boris 本機自行設定。
+
+接續 tasks 4.4–4.6 已加入發布／還原／來源健康／稽核頁面與持久 jobs，通過 88 項完整 PostgreSQL 回歸、1 項檔案介面流程及 13 項管理／閱讀 browser；只讀 gateway 另通過 3 項單元及 2 項 live browser。操作見 [research-publication](research-publication.md)。背景 scheduler 仍依資源調整保持停止，因此不會自動消費發布或擷取來源；reader gateway 測完亦已停止。本輪沒有替 Boris 設定實際密碼、發布 application 研究或對外部署。

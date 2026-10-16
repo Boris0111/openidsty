@@ -147,7 +147,7 @@ class ManagedGit:
                 raise ValueError('拒絕移除越界 worktree。')
             self.command('worktree', 'remove', '--force', str(folder))
 
-    def commit_files(self, base, files):
+    def commit_files(self, base, files, protect_ref=None):
         from .research_compile import compile_archive
         bundle = compile_archive(make_archive(files))
         expected_assets = {'industry-map/' + asset['path'] for asset in bundle['assets'].values()}
@@ -176,10 +176,27 @@ class ManagedGit:
             for name in filter(None, changed.decode().split('\0')):
                 safe_path(name, asset=name.startswith('industry-map/assets/'), write=True)
             if not changed:
+                if protect_ref:
+                    self.command('update-ref', protect_ref, base)
                 return base
             self.command('-c', 'user.name=IndustryFlow owner', '-c', 'user.email=owner@localhost',
                          'commit', '--no-gpg-sign', '-m', 'Update validated research content', directory=folder)
-            return self.command('rev-parse', 'HEAD', directory=folder).decode().strip()
+            commit = self.command('rev-parse', 'HEAD', directory=folder).decode().strip()
+            if protect_ref:
+                self.command('update-ref', protect_ref, commit)
+            return commit
+
+    def prepare_job(self, job_id, base, files):
+        ref = 'refs/research/jobs/' + str(uuid.UUID(str(job_id)))
+        try:
+            existing = self.command('rev-parse', '--verify', ref).decode().strip()
+        except ValueError:
+            existing = None
+        if existing:
+            if self.files(existing) != files:
+                raise ValueError('發布作業既有 commit 與草稿不一致。')
+            return existing
+        return self.commit_files(base, files, protect_ref=ref)
 
 
 def main():

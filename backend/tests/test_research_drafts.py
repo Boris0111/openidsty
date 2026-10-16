@@ -37,7 +37,7 @@ def draft_context(owner, authored, tmp_path, monkeypatch):
     with engine.begin() as connection:
         projected = project(connection, content, head, reason='Synthetic draft integration baseline')
         release = projected['release_id']
-        connection.execute(text("UPDATE research.research_releases SET status='published',published_at=now() WHERE release_id=:id"), {'id': release})
+        connection.execute(text("UPDATE research.research_releases SET status='published',published_at=now() WHERE release_id=:id AND status<>'published'"), {'id': release})
     response = login(client)
     assert response.status_code == 200
     headers = {'Origin': ORIGIN, 'X-CSRF-Token': response.json()['csrf_token']}

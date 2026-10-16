@@ -5,6 +5,7 @@ import os
 import re
 from pathlib import Path
 import uuid
+from typing import Literal
 import yaml
 from fastapi import APIRouter, Depends, Query, Request
 from fastapi.encoders import jsonable_encoder
@@ -144,7 +145,7 @@ async def create_draft(request: Request, owner=Depends(require_owner_write), con
     base = base_release(connection, selected)
     try:
         files = await run_in_threadpool(ManagedGit().files, base['git_commit'])
-        payload = export_files(files, asset_root())
+        payload = await run_in_threadpool(export_files, files, asset_root())
     except (ValueError, UnicodeError, yaml.YAMLError) as error:
         raise ResearchError(422, 'draft-rejected', str(error)[:12000]) from None
     key = uuid.uuid4()
@@ -234,7 +235,7 @@ async def patch_draft(draft_id: uuid.UUID, request: Request, owner=Depends(requi
                 raise ValueError('檔案變更欄位不正確。')
     except (ValueError, TypeError, yaml.YAMLError, RecursionError) as error:
         raise ResearchError(422, 'draft-rejected', str(error)[:12000]) from None
-    result = save_revision(connection, current, payload, request.headers.get('if-match'), 'web')
+    result = await run_in_threadpool(save_revision, connection, current, payload, request.headers.get('if-match'), 'web')
     return respond(export_draft(result), result['revision'])
 
 
@@ -248,7 +249,7 @@ async def draft_import(draft_id: uuid.UUID, request: Request, owner=Depends(requ
         raise ResearchError(409, 'draft-base-conflict', '匯入檔案屬於不同草稿或研究基準。')
     if type(data['revision']) is not int or request.headers.get('if-match') != '"' + str(data['revision']) + '"':
         raise ResearchError(409, 'draft-conflict', '匯入檔案與預期修訂不一致。')
-    result = save_revision(connection, current, {key: data[key] for key in ('schema_version', 'files', 'assets')},
+    result = await run_in_threadpool(save_revision, connection, current, {key: data[key] for key in ('schema_version', 'files', 'assets')},
                            request.headers.get('if-match'), 'cli')
     return respond(export_draft(result), result['revision'])
 
@@ -261,9 +262,10 @@ def draft_validate(draft_id: uuid.UUID, owner=Depends(require_owner_write), conn
 
 
 @router.get('/{draft_id}/diff')
-def draft_diff(draft_id: uuid.UUID, owner=Depends(require_owner), connection=Depends(get_admin_connection)):
+def draft_diff(draft_id: uuid.UUID, against: Literal['base', 'active'] = 'base',
+               owner=Depends(require_owner), connection=Depends(get_admin_connection)):
     current = get_draft(connection, draft_id)
-    base = base_release(connection, current['base_release_id'])
+    base = base_release(connection, current['base_release_id'] if against == 'base' else None)
     original = export_files(ManagedGit().files(base['git_commit']), asset_root())
     changes, total, truncated = [], 0, False
     for path in sorted(set(original['files']) | set(current['payload']['files'])):
@@ -276,7 +278,9 @@ def draft_diff(draft_id: uuid.UUID, owner=Depends(require_owner), connection=Dep
             break
         total += len(diff.encode())
         changes.append({'path': path, 'diff': diff})
-    return respond({'revision': current['revision'], 'changes': changes, 'assets_changed': original['assets'] != current['payload']['assets'], 'truncated': truncated}, current['revision'])
+    return respond({'revision': current['revision'], 'compared_release_id':str(base['release_id']),
+        'draft_base_release_id':str(current['base_release_id']), 'changes': changes,
+        'assets_changed': original['assets'] != current['payload']['assets'], 'truncated': truncated}, current['revision'])
 
 
 @router.get('/{draft_id}/preview')

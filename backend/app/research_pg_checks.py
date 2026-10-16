@@ -1,5 +1,6 @@
 """Explicit isolated PostgreSQL checks; never creates fixtures in the app DB."""
 import os
+import argparse
 from pathlib import Path
 from alembic import command
 from alembic.config import Config
@@ -9,24 +10,30 @@ from .config import DATABASE_URL
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--suite', choices=['all', 'admin-read', 'publication-restart', 'publication-interfaces'], default='all')
+    args = parser.parse_args()
     bootstrap = make_url(DATABASE_URL)
     if bootstrap.username != 'industry' or bootstrap.database != 'industry_research' or bootstrap.host != 'db':
         raise RuntimeError('Run only via the verified research Compose initialize service')
     with psycopg.connect(bootstrap.set(drivername='postgresql').render_as_string(hide_password=False), autocommit=True) as connection:
+        connection.execute('SELECT pg_advisory_lock(38109074)')
         exists = connection.execute("SELECT 1 FROM pg_database WHERE datname='industry_research_test'").fetchone()
         if not exists:
             connection.execute('CREATE DATABASE industry_research_test')
-    test_url = bootstrap.set(database='industry_research_test').render_as_string(hide_password=False)
-    cfg = Config(str(Path(__file__).parents[1] / 'alembic.ini'))
-    cfg.attributes['database_url'] = test_url
-    command.upgrade(cfg, 'head')
-    os.environ['RESEARCH_PG_TEST_URL'] = test_url
-    os.environ['RESEARCH_PG_READER_URL'] = make_url(os.environ['RESEARCH_READ_DATABASE_URL']).set(database='industry_research_test').render_as_string(hide_password=False)
-    os.environ['RESEARCH_PG_WRITER_URL'] = make_url(os.environ['RESEARCH_WRITE_DATABASE_URL']).set(database='industry_research_test').render_as_string(hide_password=False)
-    import pytest
-    raise SystemExit(pytest.main(['-q', '-p', 'no:cacheprovider', 'tests/test_research_postgres.py',
-        'tests/test_research_v2.py', 'tests/test_research_graph_v2.py', 'tests/test_research_search.py',
-        'tests/test_research_auth.py', 'tests/test_research_documents.py', 'tests/test_research_drafts.py']))
+        test_url = bootstrap.set(database='industry_research_test').render_as_string(hide_password=False)
+        cfg = Config(str(Path(__file__).parents[1] / 'alembic.ini'))
+        cfg.attributes['database_url'] = test_url
+        command.upgrade(cfg, 'head')
+        os.environ['RESEARCH_PG_TEST_URL'] = test_url
+        os.environ['RESEARCH_PG_READER_URL'] = make_url(os.environ['RESEARCH_READ_DATABASE_URL']).set(database='industry_research_test').render_as_string(hide_password=False)
+        os.environ['RESEARCH_PG_WRITER_URL'] = make_url(os.environ['RESEARCH_WRITE_DATABASE_URL']).set(database='industry_research_test').render_as_string(hide_password=False)
+        import pytest
+        cases = ['tests/test_publication_interfaces.py'] if args.suite == 'publication-interfaces' else ['tests/test_research_restart.py'] if args.suite == 'publication-restart' else ['tests/test_research_admin_reads.py'] if args.suite == 'admin-read' else ['tests/test_research_postgres.py',
+            'tests/test_research_v2.py', 'tests/test_research_graph_v2.py', 'tests/test_research_search.py',
+            'tests/test_research_auth.py', 'tests/test_research_documents.py', 'tests/test_research_drafts.py',
+            'tests/test_research_publication.py', 'tests/test_research_admin_reads.py', 'tests/test_research_restart.py', 'tests/test_publication_interfaces.py']
+        raise SystemExit(pytest.main(['-q', '-p', 'no:cacheprovider', *cases]))
 
 
 if __name__ == '__main__':

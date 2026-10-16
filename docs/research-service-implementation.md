@@ -74,3 +74,13 @@ Task 4.1 的 owner 設定／重設、session、CSRF、Origin、到期與持久�
 Production build、typecheck 通過，13 項 live browser 全通過：6 項既有讀者、3 項 session proxy、4 項草稿桌機／手機／入口／資產邊界。編輯情境採合成 API 回應，真實寫入／驗證／預覽另由 PostgreSQL 整合測試覆蓋；未在 application DB 設定合成密碼。桌機／手機截圖已檢視，保存在忽略的 `.work/editor-review/`，不視為 Boris 對管理 UI 的使用者驗收。
 
 本輪已初始化 managed clone 並保護目前發布 commit；公開研究仍是原 bootstrap release。原版／Valuflow 仍停止，只運行研究版 web、API、DB。Task 4.4 的持久發布與恢復、4.5 還原及同步、4.6 完整管理流程尚未完成，不把草稿功能當成發布交付。
+
+## 持久發布與管理流程（tasks 4.4–4.6）
+
+後續已加入持久 outbox、Prefect 派送／每分鐘 reconciliation、job／release refs、候選投影與單交易 head 啟用；重複請求回原 job，基準衝突保留草稿，還原不修改財務或事件。`research/published` 同步作業重讀當前 head，避免晚到同步倒退。Owner 管理頁已提供發布理由、進度、失敗重試、已發布版閱讀、還原、來源健康及操作紀錄；草稿另可與目前正式版本比較。操作見 [research-publication](research-publication.md)。
+
+驗證：88 項真實 PostgreSQL／容器測試完整通過，另以最新程式通過 1 項完整檔案介面流程（CLI 檔案交換→import→preview→publish→HTTP retry→restore，並以真正 reader login 查閱前後內容）。故障注入涵蓋 Git／asset／投影實際操作失敗、六個中斷位置、啟用交易回滾、回應遺失、基準競爭、相同內容不假更新、Prefect client 暫時失效及 lease 到期補送。另讓 child worker `os._exit(77)` 後由全新程序續跑，同一 job 僅一筆發布稽核。Prefect transport 本輪以 client 契約替身驗證；實際啟動 scheduler、流程註冊與消費作業的 runtime 整合仍由 task 9.1 驗收，不宣稱已在 application DB 實際發布。
+
+測試期間曾誤開兩個共用測試 DB 的程序，造成最後一個 projection 案例與另一輪 owner setup 互相干擾；該輪結果未採計為完整通過。已在測試入口加入 DB session advisory lock，鎖定遷移與整輪 pytest，隨後序列重跑 88 項通過。Application DB 另核對：head 仍為 `03799774-3553-5ff6-9910-13a68468af15`、owner 0、publish jobs 0。未把測試帳密、候選版本或合成內容放進 application DB。
+
+唯讀 gateway 使用相同 app image 的 opt-in reader profile，沒有 DB／session 憑證及持久 volumes；3 項原生安全測試、2 項真實 gateway browser 通過，研究、圖解與公司導覽可讀，管理／legacy 診斷／偽造 cookie／Host／寫入被拒絕。Gateway 測完已停止，仍只保留 web／API／DB。13 項管理及既有閱讀 browser 通過；管理寫入畫面採合成 API，真實 DB 行為由上述整合測試覆蓋。Build／typecheck 通過，未增加讀者端維護資料。跨裝置 TLS／私人網路設定尚未執行，條件見 [research-reader-entry](research-reader-entry.md)。
