@@ -35,11 +35,13 @@ services:
     restart: unless-stopped
   initialize:
     <<: *app
+    volumes: ["research-assets:/home/app/research-assets"]
     command: [sh, -c, "alembic upgrade head && python -m app.research_roles && python -m app.import_map && python -m app.financial_indicators"]
     depends_on:
       db: {condition: service_healthy}
   api:
     <<: *app
+    volumes: ["research-assets:/home/app/research-assets:ro"]
     environment:
       <<: *app-env
       DATABASE_URL: postgresql+psycopg://research_reader_login:${RESEARCH_READER_PASSWORD}@db:5432/industry_research
@@ -93,6 +95,7 @@ services:
       initialize: {condition: service_completed_successfully}
   worker:
     <<: *app
+    volumes: ["research-assets:/home/app/research-assets"]
     environment:
       <<: *app-env
       DATABASE_URL: postgresql+psycopg://research_writer_login:${RESEARCH_WRITER_PASSWORD}@db:5432/industry_research
@@ -102,6 +105,7 @@ services:
       deploy: {condition: service_completed_successfully}
   ingestion:
     <<: *app
+    volumes: ["research-assets:/home/app/research-assets"]
     environment:
       <<: *app-env
       DATABASE_URL: postgresql+psycopg://research_writer_login:${RESEARCH_WRITER_PASSWORD}@db:5432/industry_research

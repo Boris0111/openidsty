@@ -779,3 +779,52 @@ global:
     themes:
     - power-bottleneck
     notes: 已讀 grid bottlenecks、connection queues 與系統彈性建議；摘要非個別場址併網證明，也未核讀報告全文。
+  - id: auras-ocp-2025-reading
+    name: 雙鴻 OCP 2025 官方產品新聞
+    url: https://www.auras.com.tw/News/NewsContent/14-10/en
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal]
+    themes: [liquid-cooling]
+    notes: 已以瀏覽器讀取 2025-10-15 新聞內文；單純 HTTP 200 僅回 JS 外殼。產品範圍、研發及出貨分開判讀，不當成 2026 出貨資料。
+  - id: vertiv-coolchip-product-reading
+    name: Vertiv CoolChip CDU 公開產品家族
+    url: https://www.vertiv.com/en-us/products-catalog/thermal-management/high-density-solutions/vertiv-coolchip-cdu/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal]
+    themes: [liquid-cooling]
+    notes: 已讀產品家族、型號表及功能；未讀需填表下載的文件。液對液與液對氣型號分開，額定能力不是場址驗收。
+  - id: vertiv-liquid-cooling-reading
+    name: Vertiv 液冷方法與基礎設施公開說明
+    url: https://www.vertiv.com/en-us/solutions/learn-about/liquid-cooling-options-for-data-centers/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal, datacenter]
+    themes: [liquid-cooling]
+    notes: 僅採冷板取熱、Distribution 及回路整合說明；未採用頁面市場預測與節能比例。
+  - id: vertiv-company-scope-reading
+    name: Vertiv 官方公司業務範圍
+    url: https://www.vertiv.com/en-us/about/about-us/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal, power, datacenter]
+    notes: 已讀供電、冷卻、IT 與服務的公司定位；不以 FY2025 公司總營收推算液冷收入。
+  - id: nvidia-dsx-cooling-overview
+    name: NVIDIA DSX 設施架構公開 overview
+    url: https://docs.nvidia.com/dsx/facilities-infra/reference-design-overview
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal, datacenter]
+    themes: [liquid-cooling]
+    notes: 已讀 CDU 與獨立二次側回路說明，overview 引用 2026-08-19 指南 v2.0；未取得 NVOnline 補充文件，未泛用參考場址容量與供水條件。

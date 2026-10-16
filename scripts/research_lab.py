@@ -37,11 +37,11 @@ def run(args, **kwargs):
     return result.stdout
 
 
-def compose(*args):
+def compose(*args, input=None):
     env = {k: v for k, v in os.environ.items() if not k.startswith('RESEARCH_')}
     env.pop('COMPOSE_PROFILES', None)
     return run(['docker', 'compose', '--project-name', PROJECT, '--env-file', str(ENV_FILE),
-                '-f', str(ROOT / 'compose.research.yaml'), *args], cwd=ROOT, env=env)
+                '-f', str(ROOT / 'compose.research.yaml'), *args], cwd=ROOT, env=env, input=input)
 
 
 def setup():
@@ -180,12 +180,36 @@ def restore(source, database):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['setup', 'check', 'up', 'stop', 'start', 'restore', 'pg-check'])
+    parser.add_argument('action', choices=['setup', 'check', 'up', 'stop', 'start', 'restore', 'pg-check', 'rebuild-check', 'bootstrap'])
+    parser.add_argument('--commit', default='HEAD')
     parser.add_argument('--source-container', default='industryflow-reading-db')
     parser.add_argument('--source-database', default='industry_reading')
     args = parser.parse_args()
     report = check()
-    if args.action == 'restore':
+    if args.action in {'rebuild-check', 'bootstrap'}:
+        before = protected_snapshot()
+        if args.commit != 'HEAD' and not re.fullmatch('[0-9a-f]{40,64}', args.commit):
+            raise ValueError('Use HEAD or a full Git commit')
+        commit = run(['git', 'rev-parse', '--verify', args.commit + '^{commit}'], cwd=ROOT, text=True).strip()
+        archive = run(['git', 'archive', '--format=tar', commit, 'industry-map',
+                       'data/company-research.yaml', 'data/theme-indicators.yaml'], cwd=ROOT)
+        compose('build', 'api')
+        command = ['python', '-m', 'app.research_rebuild_check' if args.action == 'rebuild-check' else 'app.research_compile', '--commit', commit]
+        if args.action == 'bootstrap':
+            command.append('--bootstrap')
+        output = compose('run', '--rm', '--no-deps', '-T', 'initialize', *command, input=archive)
+        result = json.loads(output)
+        if args.action == 'bootstrap':
+            run(['git', 'update-ref', 'refs/research/releases/' + result['release_id'], commit], cwd=ROOT)
+        folder = ROOT / '.work/research-lab'
+        folder.mkdir(parents=True, exist_ok=True)
+        (folder / (args.action + '.json')).write_text(json.dumps(result, indent=2), encoding='utf-8')
+        report['result'] = {key: value for key, value in result.items() if key != 'search_plans'}
+        if 'search_plans' in result:
+            report['search_plans_saved'] = str(folder / (args.action + '.json'))
+        verify_protected(before)
+        report['protected_services_unchanged'] = True
+    elif args.action == 'restore':
         result = restore(args.source_container, args.source_database)
         report['restored_tables'] = {k: int(v.split(':')[0]) for k, v in result['tables'].items()}
         report['protected_services_unchanged'] = result['protected_services_unchanged']

@@ -8,6 +8,16 @@ from .research_api import event_query, event_payloads, event_order, theme_payloa
 from .graph import LAYERS, industry_graph, company_graph, impact_paths,segment_relations
 
 app = FastAPI(title='IndustryFlow 產業情報', version='0.1.0', docs_url='/api/docs', openapi_url='/api/openapi.json', redoc_url=None)
+from .research_v2 import router as research_router
+from .research_graph_v2 import router as research_graph_router
+from .research_search import router as research_search_router
+from .research_assets import router as research_assets_router
+from .research_http import install as install_research_http
+app.include_router(research_graph_router)
+app.include_router(research_search_router)
+app.include_router(research_assets_router)
+app.include_router(research_router)
+install_research_http(app)
 
 def columns(row, exclude=()):
     return {c.name:getattr(row,c.name) for c in row.__table__.columns if c.name not in exclude}
@@ -30,7 +40,7 @@ def company_detail(session, ticker):
 @app.middleware('http')
 async def cache_headers(request, call_next):
     response = await call_next(request)
-    if request.method=='GET':
+    if request.method=='GET' and 'Cache-Control' not in response.headers:
         response.headers['Cache-Control'] = 'no-store'
     response.headers['X-Content-Type-Options'] = 'nosniff'
     if response.headers.get('Content-Type') == 'application/json':

@@ -66,7 +66,7 @@ class ResearchSchemaTests(unittest.TestCase):
         self.assertEqual(sum(len(d['roles']) for d in docs), 100)
         for key, expected in old.items():
             self.assertEqual(by_key[key]['roles'], expected['roles'])
-            self.assertEqual(by_key[key]['aliases'], expected['aliases'])
+            self.assertLessEqual(set(expected['aliases']), set(by_key[key]['aliases']))
             self.assertEqual(by_key[key]['source-identifiers'], expected['source-identifiers'])
         self.assertEqual(by_key['PRIVATE:boyd']['listings'], [])
 

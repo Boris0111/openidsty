@@ -1,0 +1,16 @@
+schema-version: research-v1
+assets:
+- id: asset-cooling-loop-desktop
+  path: assets/cooling-loop-desktop.svg
+  sha256: 6d27330922c54175fced728cd4c9e9f4d4952a96ad67870cc2193e6dfdfab7f9
+  media-type: image/svg+xml
+  alt: 冷板將晶片熱量交給二次側冷卻液，CDU 與設施水路交換熱量，兩側液體分離。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-cooling-loop-mobile
+  path: assets/cooling-loop-mobile.svg
+  sha256: a1e0968d2d8652d97d515265689692bdf572b50b41f8436f03ac5200c5f65cbc
+  media-type: image/svg+xml
+  alt: 直式圖解，冷板、液對液 CDU 與設施水路的兩個回路。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026

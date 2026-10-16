@@ -1,0 +1,38 @@
+schema-version: research-v1
+taxonomy:
+  - id: taxonomy-thermal-rack-cooling
+    parent: segment-thermal
+    child: application-ai-rack-cooling
+  - id: taxonomy-rack-chip-heat
+    parent: application-ai-rack-cooling
+    child: role-chip-heat-capture
+  - id: taxonomy-rack-distribution
+    parent: application-ai-rack-cooling
+    child: role-coolant-distribution
+  - id: taxonomy-chip-cold-plate
+    parent: role-chip-heat-capture
+    child: product-cold-plate
+  - id: taxonomy-distribution-l2l
+    parent: role-coolant-distribution
+    child: product-liquid-to-liquid-cdu
+  - id: taxonomy-rack-loop-explanation
+    parent: application-ai-rack-cooling
+    child: concept-liquid-cooling-loop
+offerings:
+  - id: offering-auras-cold-plate
+    company: company-auras
+    product: product-cold-plate
+    role: role-chip-heat-capture
+    conditions: [依 2025 官方展會新聞核對產品範圍，實際平台及交付仍需個別驗證]
+    claim-refs:
+      - entity-id: company-auras
+        claim-id: cold-plate-portfolio
+  - id: offering-vertiv-l2l-cdu
+    company: company-vertiv
+    product: product-liquid-to-liquid-cdu
+    role: role-coolant-distribution
+    conditions: [限 CoolChip 液對液型號，需相容設施水路及指定運轉條件]
+    claim-refs:
+      - entity-id: company-vertiv
+        claim-id: coolchip-l2l-capability
+relations: []

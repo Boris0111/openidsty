@@ -13,3 +13,13 @@ Legacy API 暫時需要 public 表的 SELECT；原 API 的診斷路徑尚待私�
 驗證命令為 `python scripts/research_lab.py pg-check`，工具拒絕在 application DB 放 fixtures。測試涵蓋 composite FK、38 位 Decimal、revision 與 raw fact／job 唯一鍵、ready head 拒絕、匿名查詢角色無管理權限、未發布文件隱藏、published 內容不可修改。保留測試 DB 可供檢查，不刪除任何既有 volume。
 
 程式回退不等於 DB 回退；migration downgrade 拒絕破壞性刪除。需要回復時用已核對備份還原到另一個獨立 DB，再核對版本、hash 與資料後選擇服務入口。
+
+## 初始化編譯與重建
+
+`research_lab.py rebuild-check --commit <完整commit>` 從 Git archive 取得該提交的研究路徑，驗證完整 Schema 後編譯，拒絕非研究路徑、symlink、重複路徑與超限檔案。編譯結果含完整 Markdown、17 環節、7 題材、95 公司、所有 legacy 映射與固定文件引用；內容不依賴執行時間、網路狀態或當前來源健康。相同 commit／內容 hash 對應相同 release UUID；重跑核對實際 snapshot 內容，而非只相信儲存的 hash。
+
+舊判讀、指標定義／觀測、技術文件／觀測／核對保留原 DB 歷史與日期，另建立 release-scoped legacy_history 映射；動態觀測仍由 DB 備份負責，不回寫靜態 Markdown。舊關係保留原 reason、URL、checked 與 confirmed／candidate，遷移不升級信心。來源註冊表的顯示 metadata 固定在 release，runtime 健康不回頭覆寫。
+
+重建檢查只讀 application DB 的歷史，在 `industry_research_test` 的 rollback-only transaction 內匯入所需父資料與原始歷史、建立投影、再次重建並核對。成功或失敗均 rollback，fixtures 不進 application DB。只含目前 Git commit 而沒有 DB 備份，無法還原動態財務／事件歷史；完整恢復需同時保留兩者。
+
+`research_lab.py bootstrap` 是本機維護者的一次性初始化操作：第一份研究發布在單一 DB 交易完成，已有 head 就拒絕替換，並在開發 repo 留 `refs/research/releases/<uuid>` 保護內容 commit。日常編輯／後續發布改走尚待實作的 owner／managed-clone 流程；這不是繞過管理授權的讀者上傳 API。資產保存於獨立 research-assets volume，API 僅唯讀掛載。

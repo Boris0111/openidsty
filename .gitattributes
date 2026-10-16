@@ -1,0 +1,3 @@
+docker/*.sh text eol=lf
+*.sql text eol=lf
+industry-map/assets/** -text

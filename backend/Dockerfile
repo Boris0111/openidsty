@@ -4,6 +4,7 @@ WORKDIR /workspace/backend
 COPY backend/requirements.txt backend/runtime-constraints.txt /tmp/
 RUN pip install --no-cache-dir -r /tmp/requirements.txt -c /tmp/runtime-constraints.txt
 RUN useradd --create-home --uid 10001 app
+RUN mkdir /home/app/research-assets && chown app:app /home/app/research-assets
 COPY --chown=app:app backend /workspace/backend
 COPY --chown=app:app industry-map /workspace/industry-map
 COPY --chown=app:app data /workspace/data

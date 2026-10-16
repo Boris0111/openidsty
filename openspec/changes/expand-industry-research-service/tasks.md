@@ -13,13 +13,13 @@
 - [x] 2.1 在唯一 Schema 文件定義應用、角色、產品、術語、公司及關係格式，建立 kind 前綴的穩定 ID／listing／alias 映射；以全部 95 家公司、未上市及跨市場樣本驗證無遺失或誤合併，更新維護說明。
 - [x] 2.2 擴充 validator 檢查新引用、關係證據、資產、分類無環與既有上下游雙向一致；執行 validate_map 與 validator tests，證明真實供需回路通過而分類回路被拒絕。
 - [x] 2.3 Additive 建立 research schema 的 release、snapshot、關係、財務、草稿、session 與 jobs 表及 DB roles／索引；以獨立 PostgreSQL 測試 composite FK、Decimal 精度、唯一鍵與讀者權限，舊表及主鍵不變。
-- [ ] 2.4 實作初始化編譯、legacy mapping 與 release 快照重建，保留 17 環節／7 題材及判讀／指標／技術文件歷史；以同一 commit 重建比對內容 hash、日期與引用，補遷移操作文件。
+- [x] 2.4 實作初始化編譯、legacy mapping 與 release 快照重建，保留 17 環節／7 題材及判讀／指標／技術文件歷史；以同一 commit 重建比對內容 hash、日期與引用，補遷移操作文件。
 
 ## 3. 新版讀取 API 與第一條閱讀流程
 
-- [ ] 3.1 實作 manifest、catalog、物件清單／詳情、固定文件引用、legacy resolve 與統一錯誤／分頁；契約測試涵蓋 404、歧義 409、ready／draft release 不可公開讀取及新舊 API 並存，更新 API 文件。
-- [ ] 3.2 實作 typed graph 與三種 impact 遍歷的數量／深度限制；測試真實回路終止、液冷經共同下游找到 PCB、路徑理由保留及超限明示 truncated，不把能力當具名供應。
-- [ ] 3.3 實作公司／產品／術語搜尋及 alias 索引；測試臺台中文別名、短中文、英文 token 邊界、ticker、同名候選與不同法律主體，保存 SQL 計畫與搜尋契約。
+- [x] 3.1 實作 manifest、catalog、物件清單／詳情、固定文件引用、legacy resolve 與統一錯誤／分頁；契約測試涵蓋 404、歧義 409、ready／draft release 不可公開讀取及新舊 API 並存，更新 API 文件。
+- [x] 3.2 實作 typed graph 與三種 impact 遍歷的數量／深度限制；測試真實回路終止、液冷經共同下游找到 PCB、路徑理由保留及超限明示 truncated，不把能力當具名供應。
+- [x] 3.3 實作公司／產品／術語搜尋及 alias 索引；測試臺台中文別名、短中文、英文 token 邊界、ticker、同名候選與不同法律主體，保存 SQL 計畫與搜尋契約。
 - [ ] 3.4 以雙鴻及 Vertiv 的官方資料建立首條真實產品—公司—來源流程，放在 /next 供桌機／手機走讀；保留資料來源、畫面與 Boris 閱讀回饋，確認內容價值後再展開後續完整管理及全批深研。
 
 ## 4. 管理登入、草稿及發布

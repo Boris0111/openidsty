@@ -11,6 +11,9 @@ python scripts/research_lab.py up
 python scripts/research_lab.py stop
 python scripts/research_lab.py start
 python scripts/research_lab.py pg-check
+python scripts/research_lab.py rebuild-check
+# 首份實際研究流程備妥並提交後，才建立 application DB 的第一份研究 release。
+python scripts/research_lab.py bootstrap --commit <完整commit>
 ```
 
 預覽為 http://127.0.0.1:3014，API 為 http://127.0.0.1:8014；Prefect 預留 4204。`setup` 產生隨機且互不相同的 DB／session 祕密於被 Git 及 Docker build 忽略的 `.env.research`，不複製正式憑證。`check` 只顯示安全摘要，不輸出 Compose 內含憑證的完整 JSON。
