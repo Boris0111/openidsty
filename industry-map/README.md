@@ -15,10 +15,80 @@ industry-map/
 ├─ technical-documents.yaml # optional，已核對文件版本與定位，不是第二份來源表
 ├─ ai-server/*.md         # AI 伺服器層環節
 ├─ semiconductor/*.md     # 半導體層環節
-└─ themes/*.md            # 題材
+├─ themes/*.md            # 題材
+├─ companies/*.md         # research-v1 穩定公司身分與基本／深研頁
+├─ applications/*.md      # 應用
+├─ roles/*.md             # 可替換供應角色／子領域
+├─ products/*.md          # 產品類別或具名產品，必須說明邊界
+├─ concepts/*.md          # 術語、圖解與有條件比較
+├─ research/*.md          # 跨物件研究頁（選用）
+├─ research-relations.yaml # 分類、公司產品能力、具型別關係（選用）
+└─ research-assets.yaml   # 內容定址圖解清單（選用）
 ```
 
 檔名（去掉 `.md`）必須等於該檔 frontmatter 的 `segment` 或 `theme` 識別碼。
+
+新版目錄的檔名等於 `entity-id`；原有 segment/theme 檔名及 ticker 主鍵不變。
+
+## Research-v1：穩定身分與研究內容
+
+本節是新版 authoring 格式的唯一規範。檔案先經整份驗證，再在發布時編譯為 release snapshot；讀者請求不掃描工作目錄。沒有新版檔案的舊地圖仍可驗證。有 `companies/` 時，全部既有 ticker／PRIVATE 必須恰好映射到一個公司，不能漏掉或自動按名稱合併。
+
+### 共通 frontmatter
+
+| 欄位 | 規範 |
+|---|---|
+| schema-version | 固定 `research-v1` |
+| entity-id／kind | 不可變 ID，`<kind>-<kebab-case>`；kind 為 company／application／role／product／concept／research。舊物件投影使用 `segment-<segment>`／`theme-<theme>` |
+| name-zh／summary | 非空中文名稱與具體摘要，改名不改 ID |
+| aliases | 非空字串陣列，可空；不同實體可以同 alias，搜尋必須回候選而非合併。只把同一法律主體的別稱放在公司 aliases |
+| reviewed | 已查核有效 `YYYY-MM-DD` 字串或 null；基本索引未重新研究時用 null，不以遷移日代填 |
+| claims | 主張陣列，可空；每筆有局部唯一 kebab-case id、statement、confidence、conditions、reviewed、evidence。confidence 為 well-supported／inference／needs-verification，conditions 至少一筆非空文字，reviewed 必須日精度 |
+| gaps | 非空文字陣列，可空；沒有 claims 時至少一筆，交代未研究／未公開／未取得／不適用及理由 |
+
+`claims[].evidence` 至少一筆，使用本文件既有「公開頁面」或「固定文件」引用格式，另必填 `stance: supporting | counter` 與非空 `applicable-period`。引用保存讀過哪一段、什麼適用期間；支持網頁存在不表示量產或交易成立。固定文件版本不解析為 latest，文件性質沿用 technical-documents manifest。必要短摘錄不取代原文全文。
+
+### 公司：公司與證券分離
+
+公司檔另外必填以下欄位；散文至少有 `## 供應角色`、`## 研究界線`。完整深研另包含 `## 產品與用途`、`## 商業模式`、`## 客戶與供應商`、`## 競爭與替代`、`## 業務曝險`、`## 風險`、`## 財務可取性`，不能用未填模板冒充已研究。
+
+| 欄位 | 規範 |
+|---|---|
+| legacy-keys | 舊 ticker／PRIVATE 鍵的非空字串陣列，可空；一個鍵不能指向多家公司。不隨改名刪除舊鍵 |
+| listings | 陣列，可空；每筆 ticker、market（TW／US／KR／JP／HK／DE／NL）、exchange（MIC 或 UNKNOWN）、share-class（非空文字）、valid-from／valid-to（有效日日期或 null）。未知交易所或股別不猜測；期間不得倒置；同市場／交易所／ticker 的有效區間不得重疊 |
+| source-identifiers | 陣列，可空；每筆 provider、value 為非空文字，`sec-cik` 為 1–10 位數字文字；同 provider/value 不可對應不同法律主體 |
+| research-depth | basic／deep。basic 是保留既有角色的索引，並非已查核新產品或客戶；deep 仍需逐項來源與閱讀驗收 |
+| roles | 舊角色的相容基準陣列：segment-id、description、tier（1–3）、baseline-path（該 segment 相對地圖路徑）。保留遷移前角色數與描述，不把它當新交易證據；新增產品能力放 offerings |
+
+`PRIVATE:boyd` 是 legacy key，Boyd 的 listings 為空。跨市場同一法律主體可有多個 listing；ADR／普通股的 share-class 分開，不換算 EPS。母公司與子公司即使名稱相似也各有 ID，關係另外表達。初次遷移的 `company-2330-tw` 等含代號 ID 亦只是不可變字串，日後代號改變不可重新計算 ID；既有 registry 檔案才是真實來源。
+
+### 應用、角色、產品與術語
+
+application／role／product 另外必填 `definition`、`purpose`、`boundary`（各非空文字），以及 `adoption-conditions`、`bottlenecks`、`substitution-limits`（各至少一筆非空文字）。散文至少有 `## 定義與用途`、`## 採用條件與限制`；產品另有 `## 供應角色與公司`。只以可彼此替換的交付角色分類，不按公司切分類。
+
+concept 另外必填 `definition`、`scope`（非空文字）、`related-ids`（可解析 entity 陣列）、`diagram-assets`（至少一個資產 ID）、`comparisons`（可空；每筆 left／right 為產品或術語 ID，conditions／limitations 各至少一筆文字）。散文至少有 `## 中文解釋`、`## 圖解`、`## 適用範圍`。比較必須保留距離、速率、功耗或成本等條件，不宣稱無條件可互換。
+
+research 為跨物件研究頁，另填 `related-ids`（至少一筆），散文至少有 `## 研究問題`、`## 判斷與限制`。一般研究內容不放 parser 錯誤、內部 queue 或通用進階資訊。
+
+### 分類、能力與關係檔
+
+`research-relations.yaml` 為 mapping，`schema-version: research-v1`，以及三個可空陣列 `taxonomy`、`offerings`、`relations`。所有 ID 全檔唯一，端點引用不可猜測或按名稱自動建立。
+
+- taxonomy：每筆 `id: taxonomy-...`、parent、child；全部分類邊必須無環。這與允許真實回路的供需圖不同。
+- offerings：每筆 `id: offering-...`、company（company ID）、product（product ID）、role（role ID）、conditions（至少一筆文字）、claim-refs（至少一筆）。這是公司交付產品的能力，不是對具名客戶的交易。
+- relations：每筆 `id: relation-...`、source、target、kind、direction、mechanism、conditions、confidence、reviewed、claim-refs；kind 為 capability／named-supply／partnership／competition／demand-feedback，direction 為 directed／symmetric（僅 partnership／competition 可 symmetric）；mechanism 非空，conditions 至少一筆，confidence 及 reviewed 同主張。可選 product／application context 也必須解析到對應 kind。
+
+每個 claim-ref 是 `{entity-id: company-example, claim-id: product-boundary}`，必須引用該 entity 已有主張。named-supply 的 source／target 必須是公司，direction 為 directed，且引用 well-supported 主張；維護者仍必須讀原文核對雙方及具體交付，validator 不能證明交易。capability 只允許 company → product。對稱關係以端點排序去重，只維護一筆事實，反向查詢由投影處理。供應與需求回饋保留方向、適用條件與三種影響走法；不可把共同題材改成具名供應。
+
+### 圖解資產
+
+`research-assets.yaml` 為 `schema-version: research-v1`、assets 陣列；每筆 id 為 `asset-<kebab-case>`、path 為 `assets/` 內相對路徑、sha256 為實際 bytes 的 64 位小寫 hex、media-type 為 image/png、image/jpeg、image/webp 或 image/svg+xml、alt（中文圖意）、license、attribution（各非空文字）。只加入原創或有使用權資產。單檔上限 10 MiB，拒絕 symlink、越界路徑及不符格式；SVG 禁止 script、事件屬性、foreignObject、DTD／entity 及外部引用。資產引用在發布後以 hash 定址，修改圖必須產生新的 hash。
+
+### 維護與相容流程
+
+新增公司前先搜尋 ID、legacy keys、listing 與官方識別；無法確認同一法律主體時保留獨立身分，不按近似名合併。新研究的 aliases／CIK 只維護 `companies/`；`data/company-research.yaml` 保留為舊匯入相容輸入，其舊關係不因搬移而升級確定性。`scripts/bootstrap_company_registry.py` 僅供首次遷移，目錄已存在就拒絕覆寫；不是日常產生 ID 的工具。經兩入口編輯時仍走同一 draft／驗證／發布，不直接寫正式 DB。
+
+修改後執行 `python scripts/validate_map.py`；涉及 validator 時另跑 `python tests/run_validator_tests.py`。完整文件、歷史版本及原查核日期必須能由正式 Git commit 重建，動態事件與財務另由 DB 維護。
 
 ---
 

@@ -58,9 +58,10 @@ def test_migration_schema_matches_models(tmp_path):
     cfg=Config(str(ROOT/'backend/alembic.ini'))
     url=f'sqlite:///{tmp_path.as_posix()}/migration.db'
     cfg.attributes['database_url']=url
-    command.upgrade(cfg,'head')
+    # SQLite verifies the frozen legacy schema; research 0007 uses real PostgreSQL.
+    command.upgrade(cfg,'0006')
     inspector=inspect(create_engine(url))
     assert set(Base.metadata.tables)<=set(inspector.get_table_names())
     for name,table in Base.metadata.tables.items():
         assert {c.name for c in table.columns}=={c['name'] for c in inspector.get_columns(name)}
-    command.upgrade(cfg,'head')
+    command.upgrade(cfg,'0006')

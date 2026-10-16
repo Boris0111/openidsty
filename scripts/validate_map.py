@@ -820,6 +820,8 @@ def main() -> int:
     source_count = check_sources(segments, themes, errors)
     check_assessments(segments, themes, errors, skip_prose=args.skip_prose)
     check_technical(segments, themes, errors)
+    from research_schema import validate_research
+    validate_research(MAP_DIR, segments, themes, errors, parse_doc, load_yaml, args.skip_prose)
 
     if not args.skip_prose:
         for seg in segments.values():

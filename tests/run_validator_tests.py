@@ -348,7 +348,11 @@ def main() -> int:
         return 1
 
     print("全部通過：1 個合法基準（2 種模式）、{} 類失敗案例".format(len(CASES)))
-    return 0
+    # Keep the documented validator command authoritative for the new schema too.
+    import unittest
+    suite = unittest.defaultTestLoader.discover(str(ROOT / 'tests'), pattern='test_research_schema.py')
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    return 0 if result.wasSuccessful() else 1
 
 
 if __name__ == "__main__":

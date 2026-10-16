@@ -1,18 +1,18 @@
 # Tasks
 
-本清單只追蹤新服務的 implementation 與驗證；目前僅完成提案，所有項目保持未勾選。Git 保存及 worktree 建立不代表以下功能已實作。每組必須連同對應測試及操作文件交付。
+本清單追蹤新服務的 implementation 與驗證，以 checkbox 記錄實際進度。Git 保存及 worktree 建立不代表功能已實作；每組必須連同對應測試及操作文件交付。
 
 ## 1. 設計查核與隔離環境
 
-- [ ] 1.1 記錄 Boris 對本 change 當前 proposal、design、specs 與來源限制的查核；新一輪明確 apply 可作為採用當前規劃的指示，留下版本／決策紀錄後才開始程式變更。
-- [ ] 1.2 建立 industryflow-research 的隔離 Compose 與獨立環境設定，覆寫所有共用 API image 的服務；以解析後設定核對 image、port、network、volumes、憑證隔離，文件提供啟停方法且不印祕密。
-- [ ] 1.3 從備份還原至新版獨立 DB、核對版本及筆數，啟停預覽後比對原容器／image／volume／port 無變更；保存還原及 isolation 驗證紀錄。
+- [x] 1.1 記錄 Boris 對本 change 當前 proposal、design、specs 與來源限制的查核；新一輪明確 apply 可作為採用當前規劃的指示，留下版本／決策紀錄後才開始程式變更。
+- [x] 1.2 建立 industryflow-research 的隔離 Compose 與獨立環境設定，覆寫所有共用 API image 的服務；以解析後設定核對 image、port、network、volumes、憑證隔離，文件提供啟停方法且不印祕密。
+- [x] 1.3 從備份還原至新版獨立 DB、核對版本及筆數，啟停預覽後比對原容器／image／volume／port 無變更；保存還原及 isolation 驗證紀錄。
 
 ## 2. 研究 Schema、身分與資料模型
 
-- [ ] 2.1 在唯一 Schema 文件定義應用、角色、產品、術語、公司及關係格式，建立 kind 前綴的穩定 ID／listing／alias 映射；以全部 95 家公司、未上市及跨市場樣本驗證無遺失或誤合併，更新維護說明。
-- [ ] 2.2 擴充 validator 檢查新引用、關係證據、資產、分類無環與既有上下游雙向一致；執行 validate_map 與 validator tests，證明真實供需回路通過而分類回路被拒絕。
-- [ ] 2.3 Additive 建立 research schema 的 release、snapshot、關係、財務、草稿、session 與 jobs 表及 DB roles／索引；以獨立 PostgreSQL 測試 composite FK、Decimal 精度、唯一鍵與讀者權限，舊表及主鍵不變。
+- [x] 2.1 在唯一 Schema 文件定義應用、角色、產品、術語、公司及關係格式，建立 kind 前綴的穩定 ID／listing／alias 映射；以全部 95 家公司、未上市及跨市場樣本驗證無遺失或誤合併，更新維護說明。
+- [x] 2.2 擴充 validator 檢查新引用、關係證據、資產、分類無環與既有上下游雙向一致；執行 validate_map 與 validator tests，證明真實供需回路通過而分類回路被拒絕。
+- [x] 2.3 Additive 建立 research schema 的 release、snapshot、關係、財務、草稿、session 與 jobs 表及 DB roles／索引；以獨立 PostgreSQL 測試 composite FK、Decimal 精度、唯一鍵與讀者權限，舊表及主鍵不變。
 - [ ] 2.4 實作初始化編譯、legacy mapping 與 release 快照重建，保留 17 環節／7 題材及判讀／指標／技術文件歷史；以同一 commit 重建比對內容 hash、日期與引用，補遷移操作文件。
 
 ## 3. 新版讀取 API 與第一條閱讀流程
