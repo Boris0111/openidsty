@@ -54,6 +54,8 @@ def company_detail(session, ticker):
 @app.middleware('http')
 async def cache_headers(request, call_next):
     response = await call_next(request)
+    from .research_cache import reader_cache
+    response = await reader_cache(request,response)
     if request.method=='GET' and 'Cache-Control' not in response.headers:
         response.headers['Cache-Control'] = 'no-store'
     response.headers['X-Content-Type-Options'] = 'nosniff'

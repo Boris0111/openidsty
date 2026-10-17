@@ -1,5 +1,6 @@
 'use client';
-import {useEffect,useState} from 'react';
+import {useCallback,useEffect,useRef,useState} from 'react';
+import {acquireResearch,dynamicResearch,peekResearch,researchKey} from './research-cache';
 
 export type ResearchEnvelope<T>={release_id:string;schema_version:string;data:T};
 export type ResearchSummary={id:string;kind:string;name:string;summary:string;reviewed:string|null};
@@ -11,17 +12,35 @@ export type ResearchGraph={root:string;nodes:ResearchSummary[];edges:{id:string;
 export type ResearchPage={items:ResearchSummary[];has_more:boolean;next_cursor:string|null};
 
 export function useResearch<T>(path:string|null) {
-  const [state,setState]=useState<{key:string|null;data?:ResearchEnvelope<T>;error?:string;loading:boolean}>({key:null,loading:false});
+  const key=path?researchKey(path):null;
+  const [sequence,setSequence]=useState(0),force=useRef<string|null>(null);
+  const [state,setState]=useState<{key:string|null;data?:ResearchEnvelope<T>;error?:string;refreshError?:string;loading:boolean;refreshing?:boolean;expires?:number}>({key:null,loading:false});
+  const refresh=useCallback(()=>{force.current=key;setSequence(value=>value+1)},[key]);
   useEffect(()=>{
-    if(!path) return;
-    const controller=new AbortController();
-    setState({key:path,loading:true});
-    fetch(path,{signal:controller.signal,cache:'no-store'}).then(async response=>{
-      const payload=await response.json();
-      if(!response.ok) throw new Error(payload.message||'研究目前無法讀取，請稍後重試。');
-      if(!controller.signal.aborted) setState({key:path,data:payload,loading:false});
-    }).catch(error=>{if(!controller.signal.aborted)setState({key:path,error:error.message,loading:false})});
-    return ()=>controller.abort();
-  },[path]);
-  return state.key===path?state:{key:path,loading:Boolean(path),data:undefined,error:undefined};
+    if(!key)return;
+    let active=true;
+    const cached=peekResearch(key)?.payload as ResearchEnvelope<T>|undefined;
+    setState(previous=>{const data=previous.key===key?previous.data||cached:cached;return {key,data,loading:!data,refreshing:Boolean(data)}});
+    const forced=force.current===key;force.current=null;
+    let handle:ReturnType<typeof acquireResearch>|undefined;
+    try{
+      handle=acquireResearch(key,forced);
+      handle.promise.then(entry=>{if(active)setState({key,data:entry.payload as ResearchEnvelope<T>,loading:false,refreshing:false,expires:entry.ttl?entry.expires:Date.now()+30000})})
+        .catch(error=>{if(active){const message=error instanceof Error&&error.message&&!/fetch|JSON|Unexpected|AbortError/i.test(error.message)?error.message:'目前無法更新資料，請稍後重試。';setState(previous=>({...previous,loading:false,refreshing:false,expires:Date.now()+30000,...(previous.data?{refreshError:message}:{error:message})}))}});
+    }catch{setState(previous=>({...previous,loading:false,refreshing:false,...(previous.data?{refreshError:'目前無法更新資料，請稍後重試。'}:{error:'目前無法讀取資料，請稍後重試。'})}))}
+    return()=>{active=false;handle?.release()};
+  },[key,sequence]);
+  useEffect(()=>{
+    if(!key)return;
+    const visible=()=>{if(document.visibilityState==='visible')setSequence(value=>value+1)};
+    window.addEventListener('research:refresh',refresh);
+    window.addEventListener('focus',visible);document.addEventListener('visibilitychange',visible);
+    return()=>{window.removeEventListener('research:refresh',refresh);window.removeEventListener('focus',visible);document.removeEventListener('visibilitychange',visible)};
+  },[key,refresh]);
+  useEffect(()=>{
+    if(!key||!dynamicResearch(key)||!state.expires||state.refreshing||document.visibilityState!=='visible')return;
+    const timer=setTimeout(()=>{if(document.visibilityState==='visible')setSequence(value=>value+1)},Math.max(50,state.expires-Date.now()+25));
+    return()=>clearTimeout(timer);
+  },[key,state.expires,state.refreshing]);
+  return {...(state.key===key?state:{key,loading:Boolean(key),data:undefined,error:undefined,refreshError:undefined,refreshing:false}),refresh};
 }

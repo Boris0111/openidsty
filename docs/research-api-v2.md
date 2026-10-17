@@ -19,7 +19,7 @@ Legacy `/api/*` 與新版 `/api/v2/*` 並存。新版使用獨立 reader pool、
 
 固定文件的 revision_id 使用不可變 hash；舊 manifest 的 version key 在同一 published release 內只有一個對應時亦可解析，回應帶正式 revision_id。`latest` 不解析；不能用新版本替代失效的舊引用。未被引用的 manifest 版本與未發布文件不提供讀者存取。
 
-詳情的主張／證據與相關分類各有回應上限，超過時 `truncated=true` 明示；一般研究仍保留完整 Markdown。圖形與搜尋見下方契約；財務、事件、觀察及公司比較見 [動態讀取 API](research-dynamic-api.md)。收藏更新依後續 task 實作，沒有用空成功回應冒充功能。快取與 request coalescing 於對應 task 驗證；目前回應保守使用 no-store。
+詳情的主張／證據與相關分類各有回應上限，超過時 `truncated=true` 明示；一般研究仍保留完整 Markdown。圖形與搜尋見下方契約；財務、事件、觀察及公司比較見 [動態讀取 API](research-dynamic-api.md)。收藏更新依後續 task 實作，沒有用空成功回應冒充功能。已完成 release pin、manifest 採用、ETag 及有界的請求合併，見 [版本與快取](research-reading-cache.md)。
 
 詳情的 `related` 同時包含 taxonomy 相鄰項目、作者 `related-ids` 與 `comparisons` 左右對象的中文摘要，最多 100 筆，全部取自同一 release。`content.related_ids`／`content.comparisons` 只保留已解析於該次範圍的引用；沒有對應不能向其他 release 補查或洩漏未發布主體。固定引用的讀者操作見 [內容閱讀](research-content-reading.md)。
 

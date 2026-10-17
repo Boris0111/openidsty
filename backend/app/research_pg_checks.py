@@ -31,7 +31,7 @@ def main():
         import pytest
         suites={
             'reader-navigation':['tests/test_research_v2.py','tests/test_research_graph_v2.py','tests/test_research_search.py','tests/test_reader_gateway.py'],
-            'research-dynamic':['tests/test_research_dynamic.py'],
+            'research-dynamic':['tests/test_research_dynamic.py','tests/test_research_cache.py'],
             'source-updates':['tests/test_source_updates.py'],
             'financial-imports':['tests/test_financial_imports.py','tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_financial_sec.py','tests/test_sec_http.py'],
             'financial-sec':['tests/test_financial_sec.py','tests/test_sec_http.py'],
@@ -44,7 +44,7 @@ def main():
             'tests/test_research_v2.py', 'tests/test_research_graph_v2.py', 'tests/test_research_search.py',
             'tests/test_research_auth.py', 'tests/test_research_documents.py', 'tests/test_research_drafts.py',
             'tests/test_research_publication.py', 'tests/test_research_admin_reads.py', 'tests/test_research_restart.py', 'tests/test_publication_interfaces.py',
-            'tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_financial_sec.py','tests/test_sec_http.py','tests/test_financial_imports.py','tests/test_source_updates.py','tests/test_research_dynamic.py','tests/test_reader_gateway.py'])
+            'tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_financial_sec.py','tests/test_sec_http.py','tests/test_financial_imports.py','tests/test_source_updates.py','tests/test_research_dynamic.py','tests/test_research_cache.py','tests/test_reader_gateway.py'])
         raise SystemExit(pytest.main(['-q', '-p', 'no:cacheprovider', *cases]))
 
 

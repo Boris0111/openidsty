@@ -66,7 +66,7 @@ async def reader(path: str, request: Request):
                 data.extend(chunk)
                 if len(data)>MAX_RESPONSE:
                     return denied(503, '研究回應超過讀者入口限制，請縮小查詢。')
-            forwarded = {name:upstream.headers[name] for name in ('content-type','cache-control','etag','content-security-policy','x-request-id','retry-after','vary') if name in upstream.headers}
+            forwarded = {name:upstream.headers[name] for name in ('content-type','cache-control','etag','age','content-security-policy','x-request-id','retry-after','vary') if name in upstream.headers}
             forwarded['X-Content-Type-Options'] = 'nosniff'
             if request.method=='HEAD' and upstream.headers.get('content-length'):
                 forwarded['Content-Length'] = upstream.headers['content-length']

@@ -26,6 +26,8 @@ def test_file_import_publish_http_retry_restore_and_real_reader(publishing, tmp_
     app.dependency_overrides[get_research_session]=read_only
     try:
         previous=client.get('/api/v2/companies/company-auras').json()['data']['summary']
+        profile='/api/v2/companies/company-auras'
+        pinned=client.get(profile,params={'release_id':base})
         directory=tmp_path/'file-edit'
         exported=client.get(url+'/export').json()
         export_directory(exported,directory)
@@ -54,10 +56,16 @@ def test_file_import_publish_http_retry_restore_and_real_reader(publishing, tmp_
         published=publication.run_job(key,engine)
         assert published['status']=='published'
         assert client.get('/api/v2/companies/company-auras').json()['data']['summary']==preview['data']['summary']
+        assert client.get(profile,params={'release_id':base},headers={'If-None-Match':pinned.headers['etag']}).status_code==304
+        new_profile=client.get(profile,params={'release_id':str(published['target_release_id'])})
+        assert new_profile.headers['etag']!=pinned.headers['etag']
+        assert client.get('/api/v2/manifest').json()['release_id']==str(published['target_release_id'])
         restored=client.post('/api/admin/releases/'+base+'/restore',json={'base_release_id':str(published['target_release_id']),'reason':'Synthetic file-interface restoration'},headers={**headers,'Idempotency-Key':uuid.uuid4().hex})
         assert restored.status_code==202
         assert publication.run_job(restored.json()['job_id'],engine)['status']=='published'
         assert client.get('/api/v2/companies/company-auras').json()['data']['summary']==previous
+        assert client.get(profile,params={'release_id':str(published['target_release_id'])},headers={'If-None-Match':new_profile.headers['etag']}).status_code==304
+        assert client.get(profile,params={'release_id':base},headers={'If-None-Match':pinned.headers['etag']}).status_code==304
         client.cookies.clear()
         assert client.get('/api/admin/jobs/'+key).status_code==401
         assert client.get('/api/admin/sources').status_code==401

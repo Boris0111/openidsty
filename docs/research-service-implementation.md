@@ -186,3 +186,17 @@ Application 保持 migration `0015`、head `03799774-3553-5ff6-9910-13a68468af15
 驗證：`pg-check --suite research-dynamic` **20 passed**；離線瀏覽器 **13 passed**（新增財務 6＋內容／導覽 7），真實 release 回歸 **15 passed**（新增財務 3＋動態 API 1＋既有內容／導覽／走讀 11）。最後修整手機欄寬、日期不斷行及隱藏 XML 擷取方法後，另重跑財務離線 **6 passed**、真實財務 **3 passed**。Typecheck、原生及隔離 Compose production build 通過。初輪 label 精確匹配含 option 文字，以及手機 table 繼承全域 nowrap 造成溢出，已分別修正 selector 與局部排版；失敗輪不列通過。
 
 桌機 1440×1000／手機 390×844 的真實 SEC 趨勢、原期間表、台灣來源與修訂、比較原值及觀察清單已實際檢視；截圖保存在忽略的 `.work/research-financial-review/`，無橫向溢出。這是工程查核，不代表 Boris 已完成閱讀驗收。研究內容 release 不變，來源資料保存在隔離 DB volume；本次程式／文件以 feature branch 儲存，未合併 main 或歸檔 change。
+
+## 版本固定、更新採用與快取（task 6.4，2026-10-18）
+
+讀者在同一 published release 內閱讀，manifest 在進入／導覽／手動更新、回到可見頁面及可見時每 60 秒重查。新發布或還原只提示，接受後才切整頁 context；清除跨版 cursor／連線／修訂選取，原目錄篩選及原地圖返回保留。採用時清動態快取，避免還原舊研究也帶回瀏覽過的舊財務。一般頁將「檢查更新」放在原分享操作旁，只有新版本或 manifest 失敗時才有提示列，沒有另加維護資訊。
+
+指定 release 的研究 GET 提供 weak ETag／24h，財務／事件／觀察／比較及含有效值／歷史清單的 observation wrapper 最多 30 秒，固定 hash 合法資產長快取。manifest、未指定 release、admin／session、錯誤均 no-store。後端仍先執行 published／引用授權及 SQL，再判斷 304；Next／私人 gateway 轉送 If-None-Match、ETag、Age 及必要標頭。Tag 排除單純讀取時鐘變動，304 保留原 payload 及 as_of，不偽裝財務更新。
+
+新增瀏覽器成功項 LRU 100、相同 in-flight 合併與消費者計數，最後一個離開才取消；錯版、失敗及取消的舊 generation 不進成功快取。動態資料在可見時有界重驗，no-store 也不密集重送。失敗保留同一 key 成功內容並可重試，首次失敗不填空成功。引用及來源歷史仍按需讀取，沒有前端 owner 快取或 Redis。完整策略、操作及重現命令見 [版本與快取](research-reading-cache.md)。
+
+驗證：`research-dynamic` **25 passed**（新增快取 5＋動態契約 20）、`reader-navigation` **22 passed**、`publication-interfaces` **1 passed**，共 **48 項** PostgreSQL 契約；包含真正 Git／owner HTTP 發布、失敗重試／還原後，舊版和新版的條件式讀取仍一致。Node transport **6 passed**，覆蓋 LRU、共用取消、晚到回應、30 秒重驗／304、錯版與錯誤拒存。離線瀏覽器 **19 passed**（新增快取 6＋既有 13）；真實預覽 **18 passed**（新增 cache／proxy 3＋既有 15）。Typecheck、原生及隔離 Compose production build、diff 格式與 OpenSpec validate 通過。
+
+桌機 1440×1000／手機 390×844 的新版提示（明示合成 API）、真實研究＋模擬暫時失敗已實際檢視，截圖位於忽略的 `.work/research-cache-review/`。真實 Next proxy、304 空 body、資產已發布檢查與同路徑共享均已查核；沒有在 application 為展示做假發布、製造傳聞或改財務。這是工程走查，並非 Boris 的閱讀驗收，也不代表 task 9.2 的 10 人 p95 已量測。
+
+Application 仍為 migration `0015`／head `03799774-3553-5ff6-9910-13a68468af15`，1793 financial observations、4 source jobs、34 正式關係、2915 事件／1970 linked events；owner／publish jobs／financial import batches 均 0。只有研究版 web／API／DB 運作，來源排程及 Prefect worker 仍關閉、原服務 fingerprints 未變。依指定完成 6.4 後儲存；下一項為 6.5 覆蓋與研究缺口分工，本輪不接續。

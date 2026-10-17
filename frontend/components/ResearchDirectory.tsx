@@ -1,4 +1,5 @@
 'use client';
+import {ResearchReadStatus} from './ResearchReadStatus';
 import Link from 'next/link';
 import {useRouter,useSearchParams} from 'next/navigation';
 import {useResearch,ResearchPage} from '@/lib/research-api';
@@ -23,7 +24,7 @@ export function ResearchDirectory({view,release,href,indexHref}:{view:DirectoryV
   const segments=useResearch<ResearchPage>(view==='companies'?`/api/v2/segments?release_id=${release}&limit=100`:null);
   function change(key:string,value:string){router.push(indexHref(view,{...filters,[key]:value}),{scroll:false})}
   return <section className="rs-directory" aria-label={directoryNames[view]+'清單'}>
-    <nav className="rs-directory-tabs" aria-label="研究目錄分類">{(Object.keys(directoryNames) as DirectoryView[]).map(key=><Link key={key} href={indexHref(key)} aria-current={view===key?'page':undefined}>{directoryNames[key]}</Link>)}</nav>
+    <ResearchReadStatus state={result}/><nav className="rs-directory-tabs" aria-label="研究目錄分類">{(Object.keys(directoryNames) as DirectoryView[]).map(key=><Link key={key} href={indexHref(key)} aria-current={view===key?'page':undefined}>{directoryNames[key]}</Link>)}</nav>
     {view==='companies'&&<p className="rs-directory-note">同一公司的跨環節角色合併為一份研究；產品能力與具名交易分開核對。</p>}
     <div className="rs-directory-filters">
       {view==='companies'&&<><label>上市市場<select value={market} onChange={event=>change('market',event.target.value)}><option value="">全部市場與未上市公司</option>{Object.entries({TW:'台灣',US:'美國',KR:'韓國',JP:'日本',DE:'德國',NL:'荷蘭',HK:'香港'}).map(([key,name])=><option key={key} value={key}>{name}</option>)}</select></label>

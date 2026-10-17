@@ -10,6 +10,9 @@ import {mapReturn,directoryReturn} from '@/lib/research-navigation';
 import {ResearchFinancials} from './ResearchFinancials';
 import {ResearchCompare} from './ResearchCompare';
 import {ResearchEvents} from './ResearchEvents';
+import {useResearchManifest} from '@/lib/research-manifest';
+import {refreshResearch,resetDynamicResearch} from '@/lib/research-cache';
+import {ResearchReadStatus} from './ResearchReadStatus';
 
 const collections:Record<string,string>={company:'companies',product:'products',segment:'segments',theme:'themes',role:'roles',concept:'concepts',application:'applications',research:'research'};
 const kindNames:Record<string,string>={company:'公司',product:'產品',segment:'環節',theme:'題材',role:'供應角色',concept:'術語',application:'應用',research:'研究'};
@@ -33,7 +36,8 @@ export function ResearchExplorer() {
   const queryRelease=params.get('release_id'),focus=params.get('focus')||initialFocus,view=directoryView(params.get('view'));
   const from=mapReturn(params.get('from'));
   const serviceView=Object.hasOwn(serviceNames,params.get('view')||'')?params.get('view'):null;
-  const manifest=useResearch<{published_at:string}>(queryRelease?null:'/api/v2/manifest');
+  const navigation=new URLSearchParams(params);navigation.delete('release_id');
+  const manifest=useResearchManifest(navigation.toString());
   const release=queryRelease||manifest.data?.release_id;
   const kind=focus.split('-')[0],collection=collections[kind];
   const isFirst=firstFlow.has(focus)&&!view&&!serviceView;
@@ -64,9 +68,21 @@ export function ResearchExplorer() {
   const mobile=diagram.data?.data.assets.find(asset=>asset.id.endsWith('mobile'));
   const companies=graph.data?.data.nodes.filter(node=>node.kind==='company'&&node.id!==focus&&graph.data?.data.edges.some(edge=>edge.kind==='capability'&&edge.source===node.id&&edge.target===focus))||[];
   const products=graph.data?.data.nodes.filter(node=>node.kind==='product'&&node.id!==focus)||[];
-  const error=manifest.error||detail.error||(params.has('view')&&!view&&!serviceView?'找不到這個研究目錄，請從研究目錄重新選擇。':!collection&&!view&&!serviceView?'找不到這筆研究入口，請從搜尋或公司索引重新選擇。':undefined);
+  function adopt(){
+    if(!manifest.data)return;
+    const next=new URLSearchParams(params);next.set('release_id',manifest.data.release_id);
+    resetDynamicResearch();
+    for(const key of ['cursor','financial_cursor','event_cursor','edge','observation_id','before_revision','compare_company','compare_observation','index'])next.delete(key);
+    const back=directoryReturn(params.get('index'),manifest.data.release_id,from);
+    if(back){const target=new URL(back,window.location.origin);target.searchParams.delete('cursor');next.set('index',target.pathname+'?'+target.searchParams)}
+    router.push('/next?'+next,{scroll:false});
+  }
+  const updated=Boolean(queryRelease&&manifest.data&&manifest.data.release_id!==queryRelease);
+  const error=(!release?manifest.error:undefined)||detail.error||(params.has('view')&&!view&&!serviceView?'找不到這個研究目錄，請從研究目錄重新選擇。':!collection&&!view&&!serviceView?'找不到這筆研究入口，請從搜尋或公司索引重新選擇。':undefined);
   return <div className="research-service"><header className="rs-header"><Link className="rs-brand" href={href(initialFocus)}>IndustryFlow<span>產業研究</span></Link><nav aria-label="研究導覽"><Link href={href(initialFocus)} aria-current={isFirst?'page':undefined}>液冷供應鏈</Link><Link href={viewHref('segments')} aria-current={view&&view!=='companies'&&view!=='themes'?'page':undefined}>研究目錄</Link><Link href={viewHref('companies')} aria-current={view==='companies'?'page':undefined}>公司索引</Link><Link href={viewHref('themes')} aria-current={view==='themes'?'page':undefined}>題材研究</Link><Link href={serviceHref("compare")} aria-current={serviceView==="compare"?"page":undefined}>{serviceNames.compare}</Link><Link href={serviceHref("observations")} aria-current={serviceView==="observations"?"page":undefined}>{serviceNames.observations}</Link></nav>{release&&<Search release={release} href={href}/>}</header>
-    <div className="rs-content">{!view&&!serviceView&&<nav className="rs-breadcrumb" aria-label="研究返回"><Link href={index||viewHref('segments')}>回{index?'原目錄':'研究目錄'}</Link>{(from||item?.legacy_return)&&<Link href={from||item!.legacy_return!.url}>{from?'回到原來的產業地圖':item!.legacy_return!.label}</Link>}</nav>}<div className="rs-intro"><div><h1>{serviceView?serviceNames[serviceView]:view?directoryNames[view]:isFirst?'AI 機櫃的熱，怎麼送出去？':item?.name||'產業研究'}</h1><p>{view?'從研究對象找到供應角色、條件與來源。':isFirst?'先分清楚產品交付，再看公司能做什麼，以及證據支持到哪裡。':'閱讀角色、產品與可追溯的判斷依據。'}</p></div><div className="rs-page-actions"><button onClick={()=>{navigator.clipboard?.writeText(window.location.href).then(()=>setCopied('連結已複製')).catch(()=>setCopied('可複製網址列分享'))}}>分享這份研究</button><span role="status">{copied}</span></div></div>
+    <div className="rs-content">{!view&&!serviceView&&<nav className="rs-breadcrumb" aria-label="研究返回"><Link href={index||viewHref('segments')}>回{index?'原目錄':'研究目錄'}</Link>{(from||item?.legacy_return)&&<Link href={from||item!.legacy_return!.url}>{from?'回到原來的產業地圖':item!.legacy_return!.label}</Link>}</nav>}<div className="rs-intro"><div><h1>{serviceView?serviceNames[serviceView]:view?directoryNames[view]:isFirst?'AI 機櫃的熱，怎麼送出去？':item?.name||'產業研究'}</h1><p>{view?'從研究對象找到供應角色、條件與來源。':isFirst?'先分清楚產品交付，再看公司能做什麼，以及證據支持到哪裡。':'閱讀角色、產品與可追溯的判斷依據。'}</p></div><div className="rs-page-actions"><div><button onClick={()=>{navigator.clipboard?.writeText(window.location.href).then(()=>setCopied('連結已複製')).catch(()=>setCopied('可複製網址列分享'))}}>分享這份研究</button><button onClick={refreshResearch} aria-busy={manifest.loading||manifest.refreshing}>檢查更新</button></div><span role="status">{copied}</span></div></div>
+    {(updated||manifest.refreshError||release&&manifest.error)&&<aside className="rs-update" aria-label="研究更新">{updated&&<><span>有新版研究可閱讀；目前仍保留你正在讀的版本。</span><button onClick={adopt}>載入新版研究</button></>}{(manifest.refreshError||release&&manifest.error)&&<span role="status">目前無法確認研究更新，已載入的內容保留。</span>}</aside>}
+    {[detail,graph,diagram].some(result=>result.refreshError)&&<ResearchReadStatus state={{refreshError:'unavailable',refresh:refreshResearch}}/>}
     {error&&<div className="rs-error" role="alert"><p>{error}</p><button onClick={()=>window.location.reload()}>重新讀取</button><Link href="/">開啟既有研究</Link></div>}
     {!release&&!error&&<p role="status">正在讀取研究…</p>}
     {view&&release&&<ResearchDirectory key={view} view={view} release={release} href={href} indexHref={viewHref}/>}

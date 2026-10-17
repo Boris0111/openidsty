@@ -8,9 +8,10 @@ export async function GET(request: NextRequest, context: {params: Promise<{path:
   try {
     const origin = process.env.API_ORIGIN || 'http://127.0.0.1:8010';
     const url = `${origin}/api/${path.map(encodeURIComponent).join('/')}${request.nextUrl.search}`;
-    const result = await fetch(url, {cache:'no-store', signal:AbortSignal.timeout(15000)});
+    const conditional=request.headers.get('if-none-match');
+    const result = await fetch(url, {cache:'no-store', signal:AbortSignal.timeout(15000),headers:conditional&&conditional.length<=4096?{'If-None-Match':conditional}:{}});
     const headers = new Headers({'Content-Type':result.headers.get('content-type') || 'application/json', 'Cache-Control':result.headers.get('cache-control') || 'no-store'});
-    for(const name of ['ETag','X-Request-ID','Retry-After','Content-Security-Policy','X-Content-Type-Options']) {
+    for(const name of ['ETag','Age','Vary','X-Request-ID','Retry-After','Content-Security-Policy','X-Content-Type-Options']) {
       const value=result.headers.get(name); if(value) headers.set(name,value);
     }
     const disposition = result.headers.get('content-disposition');

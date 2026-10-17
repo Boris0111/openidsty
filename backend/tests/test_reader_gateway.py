@@ -26,16 +26,18 @@ def test_reader_uses_fixed_upstream_strips_credentials_and_preserves_release():
     async def upstream(request):
         observed.append(request)
         return httpx.Response(200, json={'release_id':'synthetic-published','data':{}},
-            headers={'ETag':'"one"','Set-Cookie':'must-not-escape=1','Cache-Control':'public,max-age=60'})
+            headers={'ETag':'"one"','Age':'7','Set-Cookie':'must-not-escape=1','Cache-Control':'public,max-age=60'})
     with TestClient(app, base_url='http://localhost:3015') as client:
         original=app.state.client
         app.state.client=httpx.AsyncClient(transport=httpx.MockTransport(upstream))
         try:
             response=client.get('/api/v2/companies?release_id=synthetic-published',
-                headers={'Cookie':'industryflow_owner=secret','Authorization':'Bearer secret','X-CSRF-Token':'secret','X-Forwarded-Host':'evil.example'})
+                headers={'If-None-Match':'"one"','Cookie':'industryflow_owner=secret','Authorization':'Bearer secret','X-CSRF-Token':'secret','X-Forwarded-Host':'evil.example'})
             assert response.status_code==200 and response.headers['etag']=='"one"'
+            assert response.headers['age']=='7'
             assert 'set-cookie' not in response.headers
             assert str(observed[0].url)=='http://web:3010/api/v2/companies?release_id=synthetic-published'
+            assert observed[0].headers['if-none-match']=='"one"'
             for name in ['cookie','authorization','x-csrf-token','x-forwarded-host']:
                 assert name not in observed[0].headers
         finally:

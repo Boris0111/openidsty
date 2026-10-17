@@ -1,4 +1,5 @@
 'use client';
+import {ResearchReadStatus} from './ResearchReadStatus';
 import {useState} from 'react';
 import {useResearch,ResearchCitation as Citation,ResearchDocument} from '@/lib/research-api';
 
@@ -14,7 +15,7 @@ export function ResearchCitation({source,release}:{source:Citation;release?:stri
     {source.stance==='counter'&&<strong>反向證據</strong>}
     <a href={source.url} target="_blank" rel="noreferrer">{source.title}</a>
     <span>{source.applicable_period}</span><span>引用位置：{source.locator}</span>
-    <details onToggle={event=>setOpen(event.currentTarget.open)}><summary>查閱這份引用</summary>
+    <ResearchReadStatus state={result}/><details onToggle={event=>setOpen(event.currentTarget.open)}><summary>查閱這份引用</summary>
       {result.loading?<p role="status">正在讀取引用…</p>:result.error?<p role="status">這份研究引用的文件版本目前無法讀取。原判斷與引用位置保留，可由上方連結查閱原始來源。</p>:document&&<div className="rs-citation-reading">
         {document.document_kind&&['normative','draft','roadmap'].includes(document.document_kind)&&<p>文件性質：{({normative:'正式規範',draft:'草案',roadmap:'路線圖'} as Record<string,string>)[document.document_kind]}</p>}
         {document.published&&<p>文件日期：{document.published}</p>}

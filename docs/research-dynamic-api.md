@@ -1,6 +1,6 @@
 # 財務、事件、觀察與公司比較 API
 
-所有入口使用 `/api/v2`、reader role 及 published release 檢查，回 `{release_id,schema_version,data}`。動態 `data.as_of` 是這次讀取時間，不是申報日或研究日期；回應為 `no-store`。指定研究 release 只固定公司身分與研究內容，不會將財務／事件凍結於當時，也不會在讀取時擷取外部網站。
+所有入口使用 `/api/v2`、reader role 及 published release 檢查，回 `{release_id,schema_version,data}`。動態 `data.as_of` 是這次讀取時間，不是申報日或研究日期；未指定 release 時為 `no-store`；固定研究 release 時採 ETag 與最多 30 秒快取，304 保留原 `as_of`，詳見 [版本與快取](research-reading-cache.md)。指定研究 release 只固定公司身分與研究內容，不會將財務／事件凍結於當時，也不會在讀取時擷取外部網站。
 
 ## 財務與來源
 

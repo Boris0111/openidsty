@@ -13,7 +13,7 @@
 | [公司比較](http://127.0.0.1:3014/next?view=compare&company_ids=company-vertiv,company-nvda) | 選 2–4 家；角色／產品／風險及財務，期間／範圍／主要來源未核對不排名 |
 | [傳聞觀察](http://127.0.0.1:3014/next?view=observations) | 獨立未證實資訊；沒有資料就顯示空清單，不為展示填入傳聞 |
 
-首次讀取後網址固定 `release_id`，篩選、分頁、比較公司與觀測修訂亦保留在 URL，可分享及上一頁。Release 固定研究內容，動態財務仍依讀取時間呈現，不代表財務永久快照。快取與 manifest 採用另屬 6.4。
+首次讀取後網址固定 `release_id`，篩選、分頁、比較公司與觀測修訂亦保留在 URL，可分享及上一頁。Release 固定研究內容，動態財務仍依讀取時間呈現，不代表財務永久快照。快取與 manifest 採用已由 6.4 交付，見 [版本與快取](research-reading-cache.md)。
 
 ## 本次單次更新的真實官方資料
 

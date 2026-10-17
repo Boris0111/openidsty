@@ -33,3 +33,5 @@
 .rf-table-wrap table{white-space:normal;table-layout:fixed}.rf-table-wrap th,.rf-table-wrap td{overflow-wrap:anywhere}
 @media(max-width:800px){.rf-table-wrap thead th:first-child{width:45%}.rf-table-wrap thead th:nth-child(2){width:25%}.rf-table-wrap thead th:last-child{width:30%}}
 .rf-date{white-space:nowrap}
+.rs-update{display:flex;align-items:center;flex-wrap:wrap;gap:12px 20px;border-block:1px solid var(--rs-line);padding:12px 0;margin-bottom:26px;font-size:14px}.rs-update button,.rs-scope-note button{font-size:13px;padding:5px 10px}.rs-scope-note button{margin-left:12px}
+.rs-page-actions>div{display:flex;flex-wrap:wrap;gap:10px}
