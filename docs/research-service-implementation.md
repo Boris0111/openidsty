@@ -172,3 +172,17 @@ Application 仍為 `0015`／原 research head，2915 事件、1970 linked events
 財務頁面驗收尚未完成：6.3 未實作，application canonical observations／source jobs 均 0；雙鴻與 Vertiv 財務 API 實際 HTTP 200、空 items 及明確缺口。官方樣本只在獨立 test DB 驗證，沒有把 fixtures 或舊 Float 補入預覽。已提供 [財務驗收狀態與步驟](research-financial-acceptance.md)，區分後端證據、目前空資料與頁面交付。本輪依指定範圍完成 6.2 後儲存；若續 6.3，再加入財務趨勢／修訂／比較及真實官方資料查核。
 
 Application 仍為 `0015`、原 head `03799774-3553-5ff6-9910-13a68468af15`，2915 事件／1970 linked events／34 關係不變；owner、publish jobs、financial observations、financial import batches、source jobs 均 0。僅研究版 web／API／DB 運作，原服務 fingerprints 未變，未開啟來源排程或 Prefect worker。
+
+## 財務、比較與獨立觀察（task 6.3，2026-10-18）
+
+公司研究下方接上基本財務／官方與報導／傳聞觀察，研究上方有直接跳到資料區的入口。財務支援 13 個指標及全年／單季／累計／月／期末選擇；同來源、範圍、原幣、股別及單位才組成同一圖。缺期、累計、期末及未核對股別的 EPS 不連線，沒有值即列缺口。精確字串保留在原值提示及可存取名稱，圖形座標只作視覺定位。歷史按需讀取，來源保留原值／倍率、申報日／提供者日期、固定觀測修訂及公式輸入。
+
+公司比較支援搜尋選 2–4 家，列出已有的業務／角色／產品／風險；尚未深研不加空模板。財務可比性依 API，不自行換匯、拼期間或排名。比較散文連結保留同一 release。傳聞使用獨立 observations 查詢及入口，正式資訊只讀 official／report，未知發布日不以收錄時間補上。篩選／分頁／修訂／比較公司可分享、返回；一般閱讀移除 Companyfacts XML context 擷取方法，保留真正影響數值判讀的精度與範圍限制。閱讀設計見 [財務閱讀](research-financial-reading.md)。
+
+為回應頁面無值的驗收需求，這次用既有共用更新機制單次讀 TWSE／TPEx 月營收及 NVIDIA／Vertiv companyfacts，各一次 HTTP、四個 jobs 全成功，application 實查 **1793** canonical observations。未匯入 fixtures／舊 Float；沒有開啟常駐來源排程或 Prefect worker。雙鴻月營收、Vertiv 年度／季度與 NVIDIA 非曆年期間已對照原值／官方來源。台灣季度財年、primary family／合併範圍／EPS 股別未核對則仍保留限制；不是全面完成所有公司財務或 task 8 深研。來源 hashes、原值及驗收入口見 [財務驗收](research-financial-acceptance.md)。
+
+Application 保持 migration `0015`、head `03799774-3553-5ff6-9910-13a68468af15`、34 正式關係、2915 事件／1970 linked events，owner／publish jobs／financial import batches 均 0；source jobs 4、financial observations 1793。只有研究版 web／API／DB 運作，原服務 fingerprints 未變。本輪依指定完成 6.3 後儲存，不接續 6.4 的快取／manifest 採用。
+
+驗證：`pg-check --suite research-dynamic` **20 passed**；離線瀏覽器 **13 passed**（新增財務 6＋內容／導覽 7），真實 release 回歸 **15 passed**（新增財務 3＋動態 API 1＋既有內容／導覽／走讀 11）。最後修整手機欄寬、日期不斷行及隱藏 XML 擷取方法後，另重跑財務離線 **6 passed**、真實財務 **3 passed**。Typecheck、原生及隔離 Compose production build 通過。初輪 label 精確匹配含 option 文字，以及手機 table 繼承全域 nowrap 造成溢出，已分別修正 selector 與局部排版；失敗輪不列通過。
+
+桌機 1440×1000／手機 390×844 的真實 SEC 趨勢、原期間表、台灣來源與修訂、比較原值及觀察清單已實際檢視；截圖保存在忽略的 `.work/research-financial-review/`，無橫向溢出。這是工程查核，不代表 Boris 已完成閱讀驗收。研究內容 release 不變，來源資料保存在隔離 DB volume；本次程式／文件以 feature branch 儲存，未合併 main 或歸檔 change。

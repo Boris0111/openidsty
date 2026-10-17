@@ -10,6 +10,7 @@ async function fixtures(page:Page){
     const url=new URL(route.request().url()),path=url.pathname.replace('/api/v2/','');requests.push(path+'?'+url.searchParams);
     let data:unknown;
     if(path==='manifest')data={published_at:'2026-10-17'};
+    else if(path.includes('/financials'))data={as_of:'2026-10-17T12:00:00Z',items:[],has_more:false,next_cursor:null,gaps:[],source_selection_gap:null};
     else if(path==='graphs')data={root:url.searchParams.get('root'),nodes:[product,company,role],edges:[{id:'capability:test',source:company.id,target:product.id,kind:'capability',mechanism:'只證明產品能力',conditions:['不指認具名交易'],claims:[]},{id:'classification:test',source:role.id,target:product.id,kind:'classification',mechanism:'產品分類',conditions:[],claims:[]}],truncated:true,continue_from:[]};
     else if(path.includes('/')){
       const id=path.split('/')[1];if(id==='company-missing')return route.fulfill({status:404,json:{message:'找不到這筆研究。'}});
