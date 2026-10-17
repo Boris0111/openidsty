@@ -278,3 +278,19 @@ print(result['status'],result['requests'],flush=True)
     assert resumed.stdout.strip()=='success 2'
     with engine.connect() as connection:
         assert connection.execute(text('''SELECT count(*) FROM research.financial_observations o JOIN research.financial_groups g USING(group_id) WHERE company_id=:id'''),{'id':company}).scalar_one()==3
+
+
+def test_existing_event_reindex_is_bounded_repeatable_and_never_fetches(source_context):
+    from app.source_links import reindex
+    from sqlalchemy.orm import Session
+    _,engine,company,_,make,_=source_context
+    source,_=make(adapter='rss',host='public.example')
+    with Session(engine) as session:
+        item=Event(source_id=source['id'],external_id=uuid.uuid4().hex,ticker='2330.TW',title='Rumor in preserved history',
+            body='Synthetic only',kind='news',url=source['url'],raw={})
+        session.add(item);session.commit();identifier=item.id
+    for _ in range(2):
+        result=reindex(engine,after=identifier-1,limit=1)
+        assert result['indexed']==1 and result['last_id']==identifier
+    with engine.connect() as connection:
+        assert connection.execute(text('SELECT entity_id,relevance,source_nature FROM research.event_entity_links WHERE event_id=:id'),{'id':identifier}).all()==[(company,'direct','rumor')]

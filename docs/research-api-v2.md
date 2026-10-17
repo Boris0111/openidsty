@@ -17,7 +17,7 @@ Legacy `/api/*` 與新版 `/api/v2/*` 並存。新版使用獨立 reader pool、
 
 固定文件的 revision_id 使用不可變 hash；舊 manifest 的 version key 在同一 published release 內只有一個對應時亦可解析，回應帶正式 revision_id。`latest` 不解析；不能用新版本替代失效的舊引用。未被引用的 manifest 版本與未發布文件不提供讀者存取。
 
-詳情的主張／證據與相關分類各有回應上限，超過時 `truncated=true` 明示；一般研究仍保留完整 Markdown。完整圖形遍歷、搜尋、財務及收藏更新依各自後續契約實作，沒有用空成功回應冒充功能。快取與 request coalescing 於對應 task 驗證；目前回應保守使用 no-store。
+詳情的主張／證據與相關分類各有回應上限，超過時 `truncated=true` 明示；一般研究仍保留完整 Markdown。圖形與搜尋見下方契約；財務、事件、觀察及公司比較見 [動態讀取 API](research-dynamic-api.md)。收藏更新依後續 task 實作，沒有用空成功回應冒充功能。快取與 request coalescing 於對應 task 驗證；目前回應保守使用 no-store。
 
 錯誤固定 `{code,message,request_id,retryable}`，中文 message 不揭露 SQL、連線或內部例外。歧義另回 candidates。`X-Request-ID` 與錯誤中的 request_id 一致；DB 不可用回 503／retryable=true／Retry-After，與正常無研究資料的情形分開。新錯誤契約不改舊成功 payload。
 

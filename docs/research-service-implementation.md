@@ -136,3 +136,13 @@ Migration `0014` 保存 source jobs、每 URL 重試預算、提供者退避及�
 Typecheck、隔離 production build 通過；live browser **19 passed、2 skipped**（唯讀 gateway 未啟動，該兩項不列通過）。來源手機走查發現表格橫向操作不便，改為逐筆上下排列並補明確 table roles；狀態 cell 的輔助標籤納入可存取名稱後修正測試比對，最新來源三項 **3 passed**。桌機與手機截圖實際檢視，位於忽略的 `.work/source-update-review/`，畫面是合成 API，非 Boris 驗收。
 
 Application 為 `0014`，已確認 history index、兩筆 balance adapter；head 仍 `03799774-3553-5ff6-9910-13a68468af15`，owner／publish jobs／financial observations／financial import batches／source jobs 均 0。僅新版 web／API／DB 運行，scheduler 仍關閉；原 project fingerprints 未變。Prefect 真實服務整合另由 task 9.1 驗證，沒有宣稱排程已開啟。下一項為 5.6 財務、事件、觀察與比較 API。
+
+## 動態讀取與比較完成（task 5.6）
+
+新增財務清單／單筆／修訂及公式輸入入口、2–4 公司研究與財務比較、官方／報導事件及獨立傳聞觀察。資料保持原幣、實際期間、單季／累計／全年／期末與股別，金額以 Decimal 字串傳輸。SQL 有界窗口／分頁，主要來源缺口、異幣／財季／範圍、EPS／ADR 及候選歧義都不能變成混合排名。先選合併範圍再限制候選；同一期末不同起日保留歧義，不按較晚起算日任選。完整契約及可比較／不可比較範例見 [dynamic API](research-dynamic-api.md)。
+
+Migration `0015` 提供 curated fact citations view 及索引，reader 仍不能 SELECT 原始 facts payload。第一輪讀者權限測試發現原始表拒讀，採新增 view 提供必要引用欄位，沒有放寬 raw 權限；早先失敗輪不列通過。既有事件以可續跑、每批 500 的純索引流程對應已發布 stable IDs，不擷取網站或新增事件。Initializer 亦執行索引維護。
+
+最新完整 `pg-check` **220 passed**，含新增 **20 項 dynamic reader** 與 **18 項 source updates**，以及原有 publication／restart／auth／graph／search／financial／reader gateway 契約。執行 589.51 秒；先前一輪因誤判緩衝輸出而中止，不列為通過，已更正診斷並完整重跑。Typecheck、隔離 production build、7 項 live browser（新增真實 API／代理 1 項＋原研究閱讀 6 項）通過。
+
+Application 為 `0015` 並確認引用索引存在；2915 筆既有事件保留，其中 1970 筆可連到發布物件。不能解析的事件不猜公司或角色。Research head 及 34 筆既有關係保留，owner／publish jobs／financial observations／financial import batches／source jobs 均 0。舊 Float 財務仍由 legacy 契約保留，不冒充精確 canonical 值。未開啟 scheduler 或真實 Prefect worker。下一項為 6.1 完整目錄及新舊入口往返。

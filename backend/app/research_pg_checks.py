@@ -11,7 +11,7 @@ from .config import DATABASE_URL
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['all', 'admin-read', 'publication-restart', 'publication-interfaces','financial-core','financial-sec','financial-imports','source-updates'], default='all')
+    parser.add_argument('--suite', choices=['all', 'admin-read', 'publication-restart', 'publication-interfaces','financial-core','financial-sec','financial-imports','source-updates','research-dynamic'], default='all')
     args = parser.parse_args()
     bootstrap = make_url(DATABASE_URL)
     if bootstrap.username != 'industry' or bootstrap.database != 'industry_research' or bootstrap.host != 'db':
@@ -30,6 +30,7 @@ def main():
         os.environ['RESEARCH_PG_WRITER_URL'] = make_url(os.environ['RESEARCH_WRITE_DATABASE_URL']).set(database='industry_research_test').render_as_string(hide_password=False)
         import pytest
         suites={
+            'research-dynamic':['tests/test_research_dynamic.py'],
             'source-updates':['tests/test_source_updates.py'],
             'financial-imports':['tests/test_financial_imports.py','tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_financial_sec.py','tests/test_sec_http.py'],
             'financial-sec':['tests/test_financial_sec.py','tests/test_sec_http.py'],
@@ -42,7 +43,7 @@ def main():
             'tests/test_research_v2.py', 'tests/test_research_graph_v2.py', 'tests/test_research_search.py',
             'tests/test_research_auth.py', 'tests/test_research_documents.py', 'tests/test_research_drafts.py',
             'tests/test_research_publication.py', 'tests/test_research_admin_reads.py', 'tests/test_research_restart.py', 'tests/test_publication_interfaces.py',
-            'tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_financial_sec.py','tests/test_sec_http.py','tests/test_financial_imports.py','tests/test_source_updates.py','tests/test_reader_gateway.py'])
+            'tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_financial_sec.py','tests/test_sec_http.py','tests/test_financial_imports.py','tests/test_source_updates.py','tests/test_research_dynamic.py','tests/test_reader_gateway.py'])
         raise SystemExit(pytest.main(['-q', '-p', 'no:cacheprovider', *cases]))
 
 

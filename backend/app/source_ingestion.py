@@ -26,9 +26,9 @@ def nature(definition,event):
     return 'report'
 
 
-def link_events(session,definition,started,mapping,release):
+def link_events(session,definition,started,mapping,release,events=None):
     available=set(session.execute(text('SELECT entity_id FROM research.entity_snapshots WHERE release_id=:release'),{'release':release}).scalars())
-    events=session.scalars(select(Event).where(Event.source_id==definition['id'],Event.fetched_at>=started).order_by(Event.id).limit(2001)).all()
+    if events is None:events=session.scalars(select(Event).where(Event.source_id==definition['id'],Event.fetched_at>=started).order_by(Event.id).limit(2001)).all()
     for event in events[:2000]:
         links=set();kind=nature(definition,event)
         if mapping.get(event.ticker):links.add((mapping[event.ticker],'direct'))

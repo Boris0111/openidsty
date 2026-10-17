@@ -32,6 +32,8 @@ python scripts/research_lab.py bootstrap --commit <完整commit>
 
 來源排程／單次更新可用 `--suite source-updates` 驗證持久重試、來源隔離與重啟，操作及限制見 [source updates](research-source-updates.md)。僅啟動 web／API 不會開始自動擷取。
 
+讀者財務／事件／觀察／比較可用 `--suite research-dynamic`；契約與可比較界線見 [dynamic API](research-dynamic-api.md)。
+
 首條實際讀取預覽位於 `/next`，首份 release 已建立，不要為了重建 UI 再初始化或刪除 DB。瀏覽器走讀命令（在 frontend 執行）：
 
 ```powershell

@@ -189,7 +189,7 @@ def main():
     parser.add_argument('--commit', default='HEAD')
     parser.add_argument('--source-container', default='industryflow-reading-db')
     parser.add_argument('--source-database', default='industry_reading')
-    parser.add_argument('--suite', choices=['all', 'admin-read', 'publication-restart', 'publication-interfaces','financial-core','financial-sec','financial-imports','source-updates'], default='all')
+    parser.add_argument('--suite', choices=['all', 'admin-read', 'publication-restart', 'publication-interfaces','financial-core','financial-sec','financial-imports','source-updates','research-dynamic'], default='all')
     args = parser.parse_args()
     report = check()
     if args.action in ('reader-start','reader-stop'):
@@ -249,7 +249,7 @@ def main():
     elif args.action == 'pg-check':
         before = protected_snapshot()
         compose('build', 'api')
-        output = compose('run', '--rm', '--no-deps', '-T', 'initialize',
+        output = compose('run', '--rm', '--no-deps', '-T', '-e', 'PYTHONUNBUFFERED=1', 'initialize',
                          'python', '-m', 'app.research_pg_checks', '--suite', args.suite)
         print(output.decode('utf-8', errors='replace'))
         verify_protected(before)

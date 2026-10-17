@@ -39,7 +39,7 @@ services:
   initialize:
     <<: *app
     volumes: ["research-assets:/home/app/research-assets", "research-git:/home/app/research-git"]
-    command: [sh, -c, "alembic upgrade head && python -m app.research_roles && python -m app.import_map && python -m app.financial_indicators && python -m app.financial_store definitions"]
+    command: [sh, -c, "alembic upgrade head && python -m app.research_roles && python -m app.import_map && python -m app.financial_indicators && python -m app.financial_store definitions && python -m app.source_links"]
     depends_on:
       db: {condition: service_healthy}
   api:

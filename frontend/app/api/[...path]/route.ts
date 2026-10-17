@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest, context: {params: Promise<{path: string[]}>}) {
   const {path} = await context.params;
   const allowed = ['industries','segments','themes','theme-updates','technical-documents','search','coverage','companies','compare','events','sources','health'];
-  const publicV2 = ['manifest','catalog','search','resolve','companies','products','themes','concepts','research','applications','roles','segments','documents','assets','graphs','impact'];
+  const publicV2 = ['manifest','catalog','search','resolve','companies','products','themes','concepts','research','applications','roles','segments','documents','assets','graphs','impact','events','observations','compare'];
   if ((!allowed.includes(path[0]) && !(path[0]==='v2' && publicV2.includes(path[1]))) || path.some(part=>part==='.'||part==='..'||part.includes('/')||part.includes('\\'))) return Response.json({detail:'找不到 API'}, {status:404,headers:{'Cache-Control':'no-store'}});
   try {
     const origin = process.env.API_ORIGIN || 'http://127.0.0.1:8010';
