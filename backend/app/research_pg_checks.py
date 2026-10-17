@@ -11,7 +11,7 @@ from .config import DATABASE_URL
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--suite', choices=['all', 'admin-read', 'publication-restart', 'publication-interfaces','financial-core','financial-sec'], default='all')
+    parser.add_argument('--suite', choices=['all', 'admin-read', 'publication-restart', 'publication-interfaces','financial-core','financial-sec','financial-imports'], default='all')
     args = parser.parse_args()
     bootstrap = make_url(DATABASE_URL)
     if bootstrap.username != 'industry' or bootstrap.database != 'industry_research' or bootstrap.host != 'db':
@@ -29,11 +29,11 @@ def main():
         os.environ['RESEARCH_PG_READER_URL'] = make_url(os.environ['RESEARCH_READ_DATABASE_URL']).set(database='industry_research_test').render_as_string(hide_password=False)
         os.environ['RESEARCH_PG_WRITER_URL'] = make_url(os.environ['RESEARCH_WRITE_DATABASE_URL']).set(database='industry_research_test').render_as_string(hide_password=False)
         import pytest
-        cases = ['tests/test_financial_sec.py','tests/test_sec_http.py'] if args.suite == 'financial-sec' else ['tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_research_postgres.py'] if args.suite == 'financial-core' else ['tests/test_publication_interfaces.py'] if args.suite == 'publication-interfaces' else ['tests/test_research_restart.py'] if args.suite == 'publication-restart' else ['tests/test_research_admin_reads.py'] if args.suite == 'admin-read' else ['tests/test_research_postgres.py',
+        cases = ['tests/test_financial_imports.py','tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_financial_sec.py','tests/test_sec_http.py'] if args.suite == 'financial-imports' else ['tests/test_financial_sec.py','tests/test_sec_http.py'] if args.suite == 'financial-sec' else ['tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_research_postgres.py'] if args.suite == 'financial-core' else ['tests/test_publication_interfaces.py'] if args.suite == 'publication-interfaces' else ['tests/test_research_restart.py'] if args.suite == 'publication-restart' else ['tests/test_research_admin_reads.py'] if args.suite == 'admin-read' else ['tests/test_research_postgres.py',
             'tests/test_research_v2.py', 'tests/test_research_graph_v2.py', 'tests/test_research_search.py',
             'tests/test_research_auth.py', 'tests/test_research_documents.py', 'tests/test_research_drafts.py',
             'tests/test_research_publication.py', 'tests/test_research_admin_reads.py', 'tests/test_research_restart.py', 'tests/test_publication_interfaces.py',
-            'tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_financial_sec.py','tests/test_sec_http.py','tests/test_reader_gateway.py']
+            'tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_financial_sec.py','tests/test_sec_http.py','tests/test_financial_imports.py','tests/test_reader_gateway.py']
         raise SystemExit(pytest.main(['-q', '-p', 'no:cacheprovider', *cases]))
 
 

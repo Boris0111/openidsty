@@ -40,6 +40,11 @@ def register_metrics(connection):
             raise ValueError('財務指標定義不一致，需明確遷移，不可偷偷改變既有值的意義。')
 
 
+def lock_groups(connection,groups):
+    for group in sorted(set(groups)):
+        connection.execute(text('SELECT pg_advisory_xact_lock(hashtextextended(:key,38109075))'),{'key':group})
+
+
 def save_fact(connection,fact:RawFact,payload=None):
     key=fact.fact_id
     connection.execute(text('SELECT pg_advisory_xact_lock(hashtextextended(:key,38109076))'),{'key':str(key)})
@@ -120,6 +125,7 @@ def save_official(connection,value:FinancialValue,facts:tuple[RawFact,...],*,kin
     if len({fact.source_as_of for fact in facts})!=1:raise FinancialGap('不同彙整日期不得拼成一個觀測。')
     if any(fact.context.group_id!=value.context.group_id or fact.accession!=value.statement_id or fact.normalized_value!=value.value for fact in facts):
         raise FinancialGap('原始 fact、申報、換算值與觀測不一致。')
+    lock_groups(connection,[value.context.group_id])
     ids=[save_fact(connection,fact,(payloads or {}).get(str(fact.fact_id))) for fact in sorted(facts,key=lambda item:str(item.fact_id))]
     return _save(connection,value,facts[0].filed_at,kind,limitations,ids,expected_supersedes=expected_supersedes,source_as_of=facts[0].source_as_of)
 

@@ -114,3 +114,13 @@ Production build、typecheck 通過，13 項 live browser 全通過：6 項既�
 Boris 設定後已核對 SEC_USER_AGENT 存在、唯一及格式有效，未輸出內容。以隔離 initialize 的當次環境、既有 HTTP 與 PostgreSQL gate 實際取得 Vertiv／NVIDIA companyfacts，各 HTTP 200；來源 hash、UTC 時間及精確 Decimal selected fixtures 已保存，不含請求 header。補驗揭露非 US GAAP namespace 不一定為 issuer extension，已修正為 unmapped-taxonomy 缺口，避免誤標 ECD 等標準分類。
 
 最新 `pg-check --suite financial-sec` 19 passed，包含官方年度值、NVIDIA 非曆年期間、實際 comparative EPS 重列、同值新申報只補 provenance，整批重新入庫沒有假修訂；原有合成邊界及三程序共用限流亦通過。只在可回滾的獨立 test DB 驗證，沒有向 application 寫入這批數字或啟動定時抓取。詳見 [SEC adapter](research-financial-sec.md)。
+
+## 官方財務補錄（task 5.4）
+
+新增 JSON／CSV 同格式驗證、1 MiB／100 列界線、原始數值／倍率／期間／原幣／範圍／定位預覽，以及 owner 明確核對後確認入庫。Payload hash 綁定輸入與當時數值基準，確認重試使用同一 key／原結果；過期預覽、同日衝突缺修訂依據、未知官方主機、缺欄與錯誤數值拒絕。確認將 raw facts、觀測修訂、批次結果及 audit 原子寫入，整批任一錯誤回滾。Migration `0013` 保護已確認批次／結果及原預覽不可改寫，詳見 [補錄操作與 API](research-financial-imports.md)。
+
+`pg-check --suite financial-imports` 最新 **90 passed**：21 補錄解析／真實 API、24 財務 core、5 storage、21 台灣、19 SEC／限流；原先測試固定 key 被前一案例使用後遭正確拒絕，已改成每批獨立 key，未把該失敗輪視為通過。共同群組鎖採排序，人工與自動 adapters 沿用同一順序。
+
+Admin 新增「財務補錄」、JSON／CSV 空白範本、文件連結與差異表、明確勾選／理由及重試；修改內容即清舊預覽。Production build（隔離 Compose）、typecheck、16 項 live browser 通過（新增 3 財務，既有 13）；加入空白範本下載檢查後另重跑 3 項通過。桌機 1440×1000／手機 390×844 截圖已實際檢視，存於忽略的 `.work/financial-import-review/`。畫面寫入使用明示合成 API，真實 DB 行為另由上述測試覆蓋；未將截圖當 Boris 使用者驗收。
+
+Application 已升級 `0013`，head 不變；owner、financial observations、financial import batches 均 0。僅研究版 web／API／DB 運行，scheduler 仍關閉。下一項為 5.5 到期排程、共用重試、來源隔離及單次更新。

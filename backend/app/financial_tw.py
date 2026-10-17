@@ -203,8 +203,9 @@ def parse_taiwan(payload,source_id,kind,url,issuers:dict[str,TwIssuer]):
 
 
 def persist_taiwan(connection,result:TwResult):
-    from .financial_store import register_metrics,save_official,save_derived
+    from .financial_store import register_metrics,save_official,save_derived,lock_groups
     register_metrics(connection)
+    lock_groups(connection,[row.value.context.group_id for row in result.records]+[item.context.group_id for item,_,_ in result.derived])
     mapped={};saved=[]
     for record in result.records:
         outcome=save_official(connection,record.value,(record.fact,),limitations=' '.join(record.limitations),

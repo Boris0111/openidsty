@@ -11,7 +11,8 @@ export async function proxyAdmin(request:NextRequest,path:string[]) {
   const resource=path.join('/');
   const uuid='[0-9a-fA-F-]{36}';
   const permitted=resource==='session'?['GET','POST','DELETE']:resource==='drafts'?['GET','POST']:['releases','sources','audit'].includes(resource)?['GET']:['drafts/render-document','drafts/asset-upload'].includes(resource)?['POST']:new RegExp(`^drafts/${uuid}$`).test(resource)?['GET','PATCH']:new RegExp(`^drafts/${uuid}/(export|document|diff|preview)$`).test(resource)?['GET']:new RegExp(`^drafts/${uuid}/(import|validate|publish)$`).test(resource)?['POST']:new RegExp(`^drafts/${uuid}/assets/[0-9a-f]{64}$`).test(resource)?['GET']:new RegExp(`^jobs/${uuid}$`).test(resource)?['GET']:new RegExp(`^jobs/${uuid}/retry$`).test(resource)||new RegExp(`^releases/${uuid}/restore$`).test(resource)?['POST']:[];
-  if(!permitted.includes(request.method))return failure(404,'admin-resource-not-found','找不到這項管理功能。');
+  const financial=resource==='financial-imports'?request.method==='POST':new RegExp(`^financial-imports/${uuid}$`).test(resource)?request.method==='GET':new RegExp(`^financial-imports/${uuid}/confirm$`).test(resource)?request.method==='POST':false;
+  if(!permitted.includes(request.method)&&!financial)return failure(404,'admin-resource-not-found','找不到這項管理功能。');
   const allowed=(process.env.RESEARCH_ADMIN_ORIGINS||'').split(',').filter(Boolean);
   if(!allowed.length)return failure(503,'admin-unavailable','管理入口尚未完成設定。');
   const host=request.headers.get('host');
@@ -33,7 +34,7 @@ export async function proxyAdmin(request:NextRequest,path:string[]) {
     while(true) {
       const {value,done}=await reader.read();if(done)break;
       size+=value.byteLength;
-      if(size>(resource==='session'?8192:resource==='drafts/asset-upload'?10*1024*1024:5*1024*1024)){await reader.cancel();return failure(413,'body-too-large','資料超過大小限制。')}
+      if(size>(resource==='session'?8192:resource.startsWith('financial-imports')?1024*1024:resource==='drafts/asset-upload'?10*1024*1024:5*1024*1024)){await reader.cancel();return failure(413,'body-too-large','資料超過大小限制。')}
       chunks.push(value);
     }
   }

@@ -172,8 +172,9 @@ def parse_companyfacts(payload,issuer:SecIssuer):
 
 
 def persist_sec(connection,result:SecResult):
-    from .financial_store import register_metrics,save_official,save_derived
+    from .financial_store import register_metrics,save_official,save_derived,lock_groups
     register_metrics(connection)
+    lock_groups(connection,[row.value.context.group_id for row in result.records]+[item.context.group_id for item,_ in result.derived])
     saved=[];mapped={}
     # Filing order makes the first import and a replay converge on the same head.
     for row in sorted(result.records,key=lambda row:(row.fact.filed_at,str(row.fact.fact_id))):

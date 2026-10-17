@@ -17,8 +17,8 @@ export function ResearchEditor(){
   const [document,setDocument]=useState<Document>();const [raw,setRaw]=useState(false);const [dirty,setDirty]=useState(false);
   const [busy,setBusy]=useState(false);const [message,setMessage]=useState('');const [error,setError]=useState('');
   const [previewGraph,setPreviewGraph]=useState<ResearchGraph>();const [diff,setDiff]=useState('');const [preview,setPreview]=useState<ResearchDetail>();
-  async function api(path:string,method='GET',data?:unknown,revision?:number,idempotencyKey?:string){
-    const response=await fetch('/api/admin/'+path,{method,cache:'no-store',headers:{...(data!==undefined?{'Content-Type':'application/json'}:{}),...(session?.csrf_token?{'X-CSRF-Token':session.csrf_token}:{}),...(revision!==undefined?{'If-Match':`"${revision}"`}:{}),...(idempotencyKey?{'Idempotency-Key':idempotencyKey}:{})},body:data===undefined?undefined:JSON.stringify(data)});
+  async function api(path:string,method='GET',data?:unknown,revision?:number,idempotencyKey?:string,rawType?:string){
+    const response=await fetch('/api/admin/'+path,{method,cache:'no-store',headers:{...(data!==undefined?{'Content-Type':rawType||'application/json'}:{}),...(session?.csrf_token?{'X-CSRF-Token':session.csrf_token}:{}),...(revision!==undefined?{'If-Match':`"${revision}"`}:{}),...(idempotencyKey?{'Idempotency-Key':idempotencyKey}:{})},body:data===undefined?undefined:rawType?String(data):JSON.stringify(data)});
     const result=await response.json();if(!response.ok)throw new Error(result.message||'管理服務無法完成操作。');return result;
   }
   async function action(operation:()=>Promise<void>){setBusy(true);setError('');setMessage('');try{await operation()}catch(reason){setError(reason instanceof Error?reason.message:'操作未完成。')}finally{setBusy(false)}}

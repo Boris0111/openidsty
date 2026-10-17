@@ -16,6 +16,8 @@ from .research_http import install as install_research_http
 from .research_auth import router as research_auth_router
 from .research_drafts import router as research_drafts_router
 from .research_publication import router as research_publication_router
+from .financial_imports import router as financial_imports_router
+app.include_router(financial_imports_router)
 app.include_router(research_publication_router)
 app.include_router(research_drafts_router)
 app.include_router(research_auth_router)
