@@ -71,7 +71,7 @@ def test_decimal_precision_revision_uniqueness_and_value_return(pg):
     value = Decimal('1234567890123456789012345678.1234567890')
     with admin.begin() as c:
         for revision, amount in [(1, value), (2, value - 1), (3, value)]:
-            execute(c, "INSERT INTO research.financial_observations VALUES (CAST(:id AS uuid),:g,:rev,:value,:hash,'2026-01-01',now(),NULL,'official','test')",
+            execute(c, "INSERT INTO research.financial_observations (observation_id,group_id,revision,value,semantic_hash,filed_at,recorded_at,supersedes,provenance_kind,limitations) VALUES (CAST(:id AS uuid),:g,:rev,:value,:hash,'2026-01-01',now(),NULL,'official','test')",
                     id=d['observation'] if revision == 1 else str(uuid.uuid4()), g=d['group'], rev=revision, value=amount, hash='a' * 64)
         actual = execute(c, 'SELECT value FROM research.financial_observations WHERE observation_id=CAST(:id AS uuid)', id=d['observation']).scalar_one()
         assert actual == value and isinstance(actual, Decimal)

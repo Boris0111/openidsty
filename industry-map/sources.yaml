@@ -55,8 +55,9 @@ tw:
     url: https://openapi.twse.com.tw/v1/opendata/t187ap05_L
     type: filings
     access: free
-    reachability: unverified
-    checked: '2026-10-08'
+    reachability: verified
+    checked: '2026-10-17'
+    notes: HTTP 200 JSON；實讀台積電月營收樣本。金額為新台幣千元；出表日期不是公司申報日。摘要只提供目前彙整期，歷史由本機後續累積；能力及樣本見 docs/research-financial-tw.md。
     ingestion:
       adapter: tw
       kind: revenue
@@ -67,12 +68,24 @@ tw:
     url: https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci
     type: filings
     access: free
-    reachability: unverified
-    checked: '2026-10-08'
+    reachability: verified
+    checked: '2026-10-17'
+    notes: HTTP 200 JSON；實讀台積電一般業損益樣本。各季為年度截至該季累計、金額千元、EPS 元；未明列合併／個體旗標與正式申報日，需核對財務年度起點。未提供現金流等項目。
     ingestion:
       adapter: tw
       kind: financials
       fallback: https://mopsfin.twse.com.tw/opendata/t187ap06_L_ci.csv
+  - id: twse-balance
+    provider: twse
+    name: TWSE 一般業資產負債摘要
+    url: https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-17'
+    ingestion:
+      adapter: manual
+    notes: HTTP 200 JSON；實讀台積電負債總計，金額千元。未提供現金及約當現金，不將負債總計當有息負債。新版 parser 已驗證；到期排程由 expand-industry-research-service task 5.5 接入，不交給不支援此欄位的 legacy tw adapter。
   - id: tpex-announcements
     provider: tpex
     name: TPEX 重大訊息
@@ -90,8 +103,9 @@ tw:
     url: https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O
     type: filings
     access: free
-    reachability: unverified
-    checked: '2026-10-08'
+    reachability: verified
+    checked: '2026-10-17'
+    notes: HTTP 200 JSON；實讀雙鴻 3324 上櫃樣本。金額千元、原始年增百分點；出表日期不是申報日。不得由歷史 ticker 後綴推斷上市／上櫃資料入口。
     ingestion:
       adapter: tw
       kind: revenue
@@ -101,11 +115,23 @@ tw:
     url: https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci
     type: filings
     access: free
-    reachability: unverified
-    checked: '2026-10-08'
+    reachability: verified
+    checked: '2026-10-17'
+    notes: HTTP 200 JSON；實讀雙鴻一般業累計損益。識別及年度／季別使用英文字段，與 TWSE 別名不同；金額千元、EPS 元，範圍旗標及申報日未提供。
     ingestion:
       adapter: tw
       kind: financials
+  - id: tpex-balance
+    provider: tpex
+    name: TPEx 一般業資產負債摘要
+    url: https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-17'
+    ingestion:
+      adapter: manual
+    notes: HTTP 200 JSON；實讀雙鴻負債總計，金額千元。公司代號／日期為英文字段，年度／季別為中文；沒有現金及約當現金。新版 parser 已驗證，到期排程由 task 5.5 接入。
   earnings_call:
   - name: 台積電季度法說會與財報
     url: https://investor.tsmc.com/english/quarterly-results

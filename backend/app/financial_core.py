@@ -116,6 +116,7 @@ class RawFact:
     source_url:str
     dimensions:tuple=()
     multiplier:Decimal=Decimal(1)
+    source_as_of:date|None=None
 
     def __post_init__(self):
         for value in (self.accession,self.tag,self.raw_unit):
@@ -124,6 +125,7 @@ class RawFact:
         if url.scheme!='https' or not url.hostname or url.username or url.password or any(ord(char)<33 for char in self.source_url):
             raise ValueError('原始 fact 必須保留不含帳密的 HTTPS 官方文件來源。')
         if self.filed_at is not None and type(self.filed_at) is not date:raise ValueError('申報日須保留日期精度。')
+        if self.source_as_of is not None and type(self.source_as_of) is not date:raise ValueError('來源彙整日須保留日期精度。')
         if self.value is not None:object.__setattr__(self,'value',decimal_value(self.value))
         object.__setattr__(self,'multiplier',decimal_value(self.multiplier))
         if not self.multiplier or abs(self.multiplier)>Decimal('1000000000'):raise ValueError('原始單位換算不正確。')

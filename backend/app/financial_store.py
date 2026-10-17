@@ -2,6 +2,7 @@
 import argparse
 from dataclasses import asdict
 from datetime import date
+from decimal import Decimal
 import json
 import uuid
 from sqlalchemy import text
@@ -11,6 +12,19 @@ from .research_db import writer_engine
 
 def encoded(value):
     return json.dumps(_json(value),ensure_ascii=False,sort_keys=True,separators=(',',':'))
+
+
+def raw_payload(value):
+    # Original source cells may exceed canonical Numeric precision. Keep their
+    # exact decimal text as evidence; this never makes them canonical values.
+    if isinstance(value,Decimal):
+        if not value.is_finite():raise ValueError('原始 payload 不得包含非有限數。')
+        return str(value)
+    if isinstance(value,dict):
+        if any(not isinstance(key,str) for key in value):raise ValueError('原始 payload 欄位須為文字。')
+        return {key:raw_payload(item) for key,item in value.items()}
+    if isinstance(value,(list,tuple)):return [raw_payload(item) for item in value]
+    return _json(value)
 
 
 def register_metrics(connection):
@@ -34,8 +48,8 @@ def save_fact(connection,fact:RawFact,payload=None):
         if stored['value']!=fact.value or stored['filed_at']!=fact.filed_at:
             raise FinancialGap('同一申報／tag／context 的原始值變動，須核對來源版本，不覆寫舊 fact。')
         return key
-    data={'original':payload or {},'context':asdict(fact.context),'raw_unit':fact.raw_unit,
-        'normalization_multiplier':fact.multiplier,'dimensions':list(fact.dimensions)}
+    data={'original':raw_payload(payload or {}),'context':asdict(fact.context),'raw_unit':fact.raw_unit,
+        'normalization_multiplier':fact.multiplier,'dimensions':list(fact.dimensions),'source_as_of':fact.source_as_of}
     connection.execute(text('''INSERT INTO research.financial_raw_facts(fact_id,company_id,source_family,accession,tag,
         context_hash,value,filed_at,source_url,payload) VALUES(:id,:company,:family,:accession,:tag,:context,:value,:filed,:url,CAST(:payload AS jsonb))'''),
         {'id':key,'company':fact.context.company_id,'family':fact.context.source_family,'accession':fact.accession,
@@ -43,8 +57,9 @@ def save_fact(connection,fact:RawFact,payload=None):
     return key
 
 
-def _save(connection,value,filed_at,kind,limitations,fact_ids=(),derivation=None,expected_supersedes=None):
+def _save(connection,value,filed_at,kind,limitations,fact_ids=(),derivation=None,expected_supersedes=None,source_as_of=None):
     if filed_at is not None and type(filed_at) is not date:raise ValueError('申報日必須保留日期精度。')
+    if source_as_of is not None and type(source_as_of) is not date:raise ValueError('來源彙整日必須保留日期精度。')
     context=value.context
     group=context.group_id
     connection.execute(text('SELECT pg_advisory_xact_lock(hashtextextended(:key,38109075))'),{'key':group})
@@ -52,10 +67,16 @@ def _save(connection,value,filed_at,kind,limitations,fact_ids=(),derivation=None
     names=','.join(fields)
     connection.execute(text('INSERT INTO research.financial_groups('+names+') VALUES('+','.join(':'+key for key in fields)+') ON CONFLICT(group_id) DO NOTHING'),fields)
     rows=connection.execute(text('''SELECT * FROM research.financial_observations WHERE group_id=:group
-        ORDER BY filed_at DESC NULLS LAST,revision DESC FOR UPDATE'''),{'group':group}).mappings().all()
+        ORDER BY COALESCE(filed_at,source_as_of) DESC NULLS LAST,revision DESC FOR UPDATE'''),{'group':group}).mappings().all()
+    mode='filing' if filed_at else 'snapshot' if source_as_of else 'unknown'
+    existing_modes={'filing' if row['filed_at'] else 'snapshot' if row['source_as_of'] else 'unknown' for row in rows}-{'unknown'}
+    if mode!='unknown' and existing_modes-{mode}:
+        raise FinancialGap('申報與彙整快照須分開來源族，不可把兩種日期當成同一版本順序。')
     current=rows[0] if rows else None
     same=current if current and current['semantic_hash']==value.semantic_hash else None
-    older=bool(current and current['filed_at'] and (filed_at is None or filed_at<current['filed_at']))
+    incoming_date=filed_at or source_as_of
+    current_date=(current['filed_at'] or current['source_as_of']) if current else None
+    older=bool(current_date and (incoming_date is None or incoming_date<current_date))
     if older:
         same=next((row for row in rows if row['semantic_hash']==value.semantic_hash),None)
     if same:
@@ -63,20 +84,23 @@ def _save(connection,value,filed_at,kind,limitations,fact_ids=(),derivation=None
         if filed_at and (same['filed_at'] is None or filed_at>same['filed_at']):
             # Only supporting-filing metadata advances; the numerical revision stays put.
             connection.execute(text('UPDATE research.financial_observations SET filed_at=:filed WHERE observation_id=:id'),{'id':observation,'filed':filed_at})
+        if source_as_of and (same['source_as_of'] is None or source_as_of>same['source_as_of']):
+            connection.execute(text('UPDATE research.financial_observations SET source_as_of=:asof WHERE observation_id=:id'),{'id':observation,'asof':source_as_of})
         revision=same['revision']
         created=False
     else:
-        if current and filed_at==current['filed_at'] and expected_supersedes!=current['observation_id']:
+        conflict=next((row for row in rows if (row['filed_at'] or row['source_as_of'])==incoming_date and row['semantic_hash']!=value.semantic_hash),None)
+        if conflict and expected_supersedes!=conflict['observation_id']:
             return {'status':'needs-verification','observation_id':None,'new_revision':False,'active_changed':False,
                 'reason':'同日／未知申報日的衝突需要較精確的修訂證據。'}
         observation=value.observation_id
         revision=max((row['revision'] for row in rows),default=0)+1
-        prior=next((row['observation_id'] for row in rows if row['filed_at'] is not None and filed_at is not None and row['filed_at']<filed_at),None) if older else current['observation_id'] if current else None
+        prior=next((row['observation_id'] for row in rows if (row['filed_at'] or row['source_as_of']) is not None and incoming_date is not None and (row['filed_at'] or row['source_as_of'])<incoming_date),None) if older else current['observation_id'] if current else None
         connection.execute(text('''INSERT INTO research.financial_observations(observation_id,group_id,revision,value,
-            semantic_hash,filed_at,supersedes,provenance_kind,limitations)
-            VALUES(:id,:group,:revision,:value,:hash,:filed,:prior,:kind,:limitations)'''),
+            semantic_hash,filed_at,supersedes,provenance_kind,limitations,source_as_of)
+            VALUES(:id,:group,:revision,:value,:hash,:filed,:prior,:kind,:limitations,:asof)'''),
             {'id':observation,'group':group,'revision':revision,'value':value.value,'hash':value.semantic_hash,
-             'filed':filed_at,'prior':prior,'kind':kind,'limitations':limitations})
+             'filed':filed_at,'prior':prior,'kind':kind,'limitations':limitations,'asof':source_as_of})
         created=True
     for key in fact_ids:
         connection.execute(text('''INSERT INTO research.observation_provenance(observation_id,fact_id)
@@ -93,13 +117,14 @@ def save_official(connection,value:FinancialValue,facts:tuple[RawFact,...],*,kin
     if kind not in ('official','manual-official'):raise ValueError('官方觀測必須區分自動或人工核對來源。')
     if not facts:raise ValueError('官方觀測不得缺少原始 fact。')
     if len({fact.filed_at for fact in facts})!=1:raise FinancialGap('不同申報日期不得拼成一個觀測。')
+    if len({fact.source_as_of for fact in facts})!=1:raise FinancialGap('不同彙整日期不得拼成一個觀測。')
     if any(fact.context.group_id!=value.context.group_id or fact.accession!=value.statement_id or fact.normalized_value!=value.value for fact in facts):
         raise FinancialGap('原始 fact、申報、換算值與觀測不一致。')
     ids=[save_fact(connection,fact,(payloads or {}).get(str(fact.fact_id))) for fact in sorted(facts,key=lambda item:str(item.fact_id))]
-    return _save(connection,value,facts[0].filed_at,kind,limitations,ids,expected_supersedes=expected_supersedes)
+    return _save(connection,value,facts[0].filed_at,kind,limitations,ids,expected_supersedes=expected_supersedes,source_as_of=facts[0].source_as_of)
 
 
-def save_derived(connection,derived:Derivation,*,filed_at=None,limitations=''):
+def save_derived(connection,derived:Derivation,*,filed_at=None,limitations='',source_as_of=None):
     if derived.formula_version not in {FORMULA_VERSION+':'+key for key in ('gross-margin','ytd-difference','revenue-yoy')} or len(derived.input_ids)!=2:
         raise ValueError('衍生公式與輸入不正確。')
     inputs=connection.execute(text('''SELECT o.observation_id,g.company_id,g.source_family,g.scope,g.currency,g.share_class
@@ -111,12 +136,12 @@ def save_derived(connection,derived:Derivation,*,filed_at=None,limitations=''):
     value=FinancialValue(derived.context,decimal_value(derived.value),observation,'derived')
     previous=latest(connection,derived.context.group_id)
     expected=previous['observation_id'] if previous and previous['provenance_kind']=='derived' else None
-    return _save(connection,value,filed_at,'derived',limitations,derivation=derived,expected_supersedes=expected)
+    return _save(connection,value,filed_at,'derived',limitations,derivation=derived,expected_supersedes=expected,source_as_of=source_as_of)
 
 
 def latest(connection,group_id):
     return connection.execute(text('''SELECT * FROM research.financial_observations WHERE group_id=:group
-        ORDER BY filed_at DESC NULLS LAST,revision DESC LIMIT 1'''),{'group':group_id}).mappings().first()
+        ORDER BY COALESCE(filed_at,source_as_of) DESC NULLS LAST,revision DESC LIMIT 1'''),{'group':group_id}).mappings().first()
 
 
 def main():

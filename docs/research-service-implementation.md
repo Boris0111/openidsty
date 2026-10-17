@@ -90,3 +90,11 @@ Production build、typecheck 通過，13 項 live browser 全通過：6 項既�
 新增 13 個明確口徑的 metric 定義（含毛利輔助值）、Decimal／Numeric(38,10)、raw fact／canonical group 雙身分、同值新申報只補 provenance、重編與晚到歷史、同日衝突核對、公式版本與 input lineage。基本／稀釋 EPS 及普通股／ADR 不互換，EPS／比率／期末值禁止相減；缺前期或相容申報時回缺口，不填零。Migration `0011` 保護 raw fact、group 與觀測值不被改寫，最新值依申報日而不是單看 revision。
 
 `pg-check --suite financial-core` 實際 35 passed（24 計算／身分、5 writer storage、6 原有 PG 模型／權限），包含千元倍率、有效零、同值新申報、重編後回到舊值、晚到歷史不蓋新值、非曆年 Q4、同日歧義及不可改寫。未抓取外部來源或填入合成 application 財務；指標與限制見 [research-financial-metrics](research-financial-metrics.md)。台美 adapter、官方補錄與查詢／比較仍按 tasks 5.2–5.6 接續。
+
+## 台灣官方摘要（task 5.2）
+
+2026-10-17 實讀 TWSE／TPEx 六個 JSON 入口及 MOPS 單位／累計表頭，保存台積電與雙鴻原始列及來源 hash。新版解析保留別名、千元倍率、EPS 元、母公司與總淨利差異、期末負債、缺值與有效零。未提供申報日／合併範圍時不杜撰，季度須先有已核對財年；非曆年或未知財年保留原列與缺口。出表日期使用 migration `0012` 的 source_as_of，不混成公司申報日。詳見 [台灣摘要能力及限制](research-financial-tw.md)。
+
+最新 `pg-check --suite financial-core` 56 passed（既有 35＋台灣 21），在獨立測試 DB 通過 migration、真實 writer 入庫、同值新出表日不假更新、晚到資料不蓋新值、原始高精度 JSON 數字保存及日期模式隔離。Full 地圖驗證通過（17 環節、7 題材、60 來源），兩筆新負債來源先 manual 註冊，避免誤交 legacy adapter；到期流程由 task 5.5 串接。未自動發布研究或把樣本寫進 application DB。
+
+此次接續時 Docker 引擎原為停止，啟動 Desktop 後恢復三個新版容器；原版／Valuflow 仍停止，隔離測試核對 protected services 不變。沒有執行 reset、prune、volume 刪除或重新 bootstrap。
