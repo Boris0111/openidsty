@@ -108,3 +108,9 @@ Production build、typecheck 通過，13 項 live browser 全通過：6 項既�
 **待使用者設定：** 新版 `.env.research` 尚無有效 SEC_USER_AGENT。未自行填假 email，實際 SEC companyfacts 樣本仍未取得，task 5.3 checkbox 保留未完成。設定步驟與官方限制見 [SEC adapter](research-financial-sec.md)；接手先確認設定存在（不印值），再用共用 gate 擷取官方樣本、保存 hash／selected fixtures、逐項核對並重跑測試，才能完成 5.3，再續 5.4 官方補錄。這是資料來源設定前提，並非 Docker 或測試失敗。
 
 隔離 application 已升級 `0012`，health、manifest、`/next` 均 HTTP 200；head 仍為原 `03799774-3553-5ff6-9910-13a68468af15`，owner／publish jobs／新 financial observations 均 0，legacy events 2915、financials 147。Initializer 只加入指標定義及來源 metadata，不把測試數值寫入 application DB。
+
+## SEC 官方樣本補驗（task 5.3 完成）
+
+Boris 設定後已核對 SEC_USER_AGENT 存在、唯一及格式有效，未輸出內容。以隔離 initialize 的當次環境、既有 HTTP 與 PostgreSQL gate 實際取得 Vertiv／NVIDIA companyfacts，各 HTTP 200；來源 hash、UTC 時間及精確 Decimal selected fixtures 已保存，不含請求 header。補驗揭露非 US GAAP namespace 不一定為 issuer extension，已修正為 unmapped-taxonomy 缺口，避免誤標 ECD 等標準分類。
+
+最新 `pg-check --suite financial-sec` 19 passed，包含官方年度值、NVIDIA 非曆年期間、實際 comparative EPS 重列、同值新申報只補 provenance，整批重新入庫沒有假修訂；原有合成邊界及三程序共用限流亦通過。只在可回滾的獨立 test DB 驗證，沒有向 application 寫入這批數字或啟動定時抓取。詳見 [SEC adapter](research-financial-sec.md)。

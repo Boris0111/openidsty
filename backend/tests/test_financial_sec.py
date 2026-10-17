@@ -2,10 +2,50 @@
 from datetime import date
 from decimal import Decimal
 import json
+import hashlib
+from pathlib import Path
 import pytest
 from app.financial_sec import SecIssuer,parse_companyfacts,persist_sec
 from app.financial_store import latest
 from test_financial_store import storage
+from sqlalchemy import text
+
+OFFICIAL=Path(__file__).parent/'fixtures/official-sec-20261017'
+
+
+@pytest.mark.parametrize('name,cik,end,revenue,eps,cfo',[
+    ('vrt','1674101',date(2025,12,31),'10229900000','3.49','2113800000'),
+    ('nvda','1045810',date(2026,1,25),'215938000000','4.93','102718000000')])
+def test_official_annual_samples_preserve_exact_values_and_non_calendar_dates(name,cik,end,revenue,eps,cfo):
+    payload=(OFFICIAL/(name+'.selected.json')).read_bytes()
+    provenance=next(row for row in json.loads((OFFICIAL/'provenance.json').read_text()) if row['id']==name)
+    assert hashlib.sha256(payload).hexdigest()==provenance['selected_sha256']
+    result=parse_companyfacts(payload,SecIssuer('company-'+name,cik))
+    assert not result.unresolved
+    rows={row.value.context.metric_id:row for row in result.records if row.value.context.period_end==end and row.value.context.basis=='annual'}
+    assert rows['revenue'].value.value==Decimal(revenue)
+    assert rows['eps-basic'].value.value==Decimal(eps)
+    assert rows['operating-cash-flow'].value.value==Decimal(cfo)
+    if name=='nvda':assert rows['revenue'].value.context.period_start==date(2025,1,27)
+    assert rows['revenue'].value.fiscal_year is None
+    # ECD and other unmapped standard namespaces are not called issuer extensions.
+    assert any(row['reason']=='unmapped-taxonomy' for row in result.gaps)
+
+
+def test_official_comparative_eps_revisions_and_repeated_import(storage):
+    connection,company=storage
+    result=parse_companyfacts((OFFICIAL/'nvda.selected.json').read_bytes(),SecIssuer(company,'1045810'))
+    imported=persist_sec(connection,result)
+    assert imported['new_revisions']>0 and imported['needs_review']==0
+    repeated=persist_sec(connection,result)
+    assert repeated['new_revisions']==repeated['active_changes']==0 and repeated['needs_review']==0
+    rows=[row for row in result.records if row.value.context.metric_id=='eps-basic' and
+        row.value.context.period_end==date(2023,1,29) and row.value.context.basis=='annual']
+    assert [row.value.value for row in sorted(rows,key=lambda row:row.fact.filed_at)]==[Decimal('1.76'),Decimal('1.76'),Decimal('0.18')]
+    active=latest(connection,rows[0].value.context.group_id)
+    assert active['value']==Decimal('0.18') and active['revision']==2
+    count=connection.execute(text('SELECT count(*) FROM research.observation_provenance p JOIN research.financial_observations o USING(observation_id) WHERE o.group_id=:group'),{'group':rows[0].value.context.group_id}).scalar_one()
+    assert count==3
 
 
 def document(changes=None):
@@ -77,7 +117,7 @@ def test_missing_standard_custom_taxonomy_and_context_conflict_leave_gaps():
         facts['Revenues']['units']['USD'].append(dict(first,val=101))
         facts['GrossProfit']['units']['USD'][0]['dimensions']={'ProductAxis':'AI'}
     result=parse(document(change))
-    assert any(row['reason']=='custom-taxonomy-unmapped' for row in result.gaps)
+    assert any(row['reason']=='unmapped-taxonomy' and 'custom' in row['taxonomies'] for row in result.gaps)
     assert any(row.get('metric_id')=='net-income-parent' for row in result.gaps)
     assert any(row['reason']=='conflicting-standard-context' for row in result.unresolved)
     assert not any(row.value.context.metric_id in ('gross-profit','revenue','net-income-parent') for row in result.records)

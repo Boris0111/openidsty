@@ -1,10 +1,10 @@
 # SEC 財務 adapter 與設定
 
-Task 5.3 **尚未完成**：程式與合成邊界測試已實作，官方實際 companyfacts 樣本尚待本機設定有效 `SEC_USER_AGENT` 後擷取核對；不可把離線合成測試當成真實來源驗收。自動到期擷取仍由 task 5.5 接入，尚未啟動 scheduler。
+Task 5.3 已完成標準 mapping、官方實際樣本及修訂／共用限流驗證。自動到期擷取仍由 task 5.5 接入，尚未啟動 scheduler；本次樣本沒有寫入 application 財務。
 
 ## 本機設定
 
-在新版 worktree 的 `.env.research` 加入一行 `SEC_USER_AGENT=IndustryFlow Research <你的公開研究聯絡 email>`，將整個尖括號部分換成實際 email，不保留括號。這是 SEC 要求的專案名稱／聯絡資訊，不是 API key；程式不自行猜測聯絡人，不把此設定提交 Git、放進公開研究或一般讀者回應。Compose 會在下次建立 app 容器時載入它；既有容器的環境不會因存檔立即更新。不要複製別人的 email 或官方範例作為實際聯絡人。
+在新版 worktree 的 `.env.research` 加入一行 `SEC_USER_AGENT=IndustryFlow Research <你的研究聯絡 email>`，將整個尖括號部分換成實際 email，不保留括號。SEC 明文請自動化工具宣告 User-Agent，以機構名稱及聯絡 email 為範例；本專案據此要求 email 格式，不代表必須使用個人主要信箱。可使用自己控制、可收信的專用信箱或 alias。這不是 API key；程式不自行猜測聯絡人，不把設定提交 Git、放進公開研究或一般讀者回應。Compose 會在建立 app 容器時載入它；既有容器不會因存檔立即更新。
 
 完整設定後，使用 `python scripts/research_lab.py up` 重建隔離版；不要直接顯示 `docker compose config` 的完整展開內容，也不提前開 scheduler。單次擷取及其 admin 操作由 task 5.5 完成。未設定時 SEC 回 `configuration_required`，台灣來源不應受影響；不把拒絕當成空財報。
 
@@ -44,4 +44,6 @@ SEC 只允許核對的官方 HTTPS 主機，不向外部重新導向傳送聯絡
 
 `python scripts/research_lab.py pg-check --suite financial-sec`：16 項合成／真實 DB 測試通過，包含 11 類標準 tag、不同期間、基本／稀釋 EPS、未知股別、自訂 tag 缺口、歧義欄位、重編、同值新申報、重跑不假更新；三個獨立程序使用同一 PostgreSQL gate 的實際間距符合 0.5 秒，HTTP 失敗釋放鎖。HTTP 對外請求使用 MockTransport，不傳送合成 email；一般 IR 頁跳轉 SEC 也必須經同一 gate。
 
-**待取得：** 官方實際 companyfacts 回應的 hash、日期、原始 selected fixtures 與逐項比對。未取得前 task 5.3 checkbox 保持未完成；目前不能宣稱 SEC 擷取或完整 task 5.3 已交付。
+2026-10-17 使用 Boris 已設定的聯絡資訊，經同一 PostgreSQL gate 實際取得 Vertiv（CIK 1674101）及 NVIDIA（CIK 1045810）companyfacts，均 HTTP 200。原始回應保存在忽略的 `.work/sec-official-20261017/`；`backend/tests/fixtures/official-sec-20261017/provenance.json` 保存 UTC 擷取時間、URL、完整回應及 selected fixtures 的 SHA-256。Selected JSON 保留已映射指標 2023 年以後的事實與其他 namespace，以 Decimal 精確重序列化，不經 Float；沒有保存請求 header 或聯絡 email。
+
+最新 `financial-sec` 為 **19 passed**：新增兩家公司官方數值／非曆年日期比對，以及真實 PostgreSQL 的 NVIDIA basic EPS comparative history。2023-01-29 年度 EPS 在 2023／2024／2025 申報依序為 1.76／1.76／0.18，保存 3 筆 provenance、2 次數值 revision；整批重跑新增 revision／active change 均為 0。這是後續申報重列，不能只憑數值變化宣稱公司會計錯誤。其他 namespace（如 ecd、invest、ffd）僅標為尚未映射，不能擅自稱為公司自訂 taxonomy；API 原本就不保證取得 issuer extensions。

@@ -99,8 +99,10 @@ def parse_companyfacts(payload,issuer:SecIssuer):
     gaap=data['facts'].get('us-gaap',{})
     if not isinstance(gaap,dict):raise ValueError('SEC US GAAP 格式改變。')
     if not gaap:result.gaps.append({'reason':'unsupported-taxonomy','available':list(data['facts'])})
-    custom=[key for key in data['facts'] if key not in ('us-gaap','ifrs-full','dei','srt')]
-    if custom:result.gaps.append({'reason':'custom-taxonomy-unmapped','taxonomies':custom})
+    unmapped=[key for key in data['facts'] if key!='us-gaap']
+    # Companyfacts can contain other standard taxonomies (ecd, invest, ffd...).
+    # A namespace outside our mapping does not prove it is an issuer extension.
+    if unmapped:result.gaps.append({'reason':'unmapped-taxonomy','taxonomies':unmapped})
     candidates={};count=0
     for metric,tags in TAGS.items():
         seen=False
