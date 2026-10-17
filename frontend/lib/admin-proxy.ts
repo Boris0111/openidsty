@@ -12,7 +12,8 @@ export async function proxyAdmin(request:NextRequest,path:string[]) {
   const uuid='[0-9a-fA-F-]{36}';
   const permitted=resource==='session'?['GET','POST','DELETE']:resource==='drafts'?['GET','POST']:['releases','sources','audit'].includes(resource)?['GET']:['drafts/render-document','drafts/asset-upload'].includes(resource)?['POST']:new RegExp(`^drafts/${uuid}$`).test(resource)?['GET','PATCH']:new RegExp(`^drafts/${uuid}/(export|document|diff|preview)$`).test(resource)?['GET']:new RegExp(`^drafts/${uuid}/(import|validate|publish)$`).test(resource)?['POST']:new RegExp(`^drafts/${uuid}/assets/[0-9a-f]{64}$`).test(resource)?['GET']:new RegExp(`^jobs/${uuid}$`).test(resource)?['GET']:new RegExp(`^jobs/${uuid}/retry$`).test(resource)||new RegExp(`^releases/${uuid}/restore$`).test(resource)?['POST']:[];
   const financial=resource==='financial-imports'?request.method==='POST':new RegExp(`^financial-imports/${uuid}$`).test(resource)?request.method==='GET':new RegExp(`^financial-imports/${uuid}/confirm$`).test(resource)?request.method==='POST':false;
-  if(!permitted.includes(request.method)&&!financial)return failure(404,'admin-resource-not-found','找不到這項管理功能。');
+  const source=new RegExp('^sources/[a-zA-Z0-9._-]{1,100}$').test(resource)?request.method==='GET':new RegExp('^sources/[a-zA-Z0-9._-]{1,100}/refresh$').test(resource)?request.method==='POST':new RegExp(`^source-jobs/${uuid}$`).test(resource)?request.method==='GET':false;
+  if(!permitted.includes(request.method)&&!financial&&!source)return failure(404,'admin-resource-not-found','找不到這項管理功能。');
   const allowed=(process.env.RESEARCH_ADMIN_ORIGINS||'').split(',').filter(Boolean);
   if(!allowed.length)return failure(503,'admin-unavailable','管理入口尚未完成設定。');
   const host=request.headers.get('host');

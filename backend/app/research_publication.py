@@ -52,7 +52,7 @@ def audit(owner=Depends(require_owner), connection=Depends(get_admin_connection)
 @router.get('/sources')
 def sources(owner=Depends(require_owner), connection=Depends(get_admin_connection),
             limit: int = Query(50, ge=1, le=100), cursor: str | None = Query(None, max_length=100)):
-    rows = connection.execute(text('''SELECT id,name,url,status,last_attempt,last_success,new_count,left(error,4096) AS error
+    rows = connection.execute(text('''SELECT id,name,url,status,last_attempt,last_success,new_count,left(error,4096) AS error,data->>'adapter' AS adapter
         FROM public.sources WHERE (CAST(:cursor AS text) IS NULL OR id>:cursor) ORDER BY id LIMIT :limit'''),
         {'cursor':cursor,'limit':limit+1}).mappings().all()
     return respond({'items':[dict(row) for row in rows[:limit]],'has_more':len(rows)>limit,

@@ -183,6 +183,23 @@ class ResearchSchemaTests(unittest.TestCase):
         path.write_text(path.read_text(encoding='utf-8').replace('kind: company', 'kind: company\nkind: product'), encoding='utf-8')
         self.check('重複 YAML 鍵')
 
+    def financial_profile(self):
+        (self.root/'sources.yaml').write_text(yaml.safe_dump({'tw':{'filings':[{'id':'test-financial-source'}]}}),encoding='utf-8')
+        return {'primary-source-family':'tw-mops-summary','confidence':'well-supported','reviewed':'2026-10-17',
+            'fiscal-year-end':'12-31','calendar-valid-from':'2024-01-01','calendar-valid-to':None,
+            'evidence':[{'source-id':'test-financial-source','url':'https://official.example/annual',
+                'locator':'年度報表實際期間','read-scope':'合成格式測試，非真實財年研究。','applicable-period':'測試期間','stance':'supporting'}]}
+
+    def test_financial_calendar_is_optional_but_evidence_and_dates_are_required(self):
+        self.company['financial-reporting']=self.financial_profile();self.write(self.company);self.check()
+        self.company['financial-reporting']['evidence']=[];self.write(self.company);self.check('evidence needs at least')
+
+    def test_financial_calendar_invalid_and_reversed_intervals_rejected(self):
+        self.company['financial-reporting']=self.financial_profile()
+        self.company['financial-reporting']['fiscal-year-end']='02-30';self.write(self.company);self.check('year-end invalid')
+        self.company['financial-reporting']['fiscal-year-end']='12-31'
+        self.company['financial-reporting']['calendar-valid-to']='2023-12-31';self.write(self.company);self.check('interval reversed')
+
 
 if __name__ == '__main__':
     unittest.main()

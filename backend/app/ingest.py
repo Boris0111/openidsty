@@ -35,8 +35,9 @@ def register_sources(session):
         if not row:
             row=Source(id=d['id'],status='not_run',new_count=0)
             session.add(row)
-        row.name=d['name']; row.url=d['url']; row.data=dict(d, **{k:v for k,v in (row.data or {}).items() if k in ('fetch_meta','backfill_meta','backfill_completed_at','last_error_kind','last_http_status')})
+        row.name=d['name']; row.url=d['url']; row.data=dict(d, **{k:v for k,v in (row.data or {}).items() if k in ('fetch_meta','backfill_meta','backfill_completed_at','last_error_kind','last_http_status','runtime')})
         if d['adapter']=='manual': row.status='manual'
+        elif row.status=='manual': row.status='not_run'
     session.commit()
     return definitions
 
@@ -218,6 +219,11 @@ if __name__=='__main__':
     args=parser.parse_args()
     if args.only_stale and not args.reclassify:
         parser.error('--only-stale 需搭配 --reclassify')
+    import os
+    if os.getenv('RESEARCH_WRITE_DATABASE_URL') and not args.reclassify:
+        from .source_updates import run_due
+        print(json.dumps(run_due(args.source,backfill_days=args.backfill_days),ensure_ascii=False))
+        raise SystemExit(0)
     if args.reclassify:
         print(json.dumps(reclassify_events(args.only_stale),ensure_ascii=False))
     else:

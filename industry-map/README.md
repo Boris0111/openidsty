@@ -58,6 +58,7 @@ industry-map/
 | listings | 陣列，可空；每筆 ticker、market（TW／US／KR／JP／HK／DE／NL）、exchange（MIC 或 UNKNOWN）、share-class（非空文字）、valid-from／valid-to（有效日日期或 null）。未知交易所或股別不猜測；期間不得倒置；同市場／交易所／ticker 的有效區間不得重疊 |
 | source-identifiers | 陣列，可空；每筆 provider、value 為非空文字，`sec-cik` 為 1–10 位數字文字；同 provider/value 不可對應不同法律主體 |
 | research-depth | basic／deep。basic 是保留既有角色的索引，並非已查核新產品或客戶；deep 仍需逐項來源與閱讀驗收 |
+| financial-reporting | optional 公司財務設定；primary-source-family 為來源族 kebab-case，confidence 為三種證據程度之一，reviewed 為查核日，evidence 至少一筆沿用本 Schema 的頁面／固定文件證據格式。若宣告 fiscal-year-end（MM-DD），須同時提供 calendar-valid-from（日期）及 calendar-valid-to（日期或 null），範圍不得倒置；僅 well-supported 日曆可用於自動推導日期。財年設定不代表已取得數值或可比較口徑 |
 | roles | 舊角色的相容基準陣列：segment-id、description、tier（1–3）、baseline-path（該 segment 相對地圖路徑）。保留遷移前角色數與描述，不把它當新交易證據；新增產品能力放 offerings |
 
 `PRIVATE:boyd` 是 legacy key，Boyd 的 listings 為空。跨市場同一法律主體可有多個 listing；ADR／普通股的 share-class 分開，不換算 EPS。母公司與子公司即使名稱相似也各有 ID，關係另外表達。初次遷移的 `company-2330-tw` 等含代號 ID 亦只是不可變字串，日後代號改變不可重新計算 ID；既有 registry 檔案才是真實來源。
@@ -329,7 +330,7 @@ kind 為 direct／proxy／background；unit 為 amount／percent，amount 需 US
 | `checked` | 是 | 最後實際查核日期，`YYYY-MM-DD`，加引號保留為字串 |
 | `segments` | 否 | 環節識別碼陣列，每筆須能解析；一般全市場申報入口可省略，不表示沒有覆蓋 |
 | `themes` | 否 | 題材識別碼陣列，每筆須能解析；設定涵蓋不表示已取得直接事件 |
-| `ingestion` | 否 | 自動擷取設定；省略等同 manual。`adapter` 可為 manual／tw／tsmc／delta／nvidia／microsoft／sec-submissions／sec-facts／rss／tpca／moea／census／eia／aaon-metrics／tsmc-metrics；`url`、`fallback` 為 HTTPS；`max_pages` 1–200；`paged` 表示 RSS 支援頁碼；`kind` 為 tw 的 announcements／revenue／financials；`per_company` 將 SEC URL 的 `{cik}` 展開為有 CIK 的公司；兩個指標 adapter 另有 `max_reports` 1–8、`history_days` 1–730，首次受限回補，其後核對最新兩季 |
+| `ingestion` | 否 | 自動擷取設定；省略等同 manual。`adapter` 可為 manual／tw／tsmc／delta／nvidia／microsoft／sec-submissions／sec-facts／rss／tpca／moea／census／eia／aaon-metrics／tsmc-metrics；`url`、`fallback` 為 HTTPS；`max_pages` 1–200；`paged` 表示 RSS 支援頁碼；`kind` 為 tw 的 announcements／revenue／financials／balance（balance 僅新版 research 財務流程支援）；`per_company` 將 SEC URL 的 `{cik}` 展開為有 CIK 的公司；兩個指標 adapter 另有 `max_reports` 1–8、`history_days` 1–730，首次受限回補，其後核對最新兩季 |
 | `notes` | 否 | 說明免費內容邊界、查核方法／結果、未驗證原因及統計口徑；為維護者閱讀用文字 |
 
 下例可獨立解析；若加入既有檔案，只把條目併入既有 `us.filings` 陣列，**不要重複建立 `us:` 或 `filings:` 鍵**。名稱與 URL 的用途須人工確認，驗證器不會證明頁面真的免費或內容正確。

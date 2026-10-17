@@ -1,6 +1,6 @@
 # 台灣官方財務摘要 adapter
 
-`backend/app/financial_tw.py` 解析 TWSE／TPEx 公開 JSON／CSV；本階段完成 task 5.2 的資料解析、能力及 storage。自動排程與單次更新由 task 5.5 串接，尚未把這批樣本寫入 application DB，也不自動修改研究主張。
+`backend/app/financial_tw.py` 解析 TWSE／TPEx 公開 JSON／CSV；到期排程與單次更新見 [來源更新](research-source-updates.md)。樣本僅供隔離測試，不自動修改研究主張。
 
 ## 實際提供範圍
 
@@ -10,7 +10,7 @@
 | 一般業損益 `t187ap06_*_ci` | 營收、毛利、營業利益、歸屬母公司淨利、總淨利、基本 EPS；同報表衍生毛利率 | Q1–Q3 為截至該季的年度累計，Q4 為年度；不以 EPS 相減取得單季 |
 | 一般業資產負債 `t187ap07_*_ci` | 負債總計 | 期末餘額；不是有息負債，不由總資產／負債倒推現金 |
 
-這些入口未提供 CFO、capex、現金及約當現金、稀釋 EPS。金融業專用報表及全市場完整歷史不在此一般業摘要能力內；未提供項目由官方文件核對補錄或顯示缺口。各 metric 的程式能力可由 `capabilities(kind)` 查詢，預設每日檢查，到期排程仍須完成 task 5.5。
+這些入口未提供 CFO、capex、現金及約當現金、稀釋 EPS。金融業專用報表及全市場完整歷史不在此一般業摘要能力內；未提供項目由官方文件核對補錄或顯示缺口。各 metric 的程式能力可由 `capabilities(kind)` 查詢，預設每日到期，背景服務運行時才會擷取。
 
 金額欄位以 Decimal 由新台幣千元轉為元，保留原值與 1000 倍率；EPS 已為元／股，倍率為 1。原始年增可能超過 Numeric(38,10) 可保存的小數精度，完整原始列仍保存為證據，canonical 值改用同列兩筆營收的可追溯公式，不能偷偷捨入後冒充官方原值。零與空白／缺值分開，缺少母公司淨利時不能以總淨利替代。
 
@@ -28,7 +28,7 @@
 
 來源與欄位定義：[TWSE OpenAPI](https://openapi.twse.com.tw/v1/swagger.json)、[TPEx OpenAPI](https://www.tpex.org.tw/openapi/swagger.json)。金額單位另實讀 [MOPS 月營收表](https://mopsov.twse.com.tw/nas/t21/sii/t21sc03_115_9_0.html) 的「千元」表頭；以官方 [MOPS 損益查詢](https://mopsov.twse.com.tw/mops/web/ajax_t163sb04)、[資產負債查詢](https://mopsov.twse.com.tw/mops/web/ajax_t163sb05) 的唯讀查詢（TYPEK=sii、year=115、season=02），核對新台幣仟元及截至該季累計的表頭。實際 HTML 回應保存在上述忽略目錄，不依 JavaScript 空外殼判定可讀。
 
-API 通常提供目前彙整期，不能宣稱可重建任意歷史；本機自後續成功擷取累積歷史。未來相同提供者日期卻不同值須核對，來源失敗不得刪有效資料。兩筆負債來源先以 manual 註冊，避免送入只支援舊損益欄位的 legacy adapter；task 5.5 將接入新流程，而不重複下載同一來源。
+API 通常提供目前彙整期，不能宣稱可重建任意歷史；本機自後續成功擷取累積歷史。未來相同提供者日期卻不同值須核對，來源失敗不得刪有效資料。兩筆負債來源使用 `tw / balance` 接入新流程，不送入舊損益投影；同一回應不重複下載。
 
 ## 驗證
 

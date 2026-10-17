@@ -17,6 +17,8 @@ from .research_auth import router as research_auth_router
 from .research_drafts import router as research_drafts_router
 from .research_publication import router as research_publication_router
 from .financial_imports import router as financial_imports_router
+from .source_updates import router as source_updates_router
+app.include_router(source_updates_router)
 app.include_router(financial_imports_router)
 app.include_router(research_publication_router)
 app.include_router(research_drafts_router)

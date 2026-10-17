@@ -124,3 +124,15 @@ Boris 設定後已核對 SEC_USER_AGENT 存在、唯一及格式有效，未輸�
 Admin 新增「財務補錄」、JSON／CSV 空白範本、文件連結與差異表、明確勾選／理由及重試；修改內容即清舊預覽。Production build（隔離 Compose）、typecheck、16 項 live browser 通過（新增 3 財務，既有 13）；加入空白範本下載檢查後另重跑 3 項通過。桌機 1440×1000／手機 390×844 截圖已實際檢視，存於忽略的 `.work/financial-import-review/`。畫面寫入使用明示合成 API，真實 DB 行為另由上述測試覆蓋；未將截圖當 Boris 使用者驗收。
 
 Application 已升級 `0013`，head 不變；owner、financial observations、financial import batches 均 0。僅研究版 web／API／DB 運行，scheduler 仍關閉。下一項為 5.5 到期排程、共用重試、來源隔離及單次更新。
+
+## 來源到期更新完成（task 5.5）
+
+Migration `0014` 保存 source jobs、每 URL 重試預算、提供者退避及有界派送索引。每小時檢查到期來源、財務每日到期；單次更新與 CLI／Prefect 共用相同流程。429 持久保存 Retry-After，403／外殼停止當輪，資料交易失敗保留舊值。程序中斷可續原 job，不重設預算或製造財務修訂；事件 official／report／rumor 與 direct／mention／background 分開，研究 head 及正式關係不變。來源操作見 [research-source-updates](research-source-updates.md)。
+
+台灣兩筆負債 adapter 已接入新流程；同一官方回應兼供 canonical／相容 legacy 投影。季度日期只採用同一 published release 中有證據、信心與適用期間的 `financial-reporting` 設定，未知或失效設定保留缺口，不為填圖表猜財年。Schema／validator 同步擴充，尚未替實際公司填入未核對設定。
+
+驗證：`pg-check --suite source-updates` **17 passed**（HTTP、真實 writer、429 跨 client、實際子程序 exit 77 後續跑、派送失敗恢復、日曆適用期與傳聞隔離）；`financial-imports` **90 passed**；既有 ingestion／technical／metric 六套原生測試 **78 passed**；full 地圖驗證及 validator **66 類失敗案例＋20 research tests** 通過。早先 JSON／JSONB fixture 錯誤已修正，失敗輪未列入通過。
+
+Typecheck、隔離 production build 通過；live browser **19 passed、2 skipped**（唯讀 gateway 未啟動，該兩項不列通過）。來源手機走查發現表格橫向操作不便，改為逐筆上下排列並補明確 table roles；狀態 cell 的輔助標籤納入可存取名稱後修正測試比對，最新來源三項 **3 passed**。桌機與手機截圖實際檢視，位於忽略的 `.work/source-update-review/`，畫面是合成 API，非 Boris 驗收。
+
+Application 為 `0014`，已確認 history index、兩筆 balance adapter；head 仍 `03799774-3553-5ff6-9910-13a68468af15`，owner／publish jobs／financial observations／financial import batches／source jobs 均 0。僅新版 web／API／DB 運行，scheduler 仍關閉；原 project fingerprints 未變。Prefect 真實服務整合另由 task 9.1 驗證，沒有宣稱排程已開啟。下一項為 5.6 財務、事件、觀察與比較 API。

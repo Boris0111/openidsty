@@ -232,6 +232,28 @@ class ResearchValidator:
                 documents[doc['id']] = doc
         for obj in self.entities.values():
             path, kind = obj['_path'], obj['kind']
+            profile=obj.get('financial-reporting')
+            if profile is not None:
+                if kind!='company' or not isinstance(profile,dict):
+                    self.fail(path,'financial-reporting must be a company mapping')
+                else:
+                    family=profile.get('primary-source-family')
+                    if not isinstance(family,str) or not ID.fullmatch(family):self.fail(path,'financial-reporting primary-source-family invalid')
+                    if profile.get('confidence') not in CONFIDENCES:self.fail(path,'financial-reporting confidence invalid')
+                    self.day(profile.get('reviewed'),path,'financial-reporting reviewed')
+                    self.evidence(profile.get('evidence'),path,sources,documents)
+                    calendar={'fiscal-year-end','calendar-valid-from','calendar-valid-to'}
+                    if calendar & profile.keys():
+                        if not calendar<=profile.keys():self.fail(path,'financial calendar needs year-end and validity interval')
+                        try:
+                            end=profile.get('fiscal-year-end')
+                            if not isinstance(end,str) or not re.fullmatch(r'\d{2}-\d{2}',end):raise ValueError()
+                            date.fromisoformat('2001-'+end)
+                        except ValueError:self.fail(path,'financial calendar year-end invalid')
+                        self.day(profile.get('calendar-valid-from'),path,'calendar-valid-from')
+                        self.day(profile.get('calendar-valid-to'),path,'calendar-valid-to',True)
+                        start,finish=profile.get('calendar-valid-from'),profile.get('calendar-valid-to')
+                        if isinstance(start,str) and isinstance(finish,str) and finish<start:self.fail(path,'financial calendar interval reversed')
             for claim in obj['_claims'].values():
                 self.text(claim.get('statement'), path, 'claim statement')
                 if claim.get('confidence') not in CONFIDENCES:

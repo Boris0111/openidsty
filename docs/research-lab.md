@@ -30,6 +30,8 @@ python scripts/research_lab.py bootstrap --commit <完整commit>
 
 財務測試另有 `--suite financial-core`（含台灣實際樣本）、`--suite financial-sec`（SEC 官方／合成與跨程序限流）、`--suite financial-imports`（財務計算／storage／台美來源與 owner 補錄）。來源設定及官方核對見 [SEC adapter](research-financial-sec.md)，補錄操作見 [financial imports](research-financial-imports.md)。
 
+來源排程／單次更新可用 `--suite source-updates` 驗證持久重試、來源隔離與重啟，操作及限制見 [source updates](research-source-updates.md)。僅啟動 web／API 不會開始自動擷取。
+
 首條實際讀取預覽位於 `/next`，首份 release 已建立，不要為了重建 UI 再初始化或刪除 DB。瀏覽器走讀命令（在 frontend 執行）：
 
 ```powershell

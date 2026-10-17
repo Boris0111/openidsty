@@ -26,6 +26,8 @@ class TwIssuer:
     fiscal_year_end:tuple[int,int]|None=None
     scope:str='issuer-summary-unspecified'
     share_class:str='unspecified'
+    calendar_valid_from:date|None=None
+    calendar_valid_to:date|None=None
 
 
 @dataclass(frozen=True)
@@ -148,11 +150,14 @@ def parse_taiwan(payload,source_id,kind,url,issuers:dict[str,TwIssuer]):
             year=roc_year(values['年度'][1]);season=_key(values['季別'][1])
             if not re.fullmatch('[1-4]',season):raise ValueError('季別須為 1–4。')
             quarter=int(season)
-            if issuer.fiscal_year_end!=(12,31):
+            month=quarter*3;candidate_end=date(year,month,calendar.monthrange(year,month)[1])
+            candidate_start=candidate_end if kind=='balance' else date(year,1,1)
+            if (issuer.fiscal_year_end!=(12,31) or issuer.calendar_valid_from and issuer.calendar_valid_from>candidate_start or
+                issuer.calendar_valid_to and issuer.calendar_valid_to<candidate_end):
                 result.unresolved.append({'company_id':issuer.company_id,'source_id':source_id,'reason':'calendar-unverified',
                     'reported_year':values['年度'][1],'reported_quarter':season,'source_as_of':asof,'raw':raw})
                 continue
-            month=quarter*3;end=date(year,month,calendar.monthrange(year,month)[1])
+            end=candidate_end
             start=end if kind=='balance' else date(year,1,1)
             basis='instant' if kind=='balance' else 'annual' if quarter==4 else 'ytd'
         statement=f'{source_id}:{code}:{start.isoformat()}/{end.isoformat()}:{asof.isoformat()}'

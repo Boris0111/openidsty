@@ -84,8 +84,9 @@ tw:
     reachability: verified
     checked: '2026-10-17'
     ingestion:
-      adapter: manual
-    notes: HTTP 200 JSON；實讀台積電負債總計，金額千元。未提供現金及約當現金，不將負債總計當有息負債。新版 parser 已驗證；到期排程由 expand-industry-research-service task 5.5 接入，不交給不支援此欄位的 legacy tw adapter。
+      adapter: tw
+      kind: balance
+    notes: HTTP 200 JSON；實讀台積電負債總計，金額千元。未提供現金及約當現金，不將負債總計當有息負債。由新版研究財務流程每日檢查，legacy 財報不支援；財年尚未核對時保留原列與缺口，不猜季度日期。
   - id: tpex-announcements
     provider: tpex
     name: TPEX 重大訊息
@@ -130,8 +131,9 @@ tw:
     reachability: verified
     checked: '2026-10-17'
     ingestion:
-      adapter: manual
-    notes: HTTP 200 JSON；實讀雙鴻負債總計，金額千元。公司代號／日期為英文字段，年度／季別為中文；沒有現金及約當現金。新版 parser 已驗證，到期排程由 task 5.5 接入。
+      adapter: tw
+      kind: balance
+    notes: HTTP 200 JSON；實讀雙鴻負債總計，金額千元。公司代號／日期為英文字段，年度／季別為中文；沒有現金及約當現金。由新版研究財務流程每日檢查，未核對財年時保留原列與缺口。
   earnings_call:
   - name: 台積電季度法說會與財報
     url: https://investor.tsmc.com/english/quarterly-results

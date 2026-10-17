@@ -95,6 +95,8 @@ def test_alias_collision_and_unverified_calendar_are_not_guessed():
     row=json.loads(sample('tpex','income'))[0];row['年度']='114'
     with pytest.raises(ValueError):parse('tpex','income',json.dumps([row],ensure_ascii=False))
     assert not parse('tpex','income',issuer=TwIssuer('company-auras',(1,31))).records
+    expired=TwIssuer('company-auras',(12,31),calendar_valid_from=date(2024,1,1),calendar_valid_to=date(2025,12,31))
+    assert not parse('tpex','income',issuer=expired).records
 
 
 def test_big5_csv_and_annual_income_keep_original_period():

@@ -27,8 +27,9 @@ def import_documents(session,manifest,sources):
             row=Source(id=sid,name=entry['name'],url=entry['url'],status='manual' if config['adapter']=='manual' else 'not_run',new_count=0,data=dict(entry,**config))
             session.add(row)
         else:
-            runtime={k:v for k,v in (row.data or {}).items() if k in ('fetch_meta','backfill_meta','backfill_completed_at','last_error_kind','last_http_status')}
+            runtime={k:v for k,v in (row.data or {}).items() if k in ('fetch_meta','backfill_meta','backfill_completed_at','last_error_kind','last_http_status','runtime')}
             row.name=entry['name'];row.url=entry['url'];row.data=dict(entry,**config,**runtime)
+            if row.status=='manual' and config['adapter']!='manual':row.status='not_run'
     session.flush()
     ids=[]
     for d in manifest['documents']:

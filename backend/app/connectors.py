@@ -52,6 +52,8 @@ def rows_from_text(text):
     return [{aliases.get(str(k).strip(),str(k).strip()):v for k,v in row.items()} for row in rows]
 
 def parse_tw(text, kind, url, tracked):
+    if kind not in ('announcements','revenue','financials'):
+        raise ValueError('此欄位需使用新版研究財務流程，legacy 財報不支援。')
     events,financials=[],[]
     rows=rows_from_text(text)
     required={'announcements':'主旨','revenue':'資料年月','financials':'營業收入'}[kind]
