@@ -38,9 +38,11 @@ def v2():
     insert(connection, 'legacy_mappings', {'release_id': published, 'kind': 'company', 'legacy_key': 'TEST', 'entity_id': keys[0]})
     role, product, concept = 'role-v2-' + token, 'product-v2-' + token, 'concept-v2-' + token
     for key, kind in [(role, 'role'), (product, 'product'), (concept, 'concept')]:
+        content = {'related-ids':[keys[1],keys[2]],'comparisons':[{'left':product,'right':concept,
+            'conditions':['合成比較條件'],'limitations':['合成比較限制']}]} if kind=='concept' else {}
         insert(connection, 'entities', {'entity_id': key, 'kind': kind})
         insert(connection, 'entity_snapshots', {'release_id': published, 'entity_id': key, 'kind': kind,
-            'name': '合成分類', 'summary': '測試', 'markdown': '測試', 'data': {}, 'semantic_hash': 'b' * 64})
+            'name': '合成分類', 'summary': '測試', 'markdown': '測試', 'data': content, 'semantic_hash': 'b' * 64})
     insert(connection, 'listings', {'release_id': published, 'listing_id': 'test', 'company_id': keys[0],
         'ticker': '1234.TW', 'market': 'TW', 'exchange': 'XTAI', 'share_class': 'test'})
     insert(connection, 'taxonomy_links', {'release_id': published, 'link_id': 'test-company', 'parent_id': role, 'child_id': keys[0]})
@@ -150,6 +152,18 @@ def test_document_versions_are_fixed_and_do_not_expose_maintenance(v2):
     assert client.get('/api/v2/documents/' + data['unused_doc'] + '/revisions/' + data['unreferenced']).status_code == 404
     claims = client.get('/api/v2/companies/' + data['keys'][0]).json()['data']['claims']
     assert claims[0]['evidence'][0]['revision_id'] == data['cited']
+
+
+def test_authored_related_and_comparison_targets_resolve_only_in_same_release(v2):
+    client,data=v2
+    response=client.get('/api/v2/concepts/'+data['concept'],params={'release_id':data['release']})
+    result=response.json()
+    assert result['release_id']==data['release']
+    related={row['id'] for row in result['data']['related']}
+    assert related=={data['keys'][1],data['product']}
+    assert data['keys'][2] not in related
+    assert data['keys'][2] not in response.text
+    assert result['data']['content']['comparisons'][0]['conditions']==['合成比較條件']
 
 
 def test_detail_and_cursor_do_not_mix_filters(v2):

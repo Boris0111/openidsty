@@ -70,7 +70,7 @@ export function ResearchExplorer() {
         <p className="rs-scope-note">本輪走讀：雙鴻冷板與 Vertiv 液對液 CDU。這是已核對案例，並非完整供應商名單。</p>
       </section>}
       <article className="rs-detail" ref={panel} tabIndex={-1} aria-label="選中研究內容" aria-busy={detail.loading}>
-        {detail.loading?<p role="status">正在讀取這份研究…</p>:item&&<ResearchDetailContent item={item} href={href} companies={companies} products={products}/>}
+        {detail.loading?<p role="status">正在讀取這份研究…</p>:item&&<ResearchDetailContent key={release+':'+item.id} item={item} href={href} companies={companies} products={products} release={release} illustrations={focus!=='concept-liquid-cooling-loop'}/>}
       </article>
       <div className="rs-network-area">{graph.data?<ResearchNetwork graph={graph.data.data} onSelect={navigate} selectedEdge={params.get('edge')} onEdge={selectEdge}/>:graph.error?<p role="alert">{graph.error}</p>:<p role="status">正在讀取關係…</p>}</div>
     </div>}

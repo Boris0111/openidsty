@@ -158,3 +158,17 @@ Typed graph 的圖例依實際型別顯示；圖形及文字選單共用 `edge` 
 實際確認 17 環節、7 題材、95 公司可由目錄到達；舊散熱圖 → 應用 → 晶片端角色 → 冷板 → 雙鴻 → 原地圖及舊 ticker 往返通過。桌機 1440×1000／手機 390×844 無橫向溢出，圖形縮放／平移後來回 resize 的畫布截圖一致。四張真實畫面已實際檢視，保存於忽略的 `.work/research-navigation-review/`；截圖與自動測試不是 Boris 的閱讀驗收，也不代表 task 8 的全鏈分類／26 家深研已完成。
 
 Application 仍為 `0015`／原 research head，2915 事件、1970 linked events、34 關係不變；owner、publish jobs、canonical financial observations、financial import batches、source jobs 均 0。只有新版 web／API／DB 運行，scheduler／Prefect worker 仍關閉，原服務 fingerprints 無變更。下一項為 6.2 公司／產品／術語內容、技術比較與固定版本引用。
+
+## 公司／產品／術語與固定引用完成（task 6.2，2026-10-18）
+
+公司保留同一身分及各環節角色，完整研究的段落目錄只取實際 Markdown；基本索引不新增空白深研標題。產品補回先前未呈現的全文，術語顯示比較對象、條件與互補／替代限制。圖解共用同一 reader／owner renderer，使用固定 hash 及手機資產，失效保留說明；既有走讀不重複同一張圖。相關研究與比較對象在 SQL 解析同版中文名稱，輸出有界，未解析的引用不向其他 release 補查。操作見 [內容閱讀](research-content-reading.md)。
+
+引用直接保留原始來源、期間及章節。「查閱這份引用」按需讀取固定 document revision，顯示適用範圍、已讀／未讀部分及可合法保存的摘錄；失效不改查 latest、不刪主張。HTTP／JavaScript 外殼等取證方法不放進一般閱讀。Owner 預覽只使用候選引用的內嵌資料，瀏覽器契約確認不呼叫 public draft URL。
+
+最新 `pg-check --suite reader-navigation` **22 passed**，含同版關聯／比較、未發布 ID 不洩漏、固定引用與既有圖／搜尋；`publication-interfaces` **1 passed**，完整走過檔案匯入、owner HTTP 發布、失敗重試、還原與真實 reader role。離線瀏覽器 **7 passed**（新內容 4＋導覽 3）；隔離預覽瀏覽器 **15 passed**（新內容 2＋editor 4＋導覽 3＋原走讀 6）。Typecheck、原生及隔離 production build 通過。早先分頁返回測試未等待 router URL 提交、手機狀態 cell 的可存取名稱多出標籤，以及一次回歸早於容器重建完成，均已分別修正測試／執行順序，失敗輪不列通過。
+
+桌機 1440×1000、手機 390×844 真實內容及來源展開已走查，四張截圖實際檢視並保存於忽略的 `.work/research-content-review/`，不當作 Boris 閱讀驗收。官方原文另實讀 Vertiv／NVIDIA；雙鴻新聞本環境僅取得頁面外殼，已在閱讀文件記錄限制，未改寫舊研究／查核日，也沒有以 HTTP 200 當作重新證實。全鏈分類與 26 家深研仍留 task 8。
+
+財務頁面驗收尚未完成：6.3 未實作，application canonical observations／source jobs 均 0；雙鴻與 Vertiv 財務 API 實際 HTTP 200、空 items 及明確缺口。官方樣本只在獨立 test DB 驗證，沒有把 fixtures 或舊 Float 補入預覽。已提供 [財務驗收狀態與步驟](research-financial-acceptance.md)，區分後端證據、目前空資料與頁面交付。本輪依指定範圍完成 6.2 後儲存；若續 6.3，再加入財務趨勢／修訂／比較及真實官方資料查核。
+
+Application 仍為 `0015`、原 head `03799774-3553-5ff6-9910-13a68468af15`，2915 事件／1970 linked events／34 關係不變；owner、publish jobs、financial observations、financial import batches、source jobs 均 0。僅研究版 web／API／DB 運作，原服務 fingerprints 未變，未開啟來源排程或 Prefect worker。

@@ -215,11 +215,21 @@ def detail_payload(session, release, row):
     if data.get('technical-profile'):
         content['technical_profile'] = {key.replace('-', '_'): value for key, value in data['technical-profile'].items()}
     claims, truncated = claims_payload(session, release, entity_id)
-    related = session.execute(text('''SELECT DISTINCT s.entity_id,s.kind,s.name,s.summary,s.reviewed
-        FROM research.taxonomy_links t JOIN research.entity_snapshots s ON s.release_id=t.release_id
-          AND s.entity_id=CASE WHEN t.parent_id=:id THEN t.child_id ELSE t.parent_id END
-        WHERE t.release_id=:r AND (t.parent_id=:id OR t.child_id=:id)
-        ORDER BY s.entity_id LIMIT 101'''), {'r': release['release_id'], 'id': entity_id}).mappings().all()
+    references = set(data.get('related-ids', []))
+    for comparison in data.get('comparisons', []):
+        references.update((comparison['left'],comparison['right']))
+    related = session.execute(text('''SELECT s.entity_id,s.kind,s.name,s.summary,s.reviewed
+        FROM research.entity_snapshots s WHERE s.release_id=:r AND s.entity_id<>:id
+        AND (s.entity_id=ANY(CAST(:references AS text[])) OR EXISTS (
+            SELECT 1 FROM research.taxonomy_links t WHERE t.release_id=:r AND
+            ((t.parent_id=:id AND t.child_id=s.entity_id) OR (t.child_id=:id AND t.parent_id=s.entity_id))))
+        ORDER BY s.entity_id LIMIT 101'''), {'r': release['release_id'], 'id': entity_id,
+            'references':sorted(references)}).mappings().all()
+    available = {entity_id, *(item['entity_id'] for item in related[:100])}
+    if 'related_ids' in content:
+        content['related_ids'] = [key for key in content['related_ids'] if key in available]
+    if 'comparisons' in content:
+        content['comparisons'] = [item for item in content['comparisons'] if item['left'] in available and item['right'] in available]
     assets = []
     if data.get('diagram-assets'):
         rows = session.execute(text('SELECT asset_id,sha256,metadata FROM research.release_assets WHERE release_id=:r AND asset_id=ANY(CAST(:ids AS text[])) ORDER BY asset_id'),

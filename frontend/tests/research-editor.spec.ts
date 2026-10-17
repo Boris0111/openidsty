@@ -8,6 +8,7 @@ for(const mobile of [false,true])test(`草稿編輯、預覽與 stale revision �
   const path='industry-map/companies/company-auras.md';
   const previous='44444444-4444-4444-8444-444444444444';
   let revision=1,conflict=false,summary='合成既有摘要',active=base;
+  const publicRequests:string[]=[];await page.route('**/api/v2/**',route=>{publicRequests.push(route.request().url());return route.abort()});
   const frontmatter=()=>({'entity-id':'company-auras',kind:'company','name-zh':'雙鴻',summary,claims:[{id:'keep'}]});
   const draft=()=>({draft_id:id,base_release_id:base,revision,schema_version:'research-draft-v1',files:{[path]:'synthetic markdown'},assets:{}});
   await page.route('**/api/admin/**',async route=>{
@@ -19,7 +20,7 @@ for(const mobile of [false,true])test(`草稿編輯、預覽與 stale revision �
     else if(url.pathname==='/api/admin/drafts')data={items:[{draft_id:id,current_revision:revision,status:'editing',created_at:'2026-10-17'}]};
     else if(url.pathname.endsWith('/document'))data={path,content:'synthetic markdown',frontmatter:frontmatter(),markdown:'## 合成研究\n測試內文'};
     else if(url.pathname.endsWith('/validate'))data={valid:true,errors:[],revision};
-    else if(url.pathname.endsWith('/preview'))data={data:{id:'company-auras',kind:'company',name:'雙鴻',summary,markdown:'## 合成研究\n測試內文',content:{gaps:['合成測試界線']},claims:[],related:[],assets:[],truncated:false},graph:{root:'company-auras',nodes:[],edges:[],truncated:false,continue_from:[]}};
+    else if(url.pathname.endsWith('/preview'))data={data:{id:'company-auras',kind:'company',name:'雙鴻',summary,markdown:'## 合成研究\n測試內文',content:{gaps:['合成測試界線']},claims:[{id:'sample',statement:'合成草稿主張',confidence:'inference',conditions:['僅為草稿預覽'],reviewed:'2026-10-17',evidence:[{document_id:'document-private',revision_id:'private-revision',title:'合成草稿引用',url:'https://example.invalid',locator:'section-one',applicable_period:'合成期間',read_scope:'僅供草稿核對',locators:[{id:'section-one',excerpt:'合成候選引用摘錄'}]}]}],related:[],assets:[],truncated:false},graph:{root:'company-auras',nodes:[],edges:[],truncated:false,continue_from:[]}};
     else if(url.pathname.endsWith('/publish')){
       expect(request.headers()['idempotency-key']).toMatch(/^[0-9a-f-]{36}$/);
       expect(request.postDataJSON()).toEqual({base_release_id:base,revision:2,reason:'合成發布核對'});
@@ -46,6 +47,7 @@ for(const mobile of [false,true])test(`草稿編輯、預覽與 stale revision �
   await expect(page.getByRole('status')).toContainText('已儲存修訂 2');
   await page.getByRole('button',{name:'閱讀預覽'}).click();
   await expect(page.locator('.rs-detail')).toContainText('合成新摘要');
+  await page.locator('.rs-citation summary').click();await expect(page.locator('.rs-citation-reading')).toContainText('合成候選引用摘錄');expect(publicRequests).toEqual([]);
   await mkdir('../.work/editor-review',{recursive:true});
   await page.getByRole('heading',{name:'草稿工作台'}).click();
   await page.screenshot({path:`../.work/editor-review/${mobile?'mobile':'desktop'}-preview.png`,fullPage:true});
@@ -57,7 +59,7 @@ for(const mobile of [false,true])test(`草稿編輯、預覽與 stale revision �
   await page.getByRole('button',{name:'還原已選版本',exact:true}).click();
   await expect(page.getByRole('link',{name:'開啟這份已發布研究'})).toHaveAttribute('href','/next?release_id='+previous);
   await page.getByRole('button',{name:'來源健康',exact:true}).click();
-  await expect(page.getByRole('cell',{name:'已取得',exact:true})).toBeVisible();
+  await expect(page.getByRole('cell',{name:/^(擷取狀態 )?已取得$/})).toBeVisible();
   await page.getByRole('button',{name:'操作紀錄',exact:true}).click();
   await expect(page.getByRole('cell',{name:'合成發布核對',exact:true})).toBeVisible();
   conflict=true;

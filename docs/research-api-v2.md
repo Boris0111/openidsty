@@ -21,6 +21,8 @@ Legacy `/api/*` 與新版 `/api/v2/*` 並存。新版使用獨立 reader pool、
 
 詳情的主張／證據與相關分類各有回應上限，超過時 `truncated=true` 明示；一般研究仍保留完整 Markdown。圖形與搜尋見下方契約；財務、事件、觀察及公司比較見 [動態讀取 API](research-dynamic-api.md)。收藏更新依後續 task 實作，沒有用空成功回應冒充功能。快取與 request coalescing 於對應 task 驗證；目前回應保守使用 no-store。
 
+詳情的 `related` 同時包含 taxonomy 相鄰項目、作者 `related-ids` 與 `comparisons` 左右對象的中文摘要，最多 100 筆，全部取自同一 release。`content.related_ids`／`content.comparisons` 只保留已解析於該次範圍的引用；沒有對應不能向其他 release 補查或洩漏未發布主體。固定引用的讀者操作見 [內容閱讀](research-content-reading.md)。
+
 錯誤固定 `{code,message,request_id,retryable}`，中文 message 不揭露 SQL、連線或內部例外。歧義另回 candidates。`X-Request-ID` 與錯誤中的 request_id 一致；DB 不可用回 503／retryable=true／Retry-After，與正常無研究資料的情形分開。新錯誤契約不改舊成功 payload。
 
 實際 PostgreSQL 契約命令：`python scripts/research_lab.py pg-check`。測試包含新舊 API 並存、分頁與篩選、錯誤格式、歧義、未發布拒絕及固定引用。此文件描述讀者介面；已實作 owner 管理介面另見 [登入](research-owner.md)、[草稿](research-drafts.md)、[發布](research-publication.md)、[財務補錄](research-financial-imports.md)、[來源更新](research-source-updates.md)。

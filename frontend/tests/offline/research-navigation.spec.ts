@@ -46,7 +46,7 @@ test('連線可由鍵盤選取、分享及返回，手機無溢出且 resize 保
   await page.getByRole('button',{name:'放大關係圖'}).click();const zoom=await page.getByLabel('關係圖縮放比例').textContent();
   await page.setViewportSize({width:1100,height:900});await page.setViewportSize({width:390,height:844});await expect(page.getByLabel('關係圖縮放比例')).toHaveText(zoom!);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
-  await picker.selectOption('classification:test');await page.goBack();await expect(picker).toHaveValue('capability:test');
+  await picker.selectOption('classification:test');await expect(page).toHaveURL(/edge=classification%3Atest/);await page.goBack();await expect(picker).toHaveValue('capability:test');
   await page.getByRole('button',{name:'閱讀測試公司',exact:true}).click();await expect(page.locator('.rs-detail > h2')).toHaveText('測試公司');await expect(page).not.toHaveURL(/edge=/);
 });
 
