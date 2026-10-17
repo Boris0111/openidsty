@@ -98,3 +98,13 @@ Production build、typecheck 通過，13 項 live browser 全通過：6 項既�
 最新 `pg-check --suite financial-core` 56 passed（既有 35＋台灣 21），在獨立測試 DB 通過 migration、真實 writer 入庫、同值新出表日不假更新、晚到資料不蓋新值、原始高精度 JSON 數字保存及日期模式隔離。Full 地圖驗證通過（17 環節、7 題材、60 來源），兩筆新負債來源先 manual 註冊，避免誤交 legacy adapter；到期流程由 task 5.5 串接。未自動發布研究或把樣本寫進 application DB。
 
 此次接續時 Docker 引擎原為停止，啟動 Desktop 後恢復三個新版容器；原版／Valuflow 仍停止，隔離測試核對 protected services 不變。沒有執行 reset、prune、volume 刪除或重新 bootstrap。
+
+## SEC 財務接續點（task 5.3 尚未完成）
+
+已實作 US GAAP 標準 tag mapping、原始 accession／日期／可取得 context／股別、不同期間與淨利口徑、未知／自訂 tag 缺口、同一申報衝突拒絕及 Decimal storage。所有 SEC HTTP（包含 retry、redirect 與一般 IR 跳入 SEC）共用 PostgreSQL session gate，每次間距至少 0.5 秒；不使用各 client 獨立的 SEC 限流，也不向外部 redirect 洩露聯絡 email。
+
+2026-10-17 `pg-check --suite financial-sec` 最新 16 passed，含真實 DB 修訂／冪等及三個獨立程序限流；數字場景為明示合成，HTTP 使用 MockTransport。另既有擷取／來源診斷與財務原生回歸 102 passed、4 skipped，這四項須獨立 PostgreSQL，已分別由 financial-core／financial-sec 執行；最後新增 IR→SEC 跳轉契約另包含在最新 16 項。
+
+**待使用者設定：** 新版 `.env.research` 尚無有效 SEC_USER_AGENT。未自行填假 email，實際 SEC companyfacts 樣本仍未取得，task 5.3 checkbox 保留未完成。設定步驟與官方限制見 [SEC adapter](research-financial-sec.md)；接手先確認設定存在（不印值），再用共用 gate 擷取官方樣本、保存 hash／selected fixtures、逐項核對並重跑測試，才能完成 5.3，再續 5.4 官方補錄。這是資料來源設定前提，並非 Docker 或測試失敗。
+
+隔離 application 已升級 `0012`，health、manifest、`/next` 均 HTTP 200；head 仍為原 `03799774-3553-5ff6-9910-13a68468af15`，owner／publish jobs／新 financial observations 均 0，legacy events 2915、financials 147。Initializer 只加入指標定義及來源 metadata，不把測試數值寫入 application DB。

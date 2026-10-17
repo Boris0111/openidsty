@@ -272,20 +272,40 @@ def parse_microsoft(html,url,reference=None):
     return [ir_event('MSFT',title,text[:4000],published,url,{'excerpt':text[:4000],'document_url':url})],[]
 
 class OfficialHttp:
-    def __init__(self):
+    def __init__(self,sec_gate=None):
         self.client=httpx.Client(timeout=httpx.Timeout(20,connect=10),follow_redirects=True,headers={'User-Agent':'IndustryFlow/0.1 (public official-information research)','Accept':'application/json,text/html,text/csv,application/xml;q=0.9,*/*;q=0.5'})
         self.last_request=0.0
+        self.sec_gate=sec_gate
+
+    def _request(self,url,sec=False):
+        from .sec_http import request_gate,validate_sec_url,is_sec,user_agent
+        gate=self.sec_gate or request_gate
+        sec_chain=sec
+        for _ in range(4):
+            sec_chain=sec_chain or is_sec(url)
+            if sec_chain:
+                validate_sec_url(url)
+                ua=user_agent()
+                with gate():
+                    response=self.client.get(url,headers={'User-Agent':ua},follow_redirects=False)
+            else:
+                response=self.client.get(url,follow_redirects=False)
+            if not response.is_redirect:return response
+            if not response.headers.get('location'):raise ValueError('來源重新導向沒有目標位址。')
+            url=urljoin(url,response.headers.get('location',''))
+        raise ValueError('來源重新導向超過限制。')
 
     def get(self,url,sec=False):
-        ua=os.getenv('SEC_USER_AGENT','').strip()
-        if sec and ('@' not in ua or len(ua)<8):
-            raise ValueError('需設定 SEC_USER_AGENT：專案名稱與維護者聯絡 email')
+        from .sec_http import is_sec,user_agent,validate_sec_url
+        sec=sec or is_sec(url)
+        if sec:user_agent()
+        if sec:validate_sec_url(url)
         error=None
         for attempt in range(2):
             time.sleep(max(0,0.25-(time.monotonic()-self.last_request)))
             self.last_request=time.monotonic()
             try:
-                r=self.client.get(url,headers={'User-Agent':ua} if sec else None)
+                r=self._request(url,sec)
                 r.raise_for_status()
                 if len(r.content)>20_000_000:
                     raise ValueError('來源超過 20 MB 上限')

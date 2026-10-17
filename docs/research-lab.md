@@ -28,6 +28,8 @@ python scripts/research_lab.py bootstrap --commit <完整commit>
 
 `pg-check` 在整輪遷移／測試期間持有獨立 advisory lock，避免不同測試程序共用 head／owner 而互相干擾。預設執行全部；診斷時可使用 `--suite admin-read`、`--suite publication-restart` 或 `--suite publication-interfaces` 執行特定流程，結果不能冒充完整回歸。這些 lock 與測試資料均不更改 application head。
 
+財務測試另有 `--suite financial-core`（含台灣實際樣本）及 `--suite financial-sec`（目前 SEC 合成邊界與跨程序限流）；來源設定與尚未完成的實際 SEC 核對見 [SEC adapter](research-financial-sec.md)。
+
 首條實際讀取預覽位於 `/next`，首份 release 已建立，不要為了重建 UI 再初始化或刪除 DB。瀏覽器走讀命令（在 frontend 執行）：
 
 ```powershell

@@ -11,7 +11,7 @@ x-app: &app
     RESEARCH_WRITE_DATABASE_URL: postgresql+psycopg://research_writer_login:${RESEARCH_WRITER_PASSWORD:?Run research_lab.py setup}@db:5432/industry_research
     PREFECT_API_URL: http://prefect:4200/api
     PREFECT_SERVER_ANALYTICS_ENABLED: "false"
-    SEC_USER_AGENT: ""
+    SEC_USER_AGENT: ${SEC_USER_AGENT:-}
     RESEARCH_SESSION_SECRET: ${RESEARCH_SESSION_SECRET:?Run research_lab.py setup}
     RESEARCH_ADMIN_MODE: loopback-http
     RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3014,http://localhost:3014
