@@ -13,7 +13,9 @@ Legacy `/api/*` 與新版 `/api/v2/*` 並存。新版使用獨立 reader pool、
 
 除 manifest 外皆接受 `release_id=<UUID>`；省略只在請求開始時取 active release。每個成功回應為 `{release_id,schema_version,data}`，讀者頁應保存這個 release_id 後再請求其他物件，避免混版。
 
-清單可以 `market=TW`、`role=role-...` 或 `category=...` 篩選。公司市場依 listing，未上市公司不捏造市場；role 同時支援新 offering 與既有 segment 基本索引，category 經分類子樹查詢。Cursor 綁定 release／collection／篩選；條件改變回 409，格式錯誤或 limit 超額回 422。SQL 使用索引、LIMIT 與參數綁定，不將完整名單載到 Python 後再篩選。
+清單可以 `market=TW`、`role=role-...` 或 `category=...` 篩選。公司市場依 listing，未上市公司不捏造市場；role 同時支援新 offering 與既有 segment 基本索引，category 經分類子樹查詢，公司也納入 offering 的 role／product 位於該子樹的項目。能力對應不代表具名交易。Cursor 綁定 release／collection／篩選；條件改變回 409，格式錯誤或 limit 超額回 422。SQL 使用索引、LIMIT 與參數綁定，不將完整名單載到 Python 後再篩選。
+
+詳情另含 `legacy_return: {url,label} | null`：由同一 release 的分類祖先找到既有 segment，提供中文返回標籤及本站地圖 layer／segment URL；無對應即 null，不按名稱猜測。此欄位不開放 raw mappings 或維護資料。完整閱讀操作見 [研究導覽](research-navigation-design.md)。
 
 固定文件的 revision_id 使用不可變 hash；舊 manifest 的 version key 在同一 published release 內只有一個對應時亦可解析，回應帶正式 revision_id。`latest` 不解析；不能用新版本替代失效的舊引用。未被引用的 manifest 版本與未發布文件不提供讀者存取。
 

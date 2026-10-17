@@ -56,7 +56,7 @@ def v2():
         key = 'segment-' + legacy_id
         insert(connection, 'entities', {'entity_id': key, 'kind': 'segment'}, True)
         insert(connection, 'entity_snapshots', {'release_id': published, 'entity_id': key, 'kind': 'segment',
-            'name': legacy_id, 'summary': '合成結構測試', 'markdown': '測試', 'data': authored, 'semantic_hash': 'c' * 64})
+            'name': legacy_id, 'summary': '合成結構測試', 'markdown': '測試', 'data': {**authored,'layer':'ai-server','segment':legacy_id}, 'semantic_hash': 'c' * 64})
     insert(connection, 'entities', {'entity_id': 'theme-liquid-cooling', 'kind': 'theme'}, True)
     insert(connection, 'entity_snapshots', {'release_id': published, 'entity_id': 'theme-liquid-cooling', 'kind': 'theme',
         'name': '液冷結構測試', 'summary': '合成資料', 'markdown': '測試', 'data': {'segments': ['thermal', 'power']}, 'semantic_hash': 'd' * 64})
@@ -167,10 +167,18 @@ def test_catalog_and_market_role_category_filters(v2):
     catalog = client.get('/api/v2/catalog').json()['data']
     assert {data['role'], data['product'], 'segment-thermal', 'theme-liquid-cooling'} <= {r['id'] for r in catalog['items']}
     assert len(catalog['links']) == 2
-    for filters in ({'market': 'TW'}, {'role': data['role']}, {'category': data['role']}):
+    for filters in ({'market': 'TW'}, {'role': data['role']}, {'category': data['role']}, {'category':data['product']}):
         result = client.get('/api/v2/companies', params=filters).json()['data']['items']
         assert [r['id'] for r in result] == [data['keys'][0]]
     assert client.get('/api/v2/companies', params={'market': 'US'}).json()['data']['items'] == []
+
+
+def test_legacy_map_return_is_release_scoped_and_absent_without_mapping(v2):
+    client,data=v2
+    segment=client.get('/api/v2/segments/segment-thermal',params={'release_id':data['release']}).json()['data']
+    assert segment['legacy_return']=={'url':'/?layer=ai-server&segment=thermal','label':'回到「thermal」產業地圖'}
+    assert client.get('/api/v2/products/'+data['product']).json()['data']['legacy_return'] is None
+    assert client.get('/api/v2/segments/segment-thermal',params={'release_id':data['ready']}).status_code==404
 
 
 def test_database_failure_is_retryable_and_does_not_leak_details(v2):

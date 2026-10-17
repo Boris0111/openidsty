@@ -70,7 +70,8 @@ export async function installOfflineApi(page: Page) {
   await page.route('**/api/**', async route => {
     const url = new URL(route.request().url()), path = url.pathname;
     let data: unknown;
-    if (path === '/api/industries') data = [{id: 'ai-server', name: 'AI 伺服器', segment_count: 3}, {id: 'semiconductor', name: '半導體', segment_count: 1}];
+    if (path === '/api/v2/resolve') return route.fulfill({status:503,json:{message:'離線舊版情境尚未初始化新版研究'}});
+    else if (path === '/api/industries') data = [{id: 'ai-server', name: 'AI 伺服器', segment_count: 3}, {id: 'semiconductor', name: '半導體', segment_count: 1}];
     else if (/^\/api\/industries\/[^/]+\/graph$/.test(path)) {
       const layer = path.split('/')[3], ids = layer === 'ai-server' ? ['compute', 'thermal', 'odm'] : ['foundry'];
       data = {layer, nodes: ids.map((id, i) => ({id, name: names[id], position: i + 1, company_count: 1, layer})), edges: layer === 'ai-server' ? [{id: 'thermal-odm', source: 'thermal', target: 'odm', kind: 'supply', direction: 'forward'}] : []};

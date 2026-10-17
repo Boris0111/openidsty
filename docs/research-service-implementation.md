@@ -146,3 +146,15 @@ Migration `0015` 提供 curated fact citations view 及索引，reader 仍不能
 最新完整 `pg-check` **220 passed**，含新增 **20 項 dynamic reader** 與 **18 項 source updates**，以及原有 publication／restart／auth／graph／search／financial／reader gateway 契約。執行 589.51 秒；先前一輪因誤判緩衝輸出而中止，不列為通過，已更正診斷並完整重跑。Typecheck、隔離 production build、7 項 live browser（新增真實 API／代理 1 項＋原研究閱讀 6 項）通過。
 
 Application 為 `0015` 並確認引用索引存在；2915 筆既有事件保留，其中 1970 筆可連到發布物件。不能解析的事件不猜公司或角色。Research head 及 34 筆既有關係保留，owner／publish jobs／financial observations／financial import batches／source jobs 均 0。舊 Float 財務仍由 legacy 契約保留，不冒充精確 canonical 值。未開啟 scheduler 或真實 Prefect worker。下一項為 6.1 完整目錄及新舊入口往返。
+
+## 完整研究導覽（task 6.1）
+
+接續上輪尚未提交的導覽草稿，已接上七類目錄、公司市場／角色／應用篩選及分頁；從目錄閱讀後可回原篩選頁。舊地圖與 ticker 公司頁透過已發布 resolve 進入新版穩定身分，後續閱讀保留原地圖位置。直接分享連結可由同版 taxonomy 祖先取得地圖入口，無對應不猜。操作與入口見 [研究導覽](research-navigation-design.md)。
+
+Typed graph 的圖例依實際型別顯示；圖形及文字選單共用 `edge` URL，兩端研究、條件與來源可繼續閱讀。補上明確局部範圍、截斷、鍵盤縮放按鈕與比例；resize 保留 pan／zoom。一般閱讀沒有新增維護資料。實查揭露應用篩公司原先只讀分類樹，會漏掉 offering 連入的公司，已在同版 SQL 加入產品／角色子樹對應。私人 gateway 只將合法地圖選取轉到 v2，沒有開放 legacy／admin。
+
+最新 `pg-check --suite reader-navigation` **21 passed**，涵蓋 v2 清單／固定引用／返回、typed graph／三種 traversal／真實回路、搜尋及 gateway 邊界；離線瀏覽器 **6 passed**（新版 3＋既有導覽 3）；真實 release 瀏覽器 **10 passed**（新版導覽 3＋原研究 6＋動態代理 1）。早先兩個瀏覽器 selector 同時匹配 Next announcer 或散文 h2，已改為明確區域，失敗輪不列通過。Typecheck、原生 production build 與隔離 Compose production build 通過。
+
+實際確認 17 環節、7 題材、95 公司可由目錄到達；舊散熱圖 → 應用 → 晶片端角色 → 冷板 → 雙鴻 → 原地圖及舊 ticker 往返通過。桌機 1440×1000／手機 390×844 無橫向溢出，圖形縮放／平移後來回 resize 的畫布截圖一致。四張真實畫面已實際檢視，保存於忽略的 `.work/research-navigation-review/`；截圖與自動測試不是 Boris 的閱讀驗收，也不代表 task 8 的全鏈分類／26 家深研已完成。
+
+Application 仍為 `0015`／原 research head，2915 事件、1970 linked events、34 關係不變；owner、publish jobs、canonical financial observations、financial import batches、source jobs 均 0。只有新版 web／API／DB 運行，scheduler／Prefect worker 仍關閉，原服務 fingerprints 無變更。下一項為 6.2 公司／產品／術語內容、技術比較與固定版本引用。

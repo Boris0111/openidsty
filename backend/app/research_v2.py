@@ -82,7 +82,9 @@ def page(session, release, collection, kinds, limit, cursor, market=None, role=N
           AND (CAST(:role AS text) IS NULL OR EXISTS (
             SELECT 1 FROM research.company_offerings o WHERE o.release_id=:r AND o.company_id=s.entity_id AND o.role_id=:role)
             OR EXISTS (SELECT 1 FROM research.taxonomy_links t WHERE t.release_id=:r AND t.parent_id=:role AND t.child_id=s.entity_id))
-          AND (CAST(:category AS text) IS NULL OR s.entity_id IN (SELECT entity_id FROM descendants))
+          AND (CAST(:category AS text) IS NULL OR s.entity_id IN (SELECT entity_id FROM descendants)
+            OR EXISTS (SELECT 1 FROM research.company_offerings o WHERE o.release_id=:r AND o.company_id=s.entity_id
+              AND (o.product_id IN (SELECT entity_id FROM descendants) OR o.role_id IN (SELECT entity_id FROM descendants))))
         ORDER BY s.entity_id LIMIT :limit
     '''), parameters).mappings().all()
     more = len(rows) > limit
@@ -226,5 +228,18 @@ def detail_payload(session, release, row):
                    'alt': asset['metadata']['alt'], 'attribution': asset['metadata']['attribution']} for asset in rows]
     return {**summary(row), 'markdown': row['markdown'], 'content': content, 'claims': claims,
         'assets': assets,
+        'legacy_return': legacy_return(session,release,entity_id),
         'related': [summary(item) for item in related[:100]], 'truncated': truncated or len(related) > 100,
         'content_version': row['semantic_hash']}
+
+
+def legacy_return(session,release,entity_id):
+    from urllib.parse import urlencode
+    parents=session.execute(text('''WITH RECURSIVE parents(id) AS (
+        SELECT CAST(:id AS text) UNION SELECT t.parent_id FROM research.taxonomy_links t
+        JOIN parents p ON p.id=t.child_id WHERE t.release_id=:release)
+        SELECT s.name,s.data->>'layer' AS layer,s.data->>'segment' AS segment
+        FROM parents p JOIN research.entity_snapshots s ON s.entity_id=p.id AND s.release_id=:release
+        WHERE s.kind='segment' ORDER BY s.entity_id LIMIT 1'''),{'id':entity_id,'release':release['release_id']}).mappings().first()
+    if not parents or parents['layer'] not in ('ai-server','semiconductor') or not parents['segment']:return None
+    return {'url':'/?'+urlencode({'layer':parents['layer'],'segment':parents['segment']}),'label':'回到「'+parents['name']+'」產業地圖'}

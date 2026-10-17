@@ -13,6 +13,14 @@ def test_reader_rejects_admin_legacy_host_spoof_and_mutations():
             assert client.request(method,'/api/v2/companies').status_code==403
 
 
+def test_map_return_redirect_does_not_open_legacy_or_copy_untrusted_query():
+    with TestClient(app,base_url='http://localhost:3015') as client:
+        response=client.get('/?layer=ai-server&segment=thermal&next=https://evil.invalid&relation=internal',follow_redirects=False)
+        assert response.status_code==307 and response.headers['location']=='/next?focus=segment-thermal'
+        for query in ['layer=wrong&segment=thermal','layer=ai-server&segment=../../admin','next=https://evil.invalid']:
+            assert client.get('/?'+query,follow_redirects=False).headers['location']=='/next'
+
+
 def test_reader_uses_fixed_upstream_strips_credentials_and_preserves_release():
     observed=[]
     async def upstream(request):

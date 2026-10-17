@@ -5,10 +5,13 @@ import type {ResearchGraph} from '@/lib/research-api';
 
 const kindNames:Record<string,string>={classification:'分類',capability:'產品能力','named-supply':'具名供應',partnership:'合作',competition:'競爭','segment-supply':'環節供應','segment-feedback':'需求回饋','demand-feedback':'需求回饋'};
 
-export function ResearchNetwork({graph,onSelect}:{graph:ResearchGraph;onSelect:(id:string)=>void}) {
+export function ResearchNetwork({graph,onSelect,selectedEdge:controlledEdge,onEdge}:{graph:ResearchGraph;onSelect:(id:string)=>void;selectedEdge?:string|null;onEdge?:(id:string|null)=>void}) {
   const container=useRef<HTMLDivElement>(null),instance=useRef<Core|null>(null),select=useRef(onSelect);
   select.current=onSelect;
-  const [selectedEdge,setSelectedEdge]=useState<string|null>(null);
+  const [localEdge,setLocalEdge]=useState<string|null>(null),[zoom,setZoom]=useState(100);
+  const selectedEdge=controlledEdge===undefined?localEdge:controlledEdge;
+  const edgeSelect=useRef<(id:string|null)=>void>(()=>{});
+  edgeSelect.current=id=>{if(onEdge)onEdge(id);else setLocalEdge(id)};
   useEffect(()=>{
     if(!container.current)return;
     const positions=new Map<string,{x:number;y:number}>();
@@ -29,28 +32,36 @@ export function ResearchNetwork({graph,onSelect}:{graph:ResearchGraph;onSelect:(
       {selector:'edge',style:{'curve-style':'bezier','line-color':'#7a9099','target-arrow-color':'#7a9099','target-arrow-shape':'triangle',width:1.7}},
       {selector:'edge[kind="classification"]',style:{'line-style':'dotted','target-arrow-shape':'none','line-color':'#a9b8bd'}},
       {selector:'edge[kind="capability"]',style:{'line-style':'dashed','line-color':'#267a97','target-arrow-color':'#267a97',width:2.4}},
+      {selector:'edge[kind="partnership"]',style:{'line-style':'dashed','target-arrow-shape':'none','line-color':'#476a51'}},
+      {selector:'edge[kind="competition"]',style:{'line-style':'dotted','target-arrow-shape':'none','line-color':'#805a91'}},
       {selector:'edge[kind="segment-feedback"],edge[kind="demand-feedback"]',style:{'line-style':'dashed','line-color':'#c14c38','target-arrow-color':'#c14c38'}},
       {selector:'edge:selected',style:{width:4,'line-color':'#16343a','target-arrow-color':'#16343a'}}
     ];
     const cy=cytoscape({container:container.current,style,elements:[...graph.nodes.map(node=>({data:node,position:positions.get(node.id),classes:node.id===graph.root?'center':''})),...graph.edges.map(edge=>({data:edge}))],
       layout:positions.size?{name:'preset',padding:12}:{name:'breadthfirst',directed:true,padding:32,spacingFactor:1.2},minZoom:.3,maxZoom:2.5,wheelSensitivity:.15});
     if(cy.zoom()>1.2){cy.zoom(1.2);cy.center()}
-    instance.current=cy;setSelectedEdge(null);
+    instance.current=cy;setLocalEdge(null);setZoom(Math.round(cy.zoom()*100));
+    if(controlledEdge)cy.getElementById(controlledEdge).select();
+    cy.on('zoom',()=>setZoom(Math.round(cy.zoom()*100)));
     cy.on('tap','node',event=>select.current(event.target.id()));
-    cy.on('tap','edge',event=>setSelectedEdge(event.target.id()));
+    cy.on('tap','edge',event=>edgeSelect.current(event.target.id()));
     const observer=new ResizeObserver(()=>{const zoom=cy.zoom(),pan={...cy.pan()};cy.resize();cy.zoom(zoom);cy.pan(pan)});
     observer.observe(container.current);
     return()=>{observer.disconnect();cy.destroy();instance.current=null};
   },[graph]);
   const edge=graph.edges.find(edge=>edge.id===selectedEdge),names=new Map(graph.nodes.map(node=>[node.id,node.name]));
   useEffect(()=>{instance.current?.edges().unselect();if(selectedEdge)instance.current?.getElementById(selectedEdge).select()},[selectedEdge]);
-  return <section className="rs-network" aria-labelledby="rs-network-title"><div className="rs-section-top"><h2 id="rs-network-title">從產品找到公司</h2><button onClick={()=>instance.current?.fit(undefined,32)}>重設圖形</button></div>
+  return <section className="rs-network" aria-labelledby="rs-network-title"><div className="rs-section-top"><h2 id="rs-network-title">這份研究的周邊關係</h2><button onClick={()=>instance.current?.fit(undefined,32)}>重設圖形</button></div>
     <div className="rs-canvas" ref={container} role="img" aria-label="產品、公司與分類關係圖，亦可使用下方文字清單" data-testid="research-network"/>
-    <p className="rs-legend"><span>虛線：產品能力</span><span>點線：分類</span></p>
+    <div className="rs-graph-controls" aria-label="關係圖縮放"><button aria-label="縮小關係圖" onClick={()=>{const cy=instance.current;if(cy)cy.zoom({level:Math.max(.3,cy.zoom()/1.2),renderedPosition:{x:cy.width()/2,y:cy.height()/2}})}}>−</button><output aria-label="關係圖縮放比例">{zoom}%</output><button aria-label="放大關係圖" onClick={()=>{const cy=instance.current;if(cy)cy.zoom({level:Math.min(2.5,cy.zoom()*1.2),renderedPosition:{x:cy.width()/2,y:cy.height()/2}})}}>＋</button></div>
+    <p className="rs-legend">{[...new Set(graph.edges.map(edge=>edge.kind))].map(kind=><span key={kind} data-kind={kind}>{kindNames[kind]||'關係'}</span>)}</p>
+    <p className="rs-scope-note">顯示目前選取研究的相鄰關係。產品能力不代表具名交易。</p>
     <div className="rs-node-list" aria-label="關聯研究文字清單">{graph.nodes.filter(node=>node.id!==graph.root).map(node=><button key={node.id} onClick={()=>onSelect(node.id)}>{node.name}</button>)}</div>
-    {graph.edges.filter(edge=>edge.kind!=='classification').length>0&&<label className="rs-edge-picker">閱讀連線<select value={selectedEdge||''} onChange={event=>setSelectedEdge(event.target.value||null)}><option value="">選擇關係</option>{graph.edges.filter(edge=>edge.kind!=='classification').map(edge=><option key={edge.id} value={edge.id}>{names.get(edge.source)} — {names.get(edge.target)}（{kindNames[edge.kind]||'關係'}）</option>)}</select></label>}
+    {graph.edges.length>0&&<label className="rs-edge-picker">閱讀連線<select value={edge?selectedEdge||'':''} onChange={event=>edgeSelect.current(event.target.value||null)}><option value="">選擇關係</option>{graph.edges.map(edge=><option key={edge.id} value={edge.id}>{names.get(edge.source)} — {names.get(edge.target)}（{kindNames[edge.kind]||'關係'}）</option>)}</select></label>}
+    {selectedEdge&&!edge&&<p role="status">這條連線不在目前範圍，可由下方清單重新選擇。</p>}
     {edge&&<div className="rs-edge-reading" role="region" aria-label="連線說明"><h3>{kindNames[edge.kind]||'關係'}</h3><p>{edge.mechanism}</p><ul>{edge.conditions.map(condition=><li key={condition}>{condition}</li>)}</ul>{edge.claims.map(claim=><button key={claim.entity_id+claim.claim_id} onClick={()=>onSelect(claim.entity_id)}>閱讀{nameFor(claim.entity_id,names)}的產品證據</button>)}{edge.evidence_url&&<a href={edge.evidence_url} target="_blank" rel="noreferrer">閱讀原始來源</a>}</div>}
-    {graph.truncated&&<p className="rs-limit">目前顯示這一段關係；可選擇公司或產品繼續探索。</p>}
+    {edge&&<div className="rs-node-list" aria-label="連線兩端研究">{[...new Set([edge.source,edge.target])].map(id=><button key={id} onClick={()=>onSelect(id)}>閱讀{nameFor(id,names)}</button>)}</div>}
+    {graph.truncated&&<p className="rs-limit">部分關係超過單次範圍，未在此圖顯示；可選擇公司或產品繼續探索。</p>}
   </section>;
 }
 function nameFor(id:string,names:Map<string,string>){return names.get(id)||'公司'}

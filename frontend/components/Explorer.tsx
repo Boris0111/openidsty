@@ -12,6 +12,7 @@ import {useResearchNames} from '@/lib/research-names';
 import {RelationList,RelationReading} from './Relations';
 import {ReadingTabs} from './ReadingTabs';
 import {TechnicalResearch} from './TechnicalResearch';
+import {ResearchEntry} from './ResearchEntry';
 
 function SegmentPanel({id,autoRead}:{id:string;autoRead:boolean}) {
   const api=useApi<Segment>(`/api/segments/${encodeURIComponent(id)}`),data=api.data;
@@ -25,6 +26,7 @@ function SegmentPanel({id,autoRead}:{id:string;autoRead:boolean}) {
       <div className="segment-heading"><span className="muted">{data.layer==='ai-server'?'AI 伺服器':'半導體'}環節</span><h2 tabIndex={-1}>{data.name_zh}</h2>
         <div className="prose"><Markdown names={names}>{section('環節定義').replace(/^## 環節定義\s*/,'')}</Markdown></div>
       </div>
+      <ResearchEntry kind="segment" identity={id}/>
       <ReadingTabs label="環節閱讀" tabs={[
         {id:'segment-role',label:'產業角色',content:<>
           <section><h3>供應與需求關係</h3>{(['upstream','downstream'] as const).map(direction=><div className="neighbor-row" key={direction}><span>{direction==='upstream'?'上游供應':'下游需求'}</span><div>{data[direction].length?data[direction].map(sid=>{const n=data.neighbors.find(n=>n.id===sid);return <Link key={sid} href={segmentUrl(sid,n?.layer||data.layer)}>{n?.name||'環節名稱待補'}</Link>}):<span className="muted">此範圍未列關係</span>}</div></div>)}</section>

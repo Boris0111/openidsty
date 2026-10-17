@@ -189,7 +189,7 @@ def main():
     parser.add_argument('--commit', default='HEAD')
     parser.add_argument('--source-container', default='industryflow-reading-db')
     parser.add_argument('--source-database', default='industry_reading')
-    parser.add_argument('--suite', choices=['all', 'admin-read', 'publication-restart', 'publication-interfaces','financial-core','financial-sec','financial-imports','source-updates','research-dynamic'], default='all')
+    parser.add_argument('--suite', choices=['all', 'admin-read', 'publication-restart', 'publication-interfaces','financial-core','financial-sec','financial-imports','source-updates','research-dynamic','reader-navigation'], default='all')
     args = parser.parse_args()
     report = check()
     if args.action in ('reader-start','reader-stop'):

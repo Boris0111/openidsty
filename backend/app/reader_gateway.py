@@ -1,7 +1,8 @@
 """Credential-free reader entry; fixed upstream and explicit paths/methods only."""
 from contextlib import asynccontextmanager
 import os
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
+import re
 import uuid
 import httpx
 from fastapi import FastAPI, Request
@@ -37,6 +38,10 @@ async def reader(path: str, request: Request):
     if path == 'health' and request.method == 'GET':
         return JSONResponse({'status':'ok'}, headers={'Cache-Control':'no-store'})
     if not path and request.method in ('GET','HEAD'):
+        layer=request.query_params.get('layer')
+        segment=request.query_params.get('segment','')
+        if layer in ('ai-server','semiconductor') and re.fullmatch('[a-z0-9-]{1,100}',segment):
+            return RedirectResponse('/next?'+urlencode({'focus':'segment-'+segment}),status_code=307)
         return RedirectResponse('/next', status_code=307)
     if len(path)>2048 or len(request.url.query)>4096 or '\\' in path or '%' in path or any(ord(char)<32 for char in path) or any(part in ('.','..') for part in path.split('/')):
         return denied(403, '此路徑無法由讀者入口存取。')
