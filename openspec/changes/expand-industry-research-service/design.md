@@ -72,7 +72,7 @@ Reader gateway 只轉送明列的閱讀頁面、靜態資產、v2 GET 及無副�
 
 全部 17 環節、7 題材及 95 家公司都保留。五領域以外 69 家先提供已知角色與來源，明示尚未深研部分。26 家逐一檢閱產品、業務、客戶／供應、競爭、風險與財務可取性；有依據的「未公開」可以完成查核，尚未研究的空模板不能算完成。未上市公司不要求取得不存在的公開財報。
 
-顯示順序以研究問題為準：中文標題、產品交付與商業意義、關係與證據，再到數據／追蹤。正式規範或草案的差異只有在影響論述時解釋；來源維護清單、內部 ID、JSON、parser 版本與通用「進階資訊」不進一般閱讀。桌機／手機走查與 Boris 對閱讀順序的檢閱都是驗收，不用自動測試代替易讀性判斷。
+顯示順序以研究問題為準：中文標題、產品交付與商業意義、關係與證據，再到數據／追蹤。正式規範或草案的差異只有在影響論述時解釋；來源維護清單、內部 ID、JSON、parser 版本與通用「進階資訊」不進一般閱讀。待納入判讀的事件／文件候選與處理狀態只在 admin coverage；舊 `#candidates` 連結轉到題材的數據與追蹤並說明已移至維護端。搜尋歧義、比較公司與影響遍歷的候選是讀者功能，不受此限制。桌機／手機走查與 Boris 對閱讀順序的檢閱都是驗收，不用自動測試代替易讀性判斷。
 
 ### 3. Markdown 維護、雙編輯與發布資料流程
 
@@ -177,9 +177,11 @@ Snapshot、關係兩端、claim 與 evidence 的 FK 都包含 release，禁止�
 | 更新查詢、admin、session、草稿預覽 | no-store；失敗回應不進成功快取 |
 | 瀏覽器共用請求 | 沿用 request key、in-flight 合併、切換 generation guard 與完成項 LRU，上限 100；伺服器初版不加共享 cache service |
 
+表中新鮮度是相對系統已入庫或已發布資料的讀取延遲，不代表官方發布後的更新時間；財務來源可能每日才擷取。背景頁、斷線或更新失敗時保留最後成功內容並提示。
+
 頁面 pin 一個 release，讀者接受新版後一起換頁面 context；manifest 更新不把新版邊線塞到舊公司頁。若引用帶明確 revision 失效，顯示該引用不可用，不偷偷換成最新版。歷史比較按需載入。
 
-收藏 key 為 `industryflow.research-watchlist.v2`，最多 100 個 `{kind,id,seen}`。舊 `industryflow.theme-watchlist.v1` 只在同 origin 讀得到，遷移成功保存並驗證後仍保留舊 key 作備份；研究／指標的已讀 marker 可映射即保留，不可映射標為需要重新確認，不把全部更新自動標已讀。v1 candidate token 不沿用為維護佇列通知，新版只追蹤讀者可見的新事件。
+收藏 key 為 `industryflow.research-watchlist.v2`，最多 100 個 `{kind,id,seen}`。舊 `industryflow.theme-watchlist.v1` 只在同 origin 讀得到，遷移成功保存並驗證後仍保留舊 key 作備份；研究／指標的已讀 marker 可映射即保留，不可映射標為需要重新確認，不把全部更新自動標已讀。遷移以完成標記保證可重跑而不重複，完成後不從 v1 備份回加使用者已移除的項目。首次收藏只以已成功顯示的內容建立基準；更新依收藏物件本身的研究、有效數值與關聯事件判定，整站發布不等於每個收藏都有更新。v1 candidate token 不沿用為維護佇列通知，新版只追蹤讀者可見的新事件。
 
 匯出含 schema_version、匯出時間、目標與 seen；匯入上限 1 MiB、100 目標，先預覽後合併，既有目標以本機 seen 為準，無效／封存項逐一列出。超額或結構不安全拒絕整次覆寫；部分已存在但來源不可解析的目標可保留供移除／匯出。不同 host／port／瀏覽器透過備份交換，沒有自動同步；收藏不包含研究全文。
 
@@ -234,7 +236,7 @@ Snapshot、關係兩端、claim 與 evidence 的 FK 都包含 release，禁止�
 4. 遷移全部 17／7／95 研究及既有判讀、指標、技術文件歷史的來源映射，驗證三種遍歷；建立產品、應用與術語資料及首批 26 家研究。舊關係逐條保留來源／狀態，不能因遷移自動升級確定性。
 5. 新 UI 暫置 `/next`、新 API `/api/v2`，原路徑與 API 維持相容；完成財務、收藏、後台及發布後，在隔離環境執行自動與人工驗收。不同 preview origin 的收藏透過匯出／匯入交換，不能讀另一個 port 的 localStorage。
 6. Boris 驗收後才安排正式切換，保持原 origin 並一次遷移舊收藏；舊 ticker 深連結可解析。切換前做完整備份，新版採 additive schema，回復原 image／原服務時不執行 destructive downgrade。
-7. 合併 main 與部署需依另行授權的交付範圍進行；歸檔另啟動，順序為 `add-evidence-based-theme-assessments`、`improve-industry-reading-and-technical-evidence`、本 change，避免未歸檔 delta 覆寫新版需求。
+7. 合併 main 與部署需依另行授權的交付範圍進行；歸檔另啟動，順序為 `add-evidence-based-theme-assessments`、`improve-industry-reading-and-technical-evidence`、本 change，避免未歸檔 delta 覆寫新版需求。本 change 以 MODIFIED 取代前兩案的候選呈現、快取與效能條文，並以 `retire_capabilities: true` 退役 `theme-watchlist`；必須在前兩案同步後才能套用。
 
 ## 驗收與可行性判定
 

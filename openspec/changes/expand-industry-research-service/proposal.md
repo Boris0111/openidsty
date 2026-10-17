@@ -36,6 +36,11 @@
 - `information-sources`：註冊來源可提供的指標／歷史範圍、官方與報導性質、引用與使用範圍。
 - `data-coverage`：研究交付矩陣與後台維護資訊分離，區分已研究、未公開、未取得與不適用。
 - `platform-runtime`：隔離環境、v2 讀取與獨立管理介面、版本快取、私人網路、備份與故障恢復。
+- `theme-assessments`：待納入判讀的事件／文件候選與處理狀態移至管理端；讀者保留公開事件、財務及已發布研究的條件與缺口。
+
+### Retired Capabilities
+
+- `theme-watchlist`：由 `research-watchlist` 取代，移除全部 requirements；`.openspec.yaml` 宣告 `retire_capabilities: true`。需在前兩個 change 歸檔、主 specs 已含此 capability 後才同步。
 
 ## Impact
 
