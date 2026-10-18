@@ -56,6 +56,8 @@ def main():
                 keys = list(values)
                 expressions = ['CAST(:' + key + ' AS json)' if isinstance(row[key], (dict, list)) else ':' + key for key in keys]
                 connection.execute(text('INSERT INTO public.' + table + ' (' + ','.join(keys) + ') VALUES (' + ','.join(expressions) + ')'), values)
+        # Other pg-check suites may leave a head in the test DB; this check runs in a rolled-back transaction.
+        connection.execute(text('DELETE FROM research.release_head'))
         first = project(connection, bundle, args.commit, publish=True)
         second = project(connection, bundle, args.commit, publish=True)
         assert first['release_id'] == second['release_id'] and second['reused']

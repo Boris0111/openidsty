@@ -260,3 +260,17 @@ Application 資料未改動：migration `0015`、head `03799774-3553-5ff6-9910-1
 - 隔離預覽收藏 **3 passed**，新增「真實資料匯出，到另一個全新瀏覽器 context 匯入」。截圖在 `.work/research-watchlist-review/`；這是工程走查，不是 Boris 的閱讀驗收。
 
 Application 資料未改動；研究版 web／API 已重建，原服務 fingerprints 未變。
+
+## 全鏈分類索引（task 8.1，2026-10-18）
+
+依 Boris 指示，第 8 段只改 authoring 檔並 commit，不經 admin 發布到預覽環境；checkbox 以讀過依據、完成查核為準。
+
+17 個環節整理成 11 個應用、55 個可替換供應角色（新增 53）、56 個產品類別。95 家公司依既有環節角色全部落入至少一個角色，以 taxonomy 連結，不新增能力主張；公司與產品的 `offerings` 留到 8.2–8.16 有公司主張後再建。
+
+新增 6 個術語頁：封裝分層、HBM 與伺服器 DRAM、網路距離層、供電轉換鏈、板材到成板、測試插入點。每頁附原創桌機／手機 SVG 圖解與有條件比較，並新增全鏈分類索引研究頁。分類邊界的裁決（互連拆四角、液冷／氣冷分開、谷歌列自研、跨角色公司不合併收入等）記錄在 [全鏈分類矩陣](research-classification-matrix.md)。
+
+驗證：
+- `validate_map` 通過；validator 測試通過。
+- `rebuild-check --commit 43ffb01` 編譯出 252 個研究物件，同一 commit 重建一致，歷史對應完整。
+- 修正 `research_rebuild_check`：在只會 rollback 的檢查交易內先清掉測試 DB 既有的 head，避免其他 pg-check suite 留下的狀態擋住重建驗證。
+- 圖解已實際渲染檢查；HBM 圖的主記憶體欄改為虛線對照，不以箭頭暗示供應或組成關係。
