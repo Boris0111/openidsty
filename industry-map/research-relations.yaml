@@ -750,6 +750,9 @@ taxonomy:
 - id: taxonomy-2421-tw-from-chip-heat-capture
   parent: role-chip-heat-capture
   child: company-2421-tw
+- id: taxonomy-aph-from-cable-harness
+  parent: role-cable-harness
+  child: company-aph
 offerings:
 - id: offering-auras-cold-plate
   company: company-auras
@@ -886,6 +889,42 @@ offerings:
   claim-refs:
   - entity-id: company-3665-tw
     claim-id: product-mix
+- id: offering-3023-tw-cable-assembly
+  company: company-3023-tw
+  product: product-cable-assembly
+  role: role-cable-harness
+  conditions:
+  - 年報描述客製化連接線組，但未把 AI 伺服器或資料中心列為主要應用
+  claim-refs:
+  - entity-id: company-3023-tw
+    claim-id: custom-cable-business
+- id: offering-aph-high-speed-connector
+  company: company-aph
+  product: product-high-speed-connector
+  role: role-high-speed-connector
+  conditions:
+  - 10-K 描述 IT datacom 高速與電源互連用於 AI 系統，未揭露具體平台或客戶
+  claim-refs:
+  - entity-id: company-aph
+    claim-id: it-datacom-share
+- id: offering-aph-cable-assembly
+  company: company-aph
+  product: product-cable-assembly
+  role: role-cable-harness
+  conditions:
+  - Communications Solutions 含高速、電源與光纖線纜，未揭露 AI 伺服器出貨
+  claim-refs:
+  - entity-id: company-aph
+    claim-id: it-datacom-share
+- id: offering-aph-liquid-quick-disconnect
+  company: company-aph
+  product: product-liquid-quick-disconnect
+  role: role-liquid-quick-disconnect
+  conditions:
+  - 官方產品頁列出系列與應用，未揭露客戶或出貨
+  claim-refs:
+  - entity-id: company-aph
+    claim-id: liquid-cooling-portfolio
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv

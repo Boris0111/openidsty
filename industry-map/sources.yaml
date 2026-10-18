@@ -1,6 +1,17 @@
 # 唯一來源註冊表；入口可讀性與 runtime 擷取狀態分開。
 tw:
   filings:
+  - id: sinbon-annual-report-2025
+    name: 信邦電子 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3023&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - interconnect
+    themes: []
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報）；以 pdftotext 讀取全文，印刷頁碼與 PDF 頁碼相同。年報沒有主要產品營業比重表。
   - id: bizlink-annual-report-2025
     name: 貿聯-KY 114 年度股東會年報
     url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3665&year=115&mtype=F&
@@ -414,6 +425,19 @@ tw:
       max_pages: 1
 us:
   filings:
+  - id: aph-10k-2025
+    name: Amphenol FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/820313/000110465926013549/aph-20251231x10k.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - interconnect
+    themes:
+    - cpo-silicon-photonics
+    - liquid-cooling
+    notes: SEC EDGAR 原文，申報日 2026-02-11、期間 2025-12-31；已讀 Item 1、1A、5、7 與收購附註相關段落。10-K 未提及液冷產品。
   - id: vicr-10k-2025
     name: Vicor FY2025 Form 10-K
     url: https://www.sec.gov/Archives/edgar/data/751978/000119312526085102/vicr-20251231.htm
@@ -730,6 +754,19 @@ us:
     - power-bottleneck
 global:
   technical-documents:
+  - id: aph-liquid-cooling-product-page
+    name: Amphenol Industrial 液冷快接頭產品頁
+    url: https://amphenol-industrial.com/products/liquid-cooling-systems/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - interconnect
+    - thermal
+    themes:
+    - liquid-cooling
+    notes: 官方產品頁，2026-10-18 讀取；列出 UQD、UQDB、UQD/UQDB Rev 2.0、BMQC、LQC、MQD 與 SHQD 系列。頁面無日期、無客戶或出貨說明；白皮書與型錄 PDF 未讀。
   - id: ocp-cold-plate
     name: OCP 冷板與液冷公開技術文件
     url: https://www.opencompute.org/projects/cooling-environments/cold-plate/
