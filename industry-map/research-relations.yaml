@@ -763,4 +763,35 @@ offerings:
   claim-refs:
   - entity-id: company-vertiv
     claim-id: coolchip-l2l-capability
-relations: []
+- id: offering-auras-rack-manifold
+  company: company-auras
+  product: product-rack-manifold
+  role: role-rack-manifold
+  conditions:
+  - 依 114 年度年報列出的分歧管方案，未揭露客戶或出貨量
+  claim-refs:
+  - entity-id: company-auras
+    claim-id: liquid-cooling-system-scope
+- id: offering-auras-l2l-cdu
+  company: company-auras
+  product: product-liquid-to-liquid-cdu
+  role: role-coolant-distribution
+  conditions:
+  - 年報列為可提供的水對水 CDU 方案；2025 展會新聞曾以研發措辭描述，出貨與收入未揭露
+  claim-refs:
+  - entity-id: company-auras
+    claim-id: liquid-cooling-system-scope
+relations:
+- id: relation-vertiv-delta-competition
+  source: company-vertiv
+  target: company-delta-electronics
+  kind: competition
+  direction: symmetric
+  mechanism: Vertiv 10-K 將台達電列為特定產品領域的利基型競爭者
+  conditions:
+  - 競爭限於重疊的產品領域，不代表所有業務直接競爭
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: named-competitors

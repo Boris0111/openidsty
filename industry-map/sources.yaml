@@ -1,6 +1,16 @@
 # 唯一來源註冊表；入口可讀性與 runtime 擷取狀態分開。
 tw:
   filings:
+  - id: auras-annual-report-2025
+    name: 雙鴻科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3324&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments: [thermal]
+    themes: [liquid-cooling]
+    notes: 公開資訊觀測站電子書清單（115 年股東會，114 年度年報 2025_3324_20260521F04.pdf，2026-04-30 上傳）；以 pdftotext 讀取全文。頁碼以年報印刷頁碼為準，另註 PDF 頁。
   - id: tsmc-node-metrics
     name: 台積電季度製程營收占比
     url: https://investor.tsmc.com/english/quarterly-results
@@ -314,6 +324,16 @@ tw:
       max_pages: 1
 us:
   filings:
+  - id: vertiv-10k-2025
+    name: Vertiv FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1674101/000167410126000008/vrt-20251231.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments: [thermal, power]
+    themes: [liquid-cooling, power-bottleneck]
+    notes: SEC EDGAR 原文，簽署日 2026-02-13；已讀 Item 1–15 與主要財務報表，附註（Note 1–16）本輪未取得全文。
   - id: aaon-earnings-metrics
     name: AAON 季度液冷產品收入
     url: https://investors.aaon.com/investor-news
