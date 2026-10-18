@@ -1,6 +1,34 @@
 # 唯一來源註冊表；入口可讀性與 runtime 擷取狀態分開。
 tw:
   filings:
+  - id: liteon-annual-report-2025
+    name: 光寶科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2301&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - power
+    themes:
+    - 800vdc
+    - power-bottleneck
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_2301_20260520F04.pdf）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁。部門比重與銷售地區表抽取時欄位錯位，依表列順序與合計核對。
+  - id: delta-annual-report-2025
+    name: 台達電子 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2308&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - power
+    - thermal
+    themes:
+    - 800vdc
+    - power-bottleneck
+    - liquid-cooling
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_2308_20260528F04.pdf）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁。
   - id: sunon-annual-report-2025
     name: 建準電機 114 年度股東會年報
     url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2421&year=115&mtype=F&

@@ -823,6 +823,24 @@ offerings:
   claim-refs:
   - entity-id: company-2421-tw
     claim-id: liquid-module-products
+- id: offering-delta-electronics-power-shelf-psu
+  company: company-delta-electronics
+  product: product-power-shelf-psu
+  role: role-rack-power-supply
+  conditions:
+  - 年報列出機架式 DC/DC 電源、電容系統與列間電源系統，未揭露客戶或出貨
+  claim-refs:
+  - entity-id: company-delta-electronics
+    claim-id: ai-power-products
+- id: offering-2301-tw-power-shelf-psu
+  company: company-2301-tw
+  product: product-power-shelf-psu
+  role: role-rack-power-supply
+  conditions:
+  - 雲端及物聯網部門列有伺服器電源及儲能系統解決方案，未揭露客戶或出貨
+  claim-refs:
+  - entity-id: company-2301-tw
+    claim-id: segment-mix
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv
