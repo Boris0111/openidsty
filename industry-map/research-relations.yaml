@@ -859,6 +859,15 @@ offerings:
   claim-refs:
   - entity-id: company-mpwr
     claim-id: end-market-mix
+- id: offering-vicr-power-module
+  company: company-vicr
+  product: product-power-module
+  role: role-board-power-conversion
+  conditions:
+  - 10-K 描述 Power-on-Package 與垂直供電模組，未揭露具體平台或客戶
+  claim-refs:
+  - entity-id: company-vicr
+    claim-id: product-categories
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv

@@ -389,6 +389,19 @@ tw:
       max_pages: 1
 us:
   filings:
+  - id: vicr-10k-2025
+    name: Vicor FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/751978/000119312526085102/vicr-20251231.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - power
+    themes:
+    - power-bottleneck
+    - 800vdc
+    notes: SEC EDGAR 原文，申報日 2026-03-02、期間 2025-12-31；已讀 Item 1、1A、5、7 與合併財報附註相關段落。
   - id: mpwr-10k-2025
     name: Monolithic Power Systems FY2025 Form 10-K
     url: https://www.sec.gov/Archives/edgar/data/1280452/000143774926006113/mpwr20251231_10k.htm
