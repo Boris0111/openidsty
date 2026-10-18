@@ -1,7 +1,7 @@
 'use client';
 import {useEffect,useState} from 'react';
 import Link from 'next/link';
-import {useResearchWatchlist,queryUpdates,isWatchKind,WATCH_LIMIT,UpdateItem,UpdatesResult,WatchTarget} from '@/lib/research-watchlist';
+import {useResearchWatchlist,queryUpdates,isWatchKind,WATCH_LIMIT,IMPORT_LIMIT_BYTES,UpdateItem,UpdatesResult,WatchTarget,exportWatchlist,parseImport,ImportPreview,targetKey} from '@/lib/research-watchlist';
 
 const kindNames:Record<string,string>={company:'公司',product:'產品',theme:'題材',research:'研究頁'};
 
@@ -50,6 +50,55 @@ function Card({target,item,href,onMark,onRemove}:{target:WatchTarget;item?:Updat
   </article>;
 }
 
+type Checked=ImportPreview&{retired:WatchTarget[];unchecked:boolean};
+
+function Backup(){
+  const watch=useResearchWatchlist();
+  const [preview,setPreview]=useState<Checked>();const [message,setMessage]=useState('');const [busy,setBusy]=useState(false);
+  function download(){
+    const url=URL.createObjectURL(new Blob([exportWatchlist(watch.targets)],{type:'application/json'}));
+    const link=document.createElement('a');link.href=url;link.download=`industryflow-watchlist-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.append(link);link.click();link.remove();URL.revokeObjectURL(url);setMessage(`已匯出 ${watch.targets.length} 項收藏。`);
+  }
+  async function choose(file?:File){
+    setPreview(undefined);setMessage('');
+    if(!file)return;
+    if(file.size>IMPORT_LIMIT_BYTES){setMessage('備份超過 1 MiB，未匯入；原清單保留。');return}
+    setBusy(true);
+    try{
+      const parsed=parseImport(await file.text(),watch.targets);
+      if(!parsed.preview){setMessage(parsed.error||'無法匯入；原清單保留。');return}
+      // Targets missing from the published research are listed, not imported.
+      let retired:WatchTarget[]=[];let unchecked=false;
+      if(parsed.preview.fresh.length){
+        try{const result=await queryUpdates(parsed.preview.fresh.map(({kind,id})=>({kind,id})));
+          const gone=new Set(result.data.items.filter(item=>!item.available).map(item=>targetKey(item.kind,item.id)));
+          retired=parsed.preview.fresh.filter(t=>gone.has(targetKey(t.kind,t.id)));}
+        catch{unchecked=true}
+      }
+      setPreview({...parsed.preview,fresh:parsed.preview.fresh.filter(t=>!retired.includes(t)),retired,unchecked});
+    }finally{setBusy(false)}
+  }
+  function confirm(){
+    if(!preview)return;
+    if(watch.merge(preview.fresh)){setMessage(`已合併 ${preview.fresh.length} 項；已存在的 ${preview.duplicates.length} 項保留此瀏覽器的已讀狀態。`);setPreview(undefined)}
+    else setMessage(`合併後會超過 ${WATCH_LIMIT} 項上限，未匯入；原清單保留。`);
+  }
+  return <section className="rs-watch-backup" aria-label="備份與交換"><h2>備份與交換</h2>
+    <p className="rs-scope-note">不同瀏覽器、裝置或不同網址（host／port）各有自己的收藏，不會自動同步；請在原處匯出 JSON，再到另一處匯入。備份只含研究身分、名稱與已讀基準，不含研究內容或任何登入資料，上限 1 MiB、{WATCH_LIMIT} 項。</p>
+    <div className="rs-watch-toolbar"><button onClick={download} disabled={!watch.ready||!watch.targets.length}>匯出收藏 JSON</button>
+      <label>匯入收藏備份<input type="file" accept="application/json,.json" disabled={!watch.ready||busy} onChange={event=>{void choose(event.target.files?.[0]);event.target.value=''}}/></label></div>
+    {busy&&<p role="status">正在檢查備份…</p>}{message&&<p role="status">{message}</p>}
+    {preview&&<div className="rs-watch-preview" aria-label="匯入預覽"><h3>匯入預覽（共 {preview.total} 項）</h3><ul>
+      <li>新增 {preview.fresh.length} 項{preview.fresh.length>0&&`：${preview.fresh.map(t=>t.name).slice(0,10).join('、')}${preview.fresh.length>10?' 等':''}`}</li>
+      <li>已存在 {preview.duplicates.length} 項，保留此瀏覽器的已讀狀態，不被備份覆寫</li>
+      {preview.invalid.length>0&&<li>無法解析 {preview.invalid.length} 項，不匯入：{preview.invalid.map(item=>item.label).join('、')}</li>}
+      {preview.retired.length>0&&<li>目前已發布研究找不到 {preview.retired.length} 項（可能已改名、合併或封存），不匯入：{preview.retired.map(t=>t.name).join('、')}</li>}
+      {preview.unchecked&&<li>目前無法確認新項目是否仍在已發布研究中；匯入後可在清單中檢查並移除。</li>}
+    </ul><div className="rs-watch-actions"><button onClick={confirm} disabled={!preview.fresh.length}>確認合併</button><button onClick={()=>setPreview(undefined)}>取消</button></div></div>}
+  </section>;
+}
+
 export function ResearchWatchlist({href}:{href:(id:string)=>string}){
   const watch=useResearchWatchlist();
   const [result,setResult]=useState<UpdatesResult>();const [error,setError]=useState('');const [loading,setLoading]=useState(false);const [round,setRound]=useState(0);
@@ -71,5 +120,6 @@ export function ResearchWatchlist({href}:{href:(id:string)=>string}){
       {watch.targets.map(target=><Card key={target.kind+':'+target.id} target={target} item={items.get(target.kind+':'+target.id)} href={href}
         onMark={item=>watch.mark(item)} onRemove={()=>watch.remove(target.kind,target.id)}/>)}
     </>}
+    {watch.ready&&<Backup/>}
   </section>;
 }

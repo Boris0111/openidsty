@@ -1,6 +1,6 @@
 # 此裝置收藏（research-watchlist，task 7.1）
 
-新版研究頁（`/next`）可以收藏公司、產品、題材與研究頁，集中在導覽列「此裝置收藏」查看更新。舊題材關注（v1）的遷移在 task 7.2，JSON 匯出入在 task 7.3。
+新版研究頁（`/next`）可以收藏公司、產品、題材與研究頁，集中在導覽列「此裝置收藏」查看更新（task 7.1）；舊題材關注會一次遷移（task 7.2），也可以用 JSON 備份在不同瀏覽器之間交換（task 7.3）。
 
 ## 讀者看到什麼
 
@@ -27,6 +27,35 @@
 
 **限制**：如果一則舊事件之後才被連結到這個物件，因為它的 ID 早於已讀標記，不會顯示為新事件。
 
+## 舊版題材關注遷移（task 7.2）
+
+同一個網址第一次開啟新版時，會讀取舊版 `industryflow.theme-watchlist.v1`，把每個題材轉成 `theme-<id>` 收藏。
+
+- **數值**：沿用舊版的指標基準。v1 的 `indicator_token` 與 v2 題材的數值 token 是同一套計算（後端有測試證明兩者相同），所以一致就是「數值無變更」，不一致就顯示有更新。
+- **研究、事件**：舊版沒有可對應的標記（舊候選 token 依規格不沿用），一律標「待確認」，不會自動標為已讀。
+- 遷移完成會在新版資料寫入 `v1_migrated` 標記，之後不再讀取舊版，所以移除的收藏不會因重新整理被加回。
+- 舊版清單永遠保留作備份，不刪除也不改寫。
+- 新版已有的收藏保留原本的已讀狀態，只補上舊版多出的題材。
+- 已封存或不存在的題材照樣匯入，在收藏頁顯示原因，可以移除。
+- 舊清單部分損壞時只匯入有效題材並提示；整份無法讀取時不匯入，舊資料保留。
+- 瀏覽器拒絕寫入時，每次開啟只在記憶體遷移；重跑結果相同，不會重複加入。
+
+## 備份與跨瀏覽器交換（task 7.3）
+
+不同瀏覽器、裝置，或同一台電腦上的不同網址（例如 `127.0.0.1:3014` 與私人網路 gateway 的 `:3015`，或 `localhost` 與 `127.0.0.1`）各有自己的 localStorage，彼此看不到，也不會自動同步。交換方式：
+
+1. 在原處開啟「此裝置收藏」→「匯出收藏 JSON」，下載 `industryflow-watchlist-YYYY-MM-DD.json`。
+2. 用任何方式把檔案帶到另一台裝置或另一個瀏覽器（隨身碟、雲端硬碟、自己寄信）。
+3. 在目的地開啟「此裝置收藏」→「匯入收藏備份」選擇檔案，看完預覽後按「確認合併」。
+
+規則：
+
+- **匯出內容**：格式標記 `industryflow-research-watchlist`、版本 2、匯出時間，以及每項收藏的類型、ID、名稱與已讀基準。不含研究內容、帳號、密碼或 session。
+- **整份拒絕**的情況：超過 1 MiB、不是 JSON、格式或版本不符、含 `__proto__`／`constructor`／`prototype` 等不安全欄位、超過 100 項，或合併後會超過 100 項。拒絕時原清單完全不變。
+- **逐項列出並略過**：類型不支援或 ID 格式錯誤的項目列為「無法解析」；目前已發布研究找不到的項目列為「可能已改名、合併或封存」。
+- **合併方式**：只加入新項目，並帶入備份裡的已讀基準。已存在的項目保留這個瀏覽器的已讀狀態，不會被較舊的備份倒退覆寫。
+- 按「確認合併」之前不會改動任何資料；按「取消」就放棄這次匯入。
+
 ## 儲存失敗
 
 - 儲存內容部分損壞時，保留有效項目並提示，改用本次記憶體暫存。
@@ -39,7 +68,7 @@
 python scripts/research_lab.py pg-check --suite research-dynamic   # test_research_updates：三面向分開、整站發布、重試／草稿、邊界
 python scripts/research_lab.py pg-check --suite reader-navigation  # gateway 只放行此 POST
 cd frontend
-npx playwright test --config playwright.offline.config.ts research-watchlist.spec.ts
+npx playwright test --config playwright.offline.config.ts research-watchlist.spec.ts research-watchlist-migration.spec.ts research-watchlist-backup.spec.ts
 # 隔離 preview up 後：
 $env:RESEARCH_E2E='1'; $env:E2E_BASE_URL='http://127.0.0.1:3014'
 npx playwright test research-watchlist.spec.ts

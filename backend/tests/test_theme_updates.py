@@ -45,3 +45,10 @@ def test_authored_version_changes_only_version_not_dynamic_tokens(db):
     second=snapshot(db)
     assert second['current_version_id']!=first['current_version_id']
     assert second['indicator_token']==first['indicator_token'] and second['candidate_token']==first['candidate_token']
+
+
+def test_v1_indicator_token_is_the_research_watchlist_values_token(db,client):
+    # The v1 → v2 favourites migration keeps this baseline, so both must be the same measure.
+    from app.theme_updates import indicator_tokens
+    register_sources(db);import_definitions(db);add(db,date(2026,6,30),'1');db.commit()
+    assert indicator_tokens(db,['liquid-cooling'])['liquid-cooling']==snapshot(db)['indicator_token']

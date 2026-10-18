@@ -23,3 +23,19 @@ for(const mobile of [false,true])test(`真實研究收藏：重查不產生假�
   await page.screenshot({path:`../.work/research-watchlist-review/${mobile?'mobile':'desktop'}.png`,fullPage:true});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
+
+test('真實預覽：匯出備份後在另一個瀏覽器環境匯入',async({page,browser})=>{
+  await page.goto('/next?focus=company-vertiv');await page.getByRole('button',{name:'加入收藏'}).click();await expect(page.getByText('已加入收藏',{exact:true})).toBeVisible();
+  await page.getByRole('navigation',{name:'研究導覽'}).getByRole('link',{name:'此裝置收藏'}).click();
+  const [download]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'匯出收藏 JSON'}).click()]);
+  const other=await browser.newContext({baseURL:test.info().project.use.baseURL});const second=await other.newPage();
+  try{
+    await second.goto('/next?view=watchlist');await expect(second.getByText('尚未收藏研究',{exact:false})).toBeVisible();
+    await second.getByLabel('匯入收藏備份').setInputFiles((await download.path())!);
+    await expect(second.getByLabel('匯入預覽')).toContainText('新增 1 項');
+    await second.getByRole('button',{name:'確認合併'}).click();
+    const vertiv=second.locator('.rs-watch-card').filter({hasText:'Vertiv'});
+    for(const text of ['研究無變更','數值無變更','沒有新事件'])await expect(vertiv).toContainText(text);
+    await second.screenshot({path:'../.work/research-watchlist-review/imported.png',fullPage:true});
+  }finally{await other.close()}
+});
