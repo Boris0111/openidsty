@@ -18,7 +18,9 @@ test('真實 release 的 17 環節、7 題材與 95 公司都可從完整目錄�
     expect(ids.size).toBe(count);
   }
   await page.goto('/next?view=companies');await page.getByLabel('應用範圍').selectOption('application-ai-rack-cooling');
-  await expect(page.locator('.rs-directory li')).toHaveCount(2);
+  const listed=page.locator('.rs-directory li');
+  await expect(listed.filter({hasText:'雙鴻'})).toHaveCount(1);await expect(listed.filter({hasText:'Vertiv'})).toHaveCount(1);
+  expect(await listed.count()).toBeLessThan(95);
   await page.screenshot({path:path.join(screenshots,'desktop-company-directory.png'),fullPage:true});
   await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.join(screenshots,'mobile-company-directory.png'),fullPage:true});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);

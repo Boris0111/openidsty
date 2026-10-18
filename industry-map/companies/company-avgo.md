@@ -155,6 +155,6 @@ Broadcom 在[運算環節](/next?focus=segment-compute)屬[客製 ASIC 設計與
 
 ## 財務可取性
 
-- SEC companyfacts 可自動取得標準科目；主要申報來源設為 SEC。
+- SEC 公開財務資料 可自動取得標準科目；主要申報來源設為 SEC。
 - 會計年度採 52/53 週制，與曆年不同，跨公司比較需對齊期間。
 - 客製 ASIC、交換晶片與 AI 營收：10-K 未公開。

@@ -9,8 +9,8 @@ test('產品、公司與原始證據形成真實閱讀路徑',async({page})=>{
   await page.locator('.rs-company-links a').filter({hasText:'雙鴻'}).click();
   await expect(page.locator('.rs-detail > h2')).toHaveText('雙鴻');
   await expect(page.locator('.rs-detail')).toContainText('研發措辭');
-  await expect(page.locator('.rs-citation').first()).toContainText('2025-10-15');
-  await expect(page.locator('.rs-citation a').first()).toHaveAttribute('href','https://www.auras.com.tw/News/NewsContent/14-10/en');
+  // The OCP 2025 news stays one of several primary sources after the annual-report deep research.
+  await expect(page.locator('.rs-citation').filter({has:page.locator('a[href="https://www.auras.com.tw/News/NewsContent/14-10/en"]')}).first()).toContainText('2025-10-15');
   await expect(page.locator('body')).not.toContainText(/進階資訊|待核對佇列|parser|company-auras/);
 });
 

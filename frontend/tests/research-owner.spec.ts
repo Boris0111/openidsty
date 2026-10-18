@@ -27,6 +27,9 @@ test('代理拒絕跨站與匿名寫入，不回顯密碼',async({request,baseUR
   expect(logout.status()).toBe(401);
   const hidden=await request.get('/api/admin/drafts');
   expect(hidden.status()).toBe(401);
+  // Owner-only resources the admin UI reads must reach the API (401 here), not stop at the proxy (404).
+  for(const path of ['/api/admin/coverage','/api/admin/coverage/entities?status=not-public','/api/admin/sources','/api/admin/releases'])
+    expect((await request.get(path)).status(),path).toBe(401);
 });
 
 test('登入 body 大小有限制，研究入口持續可讀',async({request,baseURL,page})=>{

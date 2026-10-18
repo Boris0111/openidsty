@@ -43,7 +43,7 @@ claims:
   statement: 年報 114 年度營業比重為導軌 98%、鉸鏈 1%、其他 1%、滑軌 0%；導軌商品是 1U–7U 伺服器及其週邊設備用的各式導軌，滑軌與鉸鏈主要用於傢俱、鋼櫃與廚具。
   confidence: well-supported
   conditions:
-  - 比重表抽取時欄位錯位，依合計 100% 核對；年報的「導軌」對應本地圖的伺服器滑軌，「滑軌」是傢俱用途
+  - 年報比重表依合計 100% 逐項核對；年報的「導軌」對應本地圖的伺服器滑軌，「滑軌」是傢俱用途
   reviewed: '2026-10-18'
   evidence:
   - source-id: kingslide-annual-report-2025
@@ -95,7 +95,7 @@ claims:
   statement: 年報 114 年度銷售地區合計為美國 57%、台灣 18%、其他 17%、中國 8%，導軌在各地區都占主要部分。
   confidence: well-supported
   conditions:
-  - 地區表抽取時欄位錯位，依各地區合計核對；地區依出貨對象，不等於終端部署地點
+  - 地區表依各地區合計逐項核對；地區依出貨對象，不等於終端部署地點
   reviewed: '2026-10-18'
   evidence:
   - source-id: kingslide-annual-report-2025

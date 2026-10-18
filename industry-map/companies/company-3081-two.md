@@ -88,7 +88,7 @@ claims:
   - source-id: landmark-annual-report-2025
     url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3081&year=115&mtype=F&
     locator: 114 年度年報第 75 頁（PDF 第 79 頁）主要商品之銷售地區
-    read-scope: 已讀銷售地區表（-table 模式核對欄位）
+    read-scope: 已讀銷售地區表並逐欄核對
     stance: supporting
     applicable-period: 113 至 114 年度
 - id: supplier-concentration

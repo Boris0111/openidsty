@@ -178,6 +178,6 @@ IT datacom 約占 36%，Communications Solutions 有機成長 71%，backlog 由 
 
 ## 財務可取性
 
-- SEC companyfacts 可自動取得標準科目；主要申報來源設為 SEC，會計年度為曆年。
+- SEC 公開財務資料 可自動取得標準科目；主要申報來源設為 SEC，會計年度為曆年。
 - 終端市場與分部比重可由 10-K 核對。
 - AI 相關營收與液冷快接頭收入：未公開。

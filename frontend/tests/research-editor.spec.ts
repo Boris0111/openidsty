@@ -72,10 +72,12 @@ for(const mobile of [false,true])test(`草稿編輯、預覽與 stale revision �
   await page.screenshot({path:`../.work/editor-review/${mobile?'mobile':'desktop'}.png`,fullPage:true});
 });
 
-test('真實管理入口未設定 owner 時顯示本機設定說明',async({page})=>{
+test('真實管理入口依 owner 狀態顯示本機設定說明或登入表單',async({page,request})=>{
+  const configured=(await (await request.get('/api/admin/session')).json()).owner_configured;
   await page.goto('/admin');
   await expect(page.getByRole('heading',{name:'草稿工作台'})).toBeVisible();
-  await expect(page.getByText('尚未設定維護者。',{exact:false})).toBeVisible();
+  if(configured)await expect(page.getByLabel('密碼')).toBeVisible();
+  else await expect(page.getByText('尚未設定維護者。',{exact:false})).toBeVisible();
   await expect(page.getByRole('button',{name:'儲存修訂',exact:true})).toHaveCount(0);
 });
 

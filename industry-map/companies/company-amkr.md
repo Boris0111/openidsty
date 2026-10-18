@@ -150,6 +150,6 @@ Amkor 在[先進封裝環節](/next?focus=segment-advanced-packaging)屬[委外�
 
 ## 財務可取性
 
-- SEC companyfacts 可自動取得標準科目；主要申報來源設為 SEC，會計年度為曆年。
+- SEC 公開財務資料 可自動取得標準科目；主要申報來源設為 SEC，會計年度為曆年。
 - 終端市場比重可由 10-K 核對。
 - 2.5D 與 AI 相關營收：10-K 未公開。
