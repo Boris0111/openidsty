@@ -450,8 +450,14 @@ taxonomy:
 - id: taxonomy-optical-chip-from-ai-networking
   parent: application-ai-networking
   child: role-optical-chip
-- id: taxonomy-3081-two-from-optical-chip
-  parent: role-optical-chip
+- id: taxonomy-optical-epiwafer-from-ai-networking
+  parent: application-ai-networking
+  child: role-optical-epiwafer
+- id: taxonomy-optical-epiwafer-from-optical-epiwafer
+  parent: role-optical-epiwafer
+  child: product-optical-epiwafer
+- id: taxonomy-3081-two-from-optical-epiwafer
+  parent: role-optical-epiwafer
   child: company-3081-two
 - id: taxonomy-inp-laser-chip-from-optical-chip
   parent: role-optical-chip
@@ -1054,6 +1060,24 @@ offerings:
   claim-refs:
   - entity-id: company-alab
     claim-id: product-families
+- id: offering-2345-tw-datacenter-switch
+  company: company-2345-tw
+  product: product-datacenter-switch
+  role: role-switch-system
+  conditions:
+  - 年報列出 200G／400G／800G 資料中心交換器，網路交換器占營收 35%
+  claim-refs:
+  - entity-id: company-2345-tw
+    claim-id: product-mix
+- id: offering-3081-two-optical-epiwafer
+  company: company-3081-two
+  product: product-optical-epiwafer
+  role: role-optical-epiwafer
+  conditions:
+  - 年報揭露磊晶片及加工品占營收 99.21%，客戶為光通訊元件廠
+  claim-refs:
+  - entity-id: company-3081-two
+    claim-id: epiwafer-business
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv

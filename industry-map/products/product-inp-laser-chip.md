@@ -19,7 +19,7 @@ substitution-limits:
 claims: []
 gaps:
 - status: not-researched
-  reason: 尚未逐家核對代表公司在此產品的具體型號、客戶與收入；列名來自既有環節角色。
+  reason: 博通的產能來源已於公司頁核對，但 10-K 未揭露雷射收入或客戶；其他雷射晶片供應者尚未研究。
 ---
 
 ## 定義與用途
@@ -32,4 +32,4 @@ gaps:
 
 ## 供應角色與公司
 
-屬於[光通訊雷射與光電晶片](/next?focus=role-optical-chip)。依既有環節角色列入的代表公司：[聯亞](/next?focus=company-3081-two)。這是分類基準，各公司在此產品的具體型號、客戶與收入待逐家深研核對。
+屬於[光通訊雷射與光電晶片](/next?focus=role-optical-chip)。代表公司：[博通](/next?focus=company-avgo)。聯亞的主要產品是供雷射晶片製作的[磊晶片](/next?focus=product-optical-epiwafer)，已改列光通訊磊晶片。

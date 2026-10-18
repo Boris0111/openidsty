@@ -9,7 +9,7 @@ summary: 供應光源與光電晶片的角色。
 reviewed: '2026-10-18'
 definition: 製造雷射、檢光等光通訊晶片。
 purpose: 辨認可彼此替換的供應者，再進入產品與公司研究。
-boundary: 不含模組組裝與 DSP。
+boundary: 不含模組組裝與 DSP；只供應磊晶片的廠商列在光通訊磊晶片。
 adoption-conditions:
 - 依速率、波長與可靠度認證
 bottlenecks:
@@ -26,7 +26,7 @@ gaps:
 
 製造雷射、檢光等光通訊晶片。主要產品類別：[磷化銦雷射晶片](/next?focus=product-inp-laser-chip)。
 
-依既有環節角色列入的代表公司：[聯亞](/next?focus=company-3081-two)。
+代表公司：[博通](/next?focus=company-avgo)（10-K 說明自有晶圓廠生產 InP 與 GaAs 雷射）。[聯亞](/next?focus=company-3081-two)原列於此，task 8.13 依其年報以磊晶片為主改列[光通訊磊晶片](/next?focus=role-optical-epiwafer)。
 
 ## 採用條件與限制
 
