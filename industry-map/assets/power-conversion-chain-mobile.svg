@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="448" viewBox="0 0 360 448">
+  <title>機櫃供電轉換鏈</title>
+  <desc>每一級轉換把電壓換到下一段需要的範圍。電源架或 PSU 處理系統供電，板端電壓調節把母線電壓降到晶片可用的低電壓高電流。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#267a97"/></marker></defs>
+  <rect width="360" height="448" rx="8" fill="#f3f6f7"/>
+  <g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#16343a">
+    <text x="22" y="36" font-size="18" font-weight="700">機櫃供電轉換鏈</text>
+    <text x="22" y="70" font-size="15" font-weight="700">設施</text>
+    <rect x="22" y="80" width="316" height="38" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="32" y="104" font-size="14">市電或設施電力</text>
+    <path d="M180 124V144" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="158" font-size="15" font-weight="700">AC/DC</text>
+    <rect x="22" y="168" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="192" font-size="14">電源架或 PSU</text>
+    <path d="M180 212V232" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="246" font-size="15" font-weight="700">母線</text>
+    <rect x="22" y="256" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="280" font-size="14">機櫃直流母線</text>
+    <path d="M180 300V320" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="334" font-size="15" font-weight="700">板端</text>
+    <rect x="22" y="344" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="368" font-size="14">DC/DC 電壓調節</text>
+    <rect x="22" y="388" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="412" font-size="14">晶片工作電壓</text>
+  </g>
+</svg>

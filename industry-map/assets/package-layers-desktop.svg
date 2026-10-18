@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="256" viewBox="0 0 760 256">
+  <title>封裝的四個層次</title>
+  <desc>越靠近晶片，連線越密、距離越短。中介層讓晶片與 HBM 之間有大量短距離連線；封裝載板把這些訊號與供電整理後接到系統電路板。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#267a97"/></marker></defs>
+  <rect width="760" height="256" rx="8" fill="#f3f6f7"/>
+  <g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#16343a">
+    <text x="30" y="38" font-size="20" font-weight="700">封裝的四個層次</text>
+    <text x="36" y="78" font-size="15" font-weight="700">晶片層</text>
+    <rect x="30" y="92" width="157" height="44" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="40" y="119" font-size="14">運算晶片</text>
+    <rect x="30" y="146" width="157" height="44" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="40" y="173" font-size="14">HBM 堆疊</text>
+    <path d="M189 114H209" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="217" y="78" font-size="15" font-weight="700">中介層</text>
+    <rect x="211" y="92" width="157" height="44" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="221" y="119" font-size="14">矽中介層</text>
+    <rect x="211" y="146" width="157" height="44" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="221" y="173" font-size="14">或 RDL 重布線</text>
+    <path d="M370 114H390" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="398" y="78" font-size="15" font-weight="700">封裝載板</text>
+    <rect x="392" y="92" width="157" height="44" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="402" y="119" font-size="14">ABF 載板</text>
+    <rect x="392" y="146" width="157" height="44" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="402" y="173" font-size="14">對外接點</text>
+    <path d="M551 114H571" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="579" y="78" font-size="15" font-weight="700">系統板</text>
+    <rect x="573" y="92" width="157" height="44" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="583" y="119" font-size="14">伺服器電路板</text>
+    <text x="30" y="234" font-size="13" fill="#526575">圖為原創功能示意，由左到右是由晶片往外的層次。</text>
+  </g>
+</svg>

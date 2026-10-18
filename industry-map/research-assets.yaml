@@ -14,3 +14,87 @@ assets:
   alt: 直式圖解，冷板、液對液 CDU 與設施水路的兩個回路。
   license: Original project illustration
   attribution: IndustryFlow, 2026
+- id: asset-package-layers-desktop
+  path: assets/package-layers-desktop.svg
+  sha256: 26870e3f9eddc49b115c538ae3eab647bd442f942a80050b47b5de24bc165cab
+  media-type: image/svg+xml
+  alt: 越靠近晶片，連線越密、距離越短。中介層讓晶片與 HBM 之間有大量短距離連線；封裝載板把這些訊號與供電整理後接到系統電路板。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-package-layers-mobile
+  path: assets/package-layers-mobile.svg
+  sha256: 269e270bf050d5c0960bccdf3ac43de90f568696dfda18c9fa61e0efeeb709e6
+  media-type: image/svg+xml
+  alt: 直式圖解：越靠近晶片，連線越密、距離越短。中介層讓晶片與 HBM 之間有大量短距離連線；封裝載板把這些訊號與供電整理後接到系統電路板。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-hbm-stack-desktop
+  path: assets/hbm-stack-desktop.svg
+  sha256: af476c28dedc40565af24a6f6d8687142b188ecc1ec046bce9b0f14d208dc095
+  media-type: image/svg+xml
+  alt: HBM 把多層 DRAM 疊在一顆邏輯 base die 上，再和加速器一起封裝，換取很高的頻寬。伺服器 DRAM 模組則插在主機板上，提供 CPU 的主記憶體容量。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-hbm-stack-mobile
+  path: assets/hbm-stack-mobile.svg
+  sha256: 9fe54915d6865aba590996cab625f23a4d807d15df1721fd9f1729b01663bed7
+  media-type: image/svg+xml
+  alt: 直式圖解：HBM 把多層 DRAM 疊在一顆邏輯 base die 上，再和加速器一起封裝，換取很高的頻寬。伺服器 DRAM 模組則插在主機板上，提供 CPU 的主記憶體容量。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-network-tiers-desktop
+  path: assets/network-tiers-desktop.svg
+  sha256: ac38a7ea57916b7dfd95571acf5891cb039b2f7df7c00e9f8361a6f8e6d17327
+  media-type: image/svg+xml
+  alt: 距離越短越常用銅纜與主動電纜，距離拉長後改用光模組。交換晶片、DSP、光元件與模組在不同層分工。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-network-tiers-mobile
+  path: assets/network-tiers-mobile.svg
+  sha256: c7a5a0ff0eb3e3749e54107659a0490cbc130c17a9d265fafe1a3a66f860afe8
+  media-type: image/svg+xml
+  alt: 直式圖解：距離越短越常用銅纜與主動電纜，距離拉長後改用光模組。交換晶片、DSP、光元件與模組在不同層分工。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-power-conversion-chain-desktop
+  path: assets/power-conversion-chain-desktop.svg
+  sha256: 5d5daf2b9d75497edd61c853fe87a75fad9eb12d6751fd2c9b4bbc823e612625
+  media-type: image/svg+xml
+  alt: 每一級轉換把電壓換到下一段需要的範圍。電源架或 PSU 處理系統供電，板端電壓調節把母線電壓降到晶片可用的低電壓高電流。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-power-conversion-chain-mobile
+  path: assets/power-conversion-chain-mobile.svg
+  sha256: d0e1f0f378eb23fb66a77978f93d2c3430124f3ace33675a4b6172af1bb95548
+  media-type: image/svg+xml
+  alt: 直式圖解：每一級轉換把電壓換到下一段需要的範圍。電源架或 PSU 處理系統供電，板端電壓調節把母線電壓降到晶片可用的低電壓高電流。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-laminate-to-board-desktop
+  path: assets/laminate-to-board-desktop.svg
+  sha256: d8681b6dd42fca4e626a02fecddf4d405d0c2b145e6e7c88ec49ccb7619f4eef
+  media-type: image/svg+xml
+  alt: 高速訊號的損耗同時受板材與加工影響。CCL 廠提供材料，PCB 廠負責層疊、對位與鑽孔，兩者需共同符合阻抗與可靠度要求。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-laminate-to-board-mobile
+  path: assets/laminate-to-board-mobile.svg
+  sha256: 7c53c01e336d577645b753bcf5cf98d25e54ad5020023e1c0304a2bf6783bd6e
+  media-type: image/svg+xml
+  alt: 直式圖解：高速訊號的損耗同時受板材與加工影響。CCL 廠提供材料，PCB 廠負責層疊、對位與鑽孔，兩者需共同符合阻抗與可靠度要求。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-test-insertions-desktop
+  path: assets/test-insertions-desktop.svg
+  sha256: 8cad2466ee4a7d92223d3cb50ebfc77294ce08e2a3c4c759958f88ef407d4a4f
+  media-type: image/svg+xml
+  alt: 晶圓測試在封裝前篩出不良 die；成品測試確認封裝後功能；系統層測試在接近實際使用的環境補找供電、熱與韌體相關失效。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026
+- id: asset-test-insertions-mobile
+  path: assets/test-insertions-mobile.svg
+  sha256: 457bf996ffb3a8a2ea1c2c7fafe7eacfa41ecb23bf6b0a15cad7459f5dada8a0
+  media-type: image/svg+xml
+  alt: 直式圖解：晶圓測試在封裝前篩出不良 die；成品測試確認封裝後功能；系統層測試在接近實際使用的環境補找供電、熱與韌體相關失效。
+  license: Original project illustration
+  attribution: IndustryFlow, 2026

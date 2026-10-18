@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="448" viewBox="0 0 360 448">
+  <title>HBM 堆疊與伺服器 DRAM</title>
+  <desc>HBM 把多層 DRAM 疊在一顆邏輯 base die 上，再和加速器一起封裝，換取很高的頻寬。伺服器 DRAM 模組則插在主機板上，提供 CPU 的主記憶體容量。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#267a97"/></marker></defs>
+  <rect width="360" height="448" rx="8" fill="#f3f6f7"/>
+  <g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#16343a">
+    <text x="22" y="36" font-size="18" font-weight="700">HBM 堆疊與伺服器 DRAM</text>
+    <text x="22" y="70" font-size="15" font-weight="700">DRAM 堆疊</text>
+    <rect x="22" y="80" width="316" height="38" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="32" y="104" font-size="14">多層 DRAM die</text>
+    <path d="M180 124V144" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="158" font-size="15" font-weight="700">邏輯底層</text>
+    <rect x="22" y="168" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="192" font-size="14">base die</text>
+    <path d="M180 212V232" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="246" font-size="15" font-weight="700">共同封裝</text>
+    <rect x="22" y="256" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="280" font-size="14">與加速器同封裝</text>
+    <path d="M22 315H338" stroke="#7d8f96" stroke-width="1.5" stroke-dasharray="5 5"/>
+    <text x="22" y="334" font-size="15" font-weight="700">對照：主記憶體</text>
+    <rect x="22" y="344" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="368" font-size="14">伺服器 DRAM 模組</text>
+    <rect x="22" y="388" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="412" font-size="14">插在主機板供 CPU</text>
+  </g>
+</svg>

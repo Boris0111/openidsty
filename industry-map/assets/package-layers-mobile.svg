@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="536" viewBox="0 0 360 536">
+  <title>封裝的四個層次</title>
+  <desc>越靠近晶片，連線越密、距離越短。中介層讓晶片與 HBM 之間有大量短距離連線；封裝載板把這些訊號與供電整理後接到系統電路板。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#267a97"/></marker></defs>
+  <rect width="360" height="536" rx="8" fill="#f3f6f7"/>
+  <g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#16343a">
+    <text x="22" y="36" font-size="18" font-weight="700">封裝的四個層次</text>
+    <text x="22" y="70" font-size="15" font-weight="700">晶片層</text>
+    <rect x="22" y="80" width="316" height="38" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="32" y="104" font-size="14">運算晶片</text>
+    <rect x="22" y="124" width="316" height="38" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="32" y="148" font-size="14">HBM 堆疊</text>
+    <path d="M180 168V188" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="202" font-size="15" font-weight="700">中介層</text>
+    <rect x="22" y="212" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="236" font-size="14">矽中介層</text>
+    <rect x="22" y="256" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="280" font-size="14">或 RDL 重布線</text>
+    <path d="M180 300V320" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="334" font-size="15" font-weight="700">封裝載板</text>
+    <rect x="22" y="344" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="368" font-size="14">ABF 載板</text>
+    <rect x="22" y="388" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="412" font-size="14">對外接點</text>
+    <path d="M180 432V452" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="466" font-size="15" font-weight="700">系統板</text>
+    <rect x="22" y="476" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="500" font-size="14">伺服器電路板</text>
+  </g>
+</svg>
