@@ -762,6 +762,9 @@ taxonomy:
 - id: taxonomy-mrvl-from-electrical-connectivity
   parent: role-electrical-connectivity
   child: company-mrvl
+- id: taxonomy-crdo-from-optical-dsp
+  parent: role-optical-dsp
+  child: company-crdo
 offerings:
 - id: offering-auras-cold-plate
   company: company-auras
@@ -1006,6 +1009,51 @@ offerings:
   claim-refs:
   - entity-id: company-mrvl
     claim-id: interconnect-portfolio
+- id: offering-crdo-active-electrical-cable
+  company: company-crdo
+  product: product-active-electrical-cable
+  role: role-electrical-connectivity
+  conditions:
+  - 10-K 說明 AEC 放量貢獻營收增量逾 99%，AEC 由貿聯代工
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: aec-revenue
+- id: offering-crdo-retimer
+  company: company-crdo
+  product: product-retimer
+  role: role-electrical-connectivity
+  conditions:
+  - 10-K 列出 Ethernet 與 PCIe retimer，未拆分收入
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: product-portfolio
+- id: offering-crdo-optical-dsp
+  company: company-crdo
+  product: product-optical-dsp
+  role: role-optical-dsp
+  conditions:
+  - 10-K 列出光 Ethernet DSP，未拆分收入
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: product-portfolio
+- id: offering-alab-retimer
+  company: company-alab
+  product: product-retimer
+  role: role-electrical-connectivity
+  conditions:
+  - 10-K 列出 Aries PCIe／CXL retimer，未拆分收入
+  claim-refs:
+  - entity-id: company-alab
+    claim-id: product-families
+- id: offering-alab-active-electrical-cable
+  company: company-alab
+  product: product-active-electrical-cable
+  role: role-electrical-connectivity
+  conditions:
+  - 10-K 列出 Aries 與 Taurus 智慧線纜模組，是裝入線纜的模組，不是整條線纜
+  claim-refs:
+  - entity-id: company-alab
+    claim-id: product-families
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv
@@ -1123,4 +1171,148 @@ relations:
   reviewed: '2026-10-18'
   claim-refs:
   - entity-id: company-mrvl
+    claim-id: named-competitors
+- id: relation-3665-tw-supplies-crdo
+  source: company-3665-tw
+  target: company-crdo
+  kind: named-supply
+  direction: directed
+  product: product-active-electrical-cable
+  mechanism: Credo 10-K 說明其 AEC 產品由貿聯製造
+  conditions:
+  - 10-K 未揭露採購金額或是否為唯一製造商
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: manufacturing-partners
+- id: relation-tsmc-supplies-crdo
+  source: company-tsmc
+  target: company-crdo
+  kind: named-supply
+  direction: directed
+  mechanism: Credo 10-K 說明 FY2026 晶圓全部由 TSMC 生產
+  conditions:
+  - 10-K 未揭露採購金額或製程節點
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: manufacturing-partners
+- id: relation-3711-tw-supplies-crdo
+  source: company-3711-tw
+  target: company-crdo
+  kind: named-supply
+  direction: directed
+  mechanism: Credo 10-K 將日月光投控旗下的 ASE 列為 IC 封裝廠
+  conditions:
+  - 10-K 具名的是子公司；未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: manufacturing-partners
+- id: relation-amkr-supplies-crdo
+  source: company-amkr
+  target: company-crdo
+  kind: named-supply
+  direction: directed
+  mechanism: Credo 10-K 將 Amkor 列為 IC 封裝廠
+  conditions:
+  - 10-K 未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: manufacturing-partners
+- id: relation-2449-tw-supplies-crdo
+  source: company-2449-tw
+  target: company-crdo
+  kind: named-supply
+  direction: directed
+  mechanism: Credo 10-K 將京元電子（KYEC）列為 IC 測試廠
+  conditions:
+  - 10-K 未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: manufacturing-partners
+- id: relation-crdo-avgo-competition
+  source: company-crdo
+  target: company-avgo
+  kind: competition
+  direction: symmetric
+  mechanism: Credo 10-K 將 Broadcom 列為主要競爭者
+  conditions:
+  - 競爭限於重疊的連接產品
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: named-competitors
+- id: relation-crdo-alab-competition
+  source: company-crdo
+  target: company-alab
+  kind: competition
+  direction: symmetric
+  mechanism: Credo 10-K 將 Astera Labs 列為主要競爭者；Astera Labs 10-K 也列出 Credo
+  conditions:
+  - 競爭限於重疊的 retimer 與主動線纜產品
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: named-competitors
+- id: relation-tsmc-supplies-alab
+  source: company-tsmc
+  target: company-alab
+  kind: named-supply
+  direction: directed
+  mechanism: Astera Labs 10-K 說明所有 IC 由 TSMC 製造
+  conditions:
+  - 10-K 未揭露採購金額或製程節點
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-alab
+    claim-id: manufacturing-partners
+- id: relation-3711-tw-supplies-alab
+  source: company-3711-tw
+  target: company-alab
+  kind: named-supply
+  direction: directed
+  mechanism: Astera Labs 10-K 將日月光投控旗下的 Advanced Semiconductor Engineering 列為封裝測試廠
+  conditions:
+  - 10-K 具名的是子公司；未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-alab
+    claim-id: manufacturing-partners
+- id: relation-amkr-supplies-alab
+  source: company-amkr
+  target: company-alab
+  kind: named-supply
+  direction: directed
+  mechanism: Astera Labs 10-K 將 Amkor 列為封裝測試廠
+  conditions:
+  - 10-K 未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-alab
+    claim-id: manufacturing-partners
+- id: relation-alab-avgo-competition
+  source: company-alab
+  target: company-avgo
+  kind: competition
+  direction: symmetric
+  mechanism: Astera Labs 10-K 將 Broadcom 列為主要競爭者
+  conditions:
+  - 競爭限於重疊的 retimer 與 PCIe 交換產品
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-alab
     claim-id: named-competitors

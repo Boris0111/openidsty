@@ -436,6 +436,32 @@ tw:
       max_pages: 1
 us:
   filings:
+  - id: alab-10k-2025
+    name: Astera Labs FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1736297/000173629726000010/alab-20251231.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - networking
+    - interconnect
+    themes:
+    - cpo-silicon-photonics
+    notes: SEC EDGAR 原文，申報日 2026-02-20、期間 2025-12-31；已讀 Item 1、1A、MD&A、Item 9A 與營收、地區、收購附註。
+  - id: crdo-10k-fy2026
+    name: Credo FY2026 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1807794/000162828026043303/crdo-20260502.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - networking
+    - interconnect
+    themes:
+    - cpo-silicon-photonics
+    notes: SEC EDGAR 原文，申報日 2026-06-15、會計年度結束於 2026-05-02（52/53 週制）；已讀 Item 1、1A、MD&A 與 Note 3 集中度附註。
   - id: mrvl-10k-fy2026
     name: Marvell FY2026 Form 10-K
     url: https://www.sec.gov/Archives/edgar/data/1835632/000183563226000011/mrvl-20260131.htm
