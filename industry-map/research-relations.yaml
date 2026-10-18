@@ -777,6 +777,15 @@ taxonomy:
 - id: taxonomy-3711-tw-from-test-service
   parent: role-test-service
   child: company-3711-tw
+- id: taxonomy-6239-tw-from-test-service
+  parent: role-test-service
+  child: company-6239-tw
+- id: taxonomy-amkr-from-test-service
+  parent: role-test-service
+  child: company-amkr
+- id: taxonomy-amkr-from-interposer-integration
+  parent: role-interposer-integration
+  child: company-amkr
 offerings:
 - id: offering-auras-cold-plate
   company: company-auras
@@ -1147,6 +1156,51 @@ offerings:
   claim-refs:
   - entity-id: company-3711-tw
     claim-id: advanced-packaging
+- id: offering-6239-tw-flip-chip-package-service
+  company: company-6239-tw
+  product: product-flip-chip-package-service
+  role: role-osat-assembly
+  conditions:
+  - IC 封裝服務占 61.76%，以記憶體封裝為主，含覆晶與扇出型封裝
+  claim-refs:
+  - entity-id: company-6239-tw
+    claim-id: revenue-mix
+- id: offering-6239-tw-chip-test-service
+  company: company-6239-tw
+  product: product-chip-test-service
+  role: role-test-service
+  conditions:
+  - IC 測試與晶圓級測試合計約 22%，以記憶體測試為主
+  claim-refs:
+  - entity-id: company-6239-tw
+    claim-id: revenue-mix
+- id: offering-amkr-flip-chip-package-service
+  company: company-amkr
+  product: product-flip-chip-package-service
+  role: role-osat-assembly
+  conditions:
+  - 10-K 描述覆晶、扇出、晶圓級與 SiP 封裝，未拆分各型態營收
+  claim-refs:
+  - entity-id: company-amkr
+    claim-id: technology-portfolio
+- id: offering-amkr-chip-test-service
+  company: company-amkr
+  product: product-chip-test-service
+  role: role-test-service
+  conditions:
+  - 10-K 描述晶圓針測、預燒、系統級與最終測試，未拆分測試營收
+  claim-refs:
+  - entity-id: company-amkr
+    claim-id: technology-portfolio
+- id: offering-amkr-2p5d-interposer-package
+  company: company-amkr
+  product: product-2p5d-interposer-package
+  role: role-interposer-integration
+  conditions:
+  - 10-K 列 2.5D 整合為技術能力，未揭露量產規模或客戶
+  claim-refs:
+  - entity-id: company-amkr
+    claim-id: technology-portfolio
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv
@@ -1435,3 +1489,42 @@ relations:
   claim-refs:
   - entity-id: company-3711-tw
     claim-id: competition
+- id: relation-3189-tw-supplies-6239-tw
+  source: company-3189-tw
+  target: company-6239-tw
+  kind: named-supply
+  direction: directed
+  mechanism: 力成年報把景碩列為主要基板供應商之一
+  conditions:
+  - 年報未揭露採購金額或品項
+  confidence: well-supported
+  reviewed: '2026-10-19'
+  claim-refs:
+  - entity-id: company-6239-tw
+    claim-id: named-materials
+- id: relation-amkr-3711-tw-competition
+  source: company-amkr
+  target: company-3711-tw
+  kind: competition
+  direction: symmetric
+  mechanism: Amkor 10-K 將 ASE Technology 列為主要封測競爭者
+  conditions:
+  - 競爭限於委外封裝與測試
+  confidence: well-supported
+  reviewed: '2026-10-19'
+  claim-refs:
+  - entity-id: company-amkr
+    claim-id: named-competitors
+- id: relation-amkr-6239-tw-competition
+  source: company-amkr
+  target: company-6239-tw
+  kind: competition
+  direction: symmetric
+  mechanism: Amkor 10-K 將 Powertech Technology（力成）列為主要封測競爭者
+  conditions:
+  - 競爭限於重疊的封裝與測試類型；力成以記憶體封測為主
+  confidence: well-supported
+  reviewed: '2026-10-19'
+  claim-refs:
+  - entity-id: company-amkr
+    claim-id: named-competitors

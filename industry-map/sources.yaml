@@ -1,6 +1,17 @@
 # 唯一來源註冊表；入口可讀性與 runtime 擷取狀態分開。
 tw:
   filings:
+  - id: pti-annual-report-2025
+    name: 力成科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=6239&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-19'
+    segments:
+    - advanced-packaging
+    themes: []
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁（PDF 頁減 4）；營業比重與進銷貨表以 -table 模式核對。
   - id: tsmc-annual-report-2025
     name: 台積公司 114 年度股東會年報
     url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2330&year=115&mtype=F&
@@ -486,6 +497,17 @@ tw:
       max_pages: 1
 us:
   filings:
+  - id: amkr-10k-2025
+    name: Amkor Technology FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1047127/000104712726000014/amkr-20251231.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-19'
+    segments:
+    - advanced-packaging
+    themes: []
+    notes: SEC EDGAR 原文，申報日 2026-02-20、期間 2025-12-31；已讀 Item 1、1A 與 MD&A 相關段落。
   - id: ase-20f-2025
     name: ASE Technology Holding FY2025 Form 20-F
     url: https://www.sec.gov/Archives/edgar/data/1122411/000119312526135585/d50802d20f.htm
