@@ -841,6 +841,24 @@ offerings:
   claim-refs:
   - entity-id: company-2301-tw
     claim-id: segment-mix
+- id: offering-6282-tw-power-shelf-psu
+  company: company-6282-tw
+  product: product-power-shelf-psu
+  role: role-rack-power-supply
+  conditions:
+  - 年報列出伺服器電源與資料中心機櫃級電源系統，未揭露客戶或出貨
+  claim-refs:
+  - entity-id: company-6282-tw
+    claim-id: server-power-products
+- id: offering-mpwr-pmic-voltage-regulator
+  company: company-mpwr
+  product: product-pmic-voltage-regulator
+  role: role-board-power-conversion
+  conditions:
+  - 10-K 將 DC to DC 方案用於伺服器與 AI 系統，未揭露具體平台或客戶
+  claim-refs:
+  - entity-id: company-mpwr
+    claim-id: end-market-mix
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv

@@ -1,6 +1,19 @@
 # 唯一來源註冊表；入口可讀性與 runtime 擷取狀態分開。
 tw:
   filings:
+  - id: acbel-annual-report-2025
+    name: 康舒科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=6282&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - power
+    themes:
+    - 800vdc
+    - power-bottleneck
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_6282_20260528F04.pdf）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁。
   - id: liteon-annual-report-2025
     name: 光寶科技 114 年度股東會年報
     url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2301&year=115&mtype=F&
@@ -376,6 +389,19 @@ tw:
       max_pages: 1
 us:
   filings:
+  - id: mpwr-10k-2025
+    name: Monolithic Power Systems FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1280452/000143774926006113/mpwr20251231_10k.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - power
+    themes:
+    - power-bottleneck
+    - 800vdc
+    notes: SEC EDGAR 原文，申報日 2026-02-27、期間 2025-12-31；已讀 Item 1、1A 與 MD&A 相關段落。
   - id: boyd-company-pages
     name: Boyd 官網公司、工程材料與據點頁
     url: https://www.boydcorp.com/about-boyd/locations.html
