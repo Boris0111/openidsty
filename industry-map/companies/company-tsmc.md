@@ -7,6 +7,9 @@ aliases:
 - TSMC
 - 台灣積體電路製造
 - 台積公司
+- 台積電
+- 臺積電
+- Taiwan Semiconductor
 summary: 晶圓代工龍頭；114 年營收 3.81 兆元、成長 31.6%，7 奈米以下占晶圓銷售 74%，高效能運算占營收 58%；CoWoS 與 SoIC 等 3DFabric 先進封裝持續量產擴充，但年報未揭露封裝營收。
 legacy-keys:
 - 2330.TW

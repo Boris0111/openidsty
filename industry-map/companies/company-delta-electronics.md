@@ -7,6 +7,8 @@ aliases:
 - Delta Electronics
 - 台達
 - 台達電子
+- 台達電
+- 臺達電
 summary: 電力電子大廠，四大範疇中電源及零組件占五成；年報描述 800VDC 供電與液冷系統，沒有單一客戶超過一成。
 legacy-keys:
 - 2308.TW
