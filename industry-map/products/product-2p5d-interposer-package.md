@@ -22,7 +22,7 @@ substitution-limits:
 claims: []
 gaps:
 - status: not-researched
-  reason: 尚未逐家核對代表公司在此產品的具體型號、客戶與收入；列名來自既有環節角色。
+  reason: 已有台積電、日月光投控、艾克爾的能力連結附原文主張（見公司頁）；具體型號、平台、客戶與其他列名公司尚未研究。
 ---
 
 ## 定義與用途

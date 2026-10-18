@@ -28,7 +28,9 @@ claims:
         read-scope: 已讀公開 overview，未讀 NVOnline 補充文件
         stance: supporting
         applicable-period: overview 引用 2026-08-19 的 DSX 指南 v2.0
-gaps: [實際設備的供水條件、流量及水質仍依場址與型號驗證。]
+gaps:
+- status: not-applicable
+  reason: 概念頁只解釋共通迴路；實際設備的供水條件、流量及水質仍依場址與型號驗證。
 ---
 
 ## 中文解釋

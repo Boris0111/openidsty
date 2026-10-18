@@ -24,7 +24,8 @@ roles:
   baseline-path: ai-server/odm.md
 claims: []
 gaps:
-- 尚未完成公司產品、客戶、競爭與風險的獨立深研。
+- status: not-researched
+  reason: 尚未完成公司產品、客戶、競爭與風險的獨立深研。
 ---
 
 ## 供應角色

@@ -37,7 +37,9 @@ claims:
         read-scope: 已讀家族架構及型號表，未讀登入或留資料才能下載的文件
         stance: supporting
         applicable-period: 2026-10-16 所讀公開產品頁；頁面未提供獨立發布日
-gaps: [官方額定能力不等於個別場址驗收，也不能證明客戶採用或出貨收入。]
+gaps:
+- status: not-public
+  reason: 官方額定能力不等於個別場址驗收，也不能證明客戶採用或出貨收入；場址驗收與客戶採用資料未公開。
 ---
 
 ## 定義與用途
