@@ -32,4 +32,4 @@ gaps:
 
 ## 供應角色與公司
 
-屬於[光通訊雷射與光電晶片](/next?focus=role-optical-chip)。代表公司：[博通](/next?focus=company-avgo)。聯亞的主要產品是供雷射晶片製作的[磊晶片](/next?focus=product-optical-epiwafer)，已改列光通訊磊晶片。
+屬於[光通訊雷射與光電晶片](/next?focus=role-optical-chip)。代表公司：[博通](/next?focus=company-avgo)、[華星光](/next?focus=company-4979-two)。聯亞的主要產品是供雷射晶片製作的[磊晶片](/next?focus=product-optical-epiwafer)，已改列光通訊磊晶片。

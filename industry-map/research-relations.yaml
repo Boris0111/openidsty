@@ -771,6 +771,9 @@ taxonomy:
 - id: taxonomy-crdo-from-optical-dsp
   parent: role-optical-dsp
   child: company-crdo
+- id: taxonomy-4979-two-from-optical-chip
+  parent: role-optical-chip
+  child: company-4979-two
 offerings:
 - id: offering-auras-cold-plate
   company: company-auras
@@ -1078,6 +1081,24 @@ offerings:
   claim-refs:
   - entity-id: company-3081-two
     claim-id: epiwafer-business
+- id: offering-4979-two-optical-transceiver
+  company: company-4979-two
+  product: product-optical-transceiver
+  role: role-optical-module
+  conditions:
+  - 主動元件及模組占 86.35%，含資料中心光學引擎與相干光模組，未拆分資料中心收入
+  claim-refs:
+  - entity-id: company-4979-two
+    claim-id: product-mix
+- id: offering-4979-two-inp-laser-chip
+  company: company-4979-two
+  product: product-inp-laser-chip
+  role: role-optical-chip
+  conditions:
+  - 年報稱 CW DFB 雷射晶粒已獲數家主要客戶採用，晶粒營收占 11.05%
+  claim-refs:
+  - entity-id: company-4979-two
+    claim-id: cw-laser-and-engines
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv
@@ -1339,4 +1360,17 @@ relations:
   reviewed: '2026-10-18'
   claim-refs:
   - entity-id: company-alab
+    claim-id: named-competitors
+- id: relation-4979-two-avgo-competition
+  source: company-4979-two
+  target: company-avgo
+  kind: competition
+  direction: symmetric
+  mechanism: 華星光年報將 Broadcom 列為 10G／25G 雷射的主要競爭者
+  conditions:
+  - 競爭限於雷射晶粒，且年報列名針對 10G／25G 世代
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-4979-two
     claim-id: named-competitors

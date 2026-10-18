@@ -26,7 +26,7 @@ gaps:
 
 製造雷射、檢光等光通訊晶片。主要產品類別：[磷化銦雷射晶片](/next?focus=product-inp-laser-chip)。
 
-代表公司：[博通](/next?focus=company-avgo)（10-K 說明自有晶圓廠生產 InP 與 GaAs 雷射）。[聯亞](/next?focus=company-3081-two)原列於此，task 8.13 依其年報以磊晶片為主改列[光通訊磊晶片](/next?focus=role-optical-epiwafer)。
+代表公司：[博通](/next?focus=company-avgo)（10-K 說明自有晶圓廠生產 InP 與 GaAs 雷射）、[華星光](/next?focus=company-4979-two)（年報揭露晶粒營收與 CW DFB 雷射）。[聯亞](/next?focus=company-3081-two)原列於此，task 8.13 依其年報以磊晶片為主改列[光通訊磊晶片](/next?focus=role-optical-epiwafer)。
 
 ## 採用條件與限制
 
