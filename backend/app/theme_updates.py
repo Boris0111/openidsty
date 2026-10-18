@@ -14,15 +14,26 @@ def token(value):
     return hashlib.sha256(json.dumps(value,sort_keys=True,ensure_ascii=False,default=str,separators=(',',':')).encode()).hexdigest()
 
 
-def updates_payload(session,ids):
-    themes={t.id:t for t in session.scalars(select(Theme).where(Theme.id.in_(ids),Theme.active.is_(True)))}
-    latest=select(ThemeAssessmentVersion.theme_id,func.max(ThemeAssessmentVersion.version_number).label('number')).where(ThemeAssessmentVersion.theme_id.in_(ids)).group_by(ThemeAssessmentVersion.theme_id).subquery()
-    versions={v.theme_id:v for v in session.scalars(select(ThemeAssessmentVersion).join(latest,and_(latest.c.theme_id==ThemeAssessmentVersion.theme_id,latest.c.number==ThemeAssessmentVersion.version_number)).options(load_only(ThemeAssessmentVersion.id,ThemeAssessmentVersion.theme_id,ThemeAssessmentVersion.version_number)))}
+def indicator_rows(session,ids):
+    """Indicator definitions and latest observations per theme; shared by v1 and research-watchlist tokens."""
     definitions=defaultdict(list)
     for tid,i in session.execute(select(ThemeIndicator.theme_id,Indicator).join(Indicator).where(ThemeIndicator.theme_id.in_(ids)).order_by(Indicator.id)):definitions[tid].append(i)
     iids={i.id for values in definitions.values() for i in values};observations=defaultdict(list)
     fields=('id','indicator_id','identity','revision','content_hash','valid','original_period','period_end')
     for row in session.scalars(latest_query(iids).options(load_only(*(getattr(IndicatorObservation,f) for f in fields)))):observations[row.indicator_id].append(row)
+    return definitions,observations
+
+
+def indicator_tokens(session,ids):
+    definitions,observations=indicator_rows(session,ids)
+    return {tid:token(sorted((i.id,r.identity,r.revision,r.content_hash,r.valid) for i in definitions[tid] for r in observations[i.id])) for tid in ids}
+
+
+def updates_payload(session,ids):
+    themes={t.id:t for t in session.scalars(select(Theme).where(Theme.id.in_(ids),Theme.active.is_(True)))}
+    latest=select(ThemeAssessmentVersion.theme_id,func.max(ThemeAssessmentVersion.version_number).label('number')).where(ThemeAssessmentVersion.theme_id.in_(ids)).group_by(ThemeAssessmentVersion.theme_id).subquery()
+    versions={v.theme_id:v for v in session.scalars(select(ThemeAssessmentVersion).join(latest,and_(latest.c.theme_id==ThemeAssessmentVersion.theme_id,latest.c.number==ThemeAssessmentVersion.version_number)).options(load_only(ThemeAssessmentVersion.id,ThemeAssessmentVersion.theme_id,ThemeAssessmentVersion.version_number)))}
+    definitions,observations=indicator_rows(session,ids)
     from . import assessments
     reference=assessments.now();conditions=[]
     for tid,t in themes.items():

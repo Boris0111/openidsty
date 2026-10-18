@@ -21,3 +21,23 @@ export async function GET(request: NextRequest, context: {params: Promise<{path:
     return Response.json({detail:'資料服務暫時無法連線，請稍後重試'}, {status:503,headers:{'Cache-Control':'no-store'}});
   }
 }
+
+// The only reader POST: a side-effect-free favourites update summary. The body is never logged.
+const UPDATES_LIMIT = 64 * 1024;
+export async function POST(request: NextRequest, context: {params: Promise<{path: string[]}>}) {
+  const {path} = await context.params;
+  const noStore = {'Cache-Control':'no-store'};
+  if (path.join('/') !== 'v2/updates/query') return Response.json({detail:'找不到 API'}, {status:404,headers:noStore});
+  if (!(request.headers.get('content-type') || '').startsWith('application/json')) return Response.json({code:'invalid-request',message:'查詢格式不正確，請確認條件。'}, {status:415,headers:noStore});
+  const body = await request.arrayBuffer();
+  if (body.byteLength > UPDATES_LIMIT) return Response.json({code:'invalid-request',message:'收藏更新查詢超過大小限制。'}, {status:413,headers:noStore});
+  try {
+    const origin = process.env.API_ORIGIN || 'http://127.0.0.1:8010';
+    const result = await fetch(`${origin}/api/v2/updates/query`, {method:'POST', cache:'no-store', signal:AbortSignal.timeout(15000), headers:{'Content-Type':'application/json'}, body});
+    const headers = new Headers({'Content-Type':result.headers.get('content-type') || 'application/json', ...noStore});
+    for(const name of ['X-Request-ID','Retry-After','X-Content-Type-Options']) {const value=result.headers.get(name); if(value) headers.set(name,value)}
+    return new Response(await result.arrayBuffer(), {status:result.status,headers});
+  } catch {
+    return Response.json({detail:'資料服務暫時無法連線，請稍後重試'}, {status:503,headers:noStore});
+  }
+}

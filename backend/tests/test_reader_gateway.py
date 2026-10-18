@@ -46,6 +46,27 @@ def test_reader_uses_fixed_upstream_strips_credentials_and_preserves_release():
             app.state.client=original
 
 
+def test_only_the_favourites_update_query_may_post():
+    observed=[]
+    async def upstream(request):
+        observed.append(request)
+        return httpx.Response(200, json={'data':{'items':[]}}, headers={'Cache-Control':'no-store'})
+    with TestClient(app, base_url='http://localhost:3015') as client:
+        original=app.state.client
+        app.state.client=httpx.AsyncClient(transport=httpx.MockTransport(upstream))
+        try:
+            for path in ['/api/v2/updates','/api/v2/updates/query/extra','/api/v2/companies']:
+                assert client.post(path,json={'items':[]}).status_code==403
+            response=client.post('/api/v2/updates/query',json={'items':[]},headers={'Cookie':'industryflow_owner=secret'})
+            assert response.status_code==200 and str(observed[-1].url)=='http://web:3010/api/v2/updates/query'
+            assert 'cookie' not in observed[-1].headers
+            assert client.post('/api/v2/updates/query',content=b'{"items":[]}'+b' '*(1024*1024)).status_code==413
+        finally:
+            import asyncio
+            asyncio.run(app.state.client.aclose())
+            app.state.client=original
+
+
 def test_reader_upstream_outage_is_retryable_and_not_cached():
     async def offline(request):
         raise httpx.ConnectError('Synthetic outage')

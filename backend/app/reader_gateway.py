@@ -46,7 +46,7 @@ async def reader(path: str, request: Request):
     if len(path)>2048 or len(request.url.query)>4096 or '\\' in path or '%' in path or any(ord(char)<32 for char in path) or any(part in ('.','..') for part in path.split('/')):
         return denied(403, '此路徑無法由讀者入口存取。')
     readable = path == 'next' or path.startswith(('_next/static/','api/v2/')) or path == 'favicon.ico'
-    permitted = request.method in ('GET','HEAD') and readable or request.method == 'POST' and path == 'api/v2/updates'
+    permitted = request.method in ('GET','HEAD') and readable or request.method == 'POST' and path == 'api/v2/updates/query'
     if not permitted:
         return denied(403, '讀者入口僅提供已發布研究。')
     content = bytearray()

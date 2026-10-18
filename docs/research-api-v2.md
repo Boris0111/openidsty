@@ -38,3 +38,7 @@ depth 預設 1、最大 3；max_nodes 預設 200、最大 500；max_edges 預設
 `GET /api/v2/impact?segment_id=segment-thermal&mode=all` 提供 linear／theme／sibling／all。三者皆保留可閱讀理由及完整 steps，每步標 inference；共同下游的 via 不是具名客戶交易。depth 計推導步驟，題材或 sibling 一步可透過 via 表達實際兩條結構連結。預設 depth=1 就涵蓋液冷經 ODM 找到 PCB 的手足路徑。經不同機制抵達同環節時保留各自理由，但節點只展開一次，避免循環擴張。
 
 Impact 的節點／路徑限制與 graph 相同。來源拓樸最多讀 500 環節及 500 題材，各路徑最多列 100 公司，超過均明示截斷並提供公司清單連結；可繼續分頁閱讀。這些是研究結構路徑，不代表經濟因果或投資受惠已被證實。
+
+## 收藏更新查詢
+
+`POST /api/v2/updates/query` 是讀者端唯一的 POST，沒有副作用，也不保存任何個人清單。Body 為 `{release_id?, items:[{kind, id, seen?}]}`：kind 限 company／product／theme／research，最多 100 個不重複目標，`seen` 是瀏覽器保存的 `{research, values, events}`。回應 `no-store`，每個目標分別回傳研究、數值、事件三個面向；不存在或封存的目標以 `available:false` 逐項回報。Next proxy 只放行這個路徑（64 KiB 上限），私人讀者 gateway 也只放行這一個 POST。完整判定規則見 [此裝置收藏](research-watchlist.md)。

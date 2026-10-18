@@ -35,3 +35,7 @@
 .rf-date{white-space:nowrap}
 .rs-update{display:flex;align-items:center;flex-wrap:wrap;gap:12px 20px;border-block:1px solid var(--rs-line);padding:12px 0;margin-bottom:26px;font-size:14px}.rs-update button,.rs-scope-note button{font-size:13px;padding:5px 10px}.rs-scope-note button{margin-left:12px}
 .rs-page-actions>div{display:flex;flex-wrap:wrap;gap:10px}
+.rs-watchlist{max-width:900px;margin:auto}.rs-watch-toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:18px 0}
+.rs-watch-card{border-top:1px solid var(--rs-line);padding:18px 0}.rs-watch-title{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}.rs-watch-title h2{font-size:20px;margin:0}.rs-watch-title span{font-size:13px;color:var(--rs-muted)}
+.rs-watch-status{list-style:none;padding:0;margin:10px 0;display:grid;gap:4px}.rs-watch-status li{display:flex;gap:12px;font-size:15px}.rs-watch-status strong{flex:0 0 3em}.rs-watch-status li[data-state=changed] span{color:#9a4a12;font-weight:600}.rs-watch-status li[data-state=pending] span{color:var(--rs-muted)}
+.rs-watch-actions{display:flex;flex-wrap:wrap;gap:10px}.rs-watch-actions button{font-size:13px;padding:6px 10px}

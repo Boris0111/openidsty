@@ -210,3 +210,28 @@ Application 仍為 migration `0015`／head `03799774-3553-5ff6-9910-13a68468af15
 驗證：`run_validator_tests` 66 類失敗案例＋22 項 schema 測試通過（新增 gap 格式 2 項）；`validate_map` 通過。`pg-check --suite admin-read` **7 passed**（新增 coverage 6 項，在 rolled-back 交易內匯入真實地圖）；`reader-navigation` 22、`research-dynamic` 25、`publication-interfaces` 1 passed。容器內離線 pytest **281 passed、110 skipped**（skipped 為需 PostgreSQL 的案例，已由上列 pg-check 覆蓋）。前端 typecheck、production build 通過；離線瀏覽器 **55 passed**（候選相關 3 個舊斷言改為新契約）；隔離預覽 **20 passed**（新增 admin 覆蓋桌機／手機 2 項，合成 admin API）。截圖存於忽略的 `.work/research-coverage-review/`，修正一次技術文件清單的小字黏連後重拍；這是工程走查，不是 Boris 閱讀驗收。
 
 Application 仍為 migration `0015`、head `03799774-3553-5ff6-9910-13a68468af15`，34 正式關係、2915 事件、1793 financial observations、4 source jobs；owner／publish jobs 均 0。結構化缺口是 authoring 檔案變更，尚未經發布進入 application release，所以真實 admin 缺口矩陣目前全為未分類＋basic 未研究。研究版 web／API 已重建，原服務 fingerprints 未變，來源排程及 Prefect worker 仍關閉。
+
+## 此裝置收藏與更新摘要（task 7.1，2026-10-18）
+
+新增 `POST /api/v2/updates/query`，依收藏物件本身回傳研究、數值、事件三個面向：
+- 研究：物件 semantic hash 加上觸及它的關係與產品能力。
+- 數值：公司各財務序列目前有效的 observation；題材沿用 v1 指標 token，已抽成共用函式，v1 結果不變。
+- 事件：已讀到的事件 ID，新事件分成依發布日與發布日未知兩類。
+
+整站發布但物件沒變、同值新申報、來源重試與未發布草稿都不會產生未讀。私人 gateway 原本預留的 `api/v2/updates` 改為 design 指定的 `/api/v2/updates/query`，Next proxy 只放行這個 POST。
+
+`/next` 新增「加入收藏」（公司／產品／題材／研究頁）與「此裝置收藏」頁，localStorage key `industryflow.research-watchlist.v2`，上限 100：
+- 首次基準以畫面上的 release 建立；無法取得時標「待確認」，不自動全部已讀。
+- 「標為已讀」只記錄畫面上的回應。
+- 頁面說明收藏不含研究全文、不跨瀏覽器同步。
+- 收藏頁隱藏「分享這份研究」，因為清單只存在本機。
+
+詳見 [此裝置收藏](research-watchlist.md)。
+
+驗證：
+- PostgreSQL：`research-dynamic` **29 passed**（新增 4 項）、`reader-navigation` **23 passed**（新增 gateway POST 1 項）。
+- 容器內離線 pytest **282 passed、114 skipped**。
+- 前端 typecheck、build 通過；離線瀏覽器全套 **60 passed**（新增收藏 5 項）。
+- 隔離預覽：收藏、讀者流程、快取、覆蓋、編輯與來源更新共 **25 passed**，新增真實 Vertiv／冷板收藏的桌機與手機案例。真實資料重查沒有出現假更新。截圖存於忽略的 `.work/research-watchlist-review/`；這是工程走查，不是 Boris 的閱讀驗收。
+
+Application 資料未改動：migration `0015`、head `03799774-3553-5ff6-9910-13a68468af15`。研究版 web／API 已重建，原服務 fingerprints 未變。v1 題材遷移留給 7.2，匯出入留給 7.3。
