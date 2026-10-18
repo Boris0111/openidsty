@@ -774,6 +774,9 @@ taxonomy:
 - id: taxonomy-4979-two-from-optical-chip
   parent: role-optical-chip
   child: company-4979-two
+- id: taxonomy-3711-tw-from-test-service
+  parent: role-test-service
+  child: company-3711-tw
 offerings:
 - id: offering-auras-cold-plate
   company: company-auras
@@ -1099,6 +1102,51 @@ offerings:
   claim-refs:
   - entity-id: company-4979-two
     claim-id: cw-laser-and-engines
+- id: offering-tsmc-advanced-logic-wafer
+  company: company-tsmc
+  product: product-advanced-logic-wafer
+  role: role-advanced-logic-foundry
+  conditions:
+  - 年報揭露 7 奈米及以下占晶圓銷售 74%，未揭露客戶別營收
+  claim-refs:
+  - entity-id: company-tsmc
+    claim-id: revenue-and-nodes
+- id: offering-tsmc-2p5d-interposer-package
+  company: company-tsmc
+  product: product-2p5d-interposer-package
+  role: role-interposer-integration
+  conditions:
+  - 年報說明 CoWoS 各版本量產狀態，未揭露封裝營收或客戶
+  claim-refs:
+  - entity-id: company-tsmc
+    claim-id: three-d-fabric
+- id: offering-3711-tw-flip-chip-package-service
+  company: company-3711-tw
+  product: product-flip-chip-package-service
+  role: role-osat-assembly
+  conditions:
+  - 封裝營收 NT$308,342.6 百萬元，未拆分覆晶與其他封裝
+  claim-refs:
+  - entity-id: company-3711-tw
+    claim-id: revenue-mix
+- id: offering-3711-tw-chip-test-service
+  company: company-3711-tw
+  product: product-chip-test-service
+  role: role-test-service
+  conditions:
+  - 測試營收 NT$71,900.2 百萬元，成長 31.8%
+  claim-refs:
+  - entity-id: company-3711-tw
+    claim-id: revenue-mix
+- id: offering-3711-tw-2p5d-interposer-package
+  company: company-3711-tw
+  product: product-2p5d-interposer-package
+  role: role-interposer-integration
+  conditions:
+  - 20-F 列出 2.5D 與 CoWoS 類技術，未揭露營收或客戶
+  claim-refs:
+  - entity-id: company-3711-tw
+    claim-id: advanced-packaging
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv
@@ -1374,3 +1422,16 @@ relations:
   claim-refs:
   - entity-id: company-4979-two
     claim-id: named-competitors
+- id: relation-3711-tw-tsmc-competition
+  source: company-3711-tw
+  target: company-tsmc
+  kind: competition
+  direction: symmetric
+  mechanism: 日月光 20-F 以台積電提供 InFO 等先進封裝技術，說明封測業面臨來自供應鏈其他層級的競爭
+  conditions:
+  - 競爭限於先進封裝；兩者在晶圓代工與封測其他業務上是上下游
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-3711-tw
+    claim-id: competition

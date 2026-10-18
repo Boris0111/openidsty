@@ -1,6 +1,19 @@
 # 唯一來源註冊表；入口可讀性與 runtime 擷取狀態分開。
 tw:
   filings:
+  - id: tsmc-annual-report-2025
+    name: 台積公司 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2330&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - foundry
+    - advanced-packaging
+    themes:
+    - cpo-silicon-photonics
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_2330_20260604F04.pdf）；此版為跨頁排版（每個 PDF 頁含兩個印刷頁），以 pdftotext 閱讀順序模式重新擷取，引用 PDF 頁碼與章節。財務報表另冊，未讀。
   - id: luxnet-annual-report-2025
     name: 華星光通 114 年度股東會年報
     url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=4979&year=115&mtype=F&
@@ -473,6 +486,18 @@ tw:
       max_pages: 1
 us:
   filings:
+  - id: ase-20f-2025
+    name: ASE Technology Holding FY2025 Form 20-F
+    url: https://www.sec.gov/Archives/edgar/data/1122411/000119312526135585/d50802d20f.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - advanced-packaging
+    themes:
+    - cpo-silicon-photonics
+    notes: SEC EDGAR 原文，申報日 2026-04-01、期間 2025-12-31；已讀 Item 3 風險、Item 4 業務與 Item 5 營運結果相關段落。中文股東會年報已下載，但 112 頁中 98 頁因字型編碼無法擷取文字，改以 20-F 為主。
   - id: alab-10k-2025
     name: Astera Labs FY2025 Form 10-K
     url: https://www.sec.gov/Archives/edgar/data/1736297/000173629726000010/alab-20251231.htm
