@@ -1,0 +1,80 @@
+name: industryflow-research-drill
+
+# Restore drill only: separate volumes, network, secrets and loopback ports. Images are the preview's,
+# never rebuilt here; no scheduler, so nothing fetches unless a one-off tools command is run explicitly.
+x-app: &app
+  image: industryflow-research-api:dev
+  environment: &app-env
+    DATABASE_URL: postgresql+psycopg://industry:${RESEARCH_POSTGRES_PASSWORD:?Run research_drill.py setup}@db:5432/industry_research
+    RESEARCH_READ_DATABASE_URL: postgresql+psycopg://research_reader_login:${RESEARCH_READER_PASSWORD:?Run research_drill.py setup}@db:5432/industry_research
+    RESEARCH_WRITE_DATABASE_URL: postgresql+psycopg://research_writer_login:${RESEARCH_WRITER_PASSWORD:?Run research_drill.py setup}@db:5432/industry_research
+    PREFECT_API_URL: http://prefect.invalid:4200/api
+    PREFECT_SERVER_ANALYTICS_ENABLED: "false"
+    SEC_USER_AGENT: ${SEC_USER_AGENT:-}
+    RESEARCH_SESSION_SECRET: ${RESEARCH_SESSION_SECRET:?Run research_drill.py setup}
+    RESEARCH_ADMIN_MODE: loopback-http
+    RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3016,http://localhost:3016
+    RESEARCH_ADMIN_HOSTS: api:8000,127.0.0.1:8016,localhost:8016
+  init: true
+  networks: [app]
+
+services:
+  db:
+    image: postgres:16.15-trixie
+    environment:
+      POSTGRES_USER: industry
+      POSTGRES_PASSWORD: ${RESEARCH_POSTGRES_PASSWORD:?Run research_drill.py setup}
+      POSTGRES_DB: industry_research
+    volumes: [pg-data:/var/lib/postgresql/data]
+    networks: [app]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U industry -d industry_research"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  api:
+    <<: *app
+    volumes: ["research-assets:/home/app/research-assets", "research-git:/home/app/research-git:ro"]
+    environment:
+      <<: *app-env
+      DATABASE_URL: postgresql+psycopg://research_reader_login:${RESEARCH_READER_PASSWORD}@db:5432/industry_research
+    ports: ["127.0.0.1:8016:8000"]
+    depends_on:
+      db: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+  web:
+    image: industryflow-research-web:dev
+    environment:
+      API_ORIGIN: http://api:8000
+      RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3016,http://localhost:3016
+    ports: ["127.0.0.1:3016:3010"]
+    depends_on:
+      api: {condition: service_healthy}
+    networks: [app]
+    init: true
+  bootstrap:
+    <<: *app
+    profiles: [tools]
+    volumes: ["research-assets:/home/app/research-assets", "research-git:/home/app/research-git"]
+    depends_on:
+      db: {condition: service_healthy}
+  worker:
+    <<: *app
+    profiles: [tools]
+    volumes: ["research-assets:/home/app/research-assets", "research-git:/home/app/research-git"]
+    environment:
+      <<: *app-env
+      DATABASE_URL: postgresql+psycopg://research_writer_login:${RESEARCH_WRITER_PASSWORD}@db:5432/industry_research
+    depends_on:
+      db: {condition: service_healthy}
+
+volumes:
+  pg-data:
+  research-git:
+  research-assets:
+networks:
+  app:

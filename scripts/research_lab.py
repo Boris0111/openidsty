@@ -1,5 +1,6 @@
 """Isolated preview operations. Never prints resolved Compose secrets."""
 import argparse
+import calendar
 import hashlib
 import json
 import os
@@ -183,9 +184,123 @@ def restore(source, database):
     return report
 
 
+BACKUP_ROOT = ROOT / 'backups/research'
+STAMP = re.compile(r'\d{8}T\d{6}Z')
+GIT_REPO = '/home/app/research-git/repository.git'
+ASSET_DIR = '/home/app/research-assets'
+
+
+def sha256_file(path):
+    digest = hashlib.sha256()
+    with Path(path).open('rb') as stream:
+        for block in iter(lambda: stream.read(1 << 20), b''):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def db_inventory(container, database='industry_research'):
+    """Per-table row count and content md5 for the research and public schemas, plus the active head."""
+    def sql(statement):
+        return run(['docker', 'exec', container, 'psql', '-U', 'industry', '-d', database,
+                    '-At', '-v', 'ON_ERROR_STOP=1', '-c', statement], text=True).strip()
+    tables = sql("SELECT schemaname || '.' || tablename FROM pg_tables "
+                 "WHERE schemaname IN ('public', 'research') ORDER BY 1").splitlines()
+    if any(not re.fullmatch(r'(public|research)\.[a-z_][a-z_0-9]*', t) for t in tables):
+        raise ValueError('Unexpected table identifier')
+    inventory = {}
+    for table in tables:
+        schema, name = table.split('.')
+        inventory[table] = sql(f"SELECT count(*) || ':' || md5(coalesce(string_agg(row_to_json(t)::text, '' "
+                               f"ORDER BY row_to_json(t)::text), '')) FROM \"{schema}\".\"{name}\" t")
+    head = sql("SELECT h.release_id || '|' || h.generation || '|' || r.content_hash || '|' || r.git_commit "
+               "FROM research.release_head h JOIN research.research_releases r USING (release_id)")
+    return inventory, dict(zip(('release_id', 'generation', 'content_hash', 'git_commit'), head.split('|')))
+
+
+def copy_verified(folder, target, files):
+    target.mkdir(parents=True)
+    for name, digest in files.items():
+        (target / name).write_bytes((folder / name).read_bytes())
+        if sha256_file(target / name) != digest:
+            raise RuntimeError(f'Secondary copy of {name} does not match')
+
+
+def prune(root, keep_days, now):
+    removed = []
+    for folder in sorted(root.iterdir()) if root.exists() else []:
+        # Only complete, script-named backups are eligible; anything else is left alone.
+        if folder.is_dir() and STAMP.fullmatch(folder.name) and (folder / 'manifest.json').exists():
+            created = calendar.timegm(time.strptime(folder.name, '%Y%m%dT%H%M%SZ'))
+            if now - created > keep_days * 86400:
+                for item in folder.iterdir():
+                    item.unlink()
+                folder.rmdir()
+                removed.append(folder.name)
+    return removed
+
+
+def backup(secondary=None, keep_days=30):
+    """Daily backup: DB dump, roles without passwords, managed Git refs, assets and the active release."""
+    before = protected_snapshot()
+    started = time.time()
+    stamp = time.strftime('%Y%m%dT%H%M%SZ', time.gmtime(started))
+    folder = BACKUP_ROOT / stamp
+    folder.mkdir(parents=True)
+    status = 'failed'
+    try:
+        db = compose('ps', '-q', 'db').decode().strip()
+        if not db:
+            raise RuntimeError('Research DB is not running; nothing backed up')
+        for attempt in range(3):
+            inventory, head = db_inventory(db)
+            # Direct binary capture: the custom dump never passes through a text decoder.
+            (folder / 'database.dump').write_bytes(compose('exec', '-T', 'db', 'pg_dump', '-U', 'industry',
+                                                           '-d', 'industry_research', '-Fc'))
+            if db_inventory(db)[0] == inventory:
+                break
+        else:
+            raise RuntimeError('Database kept changing during backup; retry when writes are idle')
+        (folder / 'roles.sql').write_bytes(compose('exec', '-T', 'db', 'pg_dumpall', '-U', 'industry',
+                                                   '--roles-only', '--no-role-passwords'))
+        tool = ('run', '--rm', '--no-deps', '-T', 'initialize')
+        (folder / 'git.bundle').write_bytes(compose(*tool, 'git', '-C', GIT_REPO, 'bundle', 'create', '-', '--all'))
+        refs = compose(*tool, 'git', '-C', GIT_REPO, 'show-ref').decode().splitlines()
+        (folder / 'assets.tar').write_bytes(compose(*tool, 'tar', '-C', ASSET_DIR, '-cf', '-', '.'))
+        files = {name: sha256_file(folder / name) for name in ('database.dump', 'roles.sql', 'git.bundle', 'assets.tar')}
+        image = run(['docker', 'image', 'inspect', 'industryflow-research-api:dev', '--format', '{{.Id}}'], text=True).strip()
+        manifest = {'created_at': stamp, 'duration_seconds': round(time.time() - started, 1), 'files': files,
+                    'sizes': {name: (folder / name).stat().st_size for name in files}, 'active_release': head,
+                    'tables': inventory, 'git_refs': refs, 'api_image': image,
+                    'excluded': 'Environment secrets (.env.research) are backed up separately; the DB includes the owner password hash.'}
+        (folder / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
+        files['manifest.json'] = sha256_file(folder / 'manifest.json')
+        result = {'backup': str(folder), 'release_id': head['release_id'], 'files': files}
+        if secondary:
+            copy_verified(folder, Path(secondary) / stamp, files)
+            result['secondary'] = str(Path(secondary) / stamp)
+        result['pruned'] = {str(root): prune(root, keep_days, started)
+                            for root in [BACKUP_ROOT, *([Path(secondary)] if secondary else [])]}
+        verify_protected(before)
+        result['protected_services_unchanged'] = True
+        status = 'ok'
+        return result
+    except Exception as error:
+        status = 'failed: ' + str(error)[:500]
+        # Remove only this run's incomplete folder so it is never mistaken for a backup.
+        for item in folder.iterdir():
+            item.unlink()
+        folder.rmdir()
+        raise
+    finally:
+        with (BACKUP_ROOT / 'backup-log.jsonl').open('a', encoding='utf-8') as log:
+            log.write(json.dumps({'stamp': stamp, 'status': status, 'seconds': round(time.time() - started, 1)}) + '\n')
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['setup', 'check', 'up', 'stop', 'start', 'restore', 'pg-check', 'rebuild-check', 'bootstrap', 'seed-git', 'reader-start', 'reader-stop'])
+    parser.add_argument('action', choices=['setup', 'check', 'up', 'stop', 'start', 'restore', 'pg-check', 'rebuild-check', 'bootstrap', 'seed-git', 'reader-start', 'reader-stop', 'backup'])
+    parser.add_argument('--secondary', help='second storage device for the verified backup copy')
+    parser.add_argument('--keep-days', type=int, default=30)
     parser.add_argument('--commit', default='HEAD')
     parser.add_argument('--source-container', default='industryflow-reading-db')
     parser.add_argument('--source-database', default='industry_reading')
@@ -242,6 +357,8 @@ def main():
             report['search_plans_saved'] = str(folder / (args.action + '.json'))
         verify_protected(before)
         report['protected_services_unchanged'] = True
+    elif args.action == 'backup':
+        report['result'] = backup(args.secondary, args.keep_days)
     elif args.action == 'restore':
         result = restore(args.source_container, args.source_database)
         report['restored_tables'] = {k: int(v.split(':')[0]) for k, v in result['tables'].items()}

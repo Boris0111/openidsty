@@ -34,6 +34,8 @@ python scripts/research_lab.py bootstrap --commit <完整commit>
 
 讀者財務／事件／觀察／比較可用 `--suite research-dynamic`；契約與可比較界線見 [dynamic API](research-dynamic-api.md)。
 
+每日備份、第二份副本與獨立還原演練見 [備份與還原](research-backup.md)；`backup` 動作與 `scripts/research_drill.py` 只操作研究預覽與演練 project。
+
 首條實際讀取預覽位於 `/next`，首份 release 已建立，不要為了重建 UI 再初始化或刪除 DB。瀏覽器走讀命令（在 frontend 執行）：
 
 ```powershell

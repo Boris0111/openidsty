@@ -1,0 +1,91 @@
+# 研究預覽的備份與還原（task 9.3）
+
+## 每日備份
+
+```powershell
+python scripts/research_lab.py backup --secondary "D:\backups\industryflow-research" --keep-days 30
+```
+
+Windows 工作排程器已註冊 `IndustryFlow Research Daily Backup`：每天 03:30 以 `C:\Users\User\openspec_pjt\.venv\Scripts\python.exe` 在本 worktree 執行上列命令。錯過的時段（關機、休眠）在下次可執行時補跑，單次上限 1 小時，同時只跑一份。它只在 Boris 登入時執行，因為 Docker Desktop 依附使用者工作階段；Docker 沒啟動時備份會失敗並記錄，不會產生半套備份。移除排程：
+
+```powershell
+Unregister-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"
+```
+
+每份備份是一個以 UTC 時間命名的資料夾（例如 `20261018T214852Z`），主副本在 worktree 的 `backups/research/`（Git 忽略），第二份在 `D:\backups\industryflow-research`。C 槽與 D 槽是兩顆不同的實體 SSD（Intel 與 Kingston），第二份複製後逐檔核對 SHA-256。
+
+| 檔案 | 內容 |
+|---|---|
+| `database.dump` | `industry_research` 的 `pg_dump -Fc`，以二進位直接寫檔，不經文字轉碼 |
+| `roles.sql` | `pg_dumpall --roles-only --no-role-passwords`：角色與成員關係，不含密碼 |
+| `git.bundle` | managed Git 的 `bundle --all`，含 release、job 與 `research/published` 等全部 refs |
+| `assets.tar` | 內容定址資產目錄；檔名即內容 SHA-256 |
+| `manifest.json` | 建立時間、耗時、各檔 SHA-256 與大小、啟用中的 release（ID、代數、內容 hash、commit）、59 張表的筆數與內容 md5、Git refs、API image |
+
+- **一致性**：DB 傾印前後各算一次全表筆數與內容 md5；兩次不同就重做，最多 3 次。這樣清單記錄的就是傾印當下的狀態，還原時可以逐表比對。
+- **結果紀錄**：成功與失敗都記在 `backups/research/backup-log.jsonl`。失敗時只刪除該次未完成的資料夾。
+- **保留**：兩處都保留 30 天。只會刪除名稱符合時間格式、且有 `manifest.json` 的完整備份資料夾，其他檔案不碰。
+
+**不在備份內**：`.env.research` 的祕密（DB 密碼、session secret）要另外以受保護的方式保存，例如放在加密的隨身碟或密碼管理器。DB 傾印本身含 owner 的 Argon2id 密碼 hash，所以備份資料夾也要視為敏感資料。
+
+## 還原演練
+
+演練使用獨立的 Compose project `industryflow-research-drill`（`compose.research-drill.yaml`）：
+
+- 環境：自己的 DB、Git 與資產 volume，自己的祕密（`.env.research-drill`，Git 忽略），web 綁 `127.0.0.1:3016`、API 綁 `127.0.0.1:8016`。
+- image：沿用預覽的 image，不重新 build。
+- 隔離：沒有排程，不會自動抓取來源。不動預覽與原服務，演練前後都會比對這兩者的容器指紋。
+
+```powershell
+cd scripts
+python research_drill.py restore --backup ..\backups\research\<時間>   # 從空 volume 開始，計時並核對
+python research_drill.py owner     # 演練用 owner：只在演練 DB 內換成演練密碼
+python research_drill.py down      # 只移除演練 project 的容器與 volume
+```
+
+`restore` 依序執行下列步驟，報告存在 `.work/research-drill/restore-<時間>.json`：
+
+1. 核對備份各檔的 hash。
+2. 啟動空 DB，先套用角色，再以 `pg_restore --exit-on-error` 還原，最後由 `research_roles` 設定演練用登入密碼。
+3. 以 `clone --mirror` 還原 managed Git，並移除指向 bundle 的 remote 設定。
+4. 解開資產。
+5. 啟動 API 與 web。
+6. 逐項核對：全表筆數與內容 md5、啟用中的 release、API 實際提供的 release、Git refs、資產內容 hash 與數量、`/next` 能否開啟。
+
+## 2026-10-19 演練結果
+
+| 項目 | 結果 |
+|---|---|
+| 備份 | `20261018T214852Z`，耗時 59 秒；DB 3.5 MB、Git bundle 3.2 MB、資產 14 個；release `4969dd12…`（第 2 代） |
+| 第二份 | D 槽副本 5 個檔案 SHA-256 全部相符 |
+| 還原 | 從空 volume 到核對完成 **52.1 秒**：DB 可用 4.9 秒、DB 還原 13.2 秒、Git 與資產 17.0 秒、服務啟動 26.2 秒 |
+| 核對 | 59 張表筆數與內容 md5 全部相同（含財務觀測、修訂、歷史與發布紀錄）；兩個 release 與啟用中版本一致；4 個 Git ref 一致；14 個資產內容 hash 正確；`/next` 回 200 |
+| 隔離 | 原服務與預覽的容器指紋在演練前後相同 |
+| 排程 | 已由工作排程器實際觸發一次並成功（見下方紀錄） |
+
+**RPO**：每日備份時，最壞情況會遺失最近 24 小時內的變更，加上一次備份的耗時（約 1 分鐘）。若主機在 03:30 關機，排程會在下次開機後補跑，關機期間沒有新資料，所以不會擴大遺失。RPO 24 小時的目標以排程頻率達成。
+
+**RTO**：實測 52 秒，遠低於 2 小時目標。實際事故還要加上判斷與決策時間。
+
+以上是個人部署的驗收量測，不是可用性保證。
+
+## 事故時保留新版資料的回復程序
+
+原則：不覆寫現有 volume，先保全最新狀態，再在獨立環境還原與比對。研究內容可由 Git 重建，動態數據可由官方來源重新取得，兩者分開處理。
+
+1. **先備份現況**：即使預覽已損壞，只要 DB 或 Git 還能讀，就先執行一次 `research_lab.py backup`。這份保存的是事故當下最新的資料，例如備份之後才發布的 release、草稿與財務補錄。
+2. **在演練環境還原**：用最近一份正常的備份執行 `research_drill.py restore`，確認核對全部通過，並記下它的 release 與時間。
+3. **比對差異**：拿第 1 步的備份與第 2 步的資料比對。
+   - **研究 release**：比對 `manifest.json` 的 `active_release` 與 `git_refs`。較新的 release 若仍在第 1 步的 Git bundle 裡，就從那個 commit 建立新草稿並重新發布，不要直接改 DB。
+   - **財務與事件**：較新的部分由來源單次更新重新取得。owner 補錄的財務批次則重新匯入原檔。
+4. **切換**：演練環境（3016）可以先暫時作為服務使用，原預覽的 volume 保留不刪，供事後比對。要把資料併回 3014 時，先停止預覽的 web 與 API，再依 `research-lab.md` 的方式還原到新 DB，核對後才啟動。任何步驟都不使用 `git reset` 回復資料，也不刪除原 volume。
+5. **研究還原與資料庫還原分開**：只是內容發布錯誤時，用管理介面的 release 還原（`/api/admin/releases/{id}/restore`）回到前一版即可，不需要還原整個 DB。
+
+## 排程實際執行紀錄
+
+| 時間（UTC） | 觸發方式 | 結果 | 耗時 |
+|---|---|---|---|
+| 20261018T214852Z | 手動執行 | ok，D 槽副本相符 | 56.2 秒 |
+| 20261018T215359Z | 工作排程器 `Start-ScheduledTask` | ok（LastTaskResult 0），D 槽副本相符 | 52.4 秒 |
+
+下一次自動執行：2026-10-20 03:30（本機時間）。
