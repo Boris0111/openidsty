@@ -868,6 +868,24 @@ offerings:
   claim-refs:
   - entity-id: company-vicr
     claim-id: product-categories
+- id: offering-3533-tw-high-speed-connector
+  company: company-3533-tw
+  product: product-high-speed-connector
+  role: role-high-speed-connector
+  conditions:
+  - 年報列出伺服器用連接器、連接線與插槽，未揭露具體平台或客戶
+  claim-refs:
+  - entity-id: company-3533-tw
+    claim-id: revenue-and-products
+- id: offering-3665-tw-cable-assembly
+  company: company-3665-tw
+  product: product-cable-assembly
+  role: role-cable-harness
+  conditions:
+  - 資訊科技與數據傳播產品占營收 42.4%，未揭露具體平台或客戶
+  claim-refs:
+  - entity-id: company-3665-tw
+    claim-id: product-mix
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv
