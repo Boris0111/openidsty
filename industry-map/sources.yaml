@@ -436,6 +436,32 @@ tw:
       max_pages: 1
 us:
   filings:
+  - id: mrvl-10k-fy2026
+    name: Marvell FY2026 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1835632/000183563226000011/mrvl-20260131.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - compute
+    - networking
+    themes:
+    - cpo-silicon-photonics
+    notes: SEC EDGAR 原文，申報日 2026-03-11、會計年度結束於 2026-01-31（52/53 週制）；已讀 Item 1、1A 與 MD&A 相關段落。
+  - id: avgo-10k-fy2025
+    name: Broadcom FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - compute
+    - networking
+    themes:
+    - cpo-silicon-photonics
+    notes: SEC EDGAR 原文，申報日 2025-12-18、會計年度結束於 2025-11-02（52/53 週制）；已讀 Item 1、1A 與 MD&A 相關段落。
   - id: aph-10k-2025
     name: Amphenol FY2025 Form 10-K
     url: https://www.sec.gov/Archives/edgar/data/820313/000110465926013549/aph-20251231x10k.htm

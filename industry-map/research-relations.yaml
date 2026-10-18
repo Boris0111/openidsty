@@ -753,6 +753,12 @@ taxonomy:
 - id: taxonomy-aph-from-cable-harness
   parent: role-cable-harness
   child: company-aph
+- id: taxonomy-avgo-from-optical-chip
+  parent: role-optical-chip
+  child: company-avgo
+- id: taxonomy-mrvl-from-switch-silicon
+  parent: role-switch-silicon
+  child: company-mrvl
 offerings:
 - id: offering-auras-cold-plate
   company: company-auras
@@ -934,6 +940,60 @@ offerings:
   claim-refs:
   - entity-id: company-2059-tw
     claim-id: rail-revenue-share
+- id: offering-avgo-custom-ai-asic
+  company: company-avgo
+  product: product-custom-ai-asic
+  role: role-custom-asic-partner
+  conditions:
+  - 10-K 描述客製加速器（XPU）設計與交付，未揭露客戶或個別專案
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: custom-silicon
+- id: offering-avgo-ethernet-switch-asic
+  company: company-avgo
+  product: product-ethernet-switch-asic
+  role: role-switch-silicon
+  conditions:
+  - 10-K 描述資料中心 Ethernet 交換晶片，未拆分收入
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: ethernet-switching
+- id: offering-avgo-inp-laser-chip
+  company: company-avgo
+  product: product-inp-laser-chip
+  role: role-optical-chip
+  conditions:
+  - 10-K 說明以自有晶圓廠生產光纖通訊用 InP 與 GaAs 雷射，未揭露收入或客戶
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: manufacturing-partners
+- id: offering-mrvl-custom-ai-asic
+  company: company-mrvl
+  product: product-custom-ai-asic
+  role: role-custom-asic-partner
+  conditions:
+  - 10-K 描述客製晶片平台，未揭露客戶或個別專案
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: custom-asic
+- id: offering-mrvl-optical-dsp
+  company: company-mrvl
+  product: product-optical-dsp
+  role: role-optical-dsp
+  conditions:
+  - 10-K 描述 PAM 與 coherent 光 DSP，未拆分收入
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: interconnect-portfolio
+- id: offering-mrvl-ethernet-switch-asic
+  company: company-mrvl
+  product: product-ethernet-switch-asic
+  role: role-switch-silicon
+  conditions:
+  - 10-K 描述 Teralynx 與 Prestera 交換晶片，未拆分收入
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: ethernet-switches
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv
@@ -947,4 +1007,108 @@ relations:
   reviewed: '2026-10-18'
   claim-refs:
   - entity-id: company-vertiv
+    claim-id: named-competitors
+- id: relation-tsmc-supplies-avgo
+  source: company-tsmc
+  target: company-avgo
+  kind: named-supply
+  direction: directed
+  mechanism: Broadcom 10-K 將 TSMC 列為外包前段晶圓製造與封裝測試的代工廠
+  conditions:
+  - 10-K 未揭露採購金額或產品別
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: manufacturing-partners
+- id: relation-3711-tw-supplies-avgo
+  source: company-3711-tw
+  target: company-avgo
+  kind: named-supply
+  direction: directed
+  mechanism: Broadcom 10-K 將日月光投控旗下的 Advanced Semiconductor Engineering 與矽品列為封裝測試代工
+  conditions:
+  - 10-K 具名的是子公司；未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: manufacturing-partners
+- id: relation-amkr-supplies-avgo
+  source: company-amkr
+  target: company-avgo
+  kind: named-supply
+  direction: directed
+  mechanism: Broadcom 10-K 將 Amkor 列為封裝測試代工
+  conditions:
+  - 10-K 未揭露採購金額或產品別
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: manufacturing-partners
+- id: relation-mrvl-avgo-competition
+  source: company-mrvl
+  target: company-avgo
+  kind: competition
+  direction: symmetric
+  mechanism: Marvell 10-K 將 Broadcom 列為直接競爭者
+  conditions:
+  - 競爭限於重疊的產品線，如客製 ASIC、交換晶片與互連
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: named-competitors
+- id: relation-mrvl-crdo-competition
+  source: company-mrvl
+  target: company-crdo
+  kind: competition
+  direction: symmetric
+  mechanism: Marvell 10-K 將 Credo 列為直接競爭者
+  conditions:
+  - 競爭限於重疊的互連產品，如 AEC DSP 與光 DSP
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: named-competitors
+- id: relation-mrvl-alab-competition
+  source: company-mrvl
+  target: company-alab
+  kind: competition
+  direction: symmetric
+  mechanism: Marvell 10-K 將 Astera Labs 列為直接競爭者
+  conditions:
+  - 競爭限於重疊的互連產品，如 PCIe retimer 與交換晶片
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: named-competitors
+- id: relation-mrvl-3661-tw-competition
+  source: company-mrvl
+  target: company-3661-tw
+  kind: competition
+  direction: symmetric
+  mechanism: Marvell 10-K 將世芯（Alchip）列為直接競爭者
+  conditions:
+  - 競爭限於客製 ASIC 設計服務
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: named-competitors
+- id: relation-mrvl-3443-tw-competition
+  source: company-mrvl
+  target: company-3443-tw
+  kind: competition
+  direction: symmetric
+  mechanism: Marvell 10-K 將創意（GUC）列為直接競爭者
+  conditions:
+  - 競爭限於客製 ASIC 設計服務
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-mrvl
     claim-id: named-competitors
