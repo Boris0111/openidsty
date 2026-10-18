@@ -11,6 +11,7 @@ from app.research_v2 import reader_gaps
 from app.import_map import import_map
 from app.models import Source, Event, EventSegment, EventTheme, TechnicalDocument
 from app.technical_documents import observation
+from app import research_coverage
 from test_research_auth import owner, login  # noqa: F401 - pytest fixture
 
 
@@ -84,11 +85,27 @@ def test_direct_background_mentions_and_unknown_dates_count_separately(seeded):
     assert 'samples' not in after
 
 
+def test_unchanged_inputs_reuse_coverage_and_any_change_recomputes(seeded):
+    client, _, session, statements, tag = seeded
+    research_coverage._memo.clear()
+    first = client.get('/api/admin/coverage').json()
+    statements.clear()
+    second = client.get('/api/admin/coverage').json()
+    assert second == first and len(statements) < 10  # fingerprint only, no re-aggregation
+    add_event(session, tag, 'invalidates-memo', datetime.now(timezone.utc) - timedelta(days=1), 'thermal')
+    third = client.get('/api/admin/coverage').json()
+    thermal = lambda data: next(r for r in data['rows'] if r['kind'] == 'segment' and r['id'] == 'thermal')
+    assert thermal(third)['direct_30d'] == thermal(first)['direct_30d'] + 1
+    research_coverage._memo['at'] -= research_coverage.MEMO_SECONDS + 1  # moving 30/90-day windows expire it too
+    assert client.get('/api/admin/coverage').json()['as_of'] != third['as_of']
+
+
 def test_statistics_stay_in_sql_and_candidates_are_bounded(seeded):
     client, _, session, statements, tag = seeded
     theme = scope(client, 'theme', 'liquid-cooling')
     baseline = datetime.fromisoformat(theme['assessment_candidates']['baseline']).replace(tzinfo=timezone.utc)
     statements.clear()
+    research_coverage._memo.clear()  # Count a full recomputation, not a memo hit.
     scope(client, 'theme', 'liquid-cooling')
     first = len(statements)
     now = datetime.now(timezone.utc)
@@ -96,6 +113,7 @@ def test_statistics_stay_in_sql_and_candidates_are_bounded(seeded):
         add_event(session, tag, f'bulk-{index}', now - timedelta(days=2), 'thermal', theme='liquid-cooling')
     add_event(session, tag, 'theme-undated', None, theme='liquid-cooling')
     statements.clear()
+    research_coverage._memo.clear()
     after = scope(client, 'theme', 'liquid-cooling')
     assert len(statements) == first  # More events do not add per-event queries.
     candidates = after['assessment_candidates']

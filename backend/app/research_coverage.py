@@ -1,5 +1,7 @@
 """Owner-only maintenance coverage. Reader pages keep only claim-level limits."""
 import re
+import threading
+import time
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import text, select, func
 from sqlalchemy.orm import Session
@@ -73,8 +75,39 @@ def theme_candidates(session, themes):
     return result
 
 
+# Scope coverage re-aggregates events, sources, indicators and technical reviews (~0.2-0.3 s of CPU).
+# Reuse the last result while a content fingerprint of every input is unchanged, for at most
+# MEMO_SECONDS because the 30/90-day windows move with time. Per process and server-side only: the
+# response stays no-store and owner-only, so no shared HTTP cache ever holds maintenance data.
+MEMO_SECONDS = 30
+SMALL_INPUTS = ('event_segments', 'event_themes', 'sources', 'roles', 'companies', 'segments', 'themes', 'indicators',
+                'theme_indicators', 'indicator_observations', 'technical_documents', 'technical_observations',
+                'technical_reviews', 'theme_assessment_versions')
+FINGERPRINT = text("SELECT md5(concat_ws('|', (SELECT generation FROM research.release_head WHERE singleton), "
+    "(SELECT count(*) || ':' || coalesce(sum(hashtext(concat_ws('|', id, source_id, external_id, ticker, title, kind, "
+    "lifecycle, published_at, fetched_at, url, mentioned::text, published_precision, reported_at, activity_at, "
+    "date_semantics, period, basis, routine, rules_version, identity, feeds::text))), 0) FROM public.events), "
+    + ', '.join(f"(SELECT count(*) || ':' || coalesce(sum(hashtext(row_to_json(t)::text)), 0) FROM public.{table} t)"
+                for table in SMALL_INPUTS) + '))')
+_memo = {}
+_memo_lock = threading.Lock()
+
+
 @router.get('/coverage')
 def scope_coverage(owner=Depends(require_owner), connection=Depends(get_admin_connection)):
+    key = connection.execute(FINGERPRINT).scalar_one() if connection.dialect.name == 'postgresql' else None
+    # Holding the lock while computing lets concurrent misses wait for one result instead of repeating it.
+    with _memo_lock:
+        if key is not None and _memo.get('key') == key and time.monotonic() - _memo['at'] < MEMO_SECONDS:
+            return respond(_memo['payload'])
+        started = time.monotonic()
+        payload = compute_scope_coverage(connection)
+        if key is not None:
+            _memo.update(key=key, at=started, payload=payload)
+    return respond(payload)
+
+
+def compute_scope_coverage(connection):
     session = Session(bind=connection, expire_on_commit=False)
     data = coverage(session)
     rows = data['rows']
@@ -90,8 +123,8 @@ def scope_coverage(owner=Depends(require_owner), connection=Depends(get_admin_co
                                       for d in row['technical_documents'] if d['id'] in documents]
         row['assessment_candidates'] = pending.get(row['id']) if row['kind'] == 'theme' else None
         row.pop('samples', None)  # Event samples stay on the maintenance report and events page.
-    return respond({**data, 'rows': rows,
-        'review_note': '待核對候選與待納入判讀事件只在管理端呈現；一般閱讀只保留影響主張的研究限制。'})
+    return {**data, 'rows': rows,
+        'review_note': '待核對候選與待納入判讀事件只在管理端呈現；一般閱讀只保留影響主張的研究限制。'}
 
 
 CURSOR = re.compile(r'^(?P<kind>[a-z]+):(?P<entity>[a-z0-9-]{1,200})$')
