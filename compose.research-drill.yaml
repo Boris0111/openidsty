@@ -26,7 +26,7 @@ services:
       POSTGRES_PASSWORD: ${RESEARCH_POSTGRES_PASSWORD:?Run research_drill.py setup}
       POSTGRES_DB: industry_research
     volumes: [pg-data:/var/lib/postgresql/data]
-    networks: [app]
+    networks: [app, offline]
     healthcheck:
       test: [CMD-SHELL, "pg_isready -U industry -d industry_research"]
       interval: 3s
@@ -72,9 +72,24 @@ services:
     depends_on:
       db: {condition: service_healthy}
 
+  offline-worker:
+    # Same writer role on an internal-only network: reaches the drill DB but no external source,
+    # so a refresh exercises the source-failure path without touching official sites.
+    <<: *app
+    profiles: [tools]
+    networks: [offline]
+    volumes: ["research-assets:/home/app/research-assets"]
+    environment:
+      <<: *app-env
+      DATABASE_URL: postgresql+psycopg://research_writer_login:${RESEARCH_WRITER_PASSWORD}@db:5432/industry_research
+    depends_on:
+      db: {condition: service_healthy}
+
 volumes:
   pg-data:
   research-git:
   research-assets:
 networks:
   app:
+  offline:
+    internal: true

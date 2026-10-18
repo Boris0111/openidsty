@@ -4,6 +4,8 @@ verify it against the backup manifest and time it. Never touches the preview or 
 python scripts/research_drill.py setup
 python scripts/research_drill.py restore --backup backups/research/<stamp>
 python scripts/research_drill.py owner      # drill-only owner credential from .env.research-drill
+python scripts/research_drill.py run-job --job <uuid> [--stop-at before-activation]
+python scripts/research_drill.py offline-refresh --source twse-revenue
 python scripts/research_drill.py down       # remove the drill containers and volumes only
 """
 import argparse
@@ -16,6 +18,7 @@ import socket
 import tarfile
 import time
 import urllib.request
+import uuid
 
 from research_lab import (ROOT, SECRET_KEYS, GIT_REPO, ASSET_DIR, run, sha256_file, db_inventory,
                           protected_snapshot, verify_protected)
@@ -55,7 +58,7 @@ def check():
     setup()
     config = json.loads(compose('--profile', 'tools', 'config', '--format', 'json'))
     services = config['services']
-    if config.get('name') != PROJECT or set(services) != {'db', 'api', 'web', 'bootstrap', 'worker'}:
+    if config.get('name') != PROJECT or set(services) != {'db', 'api', 'web', 'bootstrap', 'worker', 'offline-worker'}:
         raise ValueError('Unexpected drill project')
     for name, service in services.items():
         if 'container_name' in service or service.get('network_mode'):
@@ -71,6 +74,8 @@ def check():
         for resource in config.get(kind, {}).values():
             if resource.get('external') or not resource.get('name', '').startswith(PROJECT + '_'):
                 raise ValueError(f'Unsafe {kind} namespace')
+    if not config['networks']['offline'].get('internal') or list(services['offline-worker']['networks']) != ['offline']:
+        raise ValueError('The offline worker must only reach the internal network')
     return sorted(v['name'] for v in config['volumes'].values())
 
 
@@ -151,16 +156,58 @@ def restore(backup):
 
 
 def owner():
-    """Replace the restored owner credential with the drill-only test password, inside the drill DB only."""
+    """Set or replace the owner credential with the drill-only test password, inside the drill DB only."""
     check()
     password = env_values()['DRILL_OWNER_PASSWORD']
-    script = ('import sys; from app.research_db import writer_engine; from app.research_owner import set_owner\n'
+    script = ('import sys; from sqlalchemy import text\n'
+              'from app.research_db import writer_engine; from app.research_owner import set_owner\n'
               'password = sys.stdin.read()\n'
               'with writer_engine().begin() as connection:\n'
-              '    set_owner(connection, password, reset=True)\n'
-              'print("drill owner reset")')
+              '    exists = connection.execute(text("SELECT count(*) FROM research.admin_owner")).scalar_one() > 0\n'
+              '    set_owner(connection, password, reset=exists)\n'
+              'print("drill owner reset" if exists else "drill owner set")')
     return compose('--profile', 'tools', 'run', '--rm', '--no-deps', '-T', 'worker', 'python', '-c', script,
                    input=password.encode()).decode().strip()
+
+
+def run_job(job_id, stop_at=None):
+    """Execute one publication job once in the drill (no scheduler); optionally stop it at a stage."""
+    check()
+    job = str(uuid.UUID(job_id))
+    if stop_at and not re.fullmatch('[a-z-]+', stop_at):
+        raise ValueError('Invalid stage name')
+    script = ('import json; from app.research_publication import run_job\n'
+              f'stop = {stop_at!r}\n'
+              'def inject(stage):\n'
+              '    if stage == stop:\n'
+              '        raise RuntimeError("drill interruption at " + stage)\n'
+              'try:\n'
+              f'    result = run_job({job!r}, inject=inject)\n'
+              'except RuntimeError as error:\n'
+              '    result = {"interrupted": str(error)}\n'
+              'print(json.dumps({k: result.get(k) for k in ("status", "stage", "failure", "target_release_id", "interrupted")}, default=str))')
+    output = compose('--profile', 'tools', 'run', '--rm', '--no-deps', '-T', 'worker', 'python', '-c', script).decode()
+    return json.loads(output.strip().splitlines()[-1])
+
+
+def online_refresh(source):
+    """One real refresh of a registered official source from the drill (same limits as production)."""
+    check()
+    if not re.fullmatch('[a-z0-9-]+', source):
+        raise ValueError('Invalid source id')
+    output = compose('--profile', 'tools', 'run', '--rm', '--no-deps', '-T', 'worker',
+                     'python', '-m', 'app.source_updates', '--source', source).decode()
+    return json.loads(output.strip().splitlines()[-1])
+
+
+def offline_refresh(source):
+    """Refresh one registered source from the internal-only network, so every fetch fails."""
+    check()
+    if not re.fullmatch('[a-z0-9-]+', source):
+        raise ValueError('Invalid source id')
+    output = compose('--profile', 'tools', 'run', '--rm', '--no-deps', '-T', 'offline-worker',
+                     'python', '-m', 'app.source_updates', '--source', source).decode()
+    return json.loads(output.strip().splitlines()[-1])
 
 
 def down():
@@ -174,13 +221,17 @@ def down():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['setup', 'check', 'restore', 'owner', 'down'])
+    parser.add_argument('action', choices=['setup', 'check', 'restore', 'owner', 'run-job', 'online-refresh', 'offline-refresh', 'down'])
     parser.add_argument('--backup')
+    parser.add_argument('--job')
+    parser.add_argument('--stop-at')
+    parser.add_argument('--source')
     args = parser.parse_args()
     if args.action == 'restore' and not args.backup:
         parser.error('--backup is required')
     result = {'setup': lambda: (setup(), 'ok')[1], 'check': check, 'restore': lambda: restore(args.backup),
-              'owner': owner, 'down': down}[args.action]()
+              'owner': owner, 'down': down, 'run-job': lambda: run_job(args.job, args.stop_at),
+              'online-refresh': lambda: online_refresh(args.source), 'offline-refresh': lambda: offline_refresh(args.source)}[args.action]()
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 
