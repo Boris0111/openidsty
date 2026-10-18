@@ -38,3 +38,4 @@
 - **台灣公司**：由公開資訊觀測站電子書（`doc.twse.com.tw`）下載最新股東會年報，以 `pdftotext` 抽出全文，引用時標年報印刷頁碼與 PDF 頁碼。財務摘要由櫃買／證交所 OpenAPI 自動取得，現金流與資本支出需人工補錄。
 - **美國公司**：讀 SEC EDGAR 的最新 10-K 原文，引用 Item 與小節名稱。標準科目由 SEC companyfacts 自動取得。
 - 原文 PDF 與抽出的文字只存在忽略的 `.work/sources/`，不 commit。
+- 26 家的完整度、全鏈缺口矩陣、95 家與歷史保留，以及程式測試結果，見 [總核對](research-final-review.md)（task 8.17）。

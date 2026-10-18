@@ -29,10 +29,17 @@ def authored(tmp_path_factory):
     return payload, root
 
 
+def expected_snapshots(files):
+    # One snapshot per research page, legacy segment and theme; derived so the authored map can grow.
+    folders = {'companies', 'applications', 'roles', 'products', 'concepts', 'research', 'ai-server', 'semiconductor', 'themes'}
+    return sum(1 for path in files if path.endswith('.md') and not path.endswith('README.md')
+               and path.count('/') == 2 and path.split('/')[1] in folders)
+
+
 def test_real_content_round_trip_and_form_matches_file(authored):
     payload, root = authored
     valid, bundle = validate_payload(payload, root)
-    assert valid['valid'] and len(bundle['snapshots']) == 125
+    assert valid['valid'] and len(bundle['snapshots']) == expected_snapshots(payload['files']) >= 254
     path = 'industry-map/companies/company-auras.md'
     _, front, prose = payload['files'][path].split('---', 2)
     fields = safe_yaml(front)

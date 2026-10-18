@@ -274,3 +274,18 @@ Application 資料未改動；研究版 web／API 已重建，原服務 fingerpr
 - `rebuild-check --commit 43ffb01` 編譯出 252 個研究物件，同一 commit 重建一致，歷史對應完整。
 - 修正 `research_rebuild_check`：在只會 rollback 的檢查交易內先清掉測試 DB 既有的 head，避免其他 pg-check suite 留下的狀態擋住重建驗證。
 - 圖解已實際渲染檢查；HBM 圖的主記憶體欄改為虛線對照，不以箭頭暗示供應或組成關係。
+
+
+## 26 家深研與總核對（task 8.2–8.17，2026-10-18 至 10-19）
+
+26 家依官方原文深研：台灣公司用公開資訊觀測站的 114 年度股東會年報，美國公司用 SEC 10-K；日月光投控的中文年報多數頁面無法擷取文字，改用 20-F。表格欄位錯位時以 `pdftotext -table` 或合計重核，台積電的跨頁排版以閱讀順序重抽。逐家定位見 [交付表](research-deep-delivery-matrix.md)，總核對見 [總核對](research-final-review.md)。
+
+分類調整：新增「晶片端取熱」與「光通訊磊晶片」兩個角色及「III-V 族光通訊磊晶片」產品；聯亞改列磊晶片角色；伺服器滑軌加「導軌」「rail kit」別名；多家公司依原文加列角色（例如日月光、力成、Amkor 加列測試服務）。所有變更與原歸類記在分類矩陣與相關頁面。
+
+總核對時修正：寫入工具覆蓋了台積電與台達電的既有別名（已補回並改為合併）；7 家美國公司的 SEC CIK 補登到 `data/company-research.yaml`；71 個純文字缺口改為四種結構化狀態。
+
+驗證：
+{- `validate_map` 通過，內部連結 0 失效；validator 測試在補回別名與 CIK 後通過。
+- `rebuild-check --commit f22ffd2` 編譯出 254 個研究物件，同一 commit 重建一致。
+- 後端離線 pytest（臨時容器，唯讀掛載 worktree）282 passed、114 skipped、1 failed：快照數寫死為 125 的測試自 8.1 起失效，改為由檔案推導後該模組 34 passed。
+- 內容審查與程式測試的完整紀錄見 [總核對](research-final-review.md)；這不是 Boris 的閱讀驗收（9.4）。}
