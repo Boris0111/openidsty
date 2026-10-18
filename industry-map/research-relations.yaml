@@ -925,6 +925,15 @@ offerings:
   claim-refs:
   - entity-id: company-aph
     claim-id: liquid-cooling-portfolio
+- id: offering-2059-tw-server-slide-rail
+  company: company-2059-tw
+  product: product-server-slide-rail
+  role: role-server-rail
+  conditions:
+  - 年報的導軌即 1U–7U 伺服器用 rail kit，占營收 98%
+  claim-refs:
+  - entity-id: company-2059-tw
+    claim-id: rail-revenue-share
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv
