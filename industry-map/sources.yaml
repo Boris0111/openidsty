@@ -348,6 +348,41 @@ tw:
       max_pages: 1
 us:
   filings:
+  - id: boyd-company-pages
+    name: Boyd 官網公司、工程材料與據點頁
+    url: https://www.boydcorp.com/about-boyd/locations.html
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - thermal
+    themes: []
+    notes: 已讀 about-boyd、engineered-materials、locations、data-center 等頁；可達頁面未找到冷板、CDU 或歧管的產品頁。
+  - id: boyd-thermal-sale-completion
+    name: Boyd 完成出售熱管理業務予 Eaton（2026-03-12）
+    url: https://www.boydcorp.com/boyd-completes-the-sale-of-its-thermal-business-to-eaton-for-9-5-billion.html
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - thermal
+    themes:
+    - liquid-cooling
+    notes: Boyd 官方新聞稿，日期列 Boca Raton, FL – March 12, 2026；確切交割日未載明。eaton.com 本輪連線逾時，Eaton 自己的公告未讀。
+  - id: boyd-thermal-sale-announcement
+    name: Boyd 宣布出售熱管理業務予 Eaton（2025-11-03）
+    url: https://www.boydcorp.com/about-boyd/resources/news-and-events/boyd-announces-sale-of-its-thermal-business-to-eaton-for-9-5-billion.html
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - thermal
+    themes:
+    - liquid-cooling
+    notes: Boyd 官方新聞稿，日期列 Boca Raton, FL – November 3, 2025；已讀全文。
   - id: vertiv-10k-2025
     name: Vertiv FY2025 Form 10-K
     url: https://www.sec.gov/Archives/edgar/data/1674101/000167410126000008/vrt-20251231.htm
