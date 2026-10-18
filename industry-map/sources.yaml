@@ -1,6 +1,30 @@
 # 唯一來源註冊表；入口可讀性與 runtime 擷取狀態分開。
 tw:
   filings:
+  - id: sunon-annual-report-2025
+    name: 建準電機 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2421&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - thermal
+    themes:
+    - liquid-cooling
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_2421_20260525F04.pdf）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁。銷售地區表抽取時欄位錯位，未引用其數字。
+  - id: avc-annual-report-2025
+    name: 奇鋐科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3017&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - thermal
+    themes:
+    - liquid-cooling
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_3017_20260602F04.pdf）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁。
   - id: auras-annual-report-2025
     name: 雙鴻科技 114 年度股東會年報
     url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3324&year=115&mtype=F&

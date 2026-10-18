@@ -744,6 +744,12 @@ taxonomy:
 - id: taxonomy-test-insertions-explanation
   parent: application-chip-test
   child: concept-test-insertions
+- id: taxonomy-avc-from-chip-heat-capture
+  parent: role-chip-heat-capture
+  child: company-avc
+- id: taxonomy-2421-tw-from-chip-heat-capture
+  parent: role-chip-heat-capture
+  child: company-2421-tw
 offerings:
 - id: offering-auras-cold-plate
   company: company-auras
@@ -781,6 +787,42 @@ offerings:
   claim-refs:
   - entity-id: company-auras
     claim-id: liquid-cooling-system-scope
+- id: offering-avc-cold-plate
+  company: company-avc
+  product: product-cold-plate
+  role: role-chip-heat-capture
+  conditions:
+  - 年報列出水冷板為散熱產品之一，未揭露平台、客戶或出貨量
+  claim-refs:
+  - entity-id: company-avc
+    claim-id: product-scope
+- id: offering-avc-vapor-chamber-air-module
+  company: company-avc
+  product: product-vapor-chamber-air-module
+  role: role-air-cooling-module
+  conditions:
+  - 年報列出熱管／均熱板、3D VC 與散熱模組
+  claim-refs:
+  - entity-id: company-avc
+    claim-id: product-scope
+- id: offering-2421-tw-server-fan
+  company: company-2421-tw
+  product: product-server-fan
+  role: role-server-fan
+  conditions:
+  - 散熱風扇為主要營收來源；伺服器用比例未揭露
+  claim-refs:
+  - entity-id: company-2421-tw
+    claim-id: revenue-mix
+- id: offering-2421-tw-cold-plate
+  company: company-2421-tw
+  product: product-cold-plate
+  role: role-chip-heat-capture
+  conditions:
+  - 年報列出水冷板／水冷散熱器，未揭露平台、客戶或出貨量
+  claim-refs:
+  - entity-id: company-2421-tw
+    claim-id: liquid-module-products
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv
