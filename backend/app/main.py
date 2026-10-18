@@ -20,6 +20,8 @@ from .financial_imports import router as financial_imports_router
 from .source_updates import router as source_updates_router
 from .research_financials import router as research_financials_router
 from .research_events import router as research_events_router
+from .research_coverage import router as research_coverage_router
+app.include_router(research_coverage_router)
 app.include_router(research_financials_router)
 app.include_router(research_events_router)
 app.include_router(source_updates_router)

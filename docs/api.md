@@ -32,7 +32,7 @@ coverage 可不 cache，每列有 research_available、configured_sources、succ
 
 題材回應 additive 新增 assessment_summary（available、summary、confidence、reviewed），不移除舊欄位。assessment 查詢分開傳回 available、status／checked、authored assessment、evidence_sources 與 source_warnings；paths 在讀取時固定標 inference，不寫回 JSON。無 assessment 時回 available=false／assessment=null，原研究仍可讀；未知題材 404，POST 405。
 
-候選資訊只含直接分類、非例行、已發布的內容，真正發布日的台北日期必須晚於研究 reviewed，且時間不在未來。candidates 最多列 8 筆、candidate_count 保留總數；發布日期未知另列 unknown_date_count 與最多 8 筆 undated_candidates，不以 reported／activity／fetched 代替。current_version_id 在 P3 建立版本前為 null。evidence_sources 以 canonical ID 提供 registry 名稱與目前 runtime 狀態；source_warnings 不是重新查核結果。
+舊 assessment API 的 candidates 欄位只為本機相容保留：讀者入口（gateway）不轉送舊 `/api`，舊題材頁自 task 6.5 也不再顯示；維護者改由 `/api/admin/coverage` 的 `assessment_candidates` 查閱（見 [研究覆蓋](research-coverage.md)）。候選資訊只含直接分類、非例行、已發布的內容，真正發布日的台北日期必須晚於研究 reviewed，且時間不在未來。candidates 最多列 8 筆、candidate_count 保留總數；發布日期未知另列 unknown_date_count 與最多 8 筆 undated_candidates，不以 reported／activity／fetched 代替。current_version_id 在 P3 建立版本前為 null。evidence_sources 以 canonical ID 提供 registry 名稱與目前 runtime 狀態；source_warnings 不是重新查核結果。
 
 coverage 題材 row 新增 assessment_available／assessment_checked，與全文研究分開；環節 row 不適用者為 null。indicator_count／available_indicator_count 及 indicator_gaps 分開保存指標設定與取得狀態；未設定時明示缺口，不以新聞或來源成功補值。Markdown report 保留原 30／90 日表，另附題材判讀／指標區塊。
 

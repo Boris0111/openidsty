@@ -39,7 +39,7 @@ export default function Page({params}:{params:Promise<{id:string}>}){
         {id:'tracking',label:'數據與追蹤',anchors:['indicators','candidates','milestones','events'],content:<>
           <Status {...indicators}/>{indicators.data&&<IndicatorsPanel data={indicators.data}/>}
           {assessment.data?<CommercialProgress theme={data} data={assessment.data}/>:<section id="milestones" className="milestones"><h2>預期里程碑與查核點</h2>{data.milestones.map((m,i)=><article key={m.id||i}><time>{m.date}</time><div><h3>{m.event}</h3><p>{m.evidence}</p></div></article>)}</section>}
-          {assessment.data&&<section id="candidates" className="assessment-candidates"><div className="section-heading"><h2>研究查核後的新資訊</h2><Link href={`/events?theme=${data.theme}`}>查看全部</Link></div><p className="data-note">{assessment.data.candidate_count} 則直接相關資訊，尚未納入目前判讀。</p><EventList events={assessment.data.candidates}/>{assessment.data.unknown_date_count>0&&<><h3>發布日待確認</h3><p className="data-note">以下 {assessment.data.unknown_date_count} 則資訊尚不能判定新舊。</p><EventList events={assessment.data.undated_candidates}/></>}</section>}
+          <p id="candidates" className="data-note">待納入判讀的資訊已移至維護端核對；這裡可閱讀公開事件與指標，判讀以查核日為準。</p>
           <section id="events" className="company-events"><div className="section-heading"><h2>已發布的相關事件</h2><Link href={`/events?theme=${data.theme}`}>查看全部</Link></div><EventList events={(data.events||[]).filter(e=>e.lifecycle==='published')}/></section>
         </>},
       ]}/>

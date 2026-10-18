@@ -13,7 +13,9 @@ adoption-conditions: [平台與場址已選擇相容的直接晶片及設施水�
 bottlenecks: [取熱、水路與設施能力需要共同成立]
 substitution-limits: [其他液冷或氣冷架構需按不同採用條件另行比較]
 claims: []
-gaps: [目前走讀只核對雙鴻冷板及 Vertiv 液對液 CDU 的產品資料，並非完整供應商名單。]
+gaps:
+- status: not-researched
+  reason: 目前走讀只核對雙鴻冷板及 Vertiv 液對液 CDU 的產品資料，並非完整供應商名單。
 ---
 
 ## 定義與用途

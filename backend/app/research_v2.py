@@ -27,6 +27,11 @@ def require_release(session, release_id):
     return row
 
 
+def reader_gaps(values):
+    """Readers see each gap's reason; the four-way status is maintenance data."""
+    return [gap['reason'] if isinstance(gap, dict) else gap for gap in values or []]
+
+
 def envelope(release, data):
     return {'release_id': str(release['release_id']), 'schema_version': release['schema_version'], 'data': data}
 
@@ -208,6 +213,8 @@ def detail_payload(session, release, row):
               'scope', 'comparisons', 'related-ids', 'diagram-assets', 'gaps', 'aliases', 'listings',
               'roles', 'research-depth', 'status', 'milestones', 'kpis', 'signals', 'upstream', 'downstream', 'themes', 'segments')
     content = {key.replace('-', '_'): data[key] for key in fields if key in data}
+    if 'gaps' in content:
+        content['gaps'] = reader_gaps(content['gaps'])
     if 'roles' in content:
         content['roles'] = [{'segment_id': role['segment-id'], 'description': role['description']} for role in content['roles']]
     if data.get('assessment'):

@@ -13,7 +13,9 @@ adoption-conditions: [以相同平台與介面條件比較候選供應商]
 bottlenecks: [元件與水路整合的驗證]
 substitution-limits: [不同角色的設備不能直接相互替代]
 claims: []
-gaps: [此頁是研究分類；產品能力與來源請讀所連結的冷板研究。]
+gaps:
+- status: not-applicable
+  reason: 此頁是研究分類；產品能力與來源請讀所連結的冷板研究。
 ---
 
 ## 定義與用途

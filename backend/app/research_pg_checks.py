@@ -38,12 +38,12 @@ def main():
             'financial-core':['tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_research_postgres.py'],
             'publication-interfaces':['tests/test_publication_interfaces.py'],
             'publication-restart':['tests/test_research_restart.py'],
-            'admin-read':['tests/test_research_admin_reads.py'],
+            'admin-read':['tests/test_research_admin_reads.py','tests/test_research_coverage.py'],
         }
         cases = suites.get(args.suite,['tests/test_research_postgres.py',
             'tests/test_research_v2.py', 'tests/test_research_graph_v2.py', 'tests/test_research_search.py',
             'tests/test_research_auth.py', 'tests/test_research_documents.py', 'tests/test_research_drafts.py',
-            'tests/test_research_publication.py', 'tests/test_research_admin_reads.py', 'tests/test_research_restart.py', 'tests/test_publication_interfaces.py',
+            'tests/test_research_publication.py', 'tests/test_research_admin_reads.py', 'tests/test_research_coverage.py', 'tests/test_research_restart.py', 'tests/test_publication_interfaces.py',
             'tests/test_financial_core.py','tests/test_financial_store.py','tests/test_financial_tw.py','tests/test_financial_sec.py','tests/test_sec_http.py','tests/test_financial_imports.py','tests/test_source_updates.py','tests/test_research_dynamic.py','tests/test_research_cache.py','tests/test_reader_gateway.py'])
         raise SystemExit(pytest.main(['-q', '-p', 'no:cacheprovider', *cases]))
 

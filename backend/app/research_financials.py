@@ -6,7 +6,7 @@ from fastapi import APIRouter,Depends,Query
 from sqlalchemy import text
 from .research_db import get_research_session
 from .research_http import ResearchError
-from .research_v2 import require_release,entity,envelope,summary,claims_payload
+from .research_v2 import require_release,entity,envelope,summary,claims_payload,reader_gaps
 from .research_compile import digest
 from .financial_core import METRICS,decimal_text
 
@@ -200,7 +200,7 @@ def compare(company_ids:str=Query(...,max_length=850),basis:Literal['monthly','q
         products=[dict(item) for item in offerings if item['company_id']==key]
         columns.append({**summary(row),'roles':[{'segment_id':role['segment-id'],'description':role['description']} for role in row['data'].get('roles',[])[:100]],
             'products':products[:100],'risks':prose.get('風險','')[:12000] or None,'business_model':prose.get('商業模式','')[:12000] or None,
-            'claims':claims,'gaps':row['data'].get('gaps',[]),'research_depth':row['data'].get('research-depth','basic'),
+            'claims':claims,'gaps':reader_gaps(row['data'].get('gaps')),'research_depth':row['data'].get('research-depth','basic'),
             'truncated':truncated or len(products)>100 or any(len(prose.get(heading,''))>12000 for heading in ('風險','商業模式')),'preferred_source_family':family})
     all_values={row['observation_id']:row for rows in selected.values() for row in rows[:2]}
     enriched={row['observation_id']:row for row in enrich(session,list(all_values.values()),release)}

@@ -51,7 +51,8 @@ claims:
         stance: supporting
         applicable-period: 2026-10-16 所讀公司介紹；頁面公司資料基準為 2025 年底
 gaps:
-- 本輪未核對液冷產品單獨收入、具名客戶與訂單；產品能力不表示特定交易已成立。
+- status: not-researched
+  reason: 本輪未核對液冷產品單獨收入、具名客戶與訂單；產品能力不表示特定交易已成立。
 ---
 
 ## 供應角色

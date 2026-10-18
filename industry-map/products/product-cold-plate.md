@@ -25,7 +25,9 @@ claims:
         read-scope: 已讀冷板取熱及 CDU 控制的公開說明，未採用文中市場預測與通用節能比例
         stance: supporting
         applicable-period: 公開原理說明；頁面未提供獨立發布日
-gaps: [各平台的冷板性能、驗證及售價需另查產品規格，不能由通用原理推估。]
+gaps:
+- status: not-researched
+  reason: 各平台的冷板性能、驗證及售價需另查產品規格，不能由通用原理推估。
 ---
 
 ## 定義與用途

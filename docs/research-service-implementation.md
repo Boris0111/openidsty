@@ -200,3 +200,13 @@ Application 保持 migration `0015`、head `03799774-3553-5ff6-9910-13a68468af15
 桌機 1440×1000／手機 390×844 的新版提示（明示合成 API）、真實研究＋模擬暫時失敗已實際檢視，截圖位於忽略的 `.work/research-cache-review/`。真實 Next proxy、304 空 body、資產已發布檢查與同路徑共享均已查核；沒有在 application 為展示做假發布、製造傳聞或改財務。這是工程走查，並非 Boris 的閱讀驗收，也不代表 task 9.2 的 10 人 p95 已量測。
 
 Application 仍為 migration `0015`／head `03799774-3553-5ff6-9910-13a68468af15`，1793 financial observations、4 source jobs、34 正式關係、2915 事件／1970 linked events；owner／publish jobs／financial import batches 均 0。只有研究版 web／API／DB 運作，來源排程及 Prefect worker 仍關閉、原服務 fingerprints 未變。依指定完成 6.4 後儲存；下一項為 6.5 覆蓋與研究缺口分工，本輪不接續。
+
+## 研究覆蓋與缺口分工（task 6.5，2026-10-18）
+
+開始前依 Boris 選擇，把研究 Schema 的 gaps 擴充為 `{status, reason}` 或文字：四類為未研究／未公開／未取得／不適用，文字列為未分類。README、validator 與正反例測試同步更新；6 筆能明確歸類的缺口改為結構化，93 筆 basic 模板與 2 筆研究限制維持文字。讀者 API 只輸出 reason，status 不進一般閱讀。
+
+新增 owner 專用 `GET /api/admin/coverage`（環節／題材的事件分開計數、技術文件已核對版本／查核日／論述定位、待核對候選與處理狀態、題材待納入判讀事件）與 `GET /api/admin/coverage/entities`（正式 release 研究物件的四類缺口與未分類，cursor 分頁）。統計都在 SQL 聚合；新增 30 則事件後同一請求的 SQL 次數不變，候選與樣本各最多 5 筆。`/admin` 增加「研究覆蓋」分頁。舊題材頁 `#candidates` 改為一句轉向說明，候選清單與發布日待確認清單移出讀者頁；舊 v1 關注頁移除候選提示。搜尋、比較與影響遍歷的候選保留。契約與操作見 [研究覆蓋](research-coverage.md)。
+
+驗證：`run_validator_tests` 66 類失敗案例＋22 項 schema 測試通過（新增 gap 格式 2 項）；`validate_map` 通過。`pg-check --suite admin-read` **7 passed**（新增 coverage 6 項，在 rolled-back 交易內匯入真實地圖）；`reader-navigation` 22、`research-dynamic` 25、`publication-interfaces` 1 passed。容器內離線 pytest **281 passed、110 skipped**（skipped 為需 PostgreSQL 的案例，已由上列 pg-check 覆蓋）。前端 typecheck、production build 通過；離線瀏覽器 **55 passed**（候選相關 3 個舊斷言改為新契約）；隔離預覽 **20 passed**（新增 admin 覆蓋桌機／手機 2 項，合成 admin API）。截圖存於忽略的 `.work/research-coverage-review/`，修正一次技術文件清單的小字黏連後重拍；這是工程走查，不是 Boris 閱讀驗收。
+
+Application 仍為 migration `0015`、head `03799774-3553-5ff6-9910-13a68468af15`，34 正式關係、2915 事件、1793 financial observations、4 source jobs；owner／publish jobs 均 0。結構化缺口是 authoring 檔案變更，尚未經發布進入 application release，所以真實 admin 缺口矩陣目前全為未分類＋basic 未研究。研究版 web／API 已重建，原服務 fingerprints 未變，來源排程及 Prefect worker 仍關閉。

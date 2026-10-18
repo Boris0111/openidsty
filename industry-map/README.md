@@ -44,7 +44,18 @@ industry-map/
 | aliases | 非空字串陣列，可空；不同實體可以同 alias，搜尋必須回候選而非合併。只把同一法律主體的別稱放在公司 aliases |
 | reviewed | 已查核有效 `YYYY-MM-DD` 字串或 null；基本索引未重新研究時用 null，不以遷移日代填 |
 | claims | 主張陣列，可空；每筆有局部唯一 kebab-case id、statement、confidence、conditions、reviewed、evidence。confidence 為 well-supported／inference／needs-verification，conditions 至少一筆非空文字，reviewed 必須日精度 |
-| gaps | 非空文字陣列，可空；沒有 claims 時至少一筆，交代未研究／未公開／未取得／不適用及理由 |
+| gaps | 陣列，可空；沒有 claims 時至少一筆。每筆為 `{status, reason}`（只有這兩個鍵），或非空文字（舊格式，維護矩陣列為「未分類」）。status 定義見下方 |
+
+gap status 只描述「為什麼這裡沒有結論」，reason 必須寫出具體項目與依據：
+
+| status | 中文 | 使用時機 |
+|---|---|---|
+| not-researched | 未研究 | 還沒有查核這一項，例如尚未讀財報或只走讀部分供應商 |
+| not-public | 未公開 | 已查官方來源，公司確實沒有揭露，例如未揭露產品別營收或具名客戶 |
+| not-obtained | 未取得 | 資料可能存在，但目前無法取得或讀取，例如來源 403、付費、只提供部分歷史 |
+| not-applicable | 不適用 | 該項不適用此物件，例如未上市公司沒有公開財報、分類頁不承載產品證據 |
+
+不屬於四類的研究限制（例如「額定能力不等於場址驗收」）維持文字。讀者頁只顯示 reason；status 與統計只在維護矩陣使用。
 
 `claims[].evidence` 至少一筆，使用本文件既有「公開頁面」或「固定文件」引用格式，另必填 `stance: supporting | counter` 與非空 `applicable-period`。引用保存讀過哪一段、什麼適用期間；支持網頁存在不表示量產或交易成立。固定文件版本不解析為 latest，文件性質沿用 technical-documents manifest。必要短摘錄不取代原文全文。
 

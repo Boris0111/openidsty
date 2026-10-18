@@ -48,7 +48,8 @@ claims:
         stance: supporting
         applicable-period: '2025-10-15 新聞的產品規劃'
 gaps:
-- 本輪已讀產品新聞；具名客戶、訂單與液冷收入占比尚未完成財務文件核讀。
+- status: not-researched
+  reason: 本輪已讀產品新聞；具名客戶、訂單與液冷收入占比尚未完成財務文件核讀。
 ---
 
 ## 供應角色

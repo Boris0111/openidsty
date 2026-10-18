@@ -16,8 +16,11 @@ test('judgment precedes prose and evidence is keyboard accessible',async({page})
   await expect(reading.getByRole('link',{name:'離線測試來源 ↗'})).toHaveAttribute('href','https://example.invalid/source');
   await expect(page.getByRole('region',{name:'完整研究'})).toBeHidden();
   await page.getByRole('tab',{name:'數據與追蹤'}).click();
-  await expect(page.getByRole('heading',{name:'研究查核後的新資訊'})).toBeVisible();
-  await expect(page.getByText('尚不能判定新舊',{exact:false})).toBeVisible();
+  // Pending candidates are maintenance data; readers keep public events and the review baseline.
+  await expect(page.getByRole('heading',{name:'研究查核後的新資訊'})).toHaveCount(0);
+  await expect(page.getByText('尚不能判定新舊',{exact:false})).toHaveCount(0);
+  await expect(page.getByText('待納入判讀的資訊已移至維護端核對',{exact:false})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'已發布的相關事件'})).toBeVisible();
   await page.screenshot({path:'test-results/assessment-desktop.png',fullPage:true});
   expect(unexpected).toEqual([]);
 });

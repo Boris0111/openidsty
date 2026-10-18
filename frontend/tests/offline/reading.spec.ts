@@ -56,7 +56,9 @@ test('題材先讀判讀；中文原文與證據網址保留，數據深連結�
   await expect(research.getByRole('link',{name:'原始來源'})).toHaveAttribute('href','https://example.invalid/thermal?state=inference');
   await page.goto('/themes/liquid-cooling#candidates');
   await expect(page.getByRole('tab',{name:'數據與追蹤'})).toHaveAttribute('aria-selected','true');
-  await expect(page.getByRole('heading',{name:'研究查核後的新資訊'})).toBeVisible();
+  await expect(page.locator('#candidates')).toContainText('待納入判讀的資訊已移至維護端核對');
+  await expect(page.getByRole('heading',{name:'研究查核後的新資訊'})).toHaveCount(0);
+  await expect(page.getByRole('heading',{name:'已發布的相關事件'})).toBeVisible();
   await page.getByRole('tab',{name:'研究判讀'}).click();await expect(page.getByRole('heading',{name:'目前判讀'})).toBeVisible();
   for(const name of ['進階資訊','技術文件與待核對'])await expect(page.getByText(name,{exact:true})).toHaveCount(0);
   expect(unexpected).toEqual([]);

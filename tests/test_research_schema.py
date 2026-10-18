@@ -56,6 +56,18 @@ class ResearchSchemaTests(unittest.TestCase):
                     'locator': '產品', 'read-scope': '公開介紹', 'stance': 'supporting',
                     'applicable-period': '測試期間'}]}
 
+    def test_gap_may_be_text_or_one_of_four_statuses(self):
+        self.write({**self.company, 'gaps': ['未分類文字', *[{'status': status, 'reason': '測試理由'} for status in
+                    ('not-researched', 'not-public', 'not-obtained', 'not-applicable')]]})
+        self.check()
+
+    def test_gap_status_and_reason_are_validated(self):
+        for gap in ({'status': 'unknown', 'reason': '測試'}, {'status': 'not-public', 'reason': ' '},
+                    {'status': 'not-public', 'reason': '測試', 'note': '多餘欄位'}):
+            with self.subTest(gap=gap):
+                self.write({**self.company, 'gaps': [gap]})
+                self.check('gap')
+
     def test_all_95_identities_and_100_roles_preserved(self):
         map_dir = ROOT / 'industry-map'
         old = build_registry(map_dir, yaml.safe_load((ROOT / 'data/company-research.yaml').read_text(encoding='utf-8'))['companies'])

@@ -10,6 +10,7 @@ import yaml
 KINDS = {'companies': 'company', 'applications': 'application', 'roles': 'role',
          'products': 'product', 'concepts': 'concept', 'research': 'research'}
 CONFIDENCES = ('well-supported', 'inference', 'needs-verification')
+GAP_STATUSES = ('not-researched', 'not-public', 'not-obtained', 'not-applicable')
 ID = re.compile(r'^[a-z0-9]+(?:-[a-z0-9]+)*$')
 
 
@@ -45,6 +46,16 @@ class ResearchValidator:
             for item in value:
                 self.text(item, path, label)
         return value
+
+    def gaps(self, value, path, minimum):
+        # Plain text stays valid (unclassified); a mapping states one of four gap statuses.
+        for item in self.array(value, path, 'gaps', minimum):
+            if isinstance(item, dict):
+                if set(item) != {'status', 'reason'} or item.get('status') not in GAP_STATUSES:
+                    self.fail(path, 'gap mapping needs only status (' + '/'.join(GAP_STATUSES) + ') and reason')
+                self.text(item.get('reason'), path, 'gap reason')
+            else:
+                self.text(item, path, 'gaps')
 
     def day(self, value, path, label, nullable=False):
         if value is None and nullable:
@@ -118,7 +129,7 @@ class ResearchValidator:
                     self.fail(path, 'missing reviewed')
                 self.day(obj.get('reviewed'), path, 'reviewed', True)
                 claims = self.identified(obj.get('claims'), path, label='claims')
-                self.array(obj.get('gaps'), path, 'gaps', 0 if claims else 1, True)
+                self.gaps(obj.get('gaps'), path, 0 if claims else 1)
                 self.entities[key] = {**obj, '_body': body, '_path': path, '_claims': claims}
 
     def evidence(self, value, path, sources, documents):

@@ -13,7 +13,9 @@ adoption-conditions: [先辨認液對液或液對氣的架構]
 bottlenecks: [上下兩側回路及維護責任的整合]
 substitution-limits: [設備容量需按相同條件比較]
 claims: []
-gaps: [此頁是研究分類；能力與證據由所連結的 CDU 產品研究說明。]
+gaps:
+- status: not-applicable
+  reason: 此頁是研究分類；能力與證據由所連結的 CDU 產品研究說明。
 ---
 
 ## 定義與用途
