@@ -140,7 +140,7 @@ gaps:
 
 ## 供應角色
 
-Marvell 在[運算環節](/next?focus=segment-compute)屬[客製 ASIC 設計與交付](/next?focus=role-custom-asic-partner)，在[網路環節](/next?focus=segment-networking)屬[光通訊 DSP](/next?focus=role-optical-dsp) 與[交換器晶片](/next?focus=role-switch-silicon)。AEC DSP 與 PCIe retimer 也在產品線內，但地圖目前沒有獨立角色。
+Marvell 在[運算環節](/next?focus=segment-compute)屬[客製 ASIC 設計與交付](/next?focus=role-custom-asic-partner)，在[網路環節](/next?focus=segment-networking)屬[光通訊 DSP](/next?focus=role-optical-dsp)、[交換器晶片](/next?focus=role-switch-silicon)與[電訊號連接晶片與主動線材](/next?focus=role-electrical-connectivity)（PCIe retimer、AEC DSP）。
 
 ## 研究界線
 

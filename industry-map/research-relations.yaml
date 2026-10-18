@@ -759,6 +759,9 @@ taxonomy:
 - id: taxonomy-mrvl-from-switch-silicon
   parent: role-switch-silicon
   child: company-mrvl
+- id: taxonomy-mrvl-from-electrical-connectivity
+  parent: role-electrical-connectivity
+  child: company-mrvl
 offerings:
 - id: offering-auras-cold-plate
   company: company-auras
@@ -994,6 +997,15 @@ offerings:
   claim-refs:
   - entity-id: company-mrvl
     claim-id: ethernet-switches
+- id: offering-mrvl-retimer
+  company: company-mrvl
+  product: product-retimer
+  role: role-electrical-connectivity
+  conditions:
+  - 10-K 描述 PCIe retimer 與 AEC DSP，未拆分收入
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: interconnect-portfolio
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv
