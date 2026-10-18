@@ -82,9 +82,7 @@ claims:
   statement: 年報主要客戶表以代號揭露，114 年度最大客戶約占 8.31%，前幾大客戶各不到一成；公司並稱沒有進貨或銷貨集中風險。
   confidence: well-supported
   conditions:
-  - 客戶表抽取時欄位錯位，依金額與 114 年度合計 33
-  - 783
-  - 411 仟元核對；客戶名稱未揭露
+  - 客戶表抽取時欄位錯位，依金額與 114 年度合計 33,783,411 仟元核對；客戶名稱未揭露
   reviewed: '2026-10-18'
   evidence:
   - source-id: lotes-annual-report-2025
