@@ -50,6 +50,14 @@ test('精確原值、原幣／原期間分組，來源修訂與歷史分頁保�
   expect(requests.filter(path=>path.includes('/financials')).every(path=>path.includes('release_id='+release))).toBe(true);
 });
 
+test('分享的財務連結在補上研究版本後仍保留錨點，並落在財務區',async({page})=>{
+  await fixtures(page);await page.setViewportSize({width:390,height:400});
+  await page.goto('/next?focus=company-a#company-data');
+  await expect(page).toHaveURL(new RegExp('release_id='+release+'#company-data$'));
+  await expect(page.locator('.rf-series').first()).toBeVisible();
+  await expect(page.locator('#company-data')).toBeInViewport();
+});
+
 test('累計不連線、基本 EPS 股別明示；按需讀衍生公式、原始觀測及財務分頁',async({page})=>{
   const requests=await fixtures(page);await page.goto('/next?focus=company-a&release_id='+release);
   await page.getByRole('combobox',{name:'財務口徑',exact:true}).selectOption('ytd');await expect(page.locator('.rf-series').first()).toContainText('累計');

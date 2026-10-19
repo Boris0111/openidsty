@@ -49,7 +49,7 @@ export function ResearchExplorer() {
   const [copied,setCopied]=useState('');
   const [diagramFailed,setDiagramFailed]=useState(false);
   useEffect(()=>{
-    if(!queryRelease&&manifest.data){const next=new URLSearchParams(params);next.set('release_id',manifest.data.release_id);router.replace('/next?'+next,{scroll:false})}
+    if(!queryRelease&&manifest.data){const next=new URLSearchParams(params);next.set('release_id',manifest.data.release_id);router.replace('/next?'+next+window.location.hash,{scroll:false})}
   },[queryRelease,manifest.data,params,router]);
   useEffect(()=>{
     const selection=view?'view:'+view:focus;
@@ -69,6 +69,15 @@ export function ResearchExplorer() {
   const mobile=diagram.data?.data.assets.find(asset=>asset.id.endsWith('mobile'));
   const companies=graph.data?.data.nodes.filter(node=>node.kind==='company'&&node.id!==focus&&graph.data?.data.edges.some(edge=>edge.kind==='capability'&&edge.source===node.id&&edge.target===focus))||[];
   const products=graph.data?.data.nodes.filter(node=>node.kind==='product'&&node.id!==focus)||[];
+  const anchored=useRef<string|null>(null);
+  useEffect(()=>{
+    // A shared #company-data link lands on that section once the research above it has rendered.
+    const key=focus+':'+release;
+    if(window.location.hash!=='#company-data'||item?.kind!=='company'||anchored.current===key)return;
+    if(!(graph.data||graph.error)||(isFirst&&!(diagram.data||diagram.error)))return;
+    anchored.current=key;
+    document.getElementById('company-data')?.scrollIntoView({block:'start'});
+  },[focus,release,item,graph.data,graph.error,diagram.data,diagram.error,isFirst]);
   function adopt(){
     if(!manifest.data)return;
     const next=new URLSearchParams(params);next.set('release_id',manifest.data.release_id);
