@@ -6,7 +6,7 @@
 
 財務分成 raw facts、標準化 groups、observations、provenance 及 derivations。Raw fact 身分含 accession／tag／context；group 的唯一鍵含公司、來源族、metric、原始期間、basis、scope、unit／currency／股別，不含 accession。新值追加 revision；A → B → A 允許再次修訂，不能把回到舊值當重跑。相同值新申報只補來源的實際行為於財務 task 驗證。金額用 Numeric(38,10)，不沿用舊 Float 的精度假設。
 
-`research_reader_login` 屬於 NOLOGIN research_reader，預設 read-only transaction，沒有研究 DML、草稿、jobs、session、audit、匯入批次或原始 payload 權限。RLS 隱藏 ready／未發布的研究及其文件、資產；writer 可建立候選投影，但不能 CREATE TABLE 或重寫 published snapshot。兩種 application role 均非 superuser／schema owner／BYPASSRLS。Bootstrap 只供 initializer 做 migration／role 佈建；祕密從忽略的環境檔提供，不作為 CLI argument。
+`research_reader_login` 屬於 NOLOGIN research_reader，預設 read-only transaction，沒有研究 DML、草稿、jobs、session、audit、匯入批次或原始 payload 權限。RLS 隱藏 ready／未發布的研究及其文件、資產。財務 observations／provenance／derivations 以鍵值逐列檢查上層列是否可見（`0016`），檢查成本隨該頁筆數而不是全庫資料量增加；reader 角色關閉 JIT。原因與量測見 [效能基準](research-performance.md)。writer 可建立候選投影，但不能 CREATE TABLE 或重寫 published snapshot。兩種 application role 均非 superuser／schema owner／BYPASSRLS。Bootstrap 只供 initializer 做 migration／role 佈建；祕密從忽略的環境檔提供，不作為 CLI argument。
 
 Legacy API 暫時需要 public 表的 SELECT；原 API 的診斷路徑尚待私人網路 gateway 的 allowlist 隔離，不因此宣稱已可公開部署。reader 仍沒有新管理資料的 SELECT 權限。
 

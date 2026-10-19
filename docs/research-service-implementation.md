@@ -285,7 +285,23 @@ Application 資料未改動；研究版 web／API 已重建，原服務 fingerpr
 總核對時修正：寫入工具覆蓋了台積電與台達電的既有別名（已補回並改為合併）；7 家美國公司的 SEC CIK 補登到 `data/company-research.yaml`；71 個純文字缺口改為四種結構化狀態。
 
 驗證：
-{- `validate_map` 通過，內部連結 0 失效；validator 測試在補回別名與 CIK 後通過。
+- `validate_map` 通過，內部連結 0 失效；validator 測試在補回別名與 CIK 後通過。
 - `rebuild-check --commit f22ffd2` 編譯出 254 個研究物件，同一 commit 重建一致。
 - 後端離線 pytest（臨時容器，唯讀掛載 worktree）282 passed、114 skipped、1 failed：快照數寫死為 125 的測試自 8.1 起失效，改為由檔案推導後該模組 34 passed。
-- 內容審查與程式測試的完整紀錄見 [總核對](research-final-review.md)；這不是 Boris 的閱讀驗收（9.4）。}
+- 內容審查與程式測試的完整紀錄見 [總核對](research-final-review.md)；這不是 Boris 的閱讀驗收（9.4）。
+
+## 小群讀取效能（task 9.2，2026-10-18 至 10-20）
+
+在還原演練環境用兩組資料跑 10 人、5 分鐘的負載，期間同時做一次真實來源更新：一組是真實資料，另一組是擴大到 300 家公司、3,034 條關係、100,275 筆財務觀測的資料。完整數據見 [效能基準](research-performance.md)。
+
+- **coverage**：短測 p95 3.6 秒。`a5980e2` 改為依內容指紋重用結果 30 秒後，完整那輪是 576 ms。
+- **financial（擴大資料）**：p95 5.9 秒，8.5% 回 503。原因與修正：
+  - 讀者 RLS 與引用 view 每次都先算出全部已發布資料，成本越過 JIT 門檻；平行 hash 又用光 `/dev/shm`。
+  - migration `0016` 把三張大表的讀者 policy 改為以鍵值逐列檢查上層列，並讓讀者角色關閉 JIT。
+  - 引用來源改為逐筆的 LATERAL 查詢。可見範圍不變，由新增的 PostgreSQL 契約測試驗證；`pg-check --suite all` 共 241 項通過。
+- **修正後兩組都達標**：
+  - 擴大資料：financial p95 431 ms，coverage 712 ms，0 錯誤，每秒 44.6 個請求。
+  - 真實資料：financial p95 314 ms，coverage 637 ms，0 錯誤。
+- **新工具**：`research_drill.py migrate` 讓還原的舊版 schema 升級到目前版本。
+- **預覽尚未套用**：預覽仍是修正前的程式與 `0015`，9.4 以 `research_lab.py up` 重建時才套用。
+- **草稿路徑的限制**：關係數上限約 1,700 條、每次儲存全量驗證約 3 秒。依 Boris 決定另開 change，這裡只記錄。

@@ -111,6 +111,36 @@ def test_reader_hides_unpublished_data_and_has_no_admin_grants(pg):
         execute(c, 'SET default_transaction_read_only=on')
 
 
+def test_reader_financial_lineage_stays_limited_to_published_companies(pg):
+    admin, reader, _, d = pg
+    private_group, rows = uuid.uuid4().hex * 2, {}
+    with admin.begin() as c:
+        execute(c, "UPDATE research.research_releases SET status='published',published_at=now() WHERE release_id=CAST(:id AS uuid) AND status<>'published'", id=d['a'])
+        execute(c, "INSERT INTO research.financial_groups VALUES (:g,:c,'official-test',:m,'2025-01-01','2025-03-31','quarterly','consolidated','amount','USD','')",
+                g=private_group, c=d['private'], m=d['metric'])
+        for owner, group in [('company', d['group']), ('private', private_group)]:
+            fact, base, derived = (str(uuid.uuid4()) for _ in range(3))
+            execute(c, "INSERT INTO research.financial_raw_facts VALUES (CAST(:id AS uuid),:company,'official','filing-lineage','tag',:context,1,'2025-05-01','https://example.org','{}')",
+                    id=fact, company=d[owner], context='lineage-' + owner)
+            for observation, revision, kind in [(base, 11, 'official'), (derived, 12, 'derived')]:
+                execute(c, "INSERT INTO research.financial_observations (observation_id,group_id,revision,value,semantic_hash,filed_at,provenance_kind,limitations) "
+                           "VALUES (CAST(:id AS uuid),:g,:r,1,:h,'2025-05-01',:k,'')", id=observation, g=group, r=revision, h=observation, k=kind)
+            execute(c, "INSERT INTO research.observation_provenance VALUES (CAST(:o AS uuid),CAST(:f AS uuid))", o=base, f=fact)
+            execute(c, "INSERT INTO research.financial_derivations VALUES (CAST(:o AS uuid),CAST(:i AS uuid),'test-v1',1)", o=derived, i=base)
+            rows[owner] = {'fact': fact, 'base': base, 'derived': derived}
+    with reader.connect() as c:
+        assert execute(c, 'SHOW jit').scalar_one() == 'off'
+        for owner, visible in [('company', 1), ('private', 0)]:
+            ids = rows[owner]
+            assert execute(c, 'SELECT count(*) FROM research.financial_observations WHERE observation_id=CAST(:id AS uuid)', id=ids['base']).scalar_one() == visible
+            assert execute(c, 'SELECT count(*) FROM research.observation_provenance WHERE observation_id=CAST(:id AS uuid)', id=ids['base']).scalar_one() == visible
+            assert execute(c, 'SELECT count(*) FROM research.financial_derivations WHERE observation_id=CAST(:id AS uuid)', id=ids['derived']).scalar_one() == visible
+            assert execute(c, 'SELECT count(*) FROM research.financial_fact_citations WHERE fact_id=CAST(:id AS uuid)', id=ids['fact']).scalar_one() == visible
+            assert execute(c, '''SELECT count(*) FROM research.observation_provenance p CROSS JOIN LATERAL (
+                SELECT * FROM research.financial_fact_citations f WHERE f.fact_id=p.fact_id OFFSET 0) f
+                WHERE p.observation_id=CAST(:id AS uuid)''', id=ids['base']).scalar_one() == visible
+
+
 def test_writer_cannot_change_published_snapshot_or_create_tables(pg):
     admin, _, writer, d = pg
     with admin.begin() as c:

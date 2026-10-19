@@ -3,6 +3,7 @@ verify it against the backup manifest and time it. Never touches the preview or 
 
 python scripts/research_drill.py setup
 python scripts/research_drill.py restore --backup backups/research/<stamp>
+python scripts/research_drill.py migrate    # upgrade a restored (older) schema to the code's head
 python scripts/research_drill.py owner      # drill-only owner credential from .env.research-drill
 python scripts/research_drill.py run-job --job <uuid> [--stop-at before-activation]
 python scripts/research_drill.py offline-refresh --source twse-revenue
@@ -155,6 +156,18 @@ def restore(backup):
     return report
 
 
+def migrate():
+    """A backup keeps the schema revision it was taken at; bring the drill DB to the code's head."""
+    check()
+    db = compose('ps', '-q', 'db').decode().strip()
+    version = ['docker', 'exec', db, 'psql', '-U', 'industry', '-d', 'industry_research', '-At', '-c', 'SELECT version_num FROM alembic_version']
+    before = run(version, text=True).strip()
+    compose('--profile', 'tools', 'run', '--rm', '--no-deps', '-T', 'bootstrap', 'alembic', 'upgrade', 'head')
+    # Recreate so the API runs the current image and opens new reader sessions (role settings such as jit apply per session).
+    compose('up', '-d', '--wait', '--force-recreate', '--no-deps', 'api')
+    return {'before': before, 'after': run(version, text=True).strip()}
+
+
 def owner():
     """Set or replace the owner credential with the drill-only test password, inside the drill DB only."""
     check()
@@ -221,7 +234,7 @@ def down():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['setup', 'check', 'restore', 'owner', 'run-job', 'online-refresh', 'offline-refresh', 'down'])
+    parser.add_argument('action', choices=['setup', 'check', 'restore', 'migrate', 'owner', 'run-job', 'online-refresh', 'offline-refresh', 'down'])
     parser.add_argument('--backup')
     parser.add_argument('--job')
     parser.add_argument('--stop-at')
@@ -230,7 +243,7 @@ def main():
     if args.action == 'restore' and not args.backup:
         parser.error('--backup is required')
     result = {'setup': lambda: (setup(), 'ok')[1], 'check': check, 'restore': lambda: restore(args.backup),
-              'owner': owner, 'down': down, 'run-job': lambda: run_job(args.job, args.stop_at),
+              'migrate': migrate, 'owner': owner, 'down': down, 'run-job': lambda: run_job(args.job, args.stop_at),
               'online-refresh': lambda: online_refresh(args.source), 'offline-refresh': lambda: offline_refresh(args.source)}[args.action]()
     print(json.dumps(result, ensure_ascii=False, indent=2))
 

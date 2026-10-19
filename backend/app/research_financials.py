@@ -43,11 +43,13 @@ def enrich(session,rows,release):
     """Two batch queries, with limits per observation, independent of history size."""
     if not rows:return []
     ids=[row['observation_id'] for row in rows]
+    # OFFSET 0 keeps the security_barrier view a keyed lookup per cited fact instead of hashing every published fact.
     sources=session.execute(text('''SELECT ranked.* FROM (
         SELECT p.observation_id,f.fact_id,f.accession,f.tag,f.value,f.filed_at,f.source_url,
             f.raw_unit,f.multiplier,f.source_as_of,f.locator,
             row_number() OVER(PARTITION BY p.observation_id ORDER BY f.filed_at DESC NULLS LAST,f.fact_id) AS n
-        FROM research.observation_provenance p JOIN research.financial_fact_citations f USING(fact_id)
+        FROM research.observation_provenance p CROSS JOIN LATERAL (
+            SELECT * FROM research.financial_fact_citations c WHERE c.fact_id=p.fact_id OFFSET 0) f
         WHERE p.observation_id=ANY(CAST(:ids AS uuid[]))) ranked WHERE n<=21'''),{'ids':ids}).mappings().all()
     inputs=session.execute(text('''SELECT ranked.* FROM (SELECT d.observation_id AS target_id,d.input_id,d.ordinal,d.formula_version,
         g.company_id,g.metric_id,g.source_family,g.unit,g.group_id,g.period_start,g.period_end,g.basis,g.scope,g.currency,g.share_class,
