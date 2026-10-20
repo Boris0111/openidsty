@@ -46,6 +46,9 @@ test('mobile selection and keyboard search remain readable', async ({page}) => {
   await page.setViewportSize({width: 390, height: 844}); await page.goto('/');
   await page.getByRole('button', {name: '散熱', exact: true}).focus(); await page.keyboard.press('Enter');
   await expect(page.locator('#segment-reading').getByRole('heading', {name: '散熱', exact: true})).toBeVisible();
+  // The segment panel opens its supply chains, which keep this map selection as their way back.
+  const chain = page.getByRole('region', {name: '這個環節的供應鏈'}).getByRole('link', {name: /離線液冷供應鏈/});
+  await expect(chain).toHaveAttribute('href', /focus=application-offline-cooling&release_id=00000000-0000-4000-8000-000000000001&from=%2F%3Flayer%3Dai-server%26segment%3Dthermal/);
   const search = page.getByRole('textbox', {name: '搜尋公司、產品、環節或題材'});
   await search.fill('散熱'); await expect(page.locator('.search-results a').first()).toHaveAttribute('href', '/next?focus=segment-thermal');
   await search.fill('液冷'); await expect(page.locator('.search-results a').first()).toContainText('液冷');

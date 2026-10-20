@@ -26,17 +26,14 @@ test('真實 release 的 17 環節、7 題材與 95 公司都可從完整目錄�
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
 });
 
-test('舊散熱地圖到應用、角色、產品、公司，麵包屑回原地圖，舊公司網址開啟新版公司研究',async({page})=>{
+test('地圖選散熱進入供應鏈、產品、公司，麵包屑回原地圖，舊公司網址開啟新版公司研究',async({page})=>{
   await page.goto('/?layer=ai-server&segment=thermal');
-  const entry=page.getByRole('link',{name:'閱讀產品與公司研究'});await expect(entry).toBeVisible();await entry.focus();await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(/focus=segment-thermal/);
-  await page.locator('.rs-node-list').getByRole('button',{name:'AI 機櫃液冷',exact:false}).first().click();
-  await expect(page).toHaveURL(/focus=application-ai-rack-cooling/);
-  // IDs are stable navigation contracts; names and research are from the real release.
-  const role=await page.request.get('/api/v2/roles/role-chip-heat-capture?release_id='+new URL(page.url()).searchParams.get('release_id'));
-  const roleName=(await role.json()).data.name;
-  await page.locator('.rs-node-list').getByRole('button',{name:roleName,exact:true}).click();
-  await page.locator('.rs-node-list').getByRole('button',{name:'液冷冷板',exact:true}).click();
+  const card=page.getByRole('region',{name:'這個環節的供應鏈'}).locator('.rs-chain-card').filter({hasText:'AI 機櫃液冷'});
+  await expect(card).toBeVisible();await card.focus();await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(/focus=application-ai-rack-cooling/);await expect(page).toHaveURL(/from=/);
+  await expect(page.locator('h1')).toHaveText('AI 機櫃的熱，怎麼送出去？');
+  // Segment research now reads on the map; its /next address returns there.
+  await page.locator('.rs-chain-product').filter({hasText:'液冷冷板'}).click();
   const crumbs=page.getByRole('navigation',{name:'研究位置'});
   await expect(crumbs.getByRole('link')).toHaveText(['產業地圖','散熱','AI 機櫃液冷']);
   await page.locator('.rs-company-links a').filter({hasText:'雙鴻'}).click();await expect(page.locator('.rs-detail > h2')).toHaveText('雙鴻');
@@ -48,7 +45,7 @@ test('舊散熱地圖到應用、角色、產品、公司，麵包屑回原地�
 });
 
 test('真實圖的連線 URL、縮放平移與手機 resize',async({page,context})=>{
-  await mkdir(screenshots,{recursive:true});await page.setViewportSize({width:1440,height:1000});await page.goto('/next');
+  await mkdir(screenshots,{recursive:true});await page.setViewportSize({width:1440,height:1000});await page.goto('/next?focus=product-cold-plate');
   const picker=page.getByLabel('閱讀連線');await picker.selectOption({label:'雙鴻 — 液冷冷板（產品能力）'});
   await expect(page.getByRole('region',{name:'連線說明'})).toContainText('不指認交易客戶');
   const shared=await context.newPage();await shared.goto(page.url());await expect(shared.getByLabel('閱讀連線')).toHaveValue(await picker.inputValue());await shared.close();

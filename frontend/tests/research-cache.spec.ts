@@ -23,7 +23,7 @@ for(const mobile of [false,true])test(`真實研究共用請求、手動檢查�
   await page.setViewportSize(mobile?{width:390,height:844}:{width:1440,height:1000});
   const calls:string[]=[];page.on('request',request=>{if(request.url().includes('/api/v2/'))calls.push(request.url())});
   await page.goto('/next?focus=concept-liquid-cooling-loop');await expect(page.locator('.rs-detail > h2')).toHaveText('兩個液冷回路');
-  await expect(page.locator('.rs-diagram img')).toBeVisible();
+  await expect(page.locator('.rs-illustration img').first()).toBeVisible();
   expect(calls.filter(url=>new URL(url).pathname==='/api/v2/concepts/concept-liquid-cooling-loop')).toHaveLength(1);
   expect(calls.some(url=>url.includes('/financials/')||url.includes('/documents/'))).toBe(false);
   await page.route('**/api/v2/concepts/concept-liquid-cooling-loop?*',route=>route.fulfill({status:503,json:{message:'明示測試服務中斷'},headers:{'Cache-Control':'no-store'}}));

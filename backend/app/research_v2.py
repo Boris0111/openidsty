@@ -119,6 +119,38 @@ def catalog(release_id: uuid.UUID | None = None, limit: int = Query(50, ge=1, le
     return envelope(release, result)
 
 
+def asset_payload(session, release, ids):
+    rows = session.execute(text('SELECT asset_id,sha256,metadata FROM research.release_assets WHERE release_id=:r AND asset_id=ANY(CAST(:ids AS text[])) ORDER BY asset_id'),
+        {'r': release['release_id'], 'ids': list(ids)}).mappings().all()
+    return [{'id': asset['asset_id'], 'url': '/api/v2/assets/' + asset['sha256'] + '?release_id=' + str(release['release_id']),
+             'alt': asset['metadata']['alt'], 'attribution': asset['metadata']['attribution']} for asset in rows]
+
+
+@router.get('/chains')
+def chains(release_id: uuid.UUID | None = None, segment: str | None = Query(None, max_length=120, pattern='^segment-[a-z0-9-]+$'),
+           session=Depends(get_research_session)):
+    """Every application read as a supply chain: question, steps and the diagram concept, for the index and the map."""
+    release = require_release(session, release_id)
+    rows = session.execute(text('''SELECT a.entity_id,a.name,a.summary,a.data->>'question' AS question,a.data->'flow-steps' AS steps,
+        COALESCE((SELECT json_agg(json_build_object('id',s.entity_id,'name',s.name) ORDER BY s.entity_id) FROM research.taxonomy_links t
+            JOIN research.entity_snapshots s ON s.release_id=t.release_id AND s.entity_id=t.parent_id AND s.kind='segment'
+            WHERE t.release_id=a.release_id AND t.child_id=a.entity_id),'[]') AS segments,
+        (SELECT c.data->'diagram-assets' FROM research.taxonomy_links t JOIN research.entity_snapshots c
+            ON c.release_id=t.release_id AND c.entity_id=t.child_id AND c.kind='concept'
+            WHERE t.release_id=a.release_id AND t.parent_id=a.entity_id ORDER BY c.entity_id LIMIT 1) AS diagram
+        FROM research.entity_snapshots a WHERE a.release_id=:r AND a.kind='application' ORDER BY a.entity_id LIMIT 200'''),
+        {'r': release['release_id']}).mappings().all()
+    if segment:
+        rows = [row for row in rows if any(item['id'] == segment for item in row['segments'])]
+    assets = {asset['id']: asset for asset in asset_payload(session, release, {key for row in rows for key in row['diagram'] or []})}
+    items = []
+    for row in rows:
+        pictures = [assets[key] for key in row['diagram'] or [] if key in assets]
+        items.append({'id': row['entity_id'], 'name': row['name'], 'summary': row['summary'], 'question': row['question'],
+            'segments': row['segments'], 'steps': [step['label'] for step in row['steps'] or []], 'assets': pictures})
+    return envelope(release, {'items': items})
+
+
 @router.get('/resolve')
 def resolve(kind: str = Query(..., max_length=20), key: str = Query(..., min_length=1, max_length=200),
             release_id: uuid.UUID | None = None, session=Depends(get_research_session)):
@@ -209,7 +241,7 @@ def detail_payload(session, release, row):
     """Same curated reader contract for published content and owner-only previews."""
     entity_id = row['entity_id']
     data = row['data']
-    fields = ('definition', 'purpose', 'boundary', 'adoption-conditions', 'bottlenecks', 'substitution-limits',
+    fields = ('definition', 'purpose', 'boundary', 'adoption-conditions', 'bottlenecks', 'substitution-limits', 'question',
               'scope', 'comparisons', 'related-ids', 'diagram-assets', 'gaps', 'aliases', 'listings',
               'roles', 'research-depth', 'status', 'milestones', 'kpis', 'signals', 'upstream', 'downstream', 'themes', 'segments')
     content = {key.replace('-', '_'): data[key] for key in fields if key in data}
@@ -237,14 +269,11 @@ def detail_payload(session, release, row):
         content['related_ids'] = [key for key in content['related_ids'] if key in available]
     if 'comparisons' in content:
         content['comparisons'] = [item for item in content['comparisons'] if item['left'] in available and item['right'] in available]
-    assets = []
-    if data.get('diagram-assets'):
-        rows = session.execute(text('SELECT asset_id,sha256,metadata FROM research.release_assets WHERE release_id=:r AND asset_id=ANY(CAST(:ids AS text[])) ORDER BY asset_id'),
-            {'r': release['release_id'], 'ids': data['diagram-assets']}).mappings().all()
-        assets = [{'id': asset['asset_id'], 'url': '/api/v2/assets/' + asset['sha256'] + '?release_id=' + str(release['release_id']),
-                   'alt': asset['metadata']['alt'], 'attribution': asset['metadata']['attribution']} for asset in rows]
+    assets = asset_payload(session, release, data['diagram-assets']) if data.get('diagram-assets') else []
+    chain = supply_chain(session, release, row) if row['kind'] == 'application' else None
     return {**summary(row), 'markdown': row['markdown'], 'content': content, 'claims': claims,
-        'assets': assets,
+        'assets': assets, 'chain': chain,
+        'chains': [] if chain else chain_memberships(session, release, row),
         'legacy_return': legacy_return(session,release,entity_id),
         'trail': reading_trail(session, release, row) if row['kind'] != 'company' else [],
         'related': [summary(item) for item in related[:100]], 'truncated': truncated or len(related) > 100,
@@ -270,6 +299,67 @@ def reading_trail(session, release, row):
     if 'application' in found:
         trail.append({'id': found['application']['entity_id'], 'kind': 'application', 'name': found['application']['name'], 'url': None})
     return trail
+
+
+def supply_chain(session, release, row):
+    """An application read as one chain: ordered steps with their products and evidenced companies, then the rest."""
+    params = {'id': row['entity_id'], 'release': release['release_id']}
+    products = session.execute(text('''WITH RECURSIVE down(id, depth) AS (
+        SELECT CAST(:id AS text), 0 UNION SELECT t.child_id, d.depth + 1 FROM research.taxonomy_links t
+        JOIN down d ON d.id=t.parent_id WHERE t.release_id=:release AND d.depth<4)
+        SELECT s.entity_id, s.name, s.summary, COALESCE((SELECT json_agg(json_build_object('id',c.entity_id,'name',c.name) ORDER BY c.entity_id)
+            FROM (SELECT DISTINCT c.entity_id, c.name FROM research.company_offerings o JOIN research.entity_snapshots c
+                ON c.release_id=o.release_id AND c.entity_id=o.company_id WHERE o.release_id=:release AND o.product_id=s.entity_id) c), '[]') AS companies
+        FROM research.entity_snapshots s WHERE s.release_id=:release AND s.kind='product' AND s.entity_id IN (SELECT id FROM down)
+        ORDER BY s.entity_id'''), params).mappings().all()
+    by_id = {item['entity_id']: {'id': item['entity_id'], 'name': item['name'], 'summary': item['summary'], 'companies': item['companies']}
+             for item in products}
+    steps, placed = [], set()
+    for step in row['data'].get('flow-steps') or []:
+        listed = [by_id[key] for key in step.get('products', []) if key in by_id]
+        placed.update(item['id'] for item in listed)
+        steps.append({'label': step['label'], 'note': step.get('note'), 'products': listed})
+    concept = session.execute(text('''SELECT s.entity_id, s.name, s.data->'diagram-assets' AS assets FROM research.taxonomy_links t
+        JOIN research.entity_snapshots s ON s.release_id=t.release_id AND s.entity_id=t.child_id AND s.kind='concept'
+        WHERE t.release_id=:release AND t.parent_id=:id ORDER BY s.entity_id LIMIT 1'''), params).mappings().first()
+    diagram = ({'concept': {'id': concept['entity_id'], 'name': concept['name']}, 'assets': asset_payload(session, release, concept['assets'])}
+               if concept and concept['assets'] else None)
+    return {'question': row['data'].get('question'), 'steps': steps,
+            'other_products': [item for key, item in by_id.items() if key not in placed], 'diagram': diagram}
+
+
+def chain_memberships(session, release, row):
+    """Supply chains above this object and its step in each; a company also lists the products it offers there."""
+    entity_id, kind = row['entity_id'], row['kind']
+    if kind not in ('product', 'role', 'company', 'concept'):
+        return []
+    params = {'id': entity_id, 'release': release['release_id']}
+    offered = [] if kind != 'company' else session.execute(text(
+        'SELECT DISTINCT product_id FROM research.company_offerings WHERE release_id=:release AND company_id=:id ORDER BY product_id'),
+        params).scalars().all()
+    rows = session.execute(text('''WITH RECURSIVE up(origin, id, depth) AS (
+        SELECT o, o, 0 FROM unnest(CAST(:starts AS text[])) o
+        UNION SELECT u.origin, t.parent_id, u.depth + 1 FROM research.taxonomy_links t
+        JOIN up u ON u.id=t.child_id WHERE t.release_id=:release AND u.depth<6)
+        SELECT u.origin, s.entity_id, s.name, s.data->>'question' AS question, s.data->'flow-steps' AS steps
+        FROM up u JOIN research.entity_snapshots s ON s.release_id=:release AND s.entity_id=u.id AND s.kind='application'
+        ORDER BY s.entity_id, u.origin LIMIT 200'''), {**params, 'starts': [entity_id, *offered]}).mappings().all()
+    names = dict(session.execute(text('SELECT entity_id,name FROM research.entity_snapshots WHERE release_id=:release AND entity_id=ANY(CAST(:ids AS text[]))'),
+        {**params, 'ids': offered}).all()) if offered else {}
+    marks = {entity_id} if kind == 'product' else set()
+    if kind == 'role':
+        marks = set(session.execute(text("SELECT child_id FROM research.taxonomy_links WHERE release_id=:release AND parent_id=:id AND child_id LIKE 'product-%'"),
+            params).scalars().all())
+    found = {}
+    for item in rows:
+        found.setdefault(item['entity_id'], {**item, 'origins': set()})['origins'].add(item['origin'])
+    result = []
+    for chain in found.values():
+        here = {origin for origin in chain['origins'] if origin in names} if kind == 'company' else marks
+        result.append({'id': chain['entity_id'], 'name': chain['name'], 'question': chain['question'],
+            'steps': [{'label': step['label'], 'here': bool(here & set(step.get('products', [])))} for step in chain['steps'] or []],
+            'products': [{'id': key, 'name': names[key]} for key in sorted(here)] if kind == 'company' else []})
+    return result
 
 
 def legacy_return(session,release,entity_id):

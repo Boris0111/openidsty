@@ -5,7 +5,7 @@ type Payload=ResearchEnvelope<unknown>;
 type Stored={payload:Payload;etag:string|null;expires:number;ttl:number};
 type Pending={promise:Promise<Stored>;controller:AbortController;users:number};
 const completed=new Map<string,Stored>(),pending=new Map<string,Pending>();
-const roots=new Set(['manifest','catalog','search','resolve','companies','products','themes','concepts','research','applications','roles','segments','documents','graphs','impact','events','observations','compare']);
+const roots=new Set(['manifest','catalog','chains','search','resolve','companies','products','themes','concepts','research','applications','roles','segments','documents','graphs','impact','events','observations','compare']);
 const LIMIT=100;
 
 export function researchKey(path:string){

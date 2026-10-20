@@ -6,7 +6,7 @@ import {useResearch,ResearchPage} from '@/lib/research-api';
 
 const kindNames:Record<string,string>={segment:'環節',theme:'題材',application:'供應鏈',role:'供應角色',product:'產品',company:'公司',concept:'術語',research:'研究'};
 // One reading shell for the industry map, themes, events and /next research.
-export const readerSections=[['map','/','產業地圖'],['chains','/next?view=applications','供應鏈'],['companies','/next?view=companies','公司'],
+export const readerSections=[['map','/','產業地圖'],['chains','/next?view=chains','供應鏈'],['companies','/next?view=companies','公司'],
   ['themes','/themes','題材'],['compare','/next?view=compare','公司比較'],['events','/events','事件'],['watchlist','/next?view=watchlist','收藏']] as const;
 
 export function readerSection(pathname:string,params:URLSearchParams){

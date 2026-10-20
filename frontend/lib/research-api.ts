@@ -8,7 +8,16 @@ export type ResearchDocument={document_id:string;revision_id:string;title:string
 export type ResearchCitation=ResearchDocument&{locator:string;applicable_period:string;stance?:string};
 export type ResearchClaim={id:string;statement:string;confidence:string;conditions:string[];reviewed:string;evidence:ResearchCitation[]};
 export type ResearchTrailItem={id:string;kind:string;name:string;url:string|null};
-export type ResearchDetail=ResearchSummary&{markdown:string;legacy_return?:{url:string;label:string}|null;trail?:ResearchTrailItem[];content:{definition?:string;purpose?:string;scope?:string;boundary?:string;adoption_conditions?:string[];bottlenecks?:string[];substitution_limits?:string[];comparisons?:{left:string;right:string;conditions:string[];limitations:string[]}[];related_ids?:string[];gaps?:string[];roles?:{segment_id:string;description:string}[];listings?:{ticker:string;market:string}[]};claims:ResearchClaim[];related:ResearchSummary[];assets:{id:string;url:string;alt:string;attribution:string}[];truncated:boolean};
+export type ResearchAsset={id:string;url:string;alt:string;attribution:string};
+export type ChainProduct={id:string;name:string;summary?:string;companies:{id:string;name:string}[]};
+/** An application read as a supply chain (only on application pages). */
+export type ResearchChain={question:string|null;steps:{label:string;note:string|null;products:ChainProduct[]}[];other_products:ChainProduct[];
+  diagram:{concept:{id:string;name:string};assets:ResearchAsset[]}|null};
+/** Where a product, role, concept or company sits in each supply chain above it. */
+export type ChainMembership={id:string;name:string;question:string|null;steps:{label:string;here:boolean}[];products:{id:string;name:string}[]};
+export type ChainIndexItem={id:string;name:string;summary:string;question:string|null;segments:{id:string;name:string}[];steps:string[];assets:ResearchAsset[]};
+export type ResearchDetail=ResearchSummary&{markdown:string;legacy_return?:{url:string;label:string}|null;trail?:ResearchTrailItem[];
+  chain?:ResearchChain|null;chains?:ChainMembership[];content:{question?:string;definition?:string;purpose?:string;scope?:string;boundary?:string;adoption_conditions?:string[];bottlenecks?:string[];substitution_limits?:string[];comparisons?:{left:string;right:string;conditions:string[];limitations:string[]}[];related_ids?:string[];gaps?:string[];roles?:{segment_id:string;description:string}[];listings?:{ticker:string;market:string}[]};claims:ResearchClaim[];related:ResearchSummary[];assets:{id:string;url:string;alt:string;attribution:string}[];truncated:boolean};
 export type ResearchGraph={root:string;nodes:ResearchSummary[];edges:{id:string;source:string;target:string;kind:string;mechanism:string;conditions:string[];claims:{entity_id:string;claim_id:string}[];evidence_url?:string}[];truncated:boolean;continue_from:string[]};
 export type ResearchPage={items:ResearchSummary[];has_more:boolean;next_cursor:string|null};
 

@@ -36,6 +36,6 @@ test('登入 body 大小有限制，研究入口持續可讀',async({request,bas
   const result=await request.post('/api/admin/session',{data:'x'.repeat(8193),headers:{Origin:baseURL!,'Content-Type':'application/json'}});
   expect(result.status()).toBe(413);
   await page.goto('/next');
-  await expect(page.locator('.rs-detail > h2')).toHaveText('液冷冷板');
+  await expect(page.locator('h1')).toHaveText('供應鏈');
   await expect(page.locator('body')).not.toContainText(/登入密碼|維護者登入|owner_configured|csrf_token/);
 });

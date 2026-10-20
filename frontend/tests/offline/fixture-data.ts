@@ -82,6 +82,11 @@ export async function installOfflineApi(page: Page) {
           ? {kind: item.kind, id: item.id, available: true, name: theme.name_zh, research: {token: 'r1', changed: null}, values: {applicable: true, token: 'i1', changed: null}, events: {marker: 1, changed: null, new_dated: 0, new_undated: 0}}
           : {kind: item.kind, id: item.id, available: false, reason: '題材已不可用'})}}});
     }
+    if (path === '/api/v2/chains') {
+      const items = url.searchParams.get('segment') === 'segment-thermal' ? [{id: 'application-offline-cooling', name: '離線液冷供應鏈', summary: '離線供應鏈樣本',
+        question: '熱怎麼送出去？', segments: [{id: 'segment-thermal', name: '散熱'}], steps: ['取熱', '排熱'], assets: []}] : [];
+      return route.fulfill({json: {release_id: OFFLINE_RELEASE, schema_version: 'research-v1', data: {items}}});
+    }
     if (path === '/api/v2/search') {
       const q = url.searchParams.get('q') || '';
       const items = q.includes('液冷') ? [{id: 'theme-' + theme.theme, kind: 'theme', name: theme.name_zh, summary: '離線題材樣本', reviewed: theme.checked}]

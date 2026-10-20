@@ -5,7 +5,7 @@ import re
 from urllib.parse import urlencode
 from starlette.responses import Response, StreamingResponse
 
-STATIC = {'catalog','search','resolve','companies','products','themes','concepts','research',
+STATIC = {'catalog','chains','search','resolve','companies','products','themes','concepts','research',
           'applications','roles','segments','documents','graphs','impact'}
 JSON_LIMIT = 8 * 1024 * 1024
 

@@ -195,25 +195,36 @@ def test_legacy_map_return_is_release_scoped_and_absent_without_mapping(v2):
     assert client.get('/api/v2/segments/segment-thermal',params={'release_id':data['ready']}).status_code==404
 
 
-def test_reading_trail_runs_from_map_segment_to_supply_chain(v2):
-    client,data=v2
-    # Published releases are immutable, so author a separate release with a full map → chain → product path.
+def chain_release(data):
+    """Published releases are immutable, so author a separate release: map segment → chain → role → products and a company."""
     connection=data['session'].connection()
     connection.execute(text('RESET ROLE'))
     release,token=uuid.uuid4(),uuid.uuid4().hex
     insert(connection,'research_releases',{'release_id':release,'git_commit':uuid.uuid4().hex+'00000000','schema_version':'research-v1',
-        'content_hash':uuid.uuid4().hex*2,'status':'ready','reason':'trail test'})
-    application,role,product='application-trail-'+token,'role-trail-'+token,'product-trail-'+token
-    for key,kind,name,content in [('segment-thermal','segment','散熱',{'layer':'ai-server','segment':'thermal'}),(application,'application','合成供應鏈',{}),
-                                  (role,'role','合成角色',{}),(product,'product','合成產品',{}),(data['keys'][0],'company','合成公司',{})]:
+        'content_hash':uuid.uuid4().hex*2,'status':'ready','reason':'chain test'})
+    keys={'application':'application-trail-'+token,'role':'role-trail-'+token,'product':'product-trail-'+token,
+          'other':'product-other-'+token,'company':data['keys'][0]}
+    flow={'question':'熱怎麼送出去？','flow-steps':[{'label':'取熱','note':'晶片端','products':[keys['product']]},{'label':'排熱'}]}
+    for key,kind,name,content in [('segment-thermal','segment','散熱',{'layer':'ai-server','segment':'thermal'}),(keys['application'],'application','合成供應鏈',flow),
+                                  (keys['role'],'role','合成角色',{}),(keys['product'],'product','合成產品',{}),(keys['other'],'product','其他合成產品',{}),
+                                  (keys['company'],'company','合成公司',{})]:
         insert(connection,'entities',{'entity_id':key,'kind':kind},True)
         insert(connection,'entity_snapshots',{'release_id':release,'entity_id':key,'kind':kind,'name':name,'summary':'測試',
             'markdown':'測試','data':content,'semantic_hash':'e'*64})
-    for parent,child in [('segment-thermal',application),(application,role),(role,product),(role,data['keys'][0])]:
+    for parent,child in [('segment-thermal',keys['application']),(keys['application'],keys['role']),(keys['role'],keys['product']),
+                         (keys['role'],keys['other']),(keys['role'],keys['company'])]:
         insert(connection,'taxonomy_links',{'release_id':release,'link_id':'trail-'+child,'parent_id':parent,'child_id':child})
+    insert(connection,'company_offerings',{'release_id':release,'offering_id':'offering-'+token,'company_id':keys['company'],
+        'product_id':keys['product'],'role_id':keys['role'],'conditions':['合成能力條件']})
     connection.execute(text("UPDATE research.research_releases SET status='published',published_at=now() WHERE release_id=:id"),{'id':release})
     connection.execute(text('SET LOCAL ROLE research_reader'))
-    pinned={'release_id':str(release)}
+    return {'release_id':str(release)},keys
+
+
+def test_reading_trail_runs_from_map_segment_to_supply_chain(v2):
+    client,data=v2
+    pinned,keys=chain_release(data)
+    application,product=keys['application'],keys['product']
     assert client.get('/api/v2/products/'+product,params=pinned).json()['data']['trail']==[
         {'id':'segment-thermal','kind':'segment','name':'散熱','url':'/?layer=ai-server&segment=thermal'},
         {'id':application,'kind':'application','name':'合成供應鏈','url':None}]
@@ -221,6 +232,29 @@ def test_reading_trail_runs_from_map_segment_to_supply_chain(v2):
         {'id':'segment-thermal','kind':'segment','name':'散熱','url':'/?layer=ai-server&segment=thermal'}]
     # A company can sit in several chains, so it gets no single trail.
     assert client.get('/api/v2/companies/'+data['keys'][0],params=pinned).json()['data']['trail']==[]
+
+
+def test_supply_chain_reads_steps_products_evidence_and_positions(v2):
+    client,data=v2
+    pinned,keys=chain_release(data)
+    index=client.get('/api/v2/chains',params=pinned).json()['data']['items']
+    assert [(item['id'],item['question'],item['steps'],item['segments']) for item in index]==[
+        (keys['application'],'熱怎麼送出去？',['取熱','排熱'],[{'id':'segment-thermal','name':'散熱'}])]
+    assert client.get('/api/v2/chains',params={**pinned,'segment':'segment-thermal'}).json()['data']['items'][0]['id']==keys['application']
+    assert client.get('/api/v2/chains',params={**pinned,'segment':'segment-pcb'}).json()['data']['items']==[]
+    assert client.get('/api/v2/chains',params={**pinned,'segment':'../admin'}).status_code==422
+    application=client.get('/api/v2/applications/'+keys['application'],params=pinned).json()['data']
+    chain=application['chain']
+    assert application['content']['question']=='熱怎麼送出去？' and application['chains']==[]
+    assert [step['label'] for step in chain['steps']]==['取熱','排熱'] and chain['steps'][1]['products']==[]
+    assert chain['steps'][0]['products']==[{'id':keys['product'],'name':'合成產品','summary':'測試','companies':[{'id':keys['company'],'name':'合成公司'}]}]
+    assert [item['id'] for item in chain['other_products']]==[keys['other']] and chain['other_products'][0]['companies']==[]
+    product=client.get('/api/v2/products/'+keys['product'],params=pinned).json()['data']
+    assert product['chain'] is None and [step['here'] for step in product['chains'][0]['steps']]==[True,False]
+    role=client.get('/api/v2/roles/'+keys['role'],params=pinned).json()['data']
+    assert [step['here'] for step in role['chains'][0]['steps']]==[True,False]
+    company=client.get('/api/v2/companies/'+keys['company'],params=pinned).json()['data']
+    assert [(chain['id'],chain['products']) for chain in company['chains']]==[(keys['application'],[{'id':keys['product'],'name':'合成產品'}])]
 
 
 def test_database_failure_is_retryable_and_does_not_leak_details(v2):

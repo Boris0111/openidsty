@@ -3,8 +3,10 @@ test.skip(!process.env.RESEARCH_READER_E2E,'Use the optional isolated reader gat
 
 test('讀者入口能閱讀研究、圖解及公司，版本與網址留在讀者入口',async({page,baseURL})=>{
   await page.goto('/next');
-  await expect(page.locator('.rs-detail > h2')).toHaveText('液冷冷板');
-  await expect.poll(()=>page.locator('.rs-diagram img').evaluate((element:HTMLImageElement)=>element.naturalWidth)).toBeGreaterThan(0);
+  await expect(page.locator('h1')).toHaveText('供應鏈');
+  await page.locator('.rs-chain-card').filter({hasText:'AI 機櫃液冷'}).click();
+  await expect.poll(()=>page.locator('.rs-chain-diagram img').evaluate((element:HTMLImageElement)=>element.naturalWidth)).toBeGreaterThan(0);
+  await page.locator('.rs-chain-product').filter({hasText:'液冷冷板'}).click();
   await page.locator('.rs-company-links a').filter({hasText:'雙鴻'}).click();
   await expect(page.locator('.rs-detail > h2')).toHaveText('雙鴻');
   expect(new URL(page.url()).origin).toBe(new URL(baseURL!).origin);
