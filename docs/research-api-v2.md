@@ -6,6 +6,7 @@ Legacy `/api/*` 與新版 `/api/v2/*` 並存。新版使用獨立 reader pool、
 |---|---|
 | `/api/v2/manifest` | active release、schema、published_at、generation；no-store |
 | `/api/v2/catalog` | 應用／環節／角色／題材／產品／術語／研究分類，可分頁；分類邊最多 400，超限明示 links_truncated |
+| `/api/v2/chains` | 每個應用視為一條供應鏈，回傳 id、名稱、摘要、`question`、步驟標籤、所屬環節與圖解資產（最多 200 筆）；可用 `segment=segment-…` 篩選，格式不符回 422。固定 release 時與目錄一樣長快取 |
 | `/api/v2/{companies,products,themes,concepts,research,applications,roles,segments}` | 目錄；limit 預設 50、最大 100，回 items／next_cursor／has_more；不依賴搜尋才找到物件 |
 | 上列清單加 `/{entity_id}` | 中文名、全文、研究條件、主張與來源、相關分類；沒有動態財務、來源維護設定、raw payload 或技術待核對佇列 |
 | `/api/v2/resolve?kind=company&key=3324.TW` | 穩定 ID／舊 ticker／PRIVATE／舊環節與題材 ID；未知 404，多候選 409，禁止按名稱相近自動合併 |
@@ -15,7 +16,22 @@ Legacy `/api/*` 與新版 `/api/v2/*` 並存。新版使用獨立 reader pool、
 
 清單可以 `market=TW`、`role=role-...` 或 `category=...` 篩選。公司市場依 listing，未上市公司不捏造市場；role 同時支援新 offering 與既有 segment 基本索引，category 經分類子樹查詢，公司也納入 offering 的 role／product 位於該子樹的項目。能力對應不代表具名交易。Cursor 綁定 release／collection／篩選；條件改變回 409，格式錯誤或 limit 超額回 422。SQL 使用索引、LIMIT 與參數綁定，不將完整名單載到 Python 後再篩選。
 
-詳情另含 `legacy_return: {url,label} | null`：由同一 release 的分類祖先找到既有 segment，提供中文返回標籤及本站地圖 layer／segment URL；無對應即 null，不按名稱猜測。此欄位不開放 raw mappings 或維護資料。完整閱讀操作見 [研究導覽](research-navigation-design.md)。
+詳情另含 `legacy_return: {url,label} | null`：由同一 release 的分類祖先找到既有 segment，提供中文返回標籤及本站地圖 layer／segment URL；無對應即 null，不按名稱猜測。此欄位不開放 raw mappings 或維護資料。完整閱讀操作見 [讀者導覽](research-navigation.md)。
+
+供應鏈閱讀另有三個欄位，全部取自同一 release 的分類與能力資料（task 10.2、10.3）：
+
+- **`trail`**：麵包屑。依分類往上，取最近的環節（附地圖 URL）與供應鏈。公司可能跨多條鏈，固定為空陣列。
+- **`chain`**：只出現在應用。內容依序為：
+  - `question`；
+  - 依 `flow-steps` 排列的步驟，每步附產品，以及有能力證據的公司；
+  - 未列入步驟的 `other_products`；
+  - 應用之下概念的圖解（沒有就是 null）。
+- **`chains`**：出現在產品、角色、術語與公司，列出往上可到的供應鏈，每步以 `here` 標出所在位置：
+  - 產品看自身；
+  - 角色看旗下產品；
+  - 公司另列它在該鏈提供的產品。
+
+步驟與產品卡只描述閱讀順序與產品能力，不代表公司之間有交易。
 
 固定文件的 revision_id 使用不可變 hash；舊 manifest 的 version key 在同一 published release 內只有一個對應時亦可解析，回應帶正式 revision_id。`latest` 不解析；不能用新版本替代失效的舊引用。未被引用的 manifest 版本與未發布文件不提供讀者存取。
 
