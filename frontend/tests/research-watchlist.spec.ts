@@ -10,7 +10,7 @@ for(const mobile of [false,true])test(`真實研究收藏：重查不產生假�
   const release=new URL(page.url()).searchParams.get('release_id');
   expect(JSON.parse(bodies[0])).toEqual({release_id:release,items:[{kind:'company',id:'company-vertiv'}]});
   await page.goto('/next?focus=product-cold-plate');await page.getByRole('button',{name:'加入收藏'}).click();await expect(page.getByText('已加入收藏',{exact:true})).toBeVisible();
-  await page.getByRole('navigation',{name:'研究導覽'}).getByRole('link',{name:'此裝置收藏'}).click();
+  await page.getByRole('navigation',{name:'主要導覽'}).getByRole('link',{name:'收藏',exact:true}).click();
   const vertiv=page.locator('.rs-watch-card').filter({hasText:'Vertiv'});
   for(const text of ['研究無變更','數值無變更','沒有新事件'])await expect(vertiv).toContainText(text);
   const coldPlate=page.locator('.rs-watch-card').filter({hasText:'冷板'});
@@ -26,7 +26,7 @@ for(const mobile of [false,true])test(`真實研究收藏：重查不產生假�
 
 test('真實預覽：匯出備份後在另一個瀏覽器環境匯入',async({page,browser})=>{
   await page.goto('/next?focus=company-vertiv');await page.getByRole('button',{name:'加入收藏'}).click();await expect(page.getByText('已加入收藏',{exact:true})).toBeVisible();
-  await page.getByRole('navigation',{name:'研究導覽'}).getByRole('link',{name:'此裝置收藏'}).click();
+  await page.getByRole('navigation',{name:'主要導覽'}).getByRole('link',{name:'收藏',exact:true}).click();
   const [download]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'匯出收藏 JSON'}).click()]);
   const other=await browser.newContext({baseURL:test.info().project.use.baseURL});const second=await other.newPage();
   try{

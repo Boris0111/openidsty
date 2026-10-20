@@ -65,12 +65,29 @@ const company: Company = {
   roles: [{segment: 'foundry', segment_name: '晶圓代工', layer: 'semiconductor', role: '離線定位樣本'}],
 };
 
+export const OFFLINE_RELEASE = '00000000-0000-4000-8000-000000000001';
+
 export async function installOfflineApi(page: Page) {
   const unexpected: string[] = [];
   await page.route('**/api/**', async route => {
     const url = new URL(route.request().url()), path = url.pathname;
     let data: unknown;
     if (path === '/api/v2/resolve') return route.fulfill({status:503,json:{message:'離線舊版情境尚未初始化新版研究'}});
+    // The shared reading shell and the theme watch button read the current release and the device watchlist.
+    if (path === '/api/v2/manifest') return route.fulfill({json: {release_id: OFFLINE_RELEASE, schema_version: 'research-v1', data: {published_at: '2026-10-14T00:00:00Z', generation: 1}}});
+    if (path === '/api/v2/updates/query') {
+      const items = (route.request().postDataJSON()?.items || []) as {kind: string; id: string}[];
+      return route.fulfill({json: {release_id: OFFLINE_RELEASE, data: {as_of: '2026-10-14T00:00:00Z', release_id: OFFLINE_RELEASE, note: '離線合成更新查詢',
+        items: items.map(item => item.id === 'theme-' + theme.theme
+          ? {kind: item.kind, id: item.id, available: true, name: theme.name_zh, research: {token: 'r1', changed: null}, values: {applicable: true, token: 'i1', changed: null}, events: {marker: 1, changed: null, new_dated: 0, new_undated: 0}}
+          : {kind: item.kind, id: item.id, available: false, reason: '題材已不可用'})}}});
+    }
+    if (path === '/api/v2/search') {
+      const q = url.searchParams.get('q') || '';
+      const items = q.includes('液冷') ? [{id: 'theme-' + theme.theme, kind: 'theme', name: theme.name_zh, summary: '離線題材樣本', reviewed: theme.checked}]
+        : q.includes('散熱') ? [{id: 'segment-thermal', kind: 'segment', name: '散熱', summary: '離線環節樣本', reviewed: null}] : [];
+      return route.fulfill({json: {release_id: OFFLINE_RELEASE, schema_version: 'research-v1', data: {items, has_more: false, next_cursor: null}}});
+    }
     else if (path === '/api/industries') data = [{id: 'ai-server', name: 'AI 伺服器', segment_count: 3}, {id: 'semiconductor', name: '半導體', segment_count: 1}];
     else if (/^\/api\/industries\/[^/]+\/graph$/.test(path)) {
       const layer = path.split('/')[3], ids = layer === 'ai-server' ? ['compute', 'thermal', 'odm'] : ['foundry'];

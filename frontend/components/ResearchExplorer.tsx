@@ -2,7 +2,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {useRouter,useSearchParams} from 'next/navigation';
 import Link from 'next/link';
-import {useResearch,ResearchDetail,ResearchGraph,ResearchPage} from '@/lib/research-api';
+import {useResearch,ResearchDetail,ResearchGraph} from '@/lib/research-api';
 import {ResearchNetwork} from './ResearchNetwork';
 import {ResearchDetailContent} from './ResearchDetailContent';
 import {ResearchDirectory,directoryView,directoryNames,DirectoryView} from './ResearchDirectory';
@@ -10,27 +10,16 @@ import {mapReturn,directoryReturn} from '@/lib/research-navigation';
 import {ResearchFinancials} from './ResearchFinancials';
 import {ResearchCompare} from './ResearchCompare';
 import {ResearchEvents} from './ResearchEvents';
+import {EventTabs} from './EventTabs';
 import {useResearchManifest} from '@/lib/research-manifest';
 import {refreshResearch,resetDynamicResearch} from '@/lib/research-cache';
 import {ResearchReadStatus} from './ResearchReadStatus';
 import {ResearchWatchButton,ResearchWatchlist} from './ResearchWatch';
 
 const collections:Record<string,string>={company:'companies',product:'products',segment:'segments',theme:'themes',role:'roles',concept:'concepts',application:'applications',research:'research'};
-const kindNames:Record<string,string>={company:'公司',product:'產品',segment:'環節',theme:'題材',role:'供應角色',concept:'術語',application:'應用',research:'研究'};
 const initialFocus='product-cold-plate';
 const serviceNames:Record<string,string>={compare:'公司比較',observations:'傳聞觀察',watchlist:'此裝置收藏'};
 const firstFlow=new Set([initialFocus,'product-liquid-to-liquid-cdu','company-auras','company-vertiv','concept-liquid-cooling-loop','application-ai-rack-cooling','role-chip-heat-capture','role-coolant-distribution']);
-
-function Search({release,href}:{release:string;href:(id:string)=>string}) {
-  const [query,setQuery]=useState(''),[debounced,setDebounced]=useState('');
-  const wrapper=useRef<HTMLDivElement>(null);
-  useEffect(()=>{const timer=setTimeout(()=>setDebounced(query),200);return()=>clearTimeout(timer)},[query]);
-  const result=useResearch<ResearchPage>(debounced.trim()?`/api/v2/search?q=${encodeURIComponent(debounced)}&release_id=${release}`:null);
-  const items=query===debounced?result.data?.data.items:undefined;
-  return <div className="rs-search" ref={wrapper}><label htmlFor="rs-search">搜尋公司、產品或術語</label><input id="rs-search" value={query} placeholder="例如：雙鴻、CDU、冷板" onChange={event=>setQuery(event.target.value)} aria-expanded={Boolean(query)} aria-controls={query?'rs-results':undefined} autoComplete="off" onKeyDown={event=>{if(event.key==='Escape')setQuery('');if(event.key==='ArrowDown'){event.preventDefault();wrapper.current?.querySelector<HTMLAnchorElement>('#rs-results a')?.focus()}}}/>
-    {query&&<div className="rs-results" id="rs-results" aria-label="搜尋結果">{result.error?<p role="alert">{result.error}</p>:!items?<p role="status">搜尋中…</p>:items.length?items.map((item,index)=><Link key={item.id} href={href(item.id)} onClick={()=>setQuery('')} onKeyDown={event=>{const links=wrapper.current?.querySelectorAll<HTMLAnchorElement>('#rs-results a');if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();links?.[(index+(event.key==='ArrowDown'?1:-1)+(links.length||1))%(links?.length||1)]?.focus()}if(event.key==='Escape'){setQuery('');wrapper.current?.querySelector('input')?.focus()}}}><strong>{item.name}</strong><span>{kindNames[item.kind]}　{item.summary}</span></Link>):<p>找不到結果，請試公司代號或另一個產品名稱。</p>}</div>}
-  </div>;
-}
 
 export function ResearchExplorer() {
   const router=useRouter(),params=useSearchParams();
@@ -87,17 +76,23 @@ export function ResearchExplorer() {
     if(back){const target=new URL(back,window.location.origin);target.searchParams.delete('cursor');next.set('index',target.pathname+'?'+target.searchParams)}
     router.push('/next?'+next,{scroll:false});
   }
+  useEffect(()=>{
+    // Themes are read on their judgment pages (assessment, indicators, versions); /next only resolves them.
+    if(item?.kind==='theme')router.replace('/themes/'+encodeURIComponent(item.id.replace(/^theme-/,'')));
+  },[item,router]);
+  const crumbs=item?.kind==='company'?[{label:'公司',url:viewHref('companies')}]:[{label:'產業地圖',url:'/'},
+    ...(item?.trail||[]).map(step=>({label:step.name,url:step.kind==='segment'?(from||step.url||'/'):href(step.id)}))];
   const updated=Boolean(queryRelease&&manifest.data&&manifest.data.release_id!==queryRelease);
   const error=(!release?manifest.error:undefined)||detail.error||(params.has('view')&&!view&&!serviceView?'找不到這個研究目錄，請從研究目錄重新選擇。':!collection&&!view&&!serviceView?'找不到這筆研究入口，請從搜尋或公司索引重新選擇。':undefined);
-  return <div className="research-service"><header className="rs-header"><Link className="rs-brand" href={href(initialFocus)}>IndustryFlow<span>產業研究</span></Link><nav aria-label="研究導覽"><Link href={href(initialFocus)} aria-current={isFirst?'page':undefined}>液冷供應鏈</Link><Link href={viewHref('segments')} aria-current={view&&view!=='companies'&&view!=='themes'?'page':undefined}>研究目錄</Link><Link href={viewHref('companies')} aria-current={view==='companies'?'page':undefined}>公司索引</Link><Link href={viewHref('themes')} aria-current={view==='themes'?'page':undefined}>題材研究</Link><Link href={serviceHref("compare")} aria-current={serviceView==="compare"?"page":undefined}>{serviceNames.compare}</Link><Link href={serviceHref("observations")} aria-current={serviceView==="observations"?"page":undefined}>{serviceNames.observations}</Link><Link href={serviceHref("watchlist")} aria-current={serviceView==="watchlist"?"page":undefined}>{serviceNames.watchlist}</Link></nav>{release&&<Search release={release} href={href}/>}</header>
-    <div className="rs-content">{!view&&!serviceView&&<nav className="rs-breadcrumb" aria-label="研究返回"><Link href={index||viewHref('segments')}>回{index?'原目錄':'研究目錄'}</Link>{(from||item?.legacy_return)&&<Link href={from||item!.legacy_return!.url}>{from?'回到原來的產業地圖':item!.legacy_return!.label}</Link>}</nav>}<div className="rs-intro"><div><h1>{serviceView?serviceNames[serviceView]:view?directoryNames[view]:isFirst?'AI 機櫃的熱，怎麼送出去？':item?.name||'產業研究'}</h1><p>{view?'從研究對象找到供應角色、條件與來源。':isFirst?'先分清楚產品交付，再看公司能做什麼，以及證據支持到哪裡。':serviceView==='watchlist'?'查看你收藏的研究、數值與事件是否有實質更新。':'閱讀角色、產品與可追溯的判斷依據。'}</p></div><div className="rs-page-actions"><div>{serviceView!=='watchlist'&&<button onClick={()=>{navigator.clipboard?.writeText(window.location.href).then(()=>setCopied('連結已複製')).catch(()=>setCopied('可複製網址列分享'))}}>分享這份研究</button>}<button onClick={refreshResearch} aria-busy={manifest.loading||manifest.refreshing}>檢查更新</button>{item&&release&&!view&&!serviceView&&!detail.loading&&<ResearchWatchButton key={item.id} kind={item.kind} id={item.id} name={item.name} release={release}/>}</div><span role="status">{copied}</span></div></div>
+  return <div className="research-service">
+    <div className="rs-content">{!view&&!serviceView&&item&&<nav className="rs-breadcrumb" aria-label="研究位置"><ol>{crumbs.map(crumb=><li key={crumb.url}><Link href={crumb.url}>{crumb.label}</Link></li>)}<li aria-current="page">{item.name}</li></ol>{index&&<Link href={index}>回原目錄</Link>}</nav>}<div className="rs-intro"><div><h1>{serviceView?serviceNames[serviceView]:view?directoryNames[view]:isFirst?'AI 機櫃的熱，怎麼送出去？':item?.name||'產業研究'}</h1><p>{view?'從研究對象找到供應角色、條件與來源。':isFirst?'先分清楚產品交付，再看公司能做什麼，以及證據支持到哪裡。':serviceView==='watchlist'?'查看你收藏的研究、數值與事件是否有實質更新。':'閱讀角色、產品與可追溯的判斷依據。'}</p></div><div className="rs-page-actions"><div>{serviceView!=='watchlist'&&<button onClick={()=>{navigator.clipboard?.writeText(window.location.href).then(()=>setCopied('連結已複製')).catch(()=>setCopied('可複製網址列分享'))}}>分享這份研究</button>}<button onClick={refreshResearch} aria-busy={manifest.loading||manifest.refreshing}>檢查更新</button>{item&&release&&!view&&!serviceView&&!detail.loading&&<ResearchWatchButton key={item.id} kind={item.kind} id={item.id} name={item.name} release={release}/>}</div><span role="status">{copied}</span></div></div>
     {(updated||manifest.refreshError||release&&manifest.error)&&<aside className="rs-update" aria-label="研究更新">{updated&&<><span>有新版研究可閱讀；目前仍保留你正在讀的版本。</span><button onClick={adopt}>載入新版研究</button></>}{(manifest.refreshError||release&&manifest.error)&&<span role="status">目前無法確認研究更新，已載入的內容保留。</span>}</aside>}
     {[detail,graph,diagram].some(result=>result.refreshError)&&<ResearchReadStatus state={{refreshError:'unavailable',refresh:refreshResearch}}/>}
-    {error&&<div className="rs-error" role="alert"><p>{error}</p><button onClick={()=>window.location.reload()}>重新讀取</button><Link href="/">開啟既有研究</Link></div>}
+    {error&&<div className="rs-error" role="alert"><p>{error}</p><button onClick={()=>window.location.reload()}>重新讀取</button><Link href="/">回產業地圖</Link></div>}
     {!release&&!error&&<p role="status">正在讀取研究…</p>}
     {view&&release&&<ResearchDirectory key={view} view={view} release={release} href={href} indexHref={viewHref}/>}
     {serviceView==='compare'&&release&&<ResearchCompare release={release} href={href}/>}
-    {serviceView==='observations'&&release&&<ResearchEvents key="global-observations" release={release} rumors href={href}/>}
+    {serviceView==='observations'&&<EventTabs current="rumors"/>}{serviceView==='observations'&&release&&<ResearchEvents key="global-observations" release={release} rumors href={href}/>}
     {serviceView==='watchlist'&&<ResearchWatchlist href={href}/>}
     {!params.has('view')&&release&&collection&&<div className={`rs-workspace ${isFirst?'':'rs-single'}`}>
       {isFirst&&<section className="rs-diagram" data-full-diagram={focus==='concept-liquid-cooling-loop'} aria-label="液對液系統與產品選擇"><div className="rs-section-top"><h2>同一套系統，不同交付角色</h2><Link href={href('concept-liquid-cooling-loop')}>讀懂兩個回路</Link></div>
@@ -113,6 +108,6 @@ export function ResearchExplorer() {
       <div className="rs-network-area">{graph.data?<ResearchNetwork graph={graph.data.data} onSelect={navigate} selectedEdge={params.get('edge')} onEdge={selectEdge}/>:graph.error?<p role="alert">{graph.error}</p>:<p role="status">正在讀取關係…</p>}</div>
     </div>}
     {!params.has('view')&&item?.kind==='company'&&release&&<section className="rf-company-data" id="company-data"><div className="rs-section-top"><h2>{item.name}：財務與近期資訊</h2><Link href={serviceHref('compare',{company_ids:item.id})}>比較這家公司</Link></div><nav className="rs-directory-tabs" aria-label="公司數據與資訊">{Object.entries({financials:'基本財務',events:'官方與報導',observations:'傳聞觀察'}).map(([key,name])=><button key={key} aria-pressed={panelName===key} onClick={()=>companyPanel(key)}>{name}</button>)}</nav>{panelName==='financials'?<ResearchFinancials key={item.id+':'+release} company={item.id} release={release} taiwan={item.content.listings?.some(row=>row.market==='TW')}/>:<ResearchEvents key={item.id+':'+panelName} entity={item.id} release={release} rumors={panelName==='observations'} href={href}/>}</section>}
-    </div><footer className="rs-footer"><p>研究依公開資料與原始條件判讀，產品能力、客戶交易與收入證據分開。</p><Link href="/">既有產業地圖、事件與財務</Link></footer>
+    </div>
   </div>;
 }

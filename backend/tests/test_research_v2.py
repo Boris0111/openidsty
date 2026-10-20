@@ -96,7 +96,7 @@ def v2():
                            'keys': keys, 'doc': 'document-' + token, 'cited': cited,
                            'unused_doc': 'document-unused-' + token, 'unreferenced': unreferenced,
                            'role': role, 'product': product, 'concept': concept,
-                           'private_doc': 'document-private-' + token, 'uncited': uncited}
+                           'private_doc': 'document-private-' + token, 'uncited': uncited, 'session': session}
     finally:
         app.dependency_overrides.clear()
         session.close()
@@ -193,6 +193,34 @@ def test_legacy_map_return_is_release_scoped_and_absent_without_mapping(v2):
     assert segment['legacy_return']=={'url':'/?layer=ai-server&segment=thermal','label':'回到「thermal」產業地圖'}
     assert client.get('/api/v2/products/'+data['product']).json()['data']['legacy_return'] is None
     assert client.get('/api/v2/segments/segment-thermal',params={'release_id':data['ready']}).status_code==404
+
+
+def test_reading_trail_runs_from_map_segment_to_supply_chain(v2):
+    client,data=v2
+    # Published releases are immutable, so author a separate release with a full map → chain → product path.
+    connection=data['session'].connection()
+    connection.execute(text('RESET ROLE'))
+    release,token=uuid.uuid4(),uuid.uuid4().hex
+    insert(connection,'research_releases',{'release_id':release,'git_commit':uuid.uuid4().hex+'00000000','schema_version':'research-v1',
+        'content_hash':uuid.uuid4().hex*2,'status':'ready','reason':'trail test'})
+    application,role,product='application-trail-'+token,'role-trail-'+token,'product-trail-'+token
+    for key,kind,name,content in [('segment-thermal','segment','散熱',{'layer':'ai-server','segment':'thermal'}),(application,'application','合成供應鏈',{}),
+                                  (role,'role','合成角色',{}),(product,'product','合成產品',{}),(data['keys'][0],'company','合成公司',{})]:
+        insert(connection,'entities',{'entity_id':key,'kind':kind},True)
+        insert(connection,'entity_snapshots',{'release_id':release,'entity_id':key,'kind':kind,'name':name,'summary':'測試',
+            'markdown':'測試','data':content,'semantic_hash':'e'*64})
+    for parent,child in [('segment-thermal',application),(application,role),(role,product),(role,data['keys'][0])]:
+        insert(connection,'taxonomy_links',{'release_id':release,'link_id':'trail-'+child,'parent_id':parent,'child_id':child})
+    connection.execute(text("UPDATE research.research_releases SET status='published',published_at=now() WHERE release_id=:id"),{'id':release})
+    connection.execute(text('SET LOCAL ROLE research_reader'))
+    pinned={'release_id':str(release)}
+    assert client.get('/api/v2/products/'+product,params=pinned).json()['data']['trail']==[
+        {'id':'segment-thermal','kind':'segment','name':'散熱','url':'/?layer=ai-server&segment=thermal'},
+        {'id':application,'kind':'application','name':'合成供應鏈','url':None}]
+    assert client.get('/api/v2/applications/'+application,params=pinned).json()['data']['trail']==[
+        {'id':'segment-thermal','kind':'segment','name':'散熱','url':'/?layer=ai-server&segment=thermal'}]
+    # A company can sit in several chains, so it gets no single trail.
+    assert client.get('/api/v2/companies/'+data['keys'][0],params=pinned).json()['data']['trail']==[]
 
 
 def test_database_failure_is_retryable_and_does_not_leak_details(v2):

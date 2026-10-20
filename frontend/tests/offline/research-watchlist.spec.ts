@@ -9,7 +9,7 @@ test('收藏以畫面版本建立基準，研究／數值／事件分開，已�
   expect((await stored(page)).targets[0].seen).toEqual({research:'r1',values:'v1',events:0});
   // A site-wide release where this company did not change is not an update; values and events are.
   state.release=newer;state.values='v2';state.events.push({id:11,entity:'company-sample',dated:true},{id:12,entity:'company-sample',dated:false});
-  await page.getByRole('navigation',{name:'研究導覽'}).getByRole('link',{name:'此裝置收藏'}).click();
+  await page.getByRole('navigation',{name:'主要導覽'}).getByRole('link',{name:'收藏',exact:true}).click();
   const company=card(page,'合成公司');
   await expect(company).toContainText('研究無變更');await expect(company).toContainText('有效數值有新期或修訂');
   await expect(company).toContainText('1 則新事件（依發布日）；1 則新收錄，發布日未知，不代表剛發生');
@@ -64,7 +64,7 @@ test('儲存被拒絕仍可在手機收藏並閱讀更新',async({page})=>{
   await page.addInitScript(()=>Object.defineProperty(Storage.prototype,'setItem',{value(){throw new Error('blocked')}}));
   await page.setViewportSize({width:390,height:844});await page.goto('/next?focus=company-sample&release_id='+shown);
   await page.getByRole('button',{name:'加入收藏'}).click();await expect(page.getByText('記憶體暫存',{exact:false})).toBeVisible();
-  await page.getByRole('navigation',{name:'研究導覽'}).getByRole('link',{name:'此裝置收藏'}).click();
+  await page.getByRole('navigation',{name:'主要導覽'}).getByRole('link',{name:'收藏',exact:true}).click();
   await expect(card(page,'合成公司')).toContainText('研究無變更');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });

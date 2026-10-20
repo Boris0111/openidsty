@@ -41,3 +41,4 @@
 .rs-watch-actions{display:flex;flex-wrap:wrap;gap:10px}.rs-watch-actions button{font-size:13px;padding:6px 10px}
 .rs-watch-backup{border-top:1px solid var(--rs-line);margin-top:28px;padding-top:18px}.rs-watch-backup h2{font-size:20px;margin:0}.rs-watch-backup label{display:flex;flex-direction:column;gap:4px;font-size:14px;max-width:100%}.rs-watch-backup input[type=file]{max-width:100%;font-size:13px}
 .rs-watch-preview{border-left:3px solid var(--rs-blue);background:#f3f8fa;padding:12px 16px;margin-top:14px}.rs-watch-preview h3{font-size:16px;margin:0 0 6px}.rs-watch-preview ul{margin:0 0 10px;padding-left:20px;font-size:14px;overflow-wrap:anywhere}
+.rs-breadcrumb ol{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 0;list-style:none;margin:0;padding:0}.rs-breadcrumb li{overflow-wrap:anywhere}.rs-breadcrumb li+li::before{content:"›";margin:0 8px;color:var(--rs-muted)}.rs-breadcrumb li[aria-current]{color:var(--rs-muted)}

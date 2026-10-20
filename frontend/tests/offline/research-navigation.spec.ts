@@ -15,7 +15,8 @@ async function fixtures(page:Page){
     else if(path.includes('/')){
       const id=path.split('/')[1];if(id==='company-missing')return route.fulfill({status:404,json:{message:'找不到這筆研究。'}});
       if(id==='product-slow')await new Promise(resolve=>setTimeout(resolve,500));
-      data={...row(id,id===company.id?'測試公司':id===product.id?'測試產品':'測試研究'),markdown:'## 研究內容\n\n離線研究樣本',content:{},claims:[],related:[],assets:[],truncated:false,legacy_return:{url:'/?layer=ai-server&segment=thermal',label:'回到「散熱」產業地圖'}};
+      data={...row(id,id===company.id?'測試公司':id===product.id?'測試產品':'測試研究'),markdown:'## 研究內容\n\n離線研究樣本',content:{},claims:[],related:[],assets:[],truncated:false,legacy_return:{url:'/?layer=ai-server&segment=thermal',label:'回到「散熱」產業地圖'},
+        trail:id.startsWith('company-')?[]:[{id:'segment-thermal',kind:'segment',name:'散熱',url:'/?layer=ai-server&segment=thermal'},{id:application.id,kind:'application',name:application.name,url:null}]};
     }else{
       const items=path==='applications'?[application]:path==='roles'?[role]:path==='products'?[product]:path==='companies'?(url.searchParams.get('market')==='US'?[]:[company]):path==='concepts'?[]:[row(path==='themes'?'theme-sample':'segment-thermal',path==='themes'?'測試題材':'測試環節')];
       data={items,has_more:path==='companies'&&!url.searchParams.has('cursor')&&items.length>0,next_cursor:'synthetic-next'};
@@ -54,9 +55,12 @@ test('連線可由鍵盤選取、分享及返回，手機無溢出且 resize 保
 test('安全返回位置丟棄外部或管理參數，慢回應不覆蓋與未知物件可恢復',async({page})=>{
   await fixtures(page);
   await page.goto('/next?'+new URLSearchParams({focus:product.id,from:'/?layer=ai-server&segment=thermal&relation=thermal-odm&next=https://evil.invalid&admin=1'}));
-  await expect(page.getByRole('link',{name:'回到原來的產業地圖'})).toHaveAttribute('href','/?layer=ai-server&segment=thermal&relation=thermal-odm');
+  const crumbs=page.getByRole('navigation',{name:'研究位置'});
+  await expect(crumbs.getByRole('link')).toHaveText(['產業地圖','散熱','測試應用']);await expect(crumbs.locator('[aria-current=page]')).toHaveText('測試產品');
+  await expect(crumbs.getByRole('link',{name:'散熱'})).toHaveAttribute('href','/?layer=ai-server&segment=thermal&relation=thermal-odm');
   await page.goto('/next?'+new URLSearchParams({focus:product.id,from:'https://evil.invalid',index:'/admin?view=companies'}));
-  await expect(page.getByRole('link',{name:'回到原來的產業地圖'})).toHaveCount(0);await expect(page.getByRole('link',{name:'回研究目錄'})).toHaveAttribute('href',/view=segments/);
-  await page.goto('/next?focus=product-slow');await page.locator('.rs-header').getByRole('link',{name:'公司索引'}).click();await page.waitForTimeout(600);await expect(page.locator('h1')).toHaveText('公司');await expect(page.locator('.rs-detail')).toHaveCount(0);
-  await page.goto('/next?focus=company-missing');await expect(page.locator('.rs-error')).toContainText('找不到這筆研究');await page.getByRole('link',{name:'回研究目錄'}).click();await expect(page.locator('.rs-directory li')).toHaveCount(1);
+  await expect(crumbs.getByRole('link',{name:'散熱'})).toHaveAttribute('href','/?layer=ai-server&segment=thermal');await expect(page.getByRole('link',{name:'回原目錄'})).toHaveCount(0);
+  await page.goto('/next?focus=product-slow');await page.getByRole('navigation',{name:'主要導覽'}).getByRole('link',{name:'公司',exact:true}).click();await page.waitForTimeout(600);await expect(page.locator('h1')).toHaveText('公司');await expect(page.locator('.rs-detail')).toHaveCount(0);
+  await page.goto('/next?focus=company-missing');await expect(page.locator('.rs-error')).toContainText('找不到這筆研究');await expect(page.locator('.rs-error').getByRole('link',{name:'回產業地圖'})).toHaveAttribute('href','/');
+  await page.getByRole('navigation',{name:'主要導覽'}).getByRole('link',{name:'公司',exact:true}).click();await expect(page.locator('.rs-directory li')).toHaveCount(1);
 });

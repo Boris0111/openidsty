@@ -13,7 +13,7 @@ test('讀者入口能閱讀研究、圖解及公司，版本與網址留在讀�
 });
 
 test('讀者入口拒絕管理、舊診斷與寫入，偽造 cookie 不會取得管理資料',async({request})=>{
-  for(const path of ['/admin','/api/admin/session','/api/admin/drafts','/api/admin/sources','/sources','/api/sources','/api/docs']){
+  for(const path of ['/admin','/api/admin/session','/api/admin/drafts','/api/admin/sources','/sources','/api/sources','/coverage','/api/coverage','/api/theme-updates','/api/docs']){
     const response=await request.get(path,{headers:{Cookie:'industryflow_owner=synthetic-forged'}});
     expect(response.status()).toBe(403);
     expect(response.headers()['cache-control']).toBe('no-store');
@@ -22,4 +22,6 @@ test('讀者入口拒絕管理、舊診斷與寫入，偽造 cookie 不會取得
   expect((await request.post('/api/admin/drafts',{data:{}})).status()).toBe(403);
   expect((await request.post('/next',{data:{}})).status()).toBe(403);
   expect((await request.get('/next',{headers:{Host:'evil.example'}})).status()).toBe(403);
+  // The map, themes and events share the reading shell, so readers reach them through the same entry.
+  for(const path of ['/','/themes','/events','/api/segments/thermal'])expect((await request.get(path)).status(),path).toBe(200);
 });

@@ -1,12 +1,12 @@
 """Credential-free reader entry; fixed upstream and explicit paths/methods only."""
 from contextlib import asynccontextmanager
 import os
-from urllib.parse import quote, urlencode
+from urllib.parse import quote
 import re
 import uuid
 import httpx
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, Response, RedirectResponse
+from fastapi.responses import JSONResponse, Response
 
 UPSTREAM = 'http://web:3010'
 MAX_BODY = 1024 * 1024
@@ -30,6 +30,25 @@ def denied(status, message):
         headers={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'})
 
 
+SEGMENT = re.compile(r'[A-Za-z0-9._:-]{1,120}')
+# The map, themes and events share the reading shell with /next; coverage, sources and admin stay unreachable.
+LEGACY_READS = ('industries', 'segments', 'themes', 'events', 'technical-documents')
+
+
+def reader_page(path):
+    parts = path.split('/')
+    if parts[0] in ('themes', 'events'):
+        return len(parts) == 1 or len(parts) == 2 and bool(SEGMENT.fullmatch(parts[1]))
+    # Old company URLs resolve to the new company research in the browser.
+    return parts[0] == 'companies' and len(parts) == 2 and bool(SEGMENT.fullmatch(parts[1]))
+
+
+def legacy_read(path):
+    parts = path.split('/')
+    return (len(parts) >= 2 and parts[0] == 'api' and parts[1] in LEGACY_READS and
+            all(SEGMENT.fullmatch(part) for part in parts[2:]))
+
+
 @app.api_route('/{path:path}', methods=['GET','HEAD','POST','PUT','PATCH','DELETE','OPTIONS'])
 async def reader(path: str, request: Request):
     allowed = os.getenv('READER_ALLOWED_HOSTS', '127.0.0.1:3015,localhost:3015,localhost:8000').split(',')
@@ -37,15 +56,9 @@ async def reader(path: str, request: Request):
         return denied(403, '此主機名稱不在讀者入口設定中。')
     if path == 'health' and request.method == 'GET':
         return JSONResponse({'status':'ok'}, headers={'Cache-Control':'no-store'})
-    if not path and request.method in ('GET','HEAD'):
-        layer=request.query_params.get('layer')
-        segment=request.query_params.get('segment','')
-        if layer in ('ai-server','semiconductor') and re.fullmatch('[a-z0-9-]{1,100}',segment):
-            return RedirectResponse('/next?'+urlencode({'focus':'segment-'+segment}),status_code=307)
-        return RedirectResponse('/next', status_code=307)
     if len(path)>2048 or len(request.url.query)>4096 or '\\' in path or '%' in path or any(ord(char)<32 for char in path) or any(part in ('.','..') for part in path.split('/')):
         return denied(403, '此路徑無法由讀者入口存取。')
-    readable = path == 'next' or path.startswith(('_next/static/','api/v2/')) or path == 'favicon.ico'
+    readable = path in ('', 'next', 'favicon.ico') or path.startswith(('_next/static/', 'api/v2/')) or reader_page(path) or legacy_read(path)
     permitted = request.method in ('GET','HEAD') and readable or request.method == 'POST' and path == 'api/v2/updates/query'
     if not permitted:
         return denied(403, '讀者入口僅提供已發布研究。')

@@ -24,7 +24,7 @@ export default function Page({params}:{params:Promise<{id:string}>}){
     <Status {...api}/>{data&&<>
       <div className="theme-header">
         <div className="page-heading"><h1>{data.name_zh}</h1><p><span className="theme-status">{themeStatus[data.status]||'狀態待確認'}</span>　狀態查核 {data.checked||'未提供'}</p></div>
-        <div className="theme-actions"><WatchTheme id={id}/><button onClick={()=>{api.retry();assessment.retry();indicators.retry();}}>重新取得資料</button></div>
+        <div className="theme-actions"><WatchTheme id={id} name={data.name_zh}/><button onClick={()=>{api.retry();assessment.retry();indicators.retry();}}>重新取得資料</button></div>
       </div>
       <div className="theme-tags related-segments">{data.segments_detail?.map(s=><Link key={s.id} href={segmentUrl(s.id,s.layer)}>{s.name}</Link>)}</div>
       <ReadingTabs label="題材閱讀" tabs={[

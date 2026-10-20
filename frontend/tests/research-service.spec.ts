@@ -31,11 +31,11 @@ test('CDU 到 Vertiv、分享及返回維持同一研究版本',async({page,cont
 
 test('鍵盤搜尋可進公司，維護導覽不出現在閱讀入口',async({page})=>{
   await page.goto('/next');
-  const search=page.getByLabel('搜尋公司、產品或術語');
-  await search.fill('雙鴻');await expect(page.locator('#rs-results a')).toHaveCount(1);
+  const search=page.getByLabel('搜尋公司、產品、環節或題材');
+  await search.fill('雙鴻');await expect(page.locator('.search-results a')).toHaveCount(1);
   await search.press('ArrowDown');await page.keyboard.press('Enter');
   await expect(page.locator('.rs-detail > h2')).toHaveText('雙鴻');
-  await expect(page.locator('.rs-header')).not.toContainText(/來源狀態|資料覆蓋|管理/);
+  await expect(page.locator('.site-header')).not.toContainText(/來源狀態|資料覆蓋|管理/);
 });
 
 test('手機可先選產品閱讀並以文字清單讀取能力連線',async({page})=>{

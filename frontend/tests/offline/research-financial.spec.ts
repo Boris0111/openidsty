@@ -89,7 +89,8 @@ test('傳聞獨立查詢、未知發布日與提及標籤、日期篩選及返�
   expect(requests.some(path=>path.startsWith('observations?'))).toBe(false);
   await page.getByRole('navigation',{name:'公司數據與資訊'}).getByRole('button',{name:'官方與報導'}).click();
   await expect(page.getByRole('region',{name:'官方與報導清單'})).toContainText('合成官方發布');await expect(page.locator('.rf-event-list')).toContainText('發布日期未知；不以收錄時間代替');
-  await page.getByRole('navigation',{name:'研究導覽'}).getByRole('link',{name:'傳聞觀察',exact:true}).click();
+  await page.goto('/next?view=observations&release_id='+release);
+  await expect(page.getByRole('navigation',{name:'事件類型'}).getByRole('link',{name:'傳聞觀察'})).toHaveAttribute('aria-current','page');
   await expect(page.getByRole('region',{name:'傳聞觀察清單'})).toContainText('不會變成正式供應或客戶關係');await expect(page.locator('.rf-event-list')).toContainText('內容提及');
   await page.getByLabel('起始日期').fill('2026-10-01');await expect(page).toHaveURL(/period_from=2026-10-01/);await expect(page.getByText('日期篩選仍保留發布日未知的資訊，並逐筆明示。')).toBeVisible();
   await page.getByRole('button',{name:'下一頁資訊'}).click();await expect(page.getByText('此範圍尚未取得傳聞觀察。')).toBeVisible();
@@ -109,7 +110,7 @@ test('手機、鍵盤、分享 URL 與快速換公司不殘留前一家公司數
   await expect(page).toHaveURL(/basis=quarterly/);await expect(page.locator('.rf-series')).toHaveCount(2);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   const shared=await context.newPage();await fixtures(shared);await shared.goto(page.url());await expect(shared.getByRole('combobox',{name:'財務口徑',exact:true})).toHaveValue('quarterly');await shared.close();
-  await page.getByLabel('搜尋公司、產品或術語').fill('合成');await page.locator('.rs-results').getByRole('link').nth(1).click();
+  await page.getByLabel('搜尋公司、產品、環節或題材').fill('合成');await page.locator('.search-results').getByRole('link').nth(1).click();
   await expect(page.locator('.rs-detail > h2')).toHaveText('合成乙公司');await expect(page.locator('.rf-series')).toHaveCount(0);await expect(page.getByText('尚未取得此口徑，不代表零。')).toBeVisible();
   await page.waitForTimeout(600);await expect(page.locator('.rf-series')).toHaveCount(0);
 });

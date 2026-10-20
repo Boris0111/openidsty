@@ -246,8 +246,30 @@ def detail_payload(session, release, row):
     return {**summary(row), 'markdown': row['markdown'], 'content': content, 'claims': claims,
         'assets': assets,
         'legacy_return': legacy_return(session,release,entity_id),
+        'trail': reading_trail(session, release, row) if row['kind'] != 'company' else [],
         'related': [summary(item) for item in related[:100]], 'truncated': truncated or len(related) > 100,
         'content_version': row['semantic_hash']}
+
+
+def reading_trail(session, release, row):
+    """Breadcrumb from the industry map: nearest segment and supply chain above this object."""
+    from urllib.parse import urlencode
+    rows = session.execute(text('''WITH RECURSIVE up(id, depth) AS (
+        SELECT CAST(:id AS text), 0 UNION SELECT t.parent_id, u.depth + 1 FROM research.taxonomy_links t
+        JOIN up u ON u.id=t.child_id WHERE t.release_id=:release AND u.depth<6)
+        SELECT DISTINCT ON (s.kind) s.entity_id, s.kind, s.name, s.data->>'layer' AS layer, s.data->>'segment' AS segment
+        FROM up u JOIN research.entity_snapshots s ON s.entity_id=u.id AND s.release_id=:release
+        WHERE u.depth>0 AND s.kind IN ('segment','application') ORDER BY s.kind, u.depth, s.entity_id'''),
+        {'id': row['entity_id'], 'release': release['release_id']}).mappings().all()
+    found = {item['kind']: item for item in rows}
+    trail = []
+    segment = found.get('segment')
+    if segment and segment['layer'] in ('ai-server', 'semiconductor') and segment['segment']:
+        trail.append({'id': segment['entity_id'], 'kind': 'segment', 'name': segment['name'],
+                      'url': '/?' + urlencode({'layer': segment['layer'], 'segment': segment['segment']})})
+    if 'application' in found:
+        trail.append({'id': found['application']['entity_id'], 'kind': 'application', 'name': found['application']['name'], 'url': None})
+    return trail
 
 
 def legacy_return(session,release,entity_id):

@@ -26,7 +26,7 @@ test('真實 release 的 17 環節、7 題材與 95 公司都可從完整目錄�
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
 });
 
-test('舊散熱地圖到應用、角色、產品、公司，可回原地圖與原公司頁',async({page})=>{
+test('舊散熱地圖到應用、角色、產品、公司，麵包屑回原地圖，舊公司網址開啟新版公司研究',async({page})=>{
   await page.goto('/?layer=ai-server&segment=thermal');
   const entry=page.getByRole('link',{name:'閱讀產品與公司研究'});await expect(entry).toBeVisible();await entry.focus();await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/focus=segment-thermal/);
@@ -37,11 +37,14 @@ test('舊散熱地圖到應用、角色、產品、公司，可回原地圖與�
   const roleName=(await role.json()).data.name;
   await page.locator('.rs-node-list').getByRole('button',{name:roleName,exact:true}).click();
   await page.locator('.rs-node-list').getByRole('button',{name:'液冷冷板',exact:true}).click();
+  const crumbs=page.getByRole('navigation',{name:'研究位置'});
+  await expect(crumbs.getByRole('link')).toHaveText(['產業地圖','散熱','AI 機櫃液冷']);
   await page.locator('.rs-company-links a').filter({hasText:'雙鴻'}).click();await expect(page.locator('.rs-detail > h2')).toHaveText('雙鴻');
-  await page.getByRole('link',{name:'回到原來的產業地圖'}).click();await expect(page).toHaveURL(/layer=ai-server&segment=thermal/);
+  await expect(crumbs.getByRole('link')).toHaveText(['公司']);
+  await page.goBack();await crumbs.getByRole('link',{name:'散熱'}).click();await expect(page).toHaveURL(/layer=ai-server&segment=thermal/);
   await expect(page.locator('.segment-heading h2')).toHaveText('散熱');
-  await page.goto('/companies/3324.TW');await page.getByRole('link',{name:'閱讀完整公司研究'}).click();await expect(page.locator('.rs-detail > h2')).toHaveText('雙鴻');
-  await page.goBack();await expect(page).toHaveURL(/companies\/3324.TW/);
+  await page.goto('/companies/3324.TW');await expect(page).toHaveURL(/focus=company-auras/);await expect(page.locator('.rs-detail > h2')).toHaveText('雙鴻');
+  await page.goBack();await expect(page).toHaveURL(/layer=ai-server&segment=thermal/);
 });
 
 test('真實圖的連線 URL、縮放平移與手機 resize',async({page,context})=>{

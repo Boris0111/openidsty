@@ -36,7 +36,8 @@ test('真實公司比較保留非曆年期間與缺口，獨立觀察不混入�
   const release=new URL(page.url()).searchParams.get('release_id')!;
   const graph=await (await request.get('/api/v2/graphs',{params:{root:'company-vertiv',release_id:release}})).json();
   expect(graph.data.edges.every((edge:{kind:string})=>!edge.kind.includes('rumor'))).toBe(true);
-  await page.getByRole('navigation',{name:'研究導覽'}).getByRole('link',{name:'傳聞觀察',exact:true}).click();
+  await page.getByRole('navigation',{name:'主要導覽'}).getByRole('link',{name:'事件',exact:true}).click();
+  await page.getByRole('navigation',{name:'事件類型'}).getByRole('link',{name:'傳聞觀察'}).click();
   await expect(page.getByRole('region',{name:'傳聞觀察清單'})).toContainText('有來源、尚未證實');
   const observations=await (await request.get('/api/v2/observations',{params:{release_id:release,limit:20}})).json();
   if(!observations.data.items.length)await expect(page.getByText('此範圍尚未取得傳聞觀察。')).toBeVisible();

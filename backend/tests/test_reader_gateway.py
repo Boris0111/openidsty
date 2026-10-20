@@ -5,20 +5,36 @@ from app.reader_gateway import app
 
 def test_reader_rejects_admin_legacy_host_spoof_and_mutations():
     with TestClient(app, base_url='http://localhost:3015') as client:
-        for path in ['/admin','/api/admin/session','/api/admin/drafts','/sources','/api/sources','/api/docs','/api/openapi.json','/api/v2/%2e%2e/admin/session','/api/v2/%252e%252e/admin/session']:
-            assert client.get(path).status_code==403
+        for path in ['/admin','/api/admin/session','/api/admin/drafts','/sources','/api/sources','/coverage','/api/coverage',
+                     '/api/search?q=x','/api/theme-updates?ids=liquid-cooling','/api/companies/2330.TW','/api/compare','/watchlist','/compare',
+                     '/api/docs','/api/openapi.json','/api/v2/%2e%2e/admin/session','/api/v2/%252e%252e/admin/session',
+                     '/themes/liquid-cooling/extra','/companies/3324.TW/extra','/api/themes/../admin']:
+            assert client.get(path).status_code==403, path
         assert client.get('/next', headers={'Host':'evil.example'}).status_code==403
         for method in ['POST','PATCH','DELETE','PUT']:
             assert client.request(method,'/next').status_code==403
             assert client.request(method,'/api/v2/companies').status_code==403
+            assert client.request(method,'/api/themes').status_code==403
 
 
-def test_map_return_redirect_does_not_open_legacy_or_copy_untrusted_query():
-    with TestClient(app,base_url='http://localhost:3015') as client:
-        response=client.get('/?layer=ai-server&segment=thermal&next=https://evil.invalid&relation=internal',follow_redirects=False)
-        assert response.status_code==307 and response.headers['location']=='/next?focus=segment-thermal'
-        for query in ['layer=wrong&segment=thermal','layer=ai-server&segment=../../admin','next=https://evil.invalid']:
-            assert client.get('/?'+query,follow_redirects=False).headers['location']=='/next'
+def test_map_themes_and_events_share_the_reader_entry():
+    observed=[]
+    async def upstream(request):
+        observed.append(str(request.url))
+        return httpx.Response(200, text='ok', headers={'Cache-Control':'no-store'})
+    with TestClient(app, base_url='http://localhost:3015') as client:
+        original=app.state.client
+        app.state.client=httpx.AsyncClient(transport=httpx.MockTransport(upstream))
+        try:
+            for path in ['/','/?layer=ai-server&segment=thermal','/themes','/themes/liquid-cooling','/events','/events/12','/companies/3324.TW',
+                         '/api/industries/ai-server/graph','/api/segments/thermal','/api/themes/liquid-cooling/assessment/versions?limit=20&offset=0',
+                         '/api/themes/liquid-cooling/indicators','/api/events?limit=30','/api/technical-documents/ocp-cold-plate?limit=10&offset=0']:
+                assert client.get(path,follow_redirects=False).status_code==200, path
+            assert observed[1]=='http://web:3010/?layer=ai-server&segment=thermal'
+        finally:
+            import asyncio
+            asyncio.run(app.state.client.aclose())
+            app.state.client=original
 
 
 def test_reader_uses_fixed_upstream_strips_credentials_and_preserves_release():

@@ -1,10 +1,11 @@
 'use client';
 import {usePathname} from 'next/navigation';
 import {Shell} from './Shell';
-import {WatchlistProvider} from '@/lib/watchlist';
+import {ResearchWatchlistProvider} from '@/lib/research-watchlist';
 
 export function SiteFrame({children}:{children:React.ReactNode}) {
   const pathname=usePathname();
-  if(pathname.startsWith('/next')||pathname.startsWith('/admin')) return <main id="main">{children}</main>;
-  return <WatchlistProvider><Shell>{children}</Shell></WatchlistProvider>;
+  if(pathname.startsWith('/admin')) return <main id="main">{children}</main>;
+  // Map, themes, events and /next research share one shell and one device watchlist.
+  return <ResearchWatchlistProvider><Shell>{children}</Shell></ResearchWatchlistProvider>;
 }
