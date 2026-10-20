@@ -5,7 +5,7 @@ kind: product
 name-zh: 液冷冷板
 aliases: [冷板, cold plate, direct-to-chip]
 summary: 貼近晶片吸收熱量的零件；價值在接觸、流道與封裝適配，並不包辦整座機房散熱。
-reviewed: '2026-10-16'
+reviewed: '2026-10-20'
 definition: 將晶片熱量傳入循環冷卻液的接觸式散熱元件。
 purpose: 在高熱密度元件附近取熱，再把熱交給後續水路。
 boundary: 冷板負責晶片端取熱；CDU 的循環控制、換熱與設施散熱屬於不同交付角色。
@@ -40,4 +40,4 @@ gaps:
 
 ## 供應角色與公司
 
-[雙鴻](/next?focus=company-auras)的官方展會新聞可支持冷板產品範圍；這不等於已確認某一客戶、訂單或液冷收入。
+[雙鴻](/next?focus=company-auras)、[奇鋐](/next?focus=company-avc)與[建準](/next?focus=company-2421-tw)的官方資料可支持冷板產品範圍：雙鴻依 2025 展會新聞，奇鋐與建準依年報產品項目。這不等於已確認某一客戶、訂單或液冷收入。[Boyd](/next?focus=company-boyd)依既有環節角色列入，尚未核對其冷板產品證據。

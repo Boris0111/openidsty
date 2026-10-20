@@ -20,7 +20,9 @@ gaps:
 
 ## 定義與用途
 
-從「晶片端取熱」進入冷板研究，辨認交付邊界。
+從「晶片端取熱」進入冷板研究，辨認交付邊界。主要產品類別：[液冷冷板](/next?focus=product-cold-plate)。
+
+依既有環節角色列入的代表公司：[雙鴻](/next?focus=company-auras)、[Boyd](/next?focus=company-boyd)、[奇鋐](/next?focus=company-avc)、[建準](/next?focus=company-2421-tw)。
 
 ## 採用條件與限制
 

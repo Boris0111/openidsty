@@ -6,6 +6,7 @@ name-zh: AI 算力容量營運
 aliases:
 - AI capacity
 summary: 取得、建置並營運可用的 IT 算力與設施容量。
+question: AI 算力最後由誰建置、怎麼提供給使用者？
 reviewed: '2026-10-18'
 definition: 取得、建置並營運可用的 IT 算力與設施容量。
 purpose: 分開自用超大規模業者與 AI 雲端租用業者，辨認需求回饋的來源。
@@ -16,6 +17,13 @@ bottlenecks:
 - 電網併接、許可、場址與供應鏈交付可能限制投產
 substitution-limits:
 - 自建、託管、租賃與雲端容量的責任與可用性不同
+flow-steps:
+- label: 自建算力
+  note: 超大規模雲端與網路業者自建資料中心算力
+  products: [product-hyperscale-ai-capacity]
+- label: 雲端租用
+  note: AI 雲端業者以 GPU 雲端服務出租算力
+  products: [product-gpu-cloud-service]
 claims: []
 gaps:
 - status: not-researched

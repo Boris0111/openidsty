@@ -6,6 +6,7 @@ name-zh: AI 記憶體頻寬與容量
 aliases:
 - AI memory
 summary: 供應加速器旁的高頻寬記憶體，以及伺服器主記憶體與儲存控制。
+question: AI 加速器的記憶體頻寬從哪裡來？
 reviewed: '2026-10-18'
 definition: 供應加速器旁的高頻寬記憶體，以及伺服器主記憶體與儲存控制。
 purpose: 區分 HBM、伺服器 DRAM、利基型記憶體與 NAND 控制，避免把同環節公司視為同一供應者。
@@ -17,6 +18,17 @@ bottlenecks:
 - 堆疊、鍵合、測試與封裝配合共同影響良品供給
 substitution-limits:
 - DRAM、HBM 與 NAND 不能直接互替
+flow-steps:
+- label: DRAM 堆疊
+  note: 多層 DRAM die 疊在一起
+  products: [product-hbm-stack]
+- label: 邏輯底層
+  note: base die 負責堆疊與外部的訊號
+- label: 共同封裝
+  note: HBM 與加速器放進同一個封裝
+- label: 主記憶體對照
+  note: 伺服器 DRAM 模組插在主機板上供 CPU 使用
+  products: [product-server-dram-module]
 claims: []
 gaps:
 - status: not-researched

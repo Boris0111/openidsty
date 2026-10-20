@@ -6,6 +6,7 @@ name-zh: 伺服器氣冷散熱
 aliases:
 - server air cooling
 summary: 以均熱板、散熱模組與風扇處理仍由空氣帶走的熱。
+question: 氣冷伺服器的熱，怎麼排出去？
 reviewed: '2026-10-18'
 definition: 以均熱板、散熱模組與風扇處理仍由空氣帶走的熱。
 purpose: 與直接晶片液冷分開研究，避免把氣冷元件當成液冷供應證據。
@@ -16,6 +17,13 @@ bottlenecks:
 - 風道空間、噪音與功耗限制可用散熱能力
 substitution-limits:
 - 氣冷與液冷涉及不同流體與維修條件，不能只依 TDP 宣稱必然替代
+flow-steps:
+- label: 晶片端導熱
+  note: 均熱板與散熱鰭片把晶片的熱擴散出去
+  products: [product-vapor-chamber-air-module]
+- label: 風扇送風
+  note: 系統風扇把熱空氣排出機箱
+  products: [product-server-fan]
 claims: []
 gaps:
 - status: not-researched

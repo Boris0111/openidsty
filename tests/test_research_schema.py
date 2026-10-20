@@ -29,7 +29,8 @@ class ResearchSchemaTests(unittest.TestCase):
         self.write(self.company)
 
     def write(self, obj, body='\n## 供應角色\n\n測試\n\n## 研究界線\n\n未研究\n'):
-        folders = {'company': 'companies', 'product': 'products', 'role': 'roles', 'concept': 'concepts'}
+        folders = {'company': 'companies', 'product': 'products', 'role': 'roles', 'concept': 'concepts',
+                   'application': 'applications'}
         path = self.root / folders[obj['kind']] / (obj['entity-id'] + '.md')
         path.parent.mkdir(exist_ok=True)
         path.write_text('---\n' + yaml.safe_dump(obj, allow_unicode=True, sort_keys=False) + '---\n' + body, encoding='utf-8')
@@ -211,6 +212,45 @@ class ResearchSchemaTests(unittest.TestCase):
         self.company['financial-reporting']['fiscal-year-end']='02-30';self.write(self.company);self.check('year-end invalid')
         self.company['financial-reporting']['fiscal-year-end']='12-31'
         self.company['financial-reporting']['calendar-valid-to']='2023-12-31';self.write(self.company);self.check('interval reversed')
+
+    def flow_fixture(self, steps, **extra):
+        """Application a → role → product-in; product-out sits under another application."""
+        common = {'schema-version': 'research-v1', 'aliases': [], 'reviewed': None, 'claims': [],
+                  'gaps': [{'status': 'not-researched', 'reason': '結構測試'}], 'definition': '測試', 'purpose': '測試',
+                  'boundary': '測試', 'adoption-conditions': ['測試'], 'bottlenecks': ['測試'], 'substitution-limits': ['測試']}
+        body = '\n## 定義與用途\n\n測試\n\n## 採用條件與限制\n\n測試\n'
+        for key, kind in [('application-a', 'application'), ('application-b', 'application'), ('role-a', 'role'),
+                          ('product-in', 'product'), ('product-out', 'product')]:
+            obj = {**common, 'entity-id': key, 'kind': kind, 'name-zh': key, 'summary': '結構測試'}
+            if key == 'application-a':
+                obj.update({'question': '熱怎麼送出去？', 'flow-steps': steps, **extra})
+            self.write(obj, body + ('\n## 供應角色與公司\n\n測試\n' if kind == 'product' else ''))
+        self.relations(taxonomy=[{'id': 'taxonomy-a-role', 'parent': 'application-a', 'child': 'role-a'},
+                                 {'id': 'taxonomy-role-in', 'parent': 'role-a', 'child': 'product-in'},
+                                 {'id': 'taxonomy-b-out', 'parent': 'application-b', 'child': 'product-out'}])
+
+    def test_flow_steps_name_only_products_under_the_application(self):
+        self.flow_fixture([{'label': '取熱', 'note': '晶片端', 'products': ['product-in']}, {'label': '排熱'}])
+        self.check()
+        self.flow_fixture([{'label': '取熱', 'products': ['product-out']}, {'label': '排熱'}])
+        self.check('product-out is not classified under application-a')
+        self.flow_fixture([{'label': '取熱', 'products': ['product-in']}, {'label': '排熱', 'products': ['product-in']}])
+        self.check('product-in repeated')
+
+    def test_flow_steps_need_labels_and_known_fields(self):
+        for steps, expected in [([{'label': '取熱'}], 'flow-steps needs at least 2'),
+                                ([{'label': ' '}, {'label': '排熱'}], 'flow step label'),
+                                ([{'label': '取熱', 'owner': 'x'}, {'label': '排熱'}], 'only label, note and products'),
+                                ([{'label': '取熱', 'products': ['product-missing']}, {'label': '排熱'}], 'flow step product unresolved')]:
+            with self.subTest(expected=expected):
+                self.flow_fixture(steps)
+                self.check(expected)
+        self.flow_fixture([{'label': '取熱'}, {'label': '排熱'}], question=' ')
+        self.check('question must be nonempty')
+
+    def test_flow_fields_only_on_applications(self):
+        self.write({**self.company, 'question': '這家公司做什麼？'})
+        self.check('question is only for applications')
 
 
 if __name__ == '__main__':

@@ -78,6 +78,16 @@ gap status 只描述「為什麼這裡沒有結論」，reason 必須寫出具�
 
 application／role／product 另外必填 `definition`、`purpose`、`boundary`（各非空文字），以及 `adoption-conditions`、`bottlenecks`、`substitution-limits`（各至少一筆非空文字）。散文至少有 `## 定義與用途`、`## 採用條件與限制`；產品另有 `## 供應角色與公司`。只以可彼此替換的交付角色分類，不按公司切分類。
 
+application 可另填兩個閱讀欄位，供供應鏈頁、手機步驟與產品頁位置列使用：
+
+- `question`：讀者問題，非空文字，例如「AI 機櫃的熱，怎麼送出去？」。
+- `flow-steps`：至少兩步，依閱讀順序排列。每步只能有三個欄位：
+  - `label`：必填；
+  - `note`：選填；
+  - `products`：選填，為產品 ID 陣列。產品必須經 taxonomy 屬於該應用之下，同一應用內不可重複。
+
+這兩個欄位只描述閱讀順序，不構成研究主張或供應關係，其他 kind 不得使用。有圖解時，步驟名稱與圖解既有的標示一致；圖解只畫出部分流程時，其餘步驟依同一順序接續。沒有圖解時，步驟就是讀者看到的文字流程。不在任何步驟的產品，仍會以同一應用的其他產品呈現，不必為了列入而硬塞進步驟。
+
 concept 另外必填 `definition`、`scope`（非空文字）、`related-ids`（可解析 entity 陣列）、`diagram-assets`（至少一個資產 ID）、`comparisons`（可空；每筆 left／right 為產品或術語 ID，conditions／limitations 各至少一筆文字）。散文至少有 `## 中文解釋`、`## 圖解`、`## 適用範圍`。比較必須保留距離、速率、功耗或成本等條件，不宣稱無條件可互換。
 
 research 為跨物件研究頁，另填 `related-ids`（至少一筆），散文至少有 `## 研究問題`、`## 判斷與限制`。一般研究內容不放 parser 錯誤、內部 queue 或通用進階資訊。

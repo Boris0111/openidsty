@@ -438,6 +438,46 @@ class ResearchValidator:
             self.fail(path, 'taxonomy cycle')
         return groups
 
+    def flows(self, taxonomy):
+        """Reading-order fields on applications; steps may only name products classified under that application."""
+        children = {}
+        for item in taxonomy:
+            if isinstance(item, dict) and isinstance(item.get('parent'), str) and isinstance(item.get('child'), str):
+                children.setdefault(item['parent'], []).append(item['child'])
+        for key, obj in self.entities.items():
+            path = obj['_path']
+            if obj['kind'] != 'application':
+                for field in ('question', 'flow-steps'):
+                    if field in obj:
+                        self.fail(path, field + ' is only for applications')
+                continue
+            if 'question' in obj:
+                self.text(obj.get('question'), path, 'question')
+            if 'flow-steps' not in obj:
+                continue
+            owned, pending = set(), list(children.get(key, []))
+            while pending:  # visited set keeps this bounded even if a taxonomy cycle was reported above
+                node = pending.pop()
+                if node not in owned:
+                    owned.add(node)
+                    pending.extend(children.get(node, []))
+            named = set()
+            for step in self.array(obj.get('flow-steps'), path, 'flow-steps', 2):
+                if not isinstance(step, dict) or not set(step) <= {'label', 'note', 'products'}:
+                    self.fail(path, 'flow step must map only label, note and products')
+                    continue
+                self.text(step.get('label'), path, 'flow step label')
+                if 'note' in step:
+                    self.text(step.get('note'), path, 'flow step note')
+                for product in self.array(step.get('products', []), path, 'flow step products'):
+                    if not self.ref(product, path, 'flow step product', 'product'):
+                        continue
+                    if product not in owned:
+                        self.fail(path, 'flow step product ' + product + ' is not classified under ' + key)
+                    elif product in named:
+                        self.fail(path, 'flow step product ' + product + ' repeated')
+                    named.add(product)
+
 
 def validate_research(map_dir, segments, themes, errors, parse_doc, load_yaml, skip_prose=False):
     validator = ResearchValidator(map_dir, segments, themes, errors, parse_doc, load_yaml, skip_prose)
@@ -446,4 +486,5 @@ def validate_research(map_dir, segments, themes, errors, parse_doc, load_yaml, s
     validator.asset_manifest()
     validator.content()
     relations = validator.relations()
+    validator.flows(relations['taxonomy'])
     return {'entities': validator.entities, 'assets': validator.assets, **relations}

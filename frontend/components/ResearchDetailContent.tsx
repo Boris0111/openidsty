@@ -38,7 +38,7 @@ export function ResearchDetailContent({item,href,companies=[],products=[],onSele
     {illustrations&&item.assets.length>0&&<section aria-label="研究圖解"><ResearchIllustrations assets={item.assets}/></section>}
     {item.content.adoption_conditions&&<section className="rs-conditions"><h3>採用前要核對</h3><ul>{[...item.content.adoption_conditions,...(item.content.bottlenecks||[])].map(condition=><li key={condition}>{condition}</li>)}</ul></section>}
     {item.content.substitution_limits&&<section><h3>替代與比較限制</h3><ul>{item.content.substitution_limits.map(condition=><li key={condition}>{condition}</li>)}</ul></section>}
-    {companies.length>0&&<section className="rs-company-links"><h3>本輪有產品證據的公司</h3>{companies.map(company=><Internal key={company.id} id={company.id}><strong>{company.name}</strong><span>閱讀產品範圍與證據</span></Internal>)}</section>}
+    {companies.length>0&&<section className="rs-company-links"><h3>有產品證據的公司</h3>{companies.map(company=><Internal key={company.id} id={company.id}><strong>{company.name}</strong><span>閱讀產品範圍與證據</span></Internal>)}</section>}
     {products.length>0&&<section className="rs-company-links"><h3>已核對的產品角色</h3>{products.map(product=><Internal key={product.id} id={product.id}><strong>{product.name}</strong><span>{product.summary}</span></Internal>)}</section>}
     {item.content.comparisons?.length?<section className="rs-technical-comparisons" aria-label="技術比較"><h3>在什麼條件下比較</h3>{item.content.comparisons.map((comparison,index)=><article key={index}>
       <div className="rs-comparison-targets">{[comparison.left,comparison.right].map((id,index)=><div key={id+index}>{names.has(id)?<Internal id={id}>{names.get(id)}</Internal>:<span>比較對象未在此範圍顯示，可由目錄繼續閱讀。</span>}</div>)}</div>

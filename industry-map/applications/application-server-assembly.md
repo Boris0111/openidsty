@@ -6,6 +6,7 @@ name-zh: 伺服器與整櫃整合
 aliases:
 - server and rack integration
 summary: 把板、連接、機構與次系統組成可交付的伺服器或整櫃。
+question: 一台 AI 伺服器與整櫃，從板材到出貨經過哪些環節？
 reviewed: '2026-10-18'
 definition: 把板、連接、機構與次系統組成可交付的伺服器或整櫃。
 purpose: 分開整櫃代工、品牌整合、電路板與連接／機構子角色。
@@ -17,6 +18,22 @@ bottlenecks:
 - 缺料、工廠測試、液路完整性與維修空間可能推遲交付
 substitution-limits:
 - 品牌整合與 ODM 的責任不同，不能以含高價晶片的總營收推估組裝份額
+flow-steps:
+- label: 板材
+  note: 銅箔、樹脂與玻纖組成銅箔基板（CCL）
+  products: [product-high-speed-ccl]
+- label: 電路板
+  note: 層疊壓合、鑽孔電鍍，做成高多層伺服器板
+  products: [product-server-multilayer-pcb]
+- label: 連接與線材
+  note: 高速連接器、插槽與線束把板卡和機櫃接起來
+  products: [product-high-speed-connector, product-cable-assembly]
+- label: 機構與液路
+  note: 滑軌與液路快接頭讓伺服器可抽換、可接上液冷
+  products: [product-server-slide-rail, product-liquid-quick-disconnect]
+- label: 整櫃整合
+  note: 代工廠組裝伺服器與整櫃，品牌商以自有品牌出貨
+  products: [product-ai-rack-system, product-branded-ai-server]
 claims: []
 gaps:
 - status: not-researched

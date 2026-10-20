@@ -6,6 +6,7 @@ name-zh: AI 機櫃供電
 aliases:
 - AI rack power
 summary: 把設施電力轉換成晶片可用的電壓，並由功率元件執行轉換。
+question: 電力怎麼從設施一路降到晶片？
 reviewed: '2026-10-18'
 definition: 把設施電力轉換成晶片可用的電壓，並由功率元件執行轉換。
 purpose: 分開機櫃電源、板端電源轉換與功率／控制元件。
@@ -18,6 +19,17 @@ bottlenecks:
 substitution-limits:
 - BBU、UPS 與設施儲能功能不同
 - Si、SiC、GaN 適用條件不同，不是單一材料必勝
+flow-steps:
+- label: 設施
+  note: 市電或設施電力進入機櫃
+- label: AC/DC
+  note: 電源架或 PSU 把交流電轉成直流
+  products: [product-power-shelf-psu]
+- label: 母線
+  note: 機櫃直流母線把電力分到各伺服器
+- label: 板端
+  note: DC/DC 電壓調節到晶片工作電壓
+  products: [product-pmic-voltage-regulator, product-power-module]
 claims: []
 gaps:
 - status: not-researched

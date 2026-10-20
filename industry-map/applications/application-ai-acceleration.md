@@ -6,6 +6,7 @@ name-zh: AI 加速運算
 aliases:
 - AI accelerator
 summary: 提供訓練與推論所需算力的晶片與平台。
+question: AI 運算晶片有哪幾種來源？
 reviewed: '2026-10-18'
 definition: 提供訓練與推論所需算力的晶片與平台。
 purpose: 從加速器的供應方式（商用、客製設計、雲端自研）找到可比較的供應角色。
@@ -17,6 +18,16 @@ bottlenecks:
 - 記憶體頻寬、通訊與軟體效率可能限制有效吞吐
 substitution-limits:
 - 客製 ASIC 與 GPU 的取捨需攤提設計與軟體成本，不能由單一工作負載名稱斷言
+flow-steps:
+- label: 商用加速器
+  note: 晶片廠設計並銷售通用的 GPU 加速器
+  products: [product-ai-gpu-accelerator]
+- label: 客製 ASIC
+  note: 設計服務與晶片廠為雲端業者打造專用晶片
+  products: [product-custom-ai-asic]
+- label: 雲端自研
+  note: 雲端業者自行定義架構的加速器
+  products: [product-cloud-in-house-accelerator]
 claims: []
 gaps:
 - status: not-researched

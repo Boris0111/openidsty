@@ -6,6 +6,7 @@ name-zh: 晶片與記憶體整合封裝
 aliases:
 - advanced packaging
 summary: 把運算晶片、HBM 與載板整合成可上板的封裝。
+question: 晶片、記憶體與電路板，怎麼一層層接起來？
 reviewed: '2026-10-18'
 definition: 把運算晶片、HBM 與載板整合成可上板的封裝。
 purpose: 分開中介層整合、委外封裝與封裝載板三層，辨認各自的供應者。
@@ -19,6 +20,17 @@ bottlenecks:
 substitution-limits:
 - 不同中介層與互連結構不能當同一選項比較
 - 玻璃核心等材料方案不能由樣品推定已替換既有有機載板
+flow-steps:
+- label: 晶片層
+  note: 運算晶片與 HBM 堆疊
+- label: 中介層
+  note: 矽中介層或 RDL 重布線把晶片與 HBM 接在一起
+  products: [product-2p5d-interposer-package]
+- label: 封裝載板
+  note: 覆晶封裝把晶片接到 ABF 載板，提供對外接點
+  products: [product-flip-chip-package-service, product-abf-substrate]
+- label: 系統板
+  note: 封裝再接到伺服器電路板
 claims: []
 gaps:
 - status: not-researched

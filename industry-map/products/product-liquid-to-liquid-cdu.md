@@ -5,7 +5,7 @@ kind: product
 name-zh: 液對液 CDU
 aliases: [液對液冷卻液分配單元, L2L CDU, coolant distribution unit]
 summary: 讓伺服器側冷卻液循環、受控，並透過熱交換器把熱交給設施水路；兩側液體維持分離。
-reviewed: '2026-10-16'
+reviewed: '2026-10-20'
 definition: 具液對液換熱及冷卻液分配功能的設備。
 purpose: 串接伺服器二次側回路與設施側散熱能力。
 boundary: 本類限定液對液型；液對氣 CDU 把熱排回空氣，是不同場址條件下的選擇。
@@ -52,4 +52,4 @@ CDU 回答的是「冷卻液怎麼穩定循環、熱要交給誰」。液對液�
 
 ## 供應角色與公司
 
-[Vertiv](/next?focus=company-vertiv)的 CoolChip 公開產品頁支持本類能力。[雙鴻](/next?focus=company-auras)的 2025 新聞雖有 CDU 規劃，但其中液對液型仍使用研發措辭，本輪未將它列為已核對的量產能力。
+[Vertiv](/next?focus=company-vertiv)的 CoolChip 公開產品頁支持本類能力。[雙鴻](/next?focus=company-auras)的 114 年度年報列出水對水 CDU 方案（機櫃型 In-rack 與一對多 In-Row）；2025 展會新聞曾以研發措辭描述，年報也未揭露出貨量、客戶或收入，因此只代表可提供的產品方案。

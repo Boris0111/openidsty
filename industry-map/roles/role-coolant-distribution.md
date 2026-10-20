@@ -20,7 +20,9 @@ gaps:
 
 ## 定義與用途
 
-從回路控制與換熱辨認 CDU 的責任，並連到可核對的產品能力。
+從回路控制與換熱辨認 CDU 的責任，並連到可核對的產品能力。主要產品類別：[液對液 CDU](/next?focus=product-liquid-to-liquid-cdu)。
+
+依既有環節角色列入的代表公司：[Vertiv](/next?focus=company-vertiv)、[雙鴻](/next?focus=company-auras)。
 
 ## 採用條件與限制
 
