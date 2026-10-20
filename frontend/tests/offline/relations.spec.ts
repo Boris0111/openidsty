@@ -38,8 +38,12 @@ test('手機鍵盤可直接分享、閱讀並返回清單焦點',async({page})=>
   await expect(reading.getByRole('heading',{level:2})).toBeFocused();
   await expect(reading).toContainText('有條件推論');
   const close=reading.getByRole('button',{name:'關閉連線詳情'});await close.focus();await page.keyboard.press('Enter');
+  // Navigation commits asynchronously; wait for the close before acting on the list.
+  await expect(reading).toHaveCount(0);
   const list=page.locator('.relation-index');await list.locator(':scope > summary').focus();await page.keyboard.press('Enter');
   const item=list.getByRole('button',{name:/散熱 → ODM 組裝/});await item.focus();await page.keyboard.press('Enter');
+  // Both sample relations share this text, so check the heading to be sure the new one is open.
+  await expect(reading.getByRole('heading',{level:2})).toHaveText(/散熱 → ODM 組裝/);
   await expect(reading).toContainText('流量壓降與介面');
   await reading.getByRole('button',{name:'關閉連線詳情'}).focus();await page.keyboard.press('Enter');
   await expect(item).toBeFocused();
