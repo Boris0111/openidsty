@@ -50,11 +50,13 @@ Agent / files --> draft import --> validation --> managed Git + assets
 | PostgreSQL | 研究讀取投影、事件、財務修訂、草稿、發布紀錄與管理 session；研究投影可由內容 commit 重建 |
 | Managed Git／assets | 容器內獨立 clone 與 persistent volume，保存同專案的研究 commit、版本 refs 與內容定址資產；不掛載開發 repo 的 `.git` 或 Docker socket |
 
-Reader gateway 只轉送明列的閱讀頁面、靜態資產、v2 GET 及無副作用的更新查詢 POST。`/admin`、`/api/admin`、legacy 診斷頁、DB 與 Prefect 不經私人網路入口暴露；管理身分驗證仍在 API 執行。第一版預設 loopback，私人網路分享須明確設定介面／allowlist；跨裝置走 HTTPS，不開公網 port forwarding。
+Reader gateway 只轉送明列的閱讀頁面、靜態資產、v2 GET 及無副作用的更新查詢 POST。閱讀頁面包含新版研究，以及既有產業地圖、題材、事件頁和它們所需的舊版唯讀 API；覆蓋與來源狀態等 legacy 診斷頁仍不轉送。`/admin`、`/api/admin`、legacy 診斷頁、DB 與 Prefect 不經私人網路入口暴露；管理身分驗證仍在 API 執行。第一版預設 loopback，私人網路分享須明確設定介面／allowlist；跨裝置走 HTTPS，不開公網 port forwarding。
 
 ### 2. 讀者流程與內容交付
 
 入口為產業探索、題材、公司、術語／技術比較及此裝置收藏。全鏈先顯示應用與供應角色，再逐層展開產品及公司；不一次把全部公司和線塞入總覽。產品頁說明用途、規格界線、採用條件、瓶頸、替代限制、供應公司及引用；公司頁讀業務、產品、上下游、競爭、曝險、財務及風險。
+
+新舊頁面共用一個閱讀外框（2026-10-20 閱讀驗收回饋）：頁首依序為產業地圖、供應鏈、公司、題材、公司比較、事件、收藏；搜尋只有一個，環節導向地圖選取、題材導向既有題材頁；麵包屑依分類祖先產生。首頁是產業地圖，選環節後面板列出該環節下的供應鏈（應用）卡片。每條供應鏈頁採同一版型：問題式標題、概念圖解（沒有圖解時為文字步驟）、依步驟排列的產品、應用缺口與研究內容。只有供應鏈頁放完整圖解；產品與角色頁顯示位置列，公司頁為獨立頁面並列出所屬供應鏈。重複頁面以內容較完整者為準：公司、比較與收藏用新版，舊公司網址與 v1 收藏頁轉址；題材判讀、指標與版本比較仍在既有題材頁，新版題材與環節物件轉回既有頁面。覆蓋與來源狀態屬維護資訊，不在讀者導覽。應用新增 `question` 與 `flow-steps`（步驟標籤、說明及該應用分類下的產品），只描述閱讀順序，不構成研究主張。液冷首條流程（task 3.4）的專屬頁籤與寫死版型由此通用版型取代。
 
 能力關係與具名供應不同：`offers` 只代表公司提供某產品，`supplies` 必須有該客戶／產品的證據；`partners-with`、`competes-with`、`demand-feedback` 各自標示。公司同時出現於某題材不構成交易關係；傳聞為獨立觀察清單，正式圖預設不包含。
 
@@ -234,7 +236,7 @@ Snapshot、關係兩端、claim 與 evidence 的 FK 都包含 release，禁止�
 2. 在新版 worktree 建立隔離 Compose、環境祕密及還原 DB；記錄原服務 image／volume／port 作比對，先不啟動抓取。
 3. Additive 建 `research` schema、公司身分／listing mapping、release snapshot、financial observations、drafts／sessions／jobs；保留舊表、ticker 與 API。原始金額從 raw 官方欄位轉 Decimal；只有舊 Float 時標 legacy-import／原精度未知，直到官方重新取得，不捏造精度。
 4. 遷移全部 17／7／95 研究及既有判讀、指標、技術文件歷史的來源映射，驗證三種遍歷；建立產品、應用與術語資料及首批 26 家研究。舊關係逐條保留來源／狀態，不能因遷移自動升級確定性。
-5. 新 UI 暫置 `/next`、新 API `/api/v2`，原路徑與 API 維持相容；完成財務、收藏、後台及發布後，在隔離環境執行自動與人工驗收。不同 preview origin 的收藏透過匯出／匯入交換，不能讀另一個 port 的 localStorage。
+5. 新 UI 暫置 `/next`、新 API `/api/v2`，原路徑與 API 維持相容；驗收前即以共用閱讀外框整合新舊讀者頁（2026-10-20 閱讀驗收回饋）；完成財務、收藏、後台及發布後，在隔離環境執行自動與人工驗收。不同 preview origin 的收藏透過匯出／匯入交換，不能讀另一個 port 的 localStorage。
 6. Boris 驗收後才安排正式切換，保持原 origin 並一次遷移舊收藏；舊 ticker 深連結可解析。切換前做完整備份，新版採 additive schema，回復原 image／原服務時不執行 destructive downgrade。
 7. 合併 main 與部署需依另行授權的交付範圍進行；歸檔另啟動，順序為 `add-evidence-based-theme-assessments`、`improve-industry-reading-and-technical-evidence`、本 change，避免未歸檔 delta 覆寫新版需求。本 change 以 MODIFIED 取代前兩案的候選呈現、快取與效能條文，並以 `retire_capabilities: true` 退役 `theme-watchlist`；必須在前兩案同步後才能套用。
 

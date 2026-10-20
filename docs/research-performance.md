@@ -160,7 +160,7 @@ python research_drill.py restore --backup ..\backups\research\<時間>; python r
 - 加 `entity_snapshots(entity_id)` index：原型顯示效益很小。
 - 降低併發，或用其他類別的平均值掩蓋：規格明文禁止。
 
-**預覽目前仍是修正前的程式與 schema**：本次只在演練環境升級；`research_lab.py start` 只重新啟動既有容器。預覽要在 9.4 以 `research_lab.py up` 重建並套用 `0016`，coverage 快取（`a5980e2`）也是在那時才上線。
+**預覽套用時點**：9.2 期間只升級演練環境，`research_lab.py start` 只重新啟動既有容器。預覽在 9.4 首輪（2026-10-20）以 `research_lab.py up` 重建並套用 `0016`，coverage 快取（`a5980e2`）也同時上線。
 
 ## coverage 修正前後
 

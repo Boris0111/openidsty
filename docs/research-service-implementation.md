@@ -288,7 +288,7 @@ Application 資料未改動；研究版 web／API 已重建，原服務 fingerpr
 - `validate_map` 通過，內部連結 0 失效；validator 測試在補回別名與 CIK 後通過。
 - `rebuild-check --commit f22ffd2` 編譯出 254 個研究物件，同一 commit 重建一致。
 - 後端離線 pytest（臨時容器，唯讀掛載 worktree）282 passed、114 skipped、1 failed：快照數寫死為 125 的測試自 8.1 起失效，改為由檔案推導後該模組 34 passed。
-- 內容審查與程式測試的完整紀錄見 [總核對](research-final-review.md)；這不是 Boris 的閱讀驗收（9.4）。
+- 內容審查與程式測試的完整紀錄見 [總核對](research-final-review.md)；這不是 Boris 的閱讀驗收（最終驗收為 10.5，原 9.4）。
 
 ## 小群讀取效能（task 9.2，2026-10-18 至 10-20）
 
@@ -303,5 +303,21 @@ Application 資料未改動；研究版 web／API 已重建，原服務 fingerpr
   - 擴大資料：financial p95 431 ms，coverage 712 ms，0 錯誤，每秒 44.6 個請求。
   - 真實資料：financial p95 314 ms，coverage 637 ms，0 錯誤。
 - **新工具**：`research_drill.py migrate` 讓還原的舊版 schema 升級到目前版本。
-- **預覽尚未套用**：預覽仍是修正前的程式與 `0015`，9.4 以 `research_lab.py up` 重建時才套用。
+- **預覽套用時點**：9.2 期間只升級演練環境；預覽在 9.4 首輪（2026-10-20）以 `research_lab.py up` 重建並套用 `0016`。
 - **草稿路徑的限制**：關係數上限約 1,700 條、每次儲存全量驗證約 3 秒。依 Boris 決定另開 change，這裡只記錄。
+
+## 首輪驗收與移交（task 9.4，2026-10-20）
+
+完整紀錄見 [驗收文件](research-acceptance.md)。
+
+- **預覽**：先備份，再重建並套用 `0016`。Boris 發布最新內容，成為 release `a7c1bb50…`，內容與 `dde7db9` 重建結果一致。
+- **自動回歸全部通過**：地圖、validator、後端離線、PostgreSQL、typecheck、build、前端離線 e2e、預覽 live e2e、唯讀入口。
+- **走查**：桌機／手機各 12 頁走查通過。走查發現分享的 `#company-data` 財務連結不會停在財務區，已修正並補離線測試（`e79240b`）。
+- **閱讀驗收未通過**，有三點：
+  - 新舊站互動不清；
+  - 只有液冷有專屬入口與圖解；
+  - 財務只有近期資料。
+- **後續處理**：
+  - 前兩項依 Boris 決定改由第 10 段處理（統一外框、供應鏈版型，本輪只統一版型）。
+  - 財務歷史另開 change。
+  - 最終驗收移到 10.5。tasks.md 的 9.4 勾選只代表驗收已移交，不代表驗收完成。
