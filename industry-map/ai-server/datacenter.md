@@ -42,6 +42,41 @@ kpis:
 signals:
   - 財報與法說會的資本支出指引調整
   - 新建案選址與電力併網時程
+downstream-relations:
+  compute:
+    kind: demand-feedback
+    summary: 資料中心的算力部署需求與預算回頭形成運算晶片採購需求。
+    items:
+    - 可交付算力與平台部署所需的 GPU／客製 ASIC 需求
+    dependencies:
+    - 供電與冷卻容量、平台軟體相容性、機櫃及網路整合
+    conditions:
+    - 預算確實用於運算設備且完成採購部署，不能只依土地建物 capex 指引推定
+    confidence: inference
+    evidence: []
+    gaps:
+    - 尚未逐一拆出各雲端業者的 GPU／ASIC 採購金額、料號、交付及收入認列，不由總 capex 倒推。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 取得並營運可用 IT 算力與設施容量；土地建築、供電冷卻、設備與租賃投入分開，需求回饋不表示供應晶片。
+  adoption-conditions:
+  - 核對電網接入、可用電力／冷卻、網路、運維及實際負載，不能把簽約 MW 當已上線容量。
+  bottlenecks:
+  - 電網併接、許可、場址與供應鏈交付可能限制投產；capex 增長不能直接換算 GPU 收入。
+  substitution-limits:
+  - 自建、託管、租賃及雲端容量有不同責任與可用性；GPU／ASIC 配置需依工作負載與軟體另驗證。
+  claims:
+  - id: grid-deployment-gap
+    statement: IEA 公開摘要討論電網瓶頸、併接排隊與彈性資源；這不是個別場址完成併網的證明。
+    confidence: well-supported
+    evidence:
+    - source-id: iea-energy-ai-technical
+      url: https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary
+      locator: Executive summary／grid bottlenecks and connection queues
+      read-scope: 僅核讀公開摘要，未核讀報告全文
+  evidence-gaps:
+  - 未取得各場址接電、驗收、可售容量與服務收入的完整對照，亦缺 GPU／ASIC capex 拆分。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

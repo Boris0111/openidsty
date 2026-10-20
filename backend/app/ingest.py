@@ -35,8 +35,9 @@ def register_sources(session):
         if not row:
             row=Source(id=d['id'],status='not_run',new_count=0)
             session.add(row)
-        row.name=d['name']; row.url=d['url']; row.data=dict(d, **{k:v for k,v in (row.data or {}).items() if k in ('fetch_meta','backfill_meta','backfill_completed_at','last_error_kind','last_http_status')})
+        row.name=d['name']; row.url=d['url']; row.data=dict(d, **{k:v for k,v in (row.data or {}).items() if k in ('fetch_meta','backfill_meta','backfill_completed_at','last_error_kind','last_http_status','runtime')})
         if d['adapter']=='manual': row.status='manual'
+        elif row.status=='manual': row.status='not_run'
     session.commit()
     return definitions
 
@@ -140,7 +141,7 @@ def ingestion_lock(engine):
             if acquired:
                 connection.execute(text('SELECT pg_advisory_unlock(729310181)'))
 
-def run_ingestion(only=None,backfill_days=None):
+def run_ingestion(only=None,backfill_days=None,force_documents=False):
     from .db import engine
     with ingestion_lock(engine) as acquired:
         if not acquired:
@@ -169,6 +170,9 @@ def run_ingestion(only=None,backfill_days=None):
                     d['_requested_backfill_days']=backfill_days
                     if d['adapter'] in ('aaon-metrics','tsmc-metrics'):
                         results[d['id']]=ingest_metric_source(session,d,http)
+                    elif d['adapter']=='technical-documents':
+                        from .technical_monitor import ingest_documents
+                        results[d['id']]=ingest_documents(session,d,force=force_documents)
                     else:
                         results[d['id']]=ingest_one(session,d,http,companies)
                     print(json.dumps({'source':d['id'],**results[d['id']]},ensure_ascii=False),flush=True)
@@ -211,10 +215,16 @@ if __name__=='__main__':
     parser.add_argument('--backfill-days',type=int,choices=range(1,366),metavar='1..365',help='強制嘗試來源可提供的歷史回補')
     parser.add_argument('--reclassify',action='store_true',help='正規化既有事件日期並重新分類，不呼叫外部來源')
     parser.add_argument('--only-stale',action='store_true',help='重分類只處理缺少分類或規則版本過期的事件，供初始化使用')
+    parser.add_argument('--force-documents',action='store_true',help='手動核對指定文件，略過每日到期時間；不改研究')
     args=parser.parse_args()
     if args.only_stale and not args.reclassify:
         parser.error('--only-stale 需搭配 --reclassify')
+    import os
+    if os.getenv('RESEARCH_WRITE_DATABASE_URL') and not args.reclassify:
+        from .source_updates import run_due
+        print(json.dumps(run_due(args.source,backfill_days=args.backfill_days),ensure_ascii=False))
+        raise SystemExit(0)
     if args.reclassify:
         print(json.dumps(reclassify_events(args.only_stale),ensure_ascii=False))
     else:
-        print(json.dumps(run_ingestion(args.source,args.backfill_days),ensure_ascii=False))
+        print(json.dumps(run_ingestion(args.source,args.backfill_days,args.force_documents),ensure_ascii=False))

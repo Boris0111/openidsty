@@ -1,0 +1,21 @@
+'use client';
+import {ResearchReadStatus} from './ResearchReadStatus';
+import Link from 'next/link';
+import {useSearchParams,useRouter} from 'next/navigation';
+import {useResearch} from '@/lib/research-api';
+import {readTime} from '@/lib/research-financial';
+
+type EventPage={as_of:string;items:{id:number;title:string;excerpt:string;url:string;source_name:string;source_nature:string;published_at:string|null;reported_at:string|null;published_precision:string;date_unknown:boolean;period:string|null;entities:{entity_id:string;name:string;kind:string;relevance:string}[];entities_truncated:boolean}[];has_more:boolean;next_cursor:string|null;classification_limit:string};
+export function ResearchEvents({release,entity,rumors=false,href}:{release:string;entity?:string;rumors?:boolean;href:(id:string)=>string}){
+  const params=useSearchParams(),router=useRouter(),nature=rumors?'rumor':params.get('source_nature')||'';
+  const cursor=params.get('event_cursor'),relevance=params.get('relevance')||'',from=params.get('period_from')||'',to=params.get('period_to')||'';
+  const query=new URLSearchParams({release_id:release,limit:'20',source_nature:nature,...(entity?{entity_id:entity}:{}),...(cursor?{cursor}:{}),...(relevance?{relevance}:{}),...(from?{period_from:from}:{}),...(to?{period_to:to}:{})});
+  if(!nature)query.delete('source_nature');
+  const result=useResearch<EventPage>(`/api/v2/${rumors?'observations':'events'}?${query}`);
+  function change(key:string,value:string){const next=new URLSearchParams(params);next.delete('event_cursor');if(value)next.set(key,value);else next.delete(key);router.push('/next?'+next,{scroll:false})}
+  return <section className="rf-events" aria-label={rumors?'傳聞觀察清單':'官方與報導清單'}><ResearchReadStatus state={result}/><h2>{rumors?'傳聞觀察':'官方與報導'}</h2><p>{rumors?'以下是有來源、尚未證實的觀察資訊；重複報導不會變成正式供應或客戶關係。':'官方發布、具名報導與研究判斷分開。內容提及不表示公司是事件主體。'}</p>
+    <div className="rf-filters">{!rumors&&<label>資訊性質<select value={nature} onChange={event=>change('source_nature',event.target.value)}><option value="">官方與報導</option><option value="official">官方發布</option><option value="report">具名報導</option></select></label>}<label>主體與提及<select value={relevance} onChange={event=>change('relevance',event.target.value)}><option value="">全部關聯</option><option value="direct">直接主體</option><option value="mention">內容提及</option><option value="background">背景資訊</option></select></label><label>起始日期<input type="date" value={from} onChange={event=>change('period_from',event.target.value)}/></label><label>結束日期<input type="date" value={to} onChange={event=>change('period_to',event.target.value)}/></label></div>
+    {(from||to)&&<p className="rs-scope-note">日期篩選仍保留發布日未知的資訊，並逐筆明示。</p>}
+    {result.error?<p role="alert">{result.error}</p>:result.loading?<p role="status">正在讀取資訊…</p>:result.data&&<><p className="rs-scope-note">讀取時間（台北）：{readTime(result.data.data.as_of)}</p>{!result.data.data.items.length&&<p>此範圍尚未取得{rumors?'傳聞觀察':'官方或報導資訊'}。</p>}<ul className="rf-event-list">{result.data.data.items.map(event=><li key={event.id}><article><p className="rs-scope-note">{({official:'官方發布',report:'具名報導',rumor:'未證實觀察'} as Record<string,string>)[event.source_nature]||'資訊性質未明'}　{event.source_name}</p><h3><a href={event.url} target="_blank" rel="noreferrer">{event.title}</a></h3><p>{event.date_unknown?'發布日期未知；不以收錄時間代替。':`${event.published_at?'發布':'報導'}日期：${event.published_precision==='day'?(event.published_at||event.reported_at)!.slice(0,10):readTime((event.published_at||event.reported_at)!)}`}</p>{event.period&&<p>資料期間：{event.period}</p>}<p>{event.excerpt}</p><ul className="rf-event-entities">{event.entities.map(row=><li key={row.entity_id+row.relevance}><Link href={href(row.entity_id)}>{row.name}</Link>：{({direct:'直接主體',mention:'內容提及',background:'背景資訊'} as Record<string,string>)[row.relevance]||'關聯未分類'}</li>)}</ul>{event.entities_truncated&&<p>部分關聯超過此頁顯示範圍。</p>}</article></li>)}</ul><div className="rs-directory-pages">{cursor&&<button onClick={()=>change('event_cursor','')}>回第一頁資訊</button>}{result.data.data.has_more&&<button onClick={()=>change('event_cursor',result.data!.data.next_cursor||'')}>下一頁資訊</button>}</div></>}
+  </section>;
+}

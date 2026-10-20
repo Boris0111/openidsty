@@ -4,6 +4,17 @@ from .models import Segment, Theme, Company, Relation
 
 LAYERS = {'ai-server': 'AI 伺服器', 'semiconductor': '半導體'}
 
+def segment_relation(source,target):
+    """Topology is authoritative; absent explanation is explicitly unreviewed."""
+    authored=(source.data.get('downstream-relations') or {}).get(target.id)
+    detail=authored or {'summary':'此關係尚未完成技術與證據核對。','items':[],'dependencies':[],'conditions':[],
+        'confidence':'needs-verification','evidence':[],'gaps':['舊格式未提供供應項目／需求機制與介面條件，需回原研究核對。'],'reviewed':None}
+    return {'id':f'{source.id}:{target.id}','source':source.id,'target':target.id,'source_name':source.name,'target_name':target.name,
+        'kind':authored['kind'] if authored else 'unreviewed','direction':'one_way','relation':detail}
+
+def segment_relations(segment,neighbors):
+    return [segment_relation(neighbors[sid],segment) for sid in segment.data['upstream']]+[segment_relation(segment,neighbors[sid]) for sid in segment.data['downstream']]
+
 def industry_graph(session, layer):
     segments = {s.id:s for s in session.scalars(select(Segment))}
     inside = {s.id for s in segments.values() if s.layer == layer}
@@ -14,7 +25,7 @@ def industry_graph(session, layer):
     for sid in sorted(nodes):
         for target in segments[sid].data['downstream']:
             if target in nodes:
-                edges.append({'id': f'{sid}:{target}', 'source': sid, 'target': target, 'kind': 'supply', 'direction': 'one_way'})
+                edges.append(segment_relation(segments[sid],segments[target]))
     return {'layer': layer, 'nodes': [{'id':s.id,'name':s.name,'position':s.position,'external':s.id not in inside,'company_count':len(s.data['companies']),'layer':s.layer} for s in sorted((segments[n] for n in nodes), key=lambda x:(x.position,x.id))], 'edges':edges}
 
 def impact_paths(session, seeds, max_depth=3):

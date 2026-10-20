@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="350" viewBox="0 0 760 350">
+  <title>冷板與液對液 CDU：兩個液體回路</title>
+  <desc>左側晶片的熱進入冷板，由二次側冷卻液帶回 CDU。熱經交換器交給右側設施水路，兩側液體分離。藍色為較冷供液，紅色為帶熱回流。</desc>
+  <defs>
+    <marker id="blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#267a97"/></marker>
+    <marker id="red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#c14c38"/></marker>
+  </defs>
+  <rect width="760" height="350" rx="8" fill="#f3f6f7"/>
+  <g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#16343a">
+    <text x="30" y="38" font-size="21" font-weight="700">熱跨過交換器，液體留在各自回路</text>
+    <text x="60" y="83" font-size="16">伺服器二次側</text><text x="532" y="83" font-size="16">設施側水路</text>
+    <rect x="42" y="120" width="150" height="118" rx="8" fill="#fff" stroke="#203d46" stroke-width="2"/>
+    <rect x="65" y="145" width="104" height="30" rx="4" fill="#e3eef3" stroke="#267a97"/>
+    <text x="98" y="166" font-size="16">冷板</text>
+    <rect x="86" y="184" width="62" height="31" rx="3" fill="#fae9e4" stroke="#c14c38"/>
+    <text x="100" y="205" font-size="15">晶片</text>
+    <path d="M117 183V174" stroke="#c14c38" stroke-width="2" marker-end="url(#red)"/>
+    <rect x="318" y="99" width="140" height="164" rx="8" fill="#fff" stroke="#203d46" stroke-width="2"/>
+    <text x="345" y="127" font-size="18" font-weight="700">液對液 CDU</text>
+    <path d="M372 147V216M387 147V216M402 147V216" stroke="#203d46" stroke-width="4"/>
+    <path d="M349 182H419" stroke="#c14c38" stroke-width="2" marker-end="url(#red)"/>
+    <text x="341" y="243" font-size="15">控制／換熱</text>
+    <rect x="577" y="120" width="141" height="118" rx="8" fill="#fff" stroke="#203d46" stroke-width="2"/>
+    <text x="602" y="169" font-size="18" font-weight="700">設施散熱</text>
+    <text x="596" y="198" font-size="15">水路與排熱設備</text>
+    <path d="M318 143H221V147H194" fill="none" stroke="#267a97" stroke-width="4" marker-end="url(#blue)"/>
+    <path d="M194 212H244V232H316" fill="none" stroke="#c14c38" stroke-width="4" marker-end="url(#red)"/>
+    <path d="M577 147H460" fill="none" stroke="#267a97" stroke-width="4" marker-end="url(#blue)"/>
+    <path d="M460 232H535V212H575" fill="none" stroke="#c14c38" stroke-width="4" marker-end="url(#red)"/>
+    <text x="214" y="125" font-size="14" fill="#267a97">較冷供液</text>
+    <text x="217" y="260" font-size="14" fill="#a13b2b">帶熱回流</text>
+    <text x="497" y="129" font-size="14" fill="#267a97">供水</text>
+    <text x="491" y="260" font-size="14" fill="#a13b2b">帶熱回水</text>
+    <text x="30" y="306" font-size="16">冷板負責取熱，CDU 把熱交給設施；兩者互補，不能互相替代。</text>
+    <text x="30" y="332" font-size="13" fill="#526575">原創功能示意；未畫所有閥件與配管，非特定設備的工程設計。</text>
+  </g>
+</svg>

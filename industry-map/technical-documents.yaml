@@ -1,0 +1,239 @@
+schema-version: technical-documents-v1
+documents:
+- id: ocp-cold-plate-overview
+  source-id: ocp-cold-plate
+  title: OCP Cold Plate 公開專案介紹
+  publisher: Open Compute Project
+  doc-kind: informative
+  segments:
+  - thermal
+  - interconnect
+  - odm
+  - datacenter
+  themes:
+  - liquid-cooling
+  versions:
+  - id: public-overview-20261016
+    label: null
+    url: https://www.opencompute.org/projects/cooling-environments/cold-plate/
+    published: null
+    published-precision: unknown
+    reviewed: '2026-10-16'
+    read-scope: web 工具已讀公開 Scope、Active Workstreams 與 Accepted Contributions。
+    access-limitations: 本機 HTTP 取得受限，索引不代表下列所有規格已核讀；各 PDF 另列。
+    scope: 冷板至 CDU 的技術冷卻系統與介面協調，不能支持特定公司客戶或收入。
+    locators:
+    - id: tcs-boundary
+      section: Scope／Technology Cooling System
+      excerpt: from the cold plate to the CDU
+- id: ocp-rack-power-overview
+  source-id: ocp-rack-power
+  title: OCP Rack & Power 公開專案介紹
+  publisher: Open Compute Project
+  doc-kind: informative
+  segments:
+  - power
+  - interconnect
+  - odm
+  - datacenter
+  - power-discrete
+  themes:
+  - 800vdc
+  - power-bottleneck
+  versions:
+  - id: public-overview-20261016
+    label: null
+    url: https://www.opencompute.org/projects/rack-and-power/
+    published: null
+    published-precision: unknown
+    reviewed: '2026-10-16'
+    read-scope: web 工具已讀公開 Scope 與專案介紹。
+    access-limitations: 未據介紹頁核對任何 power shelf／BBU 的合規條文、額定數字或客戶部署。
+    scope: 設施至 IT gear 間機櫃供電轉換、儲能、控制及機構支撐。
+    locators:
+    - id: conversion-storage-control
+      section: Scope／Rack-Level Power Systems
+      excerpt: conversion, storage, and control systems
+- id: oif-document-categories
+  source-id: oif-technical
+  title: OIF IA 與 informative 文件分類及索引
+  publisher: Optical Internetworking Forum
+  doc-kind: informative
+  segments:
+  - networking
+  - interconnect
+  - advanced-packaging
+  themes:
+  - cpo-silicon-photonics
+  versions:
+  - id: public-index-20261016
+    label: null
+    url: https://www.oiforum.com/technical-work/implementation-agreements-ias/
+    published: null
+    published-precision: unknown
+    reviewed: '2026-10-16'
+    read-scope: 已讀官方分類說明及各類文件版號索引，不含所有連結文件全文。
+    access-limitations: 有限公開入口；版號與名稱須和下載文件封面再核對。
+    scope: normative IA 與白皮書、framework 等 informative 文件的證據邊界。
+    locators:
+    - id: informative-is-not-ia
+      section: 頁首 Informative Documents 說明
+      excerpt: Informative documents are not Implementation Agreements.
+- id: ucie-public-specifications
+  source-id: ucie-public
+  title: UCIe 公開規格介紹
+  publisher: UCIe Consortium
+  doc-kind: informative
+  segments:
+  - advanced-packaging
+  - compute
+  - test
+  - eda-ip
+  themes:
+  - custom-asic-vs-gpu
+  versions:
+  - id: public-overview-20261016
+    label: null
+    url: https://www.uciexpress.org/specifications
+    published: null
+    published-precision: unknown
+    reviewed: '2026-10-16'
+    read-scope: 已讀 1.0 至 3.0 公開介紹與 REQUEST 連結標示。
+    access-limitations: 未送申請、未取得完整規格；不能核對測試限值、電氣條文或跨廠實測。
+    scope: 封裝內 die-to-die physical／protocol／software stack 與 DFx 介紹；不等於 HBM 介面或全部封裝結構。
+    locators:
+    - id: package-interface
+      section: Specifications／Universal Chiplet Interconnect Express
+      excerpt: interconnect at the package level
+    - id: test-manageability
+      section: UCIe 2.0 Specification
+      excerpt: testability, manageability, and debug
+- id: ieee-irds-overview
+  source-id: ieee-irds-public
+  title: IEEE IRDS 路線圖目的公開介紹
+  publisher: IEEE
+  doc-kind: informative
+  segments:
+  - compute
+  - memory
+  - foundry
+  - materials
+  - equipment
+  - test
+  - eda-ip
+  - advanced-packaging
+  themes:
+  - advanced-node-2nm
+  - hbm4
+  versions:
+  - id: public-overview-20261016
+    label: null
+    url: https://irds.ieee.org/
+    published: null
+    published-precision: unknown
+    reviewed: '2026-10-16'
+    read-scope: 已讀 What is the IRDS 與十五年研究協調目的。
+    access-limitations: 這是入口說明，未讀各 edition／chapter；沒有用它核實特定節點量產時程。
+    scope: 路線圖為預測與研究協調，不是規範要求或廠商商業承諾。
+    locators:
+    - id: prediction-scope
+      section: International Roadmap for Devices and Systems／What is the IRDS
+      excerpt: a set of predictions
+- id: ocp-cold-plate-requirements
+  source-id: ocp-cold-plate
+  title: ACS Liquid Cooling Cold Plate Requirements Document
+  publisher: Open Compute Project
+  doc-kind: informative
+  segments:
+  - thermal
+  - interconnect
+  - odm
+  - datacenter
+  themes:
+  - liquid-cooling
+  versions:
+  - id: revision-one
+    label: '1.0'
+    url: https://www.opencompute.org/documents/ocp-acs-liquid-cooling-cold-plate-requirements-pdf
+    published: '2019-10-09'
+    published-precision: day
+    reviewed: '2026-10-16'
+    read-scope: web 擷取核讀 Introduction、4.5–4.8、5.1–5.2 與修訂表，非完整全文核讀。
+    access-limitations: 本機 PDF GET 403，未完成本機 PDF 轉換；需求文件自述非 specification，不當成完整認證條文。
+    scope: 僅支持所列介面、產品與技術邊界，不證明客戶採用或收入。
+    locators:
+    - id: loop-boundary
+      section: Introduction；4.6 CDU；4.7 Rack Manifold（PDF 頁 4、8–9）
+      excerpt: FWS is not covered in this document.
+    - id: materials-flow
+      section: 5.1.1 Wetted Materials；5.1.2 Filtering；5.2 Cold Plate Selection（PDF
+        頁 12–15）
+      excerpt: material compatibility
+    - id: serviceability
+      section: 4.8 Quick Disconnect Couplings；5.1.3 Commissioning and Maintenance（PDF
+        頁 9、13）
+      excerpt: serviceability
+- id: oif-cpo-module
+  source-id: oif-technical
+  title: Implementation Agreement for a 3.2Tb/s Co-Packaged (CPO) Module
+  publisher: Optical Internetworking Forum
+  doc-kind: formal-specification
+  segments:
+  - networking
+  - interconnect
+  - advanced-packaging
+  themes:
+  - cpo-silicon-photonics
+  versions:
+  - id: module-01-0
+    label: OIF-Co-Packaging-3.2T-Module-01.0
+    url: https://www.oiforum.com/wp-content/uploads/OIF-Co-Packaging-3.2T-Module-01.0.pdf
+    published: '2023-03-29'
+    published-precision: day
+    reviewed: '2026-10-16'
+    read-scope: 實際下載並以 bundled converter 轉 Markdown；核讀 1.1–1.2、4.5、6.2、7.1 與封面／修訂表。
+    access-limitations: 僅核讀列明章節；表格有 TBD，未認證任何產品；本次 bytes 不推定等於最初發行版本。
+    scope: 僅支持所列介面、產品與技術邊界，不證明客戶採用或收入。
+    locators:
+    - id: module-scope
+      section: 1.1–1.2 Scope / Introduction（頁 7–11）
+      excerpt: Copper Cable Attach
+    - id: thermal-interface
+      section: 6.2 Thermal Considerations（頁 29）
+      excerpt: Thermal Interface Material
+    - id: management
+      section: 7.1 Management Interface（頁 30）
+      excerpt: Management Interface
+    - id: test-points
+      section: 4.5 Test points（頁 17）
+      excerpt: Test points
+    content-hash: cc3e949493870e53d9088a1e53df332e8dc325ddcc335b8ccb3a1a026c700a44
+    parser-version: technical-text-v1
+    raw-hash: 586d0ed09f2e19d49bf92b23bb681c266d63db6c477d9c8e8c6cd6cf1d6a304f
+- id: oif-cmis
+  source-id: oif-technical
+  title: Common Management Interface Specification (CMIS)
+  publisher: Optical Internetworking Forum
+  doc-kind: formal-specification
+  segments:
+  - networking
+  - interconnect
+  themes:
+  - cpo-silicon-photonics
+  versions:
+  - id: revision-5-4
+    label: '5.4'
+    url: https://www.oiforum.com/wp-content/uploads/OIF-CMIS-05.4.pdf
+    published: '2026-05-21'
+    published-precision: day
+    reviewed: '2026-10-16'
+    read-scope: 實際下載、bundled converter 轉 Markdown，核讀封面與 1.1 Purpose and Scope（頁 30–31）。
+    access-limitations: 未核讀全部 register／timing 條文；管理介面相容不等於光學、電氣與系統互通全部通過。
+    scope: 僅支持所列介面、產品與技術邊界，不證明客戶採用或收入。
+    locators:
+    - id: management-scope
+      section: 1.1 Purpose and Scope（頁 30–31）
+      excerpt: management interaction protocol
+    content-hash: ac97d14cac1935bb7bebed6ed3d4fb201ff8bbdbc3d5212b84bb31b466736bbb
+    parser-version: technical-text-v1
+    raw-hash: cd57ebb1cfb8e0a9e9c7b63862b5b261855e9b77844f4cf85bd36ea3808911db

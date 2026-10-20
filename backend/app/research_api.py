@@ -1,7 +1,7 @@
 """Shared read-only queries, classification payloads and auditable coverage."""
 from collections import defaultdict
 from datetime import datetime, timezone, timedelta
-from sqlalchemy import select, or_, func
+from sqlalchemy import select, or_, func,case,and_,literal,union_all,true
 from .models import Event, EventSegment, EventTheme, Segment, Theme, Role, Source
 from .classify import rules
 
@@ -37,11 +37,14 @@ def event_query(ticker=None, kind=None, industry=None, segment=None, theme=None,
 
 def event_payloads(session, events, raw=False):
     ids=[e.id for e in events]
+    names=session.info.setdefault('event_source_names',{})
+    missing={e.source_id for e in events}-names.keys()
+    if missing:names.update(session.execute(select(Source.id,Source.name).where(Source.id.in_(missing))).all())
     segments=defaultdict(list); themes=defaultdict(list)
     for model,field,target in [(EventSegment,'segment_id',segments),(EventTheme,'theme_id',themes)]:
         for link in session.scalars(select(model).where(model.event_id.in_(ids))):
             target[link.event_id].append({'id':getattr(link,field),'relevance':link.relevance,'evidence':link.evidence})
-    return [dict(columns(e,() if raw else ('raw',)),segments=segments[e.id],themes=themes[e.id]) for e in events]
+    return [dict(columns(e,() if raw else ('raw',)),source_name=names.get(e.source_id),segments=segments[e.id],themes=themes[e.id]) for e in events]
 
 def theme_payload(theme):
     from .assessments import assessment_summary
@@ -51,30 +54,53 @@ def coverage(session, reference=None):
     reference=reference or datetime.now(timezone.utc)
     if reference.tzinfo is None: reference=reference.replace(tzinfo=timezone.utc)
     cutoff90=reference-timedelta(days=90); cutoff30=reference-timedelta(days=30)
-    events={e.id:e for e in session.scalars(select(Event))}
     sources=list(session.scalars(select(Source).order_by(Source.id)))
+    session.info['event_source_names']={source.id:source.name for source in sources}
     roles=defaultdict(set)
-    for role in session.scalars(select(Role)): roles[role.segment_id].add(role.ticker)
-    links={'segment':defaultdict(list),'theme':defaultdict(list)}
-    for model,field,group in [(EventSegment,'segment_id','segment'),(EventTheme,'theme_id','theme')]:
-        for link in session.scalars(select(model)): links[group][getattr(link,field)].append(link)
+    for sid,ticker in session.execute(select(Role.segment_id,Role.ticker)):roles[sid].add(ticker)
+    groups={'segment':list(session.scalars(select(Segment).order_by(Segment.id))),'theme':list(session.scalars(select(Theme).where(Theme.active.is_(True)).order_by(Theme.id)))}
+    stats={};samples={}
+    recent=and_(Event.lifecycle=='published',Event.published_at>=cutoff90,Event.published_at<=reference)
+    for group,model,field in [('segment',EventSegment,EventSegment.segment_id),('theme',EventTheme,EventTheme.theme_id)]:
+        direct=and_(model.relevance=='direct',Event.routine.is_(False),recent)
+        q=select(field,
+            func.count(func.distinct(case((and_(direct,Event.published_at>=cutoff30),Event.id)))).label('direct30'),
+            func.count(func.distinct(case((direct,Event.id)))).label('direct90'),
+            func.count(func.distinct(case((and_(model.relevance=='background',recent),Event.id)))).label('background'),
+            func.count(func.distinct(case((Event.published_at.is_(None),Event.id)))).label('unknown')
+        ).join(Event,Event.id==model.event_id).group_by(field)
+        stats[group]={r[0]:tuple(r[1:]) for r in session.execute(q)}
+        ranked=select(field.label('scope_id'),Event.id.label('event_id'),func.row_number().over(partition_by=field,order_by=(Event.published_at.desc(),Event.id.asc())).label('rank')).join(Event,Event.id==model.event_id).where(direct).subquery()
+        pairs=list(session.execute(select(ranked.c.scope_id,ranked.c.event_id).where(ranked.c.rank<=3).order_by(ranked.c.scope_id,ranked.c.rank)))
+        ids={eid for _,eid in pairs};events={e.id:e for e in session.scalars(select(Event).where(Event.id.in_(ids)))}
+        payloads={e['id']:e for e in event_payloads(session,list(events.values()))}
+        samples[group]=defaultdict(list)
+        for sid,eid in pairs:samples[group][sid].append(payloads[eid])
+    companies={}
+    for group,items in groups.items():
+        for item in items:companies[group,item.id]=roles[item.id] if group=='segment' else set(item.data.get('beneficiaries',[]))
+    scope_rows=[select(literal(group).label('kind'),literal(sid).label('scope_id'),literal(ticker).label('ticker')) for (group,sid),tickers in companies.items() for ticker in tickers]
+    mentions={};routines={}
+    if scope_rows:
+        scope=union_all(*scope_rows).cte('company_scopes')
+        each=(func.json_array_elements_text(Event.mentioned).table_valued('value') if session.bind.dialect.name=='postgresql' else func.json_each(Event.mentioned).table_valued('value')).alias('mentioned_company')
+        mq=select(scope.c.kind,scope.c.scope_id,func.count(func.distinct(Event.id))).select_from(Event).join(each,true()).join(scope,scope.c.ticker==each.c.value).where(recent).group_by(scope.c.kind,scope.c.scope_id)
+        mentions={(g,sid):count for g,sid,count in session.execute(mq)}
+        rq=select(scope.c.kind,scope.c.scope_id,func.count(func.distinct(Event.id))).select_from(Event).join(scope,scope.c.ticker==Event.ticker).where(Event.routine.is_(True),func.coalesce(Event.published_at,Event.reported_at,Event.activity_at)>=cutoff90).group_by(scope.c.kind,scope.c.scope_id)
+        routines={(g,sid):count for g,sid,count in session.execute(rq)}
+    from .technical_documents import summary_map
+    documents=summary_map(session)
+    from .indicator_api import indicator_context
+    indicator_state=indicator_context(session,[t.id for t in groups['theme']],sources)
     rows=[]
-    for group, model in [('segment',Segment),('theme',Theme)]:
-        for item in session.scalars(select(model).order_by(model.id)):
+    for group,items in groups.items():
+        for item in items:
             if group=='theme' and not item.active:continue
             scope='segments' if group=='segment' else 'themes'
-            configured=[s for s in sources if item.id in s.data.get(scope,[]) and s.data.get('adapter')!='manual']
-            related=links[group][item.id]
-            def utc(dt): return dt.replace(tzinfo=dt.tzinfo or timezone.utc) if dt else None
-            def recent(e, cutoff): return e.lifecycle=='published' and e.published_at and cutoff<=utc(e.published_at)<=reference
-            direct=[events[l.event_id] for l in related if l.relevance=='direct' and not events[l.event_id].routine and recent(events[l.event_id],cutoff90)]
-            direct30=[e for e in direct if recent(e,cutoff30)]
-            background=[events[l.event_id] for l in related if l.relevance=='background' and recent(events[l.event_id],cutoff90)]
-            unknown=[events[l.event_id] for l in related if events[l.event_id].published_at is None]
-            companies=roles[item.id] if group=='segment' else set(item.data.get('beneficiaries',[]))
-            mention_count=sum(bool(companies.intersection(e.mentioned)) and bool(recent(e,cutoff90)) for e in events.values())
-            routines=sum(e.routine and e.ticker in companies and (utc(e.published_at or e.reported_at or e.activity_at) or reference-timedelta(days=1000))>=cutoff90 for e in events.values())
-            sample=sorted(direct,key=lambda e:utc(e.published_at),reverse=True)[:3]
+            configured=[s for s in sources if item.id in s.data.get(scope,[]) and s.data.get('adapter') not in ('manual','technical-documents')]
+            direct30,direct,background,unknown=stats[group].get(item.id,(0,0,0,0))
+            mention_count=mentions.get((group,item.id),0);routine_count=routines.get((group,item.id),0)
+            sample=samples[group][item.id]
             successes=[s for s in configured if s.last_success and s.status in ('success','partial')]
             source_payload=[dict(columns(s),registry_reachability=s.data.get('reachability'),registry_checked=s.data.get('checked')) for s in configured]
             newest=max((s.last_success for s in configured if s.last_success),default=None)
@@ -91,7 +117,7 @@ def coverage(session, reference=None):
             indicator_data=None
             if group=='theme':
                 from .indicator_api import indicators_payload
-                indicator_data=indicators_payload(session,item,reference=reference.date())
+                indicator_data=indicators_payload(session,item,reference=reference.date(),context=indicator_state,history=False)
             rows.append({'id':item.id,'kind':group,'name':item.name if group=='segment' else item.data['name_zh'],
                 'layer':item.layer if group=='segment' else None,'research_available':bool(item.prose),
                 'checked':item.checked if group=='theme' else None,'sources':source_payload,
@@ -101,9 +127,10 @@ def coverage(session, reference=None):
                 'indicator_count':len(indicator_data['indicators']) if indicator_data else None,
                 'available_indicator_count':sum(i['latest'] is not None for i in indicator_data['indicators']) if indicator_data else None,
                 'indicator_gaps':(indicator_data['gaps']+[f'{i["name"]} ({i["kind"]})：{g}' for i in indicator_data['indicators'] for g in i['gaps']]) if indicator_data else [],
-                'direct_30d':len(direct30),'direct_90d':len(direct),
-                'background_90d':len(background),'unknown_date':len(unknown),'routine_90d':routines,
-                'company_mentions_90d':mention_count,'samples':event_payloads(session,sample),'gaps':gaps})
+                'direct_30d':direct30,'direct_90d':direct,
+                'background_90d':background,'unknown_date':unknown,'routine_90d':routine_count,
+                'company_mentions_90d':mention_count,'samples':sample,'gaps':gaps,
+                'technical_profile_available':bool(item.data.get('technical-profile')),'technical_reviewed':(item.data.get('technical-profile') or {}).get('reviewed'),'technical_gaps':(item.data.get('technical-profile') or {}).get('evidence-gaps',[]),'technical_documents':[d for d in documents if item.id in d[scope]]})
     return {'as_of':reference,'window_start':cutoff90,'rules_version':rules()['version'],'rows':rows,
         'counting':'直接事件僅計發布日可確認、非預告、非例行的內容分類；背景統計、公司提及、未知日期與 inference 分開。來源設定範圍不代表有事件。'}
 
@@ -117,6 +144,10 @@ def coverage_markdown(data):
     for r in data['rows']:
         if r['kind']=='theme':
             text.append(f'| {r["name"]} ({r["id"]}) | {"可讀" if r["assessment_available"] else "尚未整理"} | {r["assessment_checked"] or "未提供"} | {r["indicator_count"]}／{r["available_indicator_count"]} | {"；".join(r["indicator_gaps"]) or "—"} |')
+    text+=['','## 技術研究與文件核對','','技術文件與新聞／指標分開計數。文件性質、研究查核與 runtime 健康互不替代。','']
+    for r in data['rows']:
+        text.append(f"- {r['name']}：技術查核 {r['technical_reviewed'] or '未整理'}；"+'；'.join(r['technical_gaps']))
+        for d in r['technical_documents']:text.append(f"  - {d['title']}；性質 {d['doc_kind']}；基準 {d['versions']}；待核對 {d['pending_count']}；文件 {d['id']}")
     text+=['','## 真實分類樣本','']
     for r in data['rows']:
         text.append(f'### {r["name"]} ({r["id"]})')

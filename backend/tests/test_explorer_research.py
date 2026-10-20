@@ -27,7 +27,8 @@ def test_migration_keeps_existing_event(tmp_path):
         conn.execute(text("INSERT INTO companies VALUES ('NVDA','輝達','[]',NULL)"))
         conn.execute(text("INSERT INTO sources (id,name,url,status,new_count,data) VALUES ('legacy','legacy','https://example.org','success',1,'{}')"))
         conn.execute(text("INSERT INTO events (id,source_id,external_id,ticker,title,body,kind,lifecycle,published_at,fetched_at,url,mentioned,raw) VALUES (1,'legacy','1','NVDA','原事件','保留','announcement','published','2026-10-07','2026-10-08','https://example.org','[]','{}')"))
-    command.upgrade(cfg, 'head')
+    # PostgreSQL-only research migration has a separate isolated DB check.
+    command.upgrade(cfg, '0006')
     with engine.connect() as conn:
         assert conn.execute(text('SELECT title FROM events WHERE id=1')).scalar() == '原事件'
         assert conn.execute(text('SELECT COUNT(*) FROM companies')).scalar() == 1

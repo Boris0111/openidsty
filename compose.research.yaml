@@ -1,0 +1,145 @@
+name: industryflow-research
+
+x-app: &app
+  image: industryflow-research-api:dev
+  build:
+    context: .
+    dockerfile: backend/Dockerfile
+  environment: &app-env
+    DATABASE_URL: postgresql+psycopg://industry:${RESEARCH_POSTGRES_PASSWORD:?Run research_lab.py setup}@db:5432/industry_research
+    RESEARCH_READ_DATABASE_URL: postgresql+psycopg://research_reader_login:${RESEARCH_READER_PASSWORD:?Run research_lab.py setup}@db:5432/industry_research
+    RESEARCH_WRITE_DATABASE_URL: postgresql+psycopg://research_writer_login:${RESEARCH_WRITER_PASSWORD:?Run research_lab.py setup}@db:5432/industry_research
+    PREFECT_API_URL: http://prefect:4200/api
+    PREFECT_SERVER_ANALYTICS_ENABLED: "false"
+    SEC_USER_AGENT: ${SEC_USER_AGENT:-}
+    RESEARCH_SESSION_SECRET: ${RESEARCH_SESSION_SECRET:?Run research_lab.py setup}
+    RESEARCH_ADMIN_MODE: loopback-http
+    RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3014,http://localhost:3014
+    RESEARCH_ADMIN_HOSTS: api:8000,127.0.0.1:8014,localhost:8014
+  init: true
+  networks: [app]
+
+services:
+  db:
+    image: postgres:16.15-trixie
+    environment:
+      POSTGRES_USER: industry
+      POSTGRES_PASSWORD: ${RESEARCH_POSTGRES_PASSWORD:?Run research_lab.py setup}
+      POSTGRES_DB: industry_research
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./docker/research-init.sql:/docker-entrypoint-initdb.d/01-prefect.sql:ro
+    networks: [app]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U industry -d industry_research"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+  initialize:
+    <<: *app
+    volumes: ["research-assets:/home/app/research-assets", "research-git:/home/app/research-git"]
+    command: [sh, -c, "alembic upgrade head && python -m app.research_roles && python -m app.import_map && python -m app.financial_indicators && python -m app.financial_store definitions && python -m app.source_links"]
+    depends_on:
+      db: {condition: service_healthy}
+  api:
+    <<: *app
+    volumes: ["research-assets:/home/app/research-assets", "research-git:/home/app/research-git:ro"]
+    environment:
+      <<: *app-env
+      DATABASE_URL: postgresql+psycopg://research_reader_login:${RESEARCH_READER_PASSWORD}@db:5432/industry_research
+    ports: ["127.0.0.1:8014:8000"]
+    depends_on:
+      initialize: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  web:
+    image: industryflow-research-web:dev
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    environment:
+      API_ORIGIN: http://api:8000
+      RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3014,http://localhost:3014
+    ports: ["127.0.0.1:3014:3010"]
+    depends_on:
+      api: {condition: service_healthy}
+    networks: [app]
+    init: true
+    restart: unless-stopped
+  prefect:
+    <<: *app
+    profiles: [scheduler]
+    environment:
+      <<: *app-env
+      PREFECT_API_DATABASE_CONNECTION_URL: postgresql+asyncpg://industry:${RESEARCH_POSTGRES_PASSWORD}@db:5432/prefect
+      PREFECT_UI_API_URL: http://localhost:4204/api
+      PREFECT_UI_STATIC_DIRECTORY: /home/app/.prefect/ui
+      PREFECT_SERVER_DOCKET_URL: memory://
+    command: [prefect, server, start, --host, 0.0.0.0]
+    ports: ["127.0.0.1:4204:4200"]
+    depends_on:
+      db: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:4200/api/health', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      start_period: 40s
+      retries: 20
+  deploy:
+    <<: *app
+    profiles: [scheduler]
+    command: [python, -m, app.deploy]
+    depends_on:
+      prefect: {condition: service_healthy}
+      initialize: {condition: service_completed_successfully}
+  worker:
+    <<: *app
+    volumes: ["research-assets:/home/app/research-assets", "research-git:/home/app/research-git"]
+    environment:
+      <<: *app-env
+      DATABASE_URL: postgresql+psycopg://research_writer_login:${RESEARCH_WRITER_PASSWORD}@db:5432/industry_research
+    profiles: [scheduler]
+    command: [prefect, worker, start, --pool, industryflow, --type, process, --limit, "1"]
+    depends_on:
+      deploy: {condition: service_completed_successfully}
+  ingestion:
+    <<: *app
+    volumes: ["research-assets:/home/app/research-assets"]
+    environment:
+      <<: *app-env
+      DATABASE_URL: postgresql+psycopg://research_writer_login:${RESEARCH_WRITER_PASSWORD}@db:5432/industry_research
+    profiles: [tools]
+    command: [python, -m, app.ingest]
+    depends_on:
+      initialize: {condition: service_completed_successfully}
+  reader:
+    image: industryflow-research-api:dev
+    profiles: [reader]
+    init: true
+    read_only: true
+    cap_drop: [ALL]
+    tmpfs: [/tmp]
+    environment:
+      READER_ALLOWED_HOSTS: 127.0.0.1:3015,localhost:3015,localhost:8000
+    command: [uvicorn, app.reader_gateway:app, --host, 0.0.0.0, --port, "8000"]
+    ports: ["127.0.0.1:3015:8000"]
+    networks: [app]
+    depends_on:
+      web: {condition: service_started}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pg-data:
+  research-git:
+  research-assets:
+networks:
+  app:

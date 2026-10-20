@@ -1,0 +1,46 @@
+{
+  "before": {
+    "coverage-theme": {
+      "planning_ms": 18.344,
+      "execution_ms": 120.326,
+      "shared_hit_blocks": 646
+    },
+    "assessment-candidates": {
+      "planning_ms": 0.915,
+      "execution_ms": 4.042,
+      "shared_hit_blocks": 80
+    },
+    "latest-indicator": {
+      "planning_ms": 5.669,
+      "execution_ms": 1.983,
+      "shared_hit_blocks": 2
+    },
+    "coverage-samples": {
+      "planning_ms": 2.348,
+      "execution_ms": 32.769,
+      "shared_hit_blocks": 740
+    }
+  },
+  "after": {
+    "coverage-theme": {
+      "planning_ms": 1.753,
+      "execution_ms": 5.387,
+      "shared_hit_blocks": 646
+    },
+    "assessment-candidates": {
+      "planning_ms": 0.581,
+      "execution_ms": 0.329,
+      "shared_hit_blocks": 61
+    },
+    "latest-indicator": {
+      "planning_ms": 0.544,
+      "execution_ms": 0.073,
+      "shared_hit_blocks": 2
+    },
+    "coverage-samples": {
+      "planning_ms": 0.661,
+      "execution_ms": 6.123,
+      "shared_hit_blocks": 621
+    }
+  }
+}

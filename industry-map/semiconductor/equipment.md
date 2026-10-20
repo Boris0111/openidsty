@@ -45,6 +45,83 @@ kpis:
 signals:
   - 客戶資本支出指引調整
   - 出口管制範圍變動
+downstream-relations:
+  foundry:
+    kind: supply
+    summary: 半導體設備至晶圓代工：微影、沉積、蝕刻、清洗及量測等分立設備角色。
+    items:
+    - 微影、沉積、蝕刻、清洗及量測等分立設備角色
+    dependencies:
+    - 製程配方、潔淨設施、產能與製程控制
+    conditions:
+    - 設備安裝、製程整合、throughput 與良率驗收完成
+    confidence: inference
+    evidence: []
+    gaps:
+    - 尚缺各機台在指定產線的驗收、產出及認列日期；客戶土建 capex 不能全數當設備訂單。
+    reviewed: '2026-10-16'
+  advanced-packaging:
+    kind: supply
+    summary: 半導體設備至先進封裝：封裝加工、濕製程及製程控制設備。
+    items:
+    - 封裝加工、濕製程及製程控制設備
+    dependencies:
+    - 晶圓／面板尺寸、翹曲、材料與潔淨度
+    conditions:
+    - 設備適用實際封裝流程且完成產線驗收
+    confidence: inference
+    evidence: []
+    gaps:
+    - 未取得特定封裝路線的機台配置、節拍、良率及驗收對照；不能把 EUV 設備需求套入所有封裝。
+    reviewed: '2026-10-16'
+  test:
+    kind: supply
+    summary: 半導體設備至測試與探針：測試前後所需製程控制、量測及檢查能力。
+    items:
+    - 測試前後所需製程控制、量測及檢查能力
+    dependencies:
+    - 缺陷分類、接觸介面與測試流程的責任分工
+    conditions:
+    - 新增設備確有需求且不與 test 環節 ATE／服務重複計算
+    confidence: inference
+    evidence: []
+    gaps:
+    - 缺少機台料號與測試服務流程的邊界對照，本清單不證明 ATE、量測及探針卡由同一家公司供應。
+    reviewed: '2026-10-16'
+  memory:
+    kind: supply
+    summary: 半導體設備至記憶體：記憶體製造、堆疊相關製程與量測設備。
+    items:
+    - 記憶體製造、堆疊相關製程與量測設備
+    dependencies:
+    - 記憶體製程、TSV／堆疊流程及產線產能
+    conditions:
+    - 設備適用具名製程與廠區且完成安裝驗收
+    confidence: inference
+    evidence: []
+    gaps:
+    - 未取得各記憶體廠的製程設備清單、堆疊瓶頸與擴產驗收，不能由 HBM 需求直接推定所有設備受惠。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 微影、沉積、蝕刻、濕製程與製程控制設備分工；ATE、探針與測試服務主要在測試環節，不重複加總。
+  adoption-conditions:
+  - 機台須適用指定製程、加工尺寸、材料與設施，完成安裝及產線驗收。
+  bottlenecks:
+  - 節拍、缺陷、overlay／製程控制與維護會限制有效產能，capex 公告不等於完成驗收。
+  substitution-limits:
+  - NXE／EXE 微影、濕製程及檢測設備不互替；High-NA 廠商時程不能推定每條 2nm 產線都採用。
+  claims:
+  - id: euv-platform-scope
+    statement: ASML 將 NXE 與 High-NA EXE 平台分開介紹；規格與預期時程不是所有晶圓廠已部署證據。
+    confidence: well-supported
+    evidence:
+    - source-id: asml-euv-technical
+      url: https://www.asml.com/en/products/euv-lithography-systems
+      locator: NXE systems／EXE systems
+      read-scope: 已讀指定公開說明；沒有取得客戶完整設計、測試或認證檔
+  evidence-gaps:
+  - 未取得客戶實際機台配置、throughput、良率與驗收／認列時點；自製、代理及服務收入仍須拆分。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

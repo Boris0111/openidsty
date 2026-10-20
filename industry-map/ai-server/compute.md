@@ -50,6 +50,43 @@ kpis:
 signals:
   - 新世代平台發表與量產時程變動
   - 雲端業者自研晶片專案得標歸屬
+downstream-relations:
+  advanced-packaging:
+    kind: supply
+    summary: 運算晶片至先進封裝：待整合的運算 die 與封裝設計需求。
+    items:
+    - 待整合的運算 die 與封裝設計需求
+    dependencies:
+    - die bump／D2D 介面、功耗與記憶體配置
+    conditions:
+    - 晶片設計與封裝製程、測試方案可共同製造
+    confidence: inference
+    evidence: []
+    gaps:
+    - 未取得各 GPU／ASIC 的 bump map、已知良品 die 測試覆蓋與封裝良率，不由晶片 roadmap 推定封裝訂單。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 運算晶片設計、軟體與平台整合；晶圓製造及封裝各有獨立供應角色，GPU／ASIC 不是依訓練或推論一刀切。
+  adoption-conditions:
+  - 按實際工作負載、軟體移植與利用率評估平台，不用峰值算力替代端到端效能。
+  - 設計須與 PDK、記憶體、封裝、供電及網路共同驗證。
+  bottlenecks:
+  - 記憶體容量／頻寬、通訊與軟體效率可能限制有效吞吐；需同口徑實測。
+  substitution-limits:
+  - 客製 ASIC 必須攤提設計與軟體成本，不能由單一 workload 名稱斷言一定勝過 GPU。
+  claims:
+  - id: rack-compute-interface
+    statement: NVIDIA NVLink 公開說明以 GPU-to-GPU 與機櫃級互連描述平台；不等於工作負載或客戶收入保證。
+    confidence: well-supported
+    evidence:
+    - source-id: nvidia-networking-technical
+      url: https://www.nvidia.com/en-us/data-center/nvlink/
+      locator: Introduction／Scale-up networking fabric
+      read-scope: 已讀指定公開說明；沒有取得客戶完整設計、測試或認證檔
+  evidence-gaps:
+  - 尚缺各候選平台在同模型、精度、批次、延遲與利用率下的完整 TCO／吞吐比較。
+  - 設計服務、IP 授權、晶圓與封裝支出不能直接相加為單一供應商收入。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

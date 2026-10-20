@@ -1,6 +1,189 @@
 # 唯一來源註冊表；入口可讀性與 runtime 擷取狀態分開。
 tw:
   filings:
+  - id: pti-annual-report-2025
+    name: 力成科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=6239&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-19'
+    segments:
+    - advanced-packaging
+    themes: []
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁（PDF 頁減 4）；營業比重與進銷貨表以 -table 模式核對。
+  - id: tsmc-annual-report-2025
+    name: 台積公司 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2330&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - foundry
+    - advanced-packaging
+    themes:
+    - cpo-silicon-photonics
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_2330_20260604F04.pdf）；此版為跨頁排版（每個 PDF 頁含兩個印刷頁），以 pdftotext 閱讀順序模式重新擷取，引用 PDF 頁碼與章節。財務報表另冊，未讀。
+  - id: luxnet-annual-report-2025
+    name: 華星光通 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=4979&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - networking
+    themes:
+    - cpo-silicon-photonics
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁（PDF 頁減 1）；營業比重、銷售地區、原料與進銷貨表以 -table 模式核對。
+  - id: landmark-annual-report-2025
+    name: 聯亞光電 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3081&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - networking
+    themes:
+    - cpo-silicon-photonics
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁（PDF 頁減 4）；營業比重、銷售地區與進銷貨表以 -table 模式核對。
+  - id: accton-annual-report-2025
+    name: 智邦科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2345&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - networking
+    themes:
+    - cpo-silicon-photonics
+    - liquid-cooling
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁（PDF 頁減 4）；表格以 -table 模式核對。
+  - id: kingslide-annual-report-2025
+    name: 川湖科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2059&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - interconnect
+    themes: []
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁（PDF 頁減 4）。營業比重與銷售地區表抽取時欄位錯位，依合計核對。
+  - id: sinbon-annual-report-2025
+    name: 信邦電子 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3023&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - interconnect
+    themes: []
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報）；以 pdftotext 讀取全文，印刷頁碼與 PDF 頁碼相同。年報沒有主要產品營業比重表。
+  - id: bizlink-annual-report-2025
+    name: 貿聯-KY 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3665&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - interconnect
+    themes:
+    - cpo-silicon-photonics
+    - 800vdc
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_3665_20260529F04.pdf）；以 pdftotext 讀取全文，頁碼以年報印刷頁碼為準。產品比重表抽取時欄位錯位，依產品順序與合計核對。
+  - id: lotes-annual-report-2025
+    name: 嘉澤端子 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3533&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - interconnect
+    themes:
+    - 800vdc
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_3533_20260612F04.pdf）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁。客戶表抽取時欄位錯位，依金額與合計核對。
+  - id: acbel-annual-report-2025
+    name: 康舒科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=6282&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - power
+    themes:
+    - 800vdc
+    - power-bottleneck
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_6282_20260528F04.pdf）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁。
+  - id: liteon-annual-report-2025
+    name: 光寶科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2301&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - power
+    themes:
+    - 800vdc
+    - power-bottleneck
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_2301_20260520F04.pdf）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁。部門比重與銷售地區表抽取時欄位錯位，依表列順序與合計核對。
+  - id: delta-annual-report-2025
+    name: 台達電子 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2308&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - power
+    - thermal
+    themes:
+    - 800vdc
+    - power-bottleneck
+    - liquid-cooling
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_2308_20260528F04.pdf）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁。
+  - id: sunon-annual-report-2025
+    name: 建準電機 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2421&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - thermal
+    themes:
+    - liquid-cooling
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_2421_20260525F04.pdf）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁。銷售地區表抽取時欄位錯位，未引用其數字。
+  - id: avc-annual-report-2025
+    name: 奇鋐科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3017&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - thermal
+    themes:
+    - liquid-cooling
+    notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報 2025_3017_20260602F04.pdf）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁。
+  - id: auras-annual-report-2025
+    name: 雙鴻科技 114 年度股東會年報
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3324&year=115&mtype=F&
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments: [thermal]
+    themes: [liquid-cooling]
+    notes: 公開資訊觀測站電子書清單（115 年股東會，114 年度年報 2025_3324_20260521F04.pdf，2026-04-30 上傳）；以 pdftotext 讀取全文。頁碼以年報印刷頁碼為準，另註 PDF 頁。
   - id: tsmc-node-metrics
     name: 台積電季度製程營收占比
     url: https://investor.tsmc.com/english/quarterly-results
@@ -55,8 +238,9 @@ tw:
     url: https://openapi.twse.com.tw/v1/opendata/t187ap05_L
     type: filings
     access: free
-    reachability: unverified
-    checked: '2026-10-08'
+    reachability: verified
+    checked: '2026-10-17'
+    notes: HTTP 200 JSON；實讀台積電月營收樣本。金額為新台幣千元；出表日期不是公司申報日。摘要只提供目前彙整期，歷史由本機後續累積；能力及樣本見 docs/research-financial-tw.md。
     ingestion:
       adapter: tw
       kind: revenue
@@ -67,12 +251,25 @@ tw:
     url: https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci
     type: filings
     access: free
-    reachability: unverified
-    checked: '2026-10-08'
+    reachability: verified
+    checked: '2026-10-17'
+    notes: HTTP 200 JSON；實讀台積電一般業損益樣本。各季為年度截至該季累計、金額千元、EPS 元；未明列合併／個體旗標與正式申報日，需核對財務年度起點。未提供現金流等項目。
     ingestion:
       adapter: tw
       kind: financials
       fallback: https://mopsfin.twse.com.tw/opendata/t187ap06_L_ci.csv
+  - id: twse-balance
+    provider: twse
+    name: TWSE 一般業資產負債摘要
+    url: https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-17'
+    ingestion:
+      adapter: tw
+      kind: balance
+    notes: HTTP 200 JSON；實讀台積電負債總計，金額千元。未提供現金及約當現金，不將負債總計當有息負債。由新版研究財務流程每日檢查，legacy 財報不支援；財年尚未核對時保留原列與缺口，不猜季度日期。
   - id: tpex-announcements
     provider: tpex
     name: TPEX 重大訊息
@@ -90,8 +287,9 @@ tw:
     url: https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O
     type: filings
     access: free
-    reachability: unverified
-    checked: '2026-10-08'
+    reachability: verified
+    checked: '2026-10-17'
+    notes: HTTP 200 JSON；實讀雙鴻 3324 上櫃樣本。金額千元、原始年增百分點；出表日期不是申報日。不得由歷史 ticker 後綴推斷上市／上櫃資料入口。
     ingestion:
       adapter: tw
       kind: revenue
@@ -101,11 +299,24 @@ tw:
     url: https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci
     type: filings
     access: free
-    reachability: unverified
-    checked: '2026-10-08'
+    reachability: verified
+    checked: '2026-10-17'
+    notes: HTTP 200 JSON；實讀雙鴻一般業累計損益。識別及年度／季別使用英文字段，與 TWSE 別名不同；金額千元、EPS 元，範圍旗標及申報日未提供。
     ingestion:
       adapter: tw
       kind: financials
+  - id: tpex-balance
+    provider: tpex
+    name: TPEx 一般業資產負債摘要
+    url: https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-17'
+    ingestion:
+      adapter: tw
+      kind: balance
+    notes: HTTP 200 JSON；實讀雙鴻負債總計，金額千元。公司代號／日期為英文字段，年度／季別為中文；沒有現金及約當現金。由新版研究財務流程每日檢查，未核對財年時保留原列與缺口。
   earnings_call:
   - name: 台積電季度法說會與財報
     url: https://investor.tsmc.com/english/quarterly-results
@@ -286,6 +497,165 @@ tw:
       max_pages: 1
 us:
   filings:
+  - id: amkr-10k-2025
+    name: Amkor Technology FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1047127/000104712726000014/amkr-20251231.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-19'
+    segments:
+    - advanced-packaging
+    themes: []
+    notes: SEC EDGAR 原文，申報日 2026-02-20、期間 2025-12-31；已讀 Item 1、1A 與 MD&A 相關段落。
+  - id: ase-20f-2025
+    name: ASE Technology Holding FY2025 Form 20-F
+    url: https://www.sec.gov/Archives/edgar/data/1122411/000119312526135585/d50802d20f.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - advanced-packaging
+    themes:
+    - cpo-silicon-photonics
+    notes: SEC EDGAR 原文，申報日 2026-04-01、期間 2025-12-31；已讀 Item 3 風險、Item 4 業務與 Item 5 營運結果相關段落。中文股東會年報已下載，但 112 頁中 98 頁因字型編碼無法擷取文字，改以 20-F 為主。
+  - id: alab-10k-2025
+    name: Astera Labs FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1736297/000173629726000010/alab-20251231.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - networking
+    - interconnect
+    themes:
+    - cpo-silicon-photonics
+    notes: SEC EDGAR 原文，申報日 2026-02-20、期間 2025-12-31；已讀 Item 1、1A、MD&A、Item 9A 與營收、地區、收購附註。
+  - id: crdo-10k-fy2026
+    name: Credo FY2026 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1807794/000162828026043303/crdo-20260502.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - networking
+    - interconnect
+    themes:
+    - cpo-silicon-photonics
+    notes: SEC EDGAR 原文，申報日 2026-06-15、會計年度結束於 2026-05-02（52/53 週制）；已讀 Item 1、1A、MD&A 與 Note 3 集中度附註。
+  - id: mrvl-10k-fy2026
+    name: Marvell FY2026 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1835632/000183563226000011/mrvl-20260131.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - compute
+    - networking
+    themes:
+    - cpo-silicon-photonics
+    notes: SEC EDGAR 原文，申報日 2026-03-11、會計年度結束於 2026-01-31（52/53 週制）；已讀 Item 1、1A 與 MD&A 相關段落。
+  - id: avgo-10k-fy2025
+    name: Broadcom FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - compute
+    - networking
+    themes:
+    - cpo-silicon-photonics
+    notes: SEC EDGAR 原文，申報日 2025-12-18、會計年度結束於 2025-11-02（52/53 週制）；已讀 Item 1、1A 與 MD&A 相關段落。
+  - id: aph-10k-2025
+    name: Amphenol FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/820313/000110465926013549/aph-20251231x10k.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - interconnect
+    themes:
+    - cpo-silicon-photonics
+    - liquid-cooling
+    notes: SEC EDGAR 原文，申報日 2026-02-11、期間 2025-12-31；已讀 Item 1、1A、5、7 與收購附註相關段落。10-K 未提及液冷產品。
+  - id: vicr-10k-2025
+    name: Vicor FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/751978/000119312526085102/vicr-20251231.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - power
+    themes:
+    - power-bottleneck
+    - 800vdc
+    notes: SEC EDGAR 原文，申報日 2026-03-02、期間 2025-12-31；已讀 Item 1、1A、5、7 與合併財報附註相關段落。
+  - id: mpwr-10k-2025
+    name: Monolithic Power Systems FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1280452/000143774926006113/mpwr20251231_10k.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - power
+    themes:
+    - power-bottleneck
+    - 800vdc
+    notes: SEC EDGAR 原文，申報日 2026-02-27、期間 2025-12-31；已讀 Item 1、1A 與 MD&A 相關段落。
+  - id: boyd-company-pages
+    name: Boyd 官網公司、工程材料與據點頁
+    url: https://www.boydcorp.com/about-boyd/locations.html
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - thermal
+    themes: []
+    notes: 已讀 about-boyd、engineered-materials、locations、data-center 等頁；可達頁面未找到冷板、CDU 或歧管的產品頁。
+  - id: boyd-thermal-sale-completion
+    name: Boyd 完成出售熱管理業務予 Eaton（2026-03-12）
+    url: https://www.boydcorp.com/boyd-completes-the-sale-of-its-thermal-business-to-eaton-for-9-5-billion.html
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - thermal
+    themes:
+    - liquid-cooling
+    notes: Boyd 官方新聞稿，日期列 Boca Raton, FL – March 12, 2026；確切交割日未載明。eaton.com 本輪連線逾時，Eaton 自己的公告未讀。
+  - id: boyd-thermal-sale-announcement
+    name: Boyd 宣布出售熱管理業務予 Eaton（2025-11-03）
+    url: https://www.boydcorp.com/about-boyd/resources/news-and-events/boyd-announces-sale-of-its-thermal-business-to-eaton-for-9-5-billion.html
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - thermal
+    themes:
+    - liquid-cooling
+    notes: Boyd 官方新聞稿，日期列 Boca Raton, FL – November 3, 2025；已讀全文。
+  - id: vertiv-10k-2025
+    name: Vertiv FY2025 Form 10-K
+    url: https://www.sec.gov/Archives/edgar/data/1674101/000167410126000008/vrt-20251231.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments: [thermal, power]
+    themes: [liquid-cooling, power-bottleneck]
+    notes: SEC EDGAR 原文，簽署日 2026-02-13；已讀 Item 1–15 與主要財務報表，附註（Note 1–16）本輪未取得全文。
   - id: aaon-earnings-metrics
     name: AAON 季度液冷產品收入
     url: https://investors.aaon.com/investor-news
@@ -529,3 +899,315 @@ us:
       max_pages: 3
     themes:
     - power-bottleneck
+global:
+  technical-documents:
+  - id: aph-liquid-cooling-product-page
+    name: Amphenol Industrial 液冷快接頭產品頁
+    url: https://amphenol-industrial.com/products/liquid-cooling-systems/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-18'
+    segments:
+    - interconnect
+    - thermal
+    themes:
+    - liquid-cooling
+    notes: 官方產品頁，2026-10-18 讀取；列出 UQD、UQDB、UQD/UQDB Rev 2.0、BMQC、LQC、MQD 與 SHQD 系列。頁面無日期、無客戶或出貨說明；白皮書與型錄 PDF 未讀。
+  - id: ocp-cold-plate
+    name: OCP 冷板與液冷公開技術文件
+    url: https://www.opencompute.org/projects/cooling-environments/cold-plate/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal, interconnect, odm, datacenter]
+    themes: [liquid-cooling]
+    notes: 已讀公開 Scope、Active Workstreams 與 Accepted Contributions；個別文件須分別查核，不能把索引成功當全文已讀。目前人工核對，待指定文件 parser 驗證後才啟用監測。
+    ingestion:
+      adapter: technical-documents
+      document-ids:
+      - ocp-cold-plate-requirements
+      allowed-hosts:
+      - www.opencompute.org
+      max-pages: 2
+      max-documents: 10
+      html-bytes: 2097152
+      document-bytes: 15728640
+      timeout-seconds: 20
+      interval-hours: 24
+  - id: ocp-rack-power
+    name: OCP 機櫃與電力公開技術文件
+    url: https://www.opencompute.org/projects/rack-and-power/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [power, interconnect, odm, datacenter, power-discrete]
+    themes: [800vdc, power-bottleneck]
+    notes: 已讀公開 Scope 與專案介紹；機櫃供電轉換、儲能、控制及機構支撐分開，尚未據索引核實特定規格或客戶採用。
+  - id: oif-technical
+    name: OIF 介面協議與公開技術文件
+    url: https://www.oiforum.com/technical-work/implementation-agreements-ias/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [networking, interconnect, advanced-packaging]
+    themes: [cpo-silicon-photonics]
+    notes: 已讀官方 IA／Informative 分類及版本索引；CMIS 與 CPO 等文件須逐份核對版號、章節及可讀性，不能把 framework 當 normative IA。目前人工核對。
+    ingestion:
+      adapter: technical-documents
+      document-ids:
+      - oif-cpo-module
+      - oif-cmis
+      allowed-hosts:
+      - www.oiforum.com
+      max-pages: 2
+      max-documents: 10
+      html-bytes: 2097152
+      document-bytes: 15728640
+      timeout-seconds: 20
+      interval-hours: 24
+  - id: ucie-public
+    name: UCIe 公開規格介紹
+    url: https://www.uciexpress.org/specifications
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [advanced-packaging, compute, test, eda-ip]
+    themes: [custom-asic-vs-gpu]
+    notes: 已讀公開 1.0／1.1／2.0／3.0 介紹；全文為 REQUEST，未送申請、未取得規格全文。可引用者只有公開介紹，不能宣稱核對合規條文。
+  - id: ieee-irds-public
+    name: IEEE IRDS 公開路線圖入口
+    url: https://irds.ieee.org/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [compute, memory, foundry, materials, equipment, test, eda-ip, advanced-packaging]
+    themes: [advanced-node-2nm, hbm4]
+    notes: 已讀 What is the IRDS 與路線圖目的；屬預測與研究協調，未讀各 edition／chapter 全文，不能當強制規範或量產承諾。
+  - id: jedec-public
+    name: JEDEC 公開文件搜尋入口
+    url: https://www.jedec.org/standards-documents
+    type: technical-documents
+    access: free
+    reachability: unverified
+    checked: '2026-10-16'
+    segments: [memory, advanced-packaging, substrate]
+    themes: [hbm4]
+    notes: web 工具回報 robots 拒絕；本機 HTTP GET 200 已讀 Standards & Documents Search 的公開分類、搜尋與下載導覽。未取得個別規格全文；不登入、不使用付費內容，也不將搜尋頁當成規格條文。
+  - id: tsmc-public-technology
+    name: 台積電公開製程與封裝技術
+    url: https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/3DFabric.htm
+    segments:
+    - advanced-packaging
+    - foundry
+    - compute
+    - substrate
+    themes:
+    - advanced-node-2nm
+    - custom-asic-vs-gpu
+    notes: 已讀公開 3DFabric 與 CoWoS-S/R/L 技術說明；PDK、良率、客戶設計及成本資料未公開，不把廠商能力介紹當客戶採用。
+    reachability: verified
+    type: technical-documents
+    access: free
+    checked: '2026-10-16'
+  - id: nvidia-networking-technical
+    name: NVIDIA 公開網路架構與介面介紹
+    url: https://www.nvidia.com/en-us/networking/
+    segments:
+    - networking
+    - compute
+    - interconnect
+    - odm
+    themes:
+    - cpo-silicon-photonics
+    - custom-asic-vs-gpu
+    notes: 已讀 scale-up／scale-out／scale-across 分工與 NVLink 介紹；產品宣稱、preliminary 規格及客戶實測分開，不引用行銷比較數字當一般保證。
+    reachability: verified
+    type: technical-documents
+    access: free
+    checked: '2026-10-16'
+  - id: kingslide-mechanical
+    name: 川湖 MGX 機構滑軌公開說明
+    url: https://www.kingslide.com/blog/post/news/identifier/company-news-018-jp/
+    segments:
+    - interconnect
+    - odm
+    themes: []
+    notes: 官方搜尋摘要可讀 2026-05-29 rail solutions 說明；全文 GET 逾時／502，未重新核對完整型錄、承重或料號。僅以摘要辨認機構角色，不推定高壓母排或快接頭供應。
+    reachability: unverified
+    type: technical-documents
+    access: free
+    checked: '2026-10-16'
+  - id: skhynix-hbm-technical
+    name: SK hynix HBM 製程合作公開說明
+    url: https://news.skhynix.com/en/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - memory
+    - foundry
+    - advanced-packaging
+    themes:
+    - hbm4
+    notes: 2024-04-19 合作公告已讀；計畫、base die 與 DRAM 分工不等於目前全部客戶量產驗證。
+  - id: ibiden-substrate-technical
+    name: Ibiden IC 封裝載板產品說明
+    url: https://www.ibiden.com/product/electronics/merchandise/fliptippkg/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - substrate
+    - advanced-packaging
+    themes: []
+    notes: 已讀 IC package substrate、SAP 與 micro-via 能力說明；沒有客戶良率或成本。
+  - id: entegris-materials-technical
+    name: Entegris 材料與污染控制說明
+    url: https://www.entegris.com/en/home/our-science/by-solution-area/contamination-control.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - materials
+    - foundry
+    - advanced-packaging
+    themes:
+    - advanced-node-2nm
+    notes: 已讀 purification／filtration 與 contamination control 範圍；廠商能力描述不等於指定客戶材料認證。
+  - id: asml-euv-technical
+    name: ASML EUV／High-NA 產品說明
+    url: https://www.asml.com/en/products/euv-lithography-systems
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - equipment
+    - foundry
+    themes:
+    - advanced-node-2nm
+    notes: 已讀 NXE／EXE 及 numerical aperture 分工；預期時程不是每家晶圓廠已驗收證據。
+  - id: teradyne-slt-technical
+    name: Teradyne 系統層測試公開說明
+    url: https://www.teradyne.com/2026/08/24/slt-in-the-ai-era-validating-reliability-at-scale/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - test
+    - advanced-packaging
+    themes: []
+    notes: 已讀 SLT 與 ATE 互補、電力／熱與互連失效範圍；未核實所有廠商客戶或收入。
+  - id: m31-ip-technical
+    name: M31 公開 IP 產品入口
+    url: https://www.m31tech.com/products/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - eda-ip
+    - compute
+    - networking
+    themes:
+    - custom-asic-vs-gpu
+    notes: 公開產品入口可讀；本輪不據入口推定特定 PDK 的 silicon-proven 狀態或授權條款。
+  - id: infineon-power-technical
+    name: Infineon AI 供電技術分工
+    url: https://www.infineon.com/technology/ai/we-power-ai
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - power-discrete
+    - power
+    themes:
+    - 800vdc
+    notes: 已讀 Si／SiC／GaN hybrid approach 段落；不當成所有電壓區間的替代保證。
+  - id: supermicro-rack-technical
+    name: Supermicro 整櫃與液冷技術說明
+    url: https://www.supermicro.com/en/solutions/liquid-cooling
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - odm
+    - thermal
+    - datacenter
+    themes:
+    - liquid-cooling
+    notes: 已讀 system／rack、in-row、site infrastructure 範圍及組件清單；原廠名目能力不等於客戶場址驗收。
+  - id: iea-energy-ai-technical
+    name: IEA 能源與 AI 公開研究摘要
+    url: https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments:
+    - datacenter
+    - power
+    themes:
+    - power-bottleneck
+    notes: 已讀 grid bottlenecks、connection queues 與系統彈性建議；摘要非個別場址併網證明，也未核讀報告全文。
+  - id: auras-ocp-2025-reading
+    name: 雙鴻 OCP 2025 官方產品新聞
+    url: https://www.auras.com.tw/News/NewsContent/14-10/en
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal]
+    themes: [liquid-cooling]
+    notes: 已以瀏覽器讀取 2025-10-15 新聞內文；單純 HTTP 200 僅回 JS 外殼。產品範圍、研發及出貨分開判讀，不當成 2026 出貨資料。
+  - id: vertiv-coolchip-product-reading
+    name: Vertiv CoolChip CDU 公開產品家族
+    url: https://www.vertiv.com/en-us/products-catalog/thermal-management/high-density-solutions/vertiv-coolchip-cdu/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal]
+    themes: [liquid-cooling]
+    notes: 已讀產品家族、型號表及功能；未讀需填表下載的文件。液對液與液對氣型號分開，額定能力不是場址驗收。
+  - id: vertiv-liquid-cooling-reading
+    name: Vertiv 液冷方法與基礎設施公開說明
+    url: https://www.vertiv.com/en-us/solutions/learn-about/liquid-cooling-options-for-data-centers/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal, datacenter]
+    themes: [liquid-cooling]
+    notes: 僅採冷板取熱、Distribution 及回路整合說明；未採用頁面市場預測與節能比例。
+  - id: vertiv-company-scope-reading
+    name: Vertiv 官方公司業務範圍
+    url: https://www.vertiv.com/en-us/about/about-us/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal, power, datacenter]
+    notes: 已讀供電、冷卻、IT 與服務的公司定位；不以 FY2025 公司總營收推算液冷收入。
+  - id: nvidia-dsx-cooling-overview
+    name: NVIDIA DSX 設施架構公開 overview
+    url: https://docs.nvidia.com/dsx/facilities-infra/reference-design-overview
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-10-16'
+    segments: [thermal, datacenter]
+    themes: [liquid-cooling]
+    notes: 已讀 CDU 與獨立二次側回路說明，overview 引用 2026-08-19 指南 v2.0；未取得 NVOnline 補充文件，未泛用參考場址容量與供水條件。

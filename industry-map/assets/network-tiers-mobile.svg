@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="404" viewBox="0 0 360 404">
+  <title>AI 網路的三個距離層</title>
+  <desc>距離越短越常用銅纜與主動電纜，距離拉長後改用光模組。交換晶片、DSP、光元件與模組在不同層分工。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#267a97"/></marker></defs>
+  <rect width="360" height="404" rx="8" fill="#f3f6f7"/>
+  <g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#16343a">
+    <text x="22" y="36" font-size="18" font-weight="700">AI 網路的三個距離層</text>
+    <text x="22" y="70" font-size="15" font-weight="700">機櫃內</text>
+    <rect x="22" y="80" width="316" height="38" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="32" y="104" font-size="14">加速器互連</text>
+    <rect x="22" y="124" width="316" height="38" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="32" y="148" font-size="14">銅纜／主動電纜</text>
+    <path d="M180 168V188" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="202" font-size="15" font-weight="700">機櫃間</text>
+    <rect x="22" y="212" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="236" font-size="14">交換器</text>
+    <rect x="22" y="256" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="280" font-size="14">光模組或銅</text>
+    <path d="M180 300V320" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="334" font-size="15" font-weight="700">跨機房</text>
+    <rect x="22" y="344" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="368" font-size="14">長距光通訊</text>
+  </g>
+</svg>

@@ -1,0 +1,1530 @@
+schema-version: research-v1
+taxonomy:
+- id: taxonomy-thermal-rack-cooling
+  parent: segment-thermal
+  child: application-ai-rack-cooling
+- id: taxonomy-rack-chip-heat
+  parent: application-ai-rack-cooling
+  child: role-chip-heat-capture
+- id: taxonomy-rack-distribution
+  parent: application-ai-rack-cooling
+  child: role-coolant-distribution
+- id: taxonomy-chip-cold-plate
+  parent: role-chip-heat-capture
+  child: product-cold-plate
+- id: taxonomy-distribution-l2l
+  parent: role-coolant-distribution
+  child: product-liquid-to-liquid-cdu
+- id: taxonomy-rack-loop-explanation
+  parent: application-ai-rack-cooling
+  child: concept-liquid-cooling-loop
+- id: taxonomy-ai-acceleration-from-compute
+  parent: segment-compute
+  child: application-ai-acceleration
+- id: taxonomy-ai-memory-from-memory
+  parent: segment-memory
+  child: application-ai-memory
+- id: taxonomy-chip-integration-from-advanced-packaging
+  parent: segment-advanced-packaging
+  child: application-chip-integration
+- id: taxonomy-chip-integration-from-substrate
+  parent: segment-substrate
+  child: application-chip-integration
+- id: taxonomy-chip-test-from-test
+  parent: segment-test
+  child: application-chip-test
+- id: taxonomy-chip-manufacturing-from-foundry
+  parent: segment-foundry
+  child: application-chip-manufacturing
+- id: taxonomy-chip-manufacturing-from-equipment
+  parent: segment-equipment
+  child: application-chip-manufacturing
+- id: taxonomy-chip-manufacturing-from-materials
+  parent: segment-materials
+  child: application-chip-manufacturing
+- id: taxonomy-chip-design-from-eda-ip
+  parent: segment-eda-ip
+  child: application-chip-design
+- id: taxonomy-ai-networking-from-networking
+  parent: segment-networking
+  child: application-ai-networking
+- id: taxonomy-ai-rack-power-from-power
+  parent: segment-power
+  child: application-ai-rack-power
+- id: taxonomy-ai-rack-power-from-power-discrete
+  parent: segment-power-discrete
+  child: application-ai-rack-power
+- id: taxonomy-server-assembly-from-odm
+  parent: segment-odm
+  child: application-server-assembly
+- id: taxonomy-server-assembly-from-pcb
+  parent: segment-pcb
+  child: application-server-assembly
+- id: taxonomy-server-assembly-from-interconnect
+  parent: segment-interconnect
+  child: application-server-assembly
+- id: taxonomy-server-air-cooling-from-thermal
+  parent: segment-thermal
+  child: application-server-air-cooling
+- id: taxonomy-ai-capacity-from-datacenter
+  parent: segment-datacenter
+  child: application-ai-capacity
+- id: taxonomy-merchant-accelerator-from-ai-acceleration
+  parent: application-ai-acceleration
+  child: role-merchant-accelerator
+- id: taxonomy-nvda-from-merchant-accelerator
+  parent: role-merchant-accelerator
+  child: company-nvda
+- id: taxonomy-amd-from-merchant-accelerator
+  parent: role-merchant-accelerator
+  child: company-amd
+- id: taxonomy-intc-from-merchant-accelerator
+  parent: role-merchant-accelerator
+  child: company-intc
+- id: taxonomy-ai-gpu-accelerator-from-merchant-accelerator
+  parent: role-merchant-accelerator
+  child: product-ai-gpu-accelerator
+- id: taxonomy-custom-asic-partner-from-ai-acceleration
+  parent: application-ai-acceleration
+  child: role-custom-asic-partner
+- id: taxonomy-avgo-from-custom-asic-partner
+  parent: role-custom-asic-partner
+  child: company-avgo
+- id: taxonomy-mrvl-from-custom-asic-partner
+  parent: role-custom-asic-partner
+  child: company-mrvl
+- id: taxonomy-3661-tw-from-custom-asic-partner
+  parent: role-custom-asic-partner
+  child: company-3661-tw
+- id: taxonomy-3443-tw-from-custom-asic-partner
+  parent: role-custom-asic-partner
+  child: company-3443-tw
+- id: taxonomy-custom-ai-asic-from-custom-asic-partner
+  parent: role-custom-asic-partner
+  child: product-custom-ai-asic
+- id: taxonomy-in-house-accelerator-from-ai-acceleration
+  parent: application-ai-acceleration
+  child: role-in-house-accelerator
+- id: taxonomy-googl-from-in-house-accelerator
+  parent: role-in-house-accelerator
+  child: company-googl
+- id: taxonomy-cloud-in-house-accelerator-from-in-house-accelerator
+  parent: role-in-house-accelerator
+  child: product-cloud-in-house-accelerator
+- id: taxonomy-hbm-stack-supply-from-ai-memory
+  parent: application-ai-memory
+  child: role-hbm-stack-supply
+- id: taxonomy-000660-ks-from-hbm-stack-supply
+  parent: role-hbm-stack-supply
+  child: company-000660-ks
+- id: taxonomy-005930-ks-from-hbm-stack-supply
+  parent: role-hbm-stack-supply
+  child: company-005930-ks
+- id: taxonomy-mu-from-hbm-stack-supply
+  parent: role-hbm-stack-supply
+  child: company-mu
+- id: taxonomy-hbm-stack-from-hbm-stack-supply
+  parent: role-hbm-stack-supply
+  child: product-hbm-stack
+- id: taxonomy-server-dram-from-ai-memory
+  parent: application-ai-memory
+  child: role-server-dram
+- id: taxonomy-000660-ks-from-server-dram
+  parent: role-server-dram
+  child: company-000660-ks
+- id: taxonomy-005930-ks-from-server-dram
+  parent: role-server-dram
+  child: company-005930-ks
+- id: taxonomy-mu-from-server-dram
+  parent: role-server-dram
+  child: company-mu
+- id: taxonomy-2408-tw-from-server-dram
+  parent: role-server-dram
+  child: company-2408-tw
+- id: taxonomy-server-dram-module-from-server-dram
+  parent: role-server-dram
+  child: product-server-dram-module
+- id: taxonomy-specialty-memory-from-ai-memory
+  parent: application-ai-memory
+  child: role-specialty-memory
+- id: taxonomy-2344-tw-from-specialty-memory
+  parent: role-specialty-memory
+  child: company-2344-tw
+- id: taxonomy-specialty-memory-from-specialty-memory
+  parent: role-specialty-memory
+  child: product-specialty-memory
+- id: taxonomy-nand-controller-from-ai-memory
+  parent: application-ai-memory
+  child: role-nand-controller
+- id: taxonomy-8299-two-from-nand-controller
+  parent: role-nand-controller
+  child: company-8299-two
+- id: taxonomy-ssd-controller-from-nand-controller
+  parent: role-nand-controller
+  child: product-ssd-controller
+- id: taxonomy-interposer-integration-from-chip-integration
+  parent: application-chip-integration
+  child: role-interposer-integration
+- id: taxonomy-tsmc-from-interposer-integration
+  parent: role-interposer-integration
+  child: company-tsmc
+- id: taxonomy-3711-tw-from-interposer-integration
+  parent: role-interposer-integration
+  child: company-3711-tw
+- id: taxonomy-2p5d-interposer-package-from-interposer-integration
+  parent: role-interposer-integration
+  child: product-2p5d-interposer-package
+- id: taxonomy-osat-assembly-from-chip-integration
+  parent: application-chip-integration
+  child: role-osat-assembly
+- id: taxonomy-3711-tw-from-osat-assembly
+  parent: role-osat-assembly
+  child: company-3711-tw
+- id: taxonomy-6239-tw-from-osat-assembly
+  parent: role-osat-assembly
+  child: company-6239-tw
+- id: taxonomy-amkr-from-osat-assembly
+  parent: role-osat-assembly
+  child: company-amkr
+- id: taxonomy-flip-chip-package-service-from-osat-assembly
+  parent: role-osat-assembly
+  child: product-flip-chip-package-service
+- id: taxonomy-ic-substrate-from-chip-integration
+  parent: application-chip-integration
+  child: role-ic-substrate
+- id: taxonomy-4062-t-from-ic-substrate
+  parent: role-ic-substrate
+  child: company-4062-t
+- id: taxonomy-private-shinko-from-ic-substrate
+  parent: role-ic-substrate
+  child: company-private-shinko
+- id: taxonomy-3037-tw-from-ic-substrate
+  parent: role-ic-substrate
+  child: company-3037-tw
+- id: taxonomy-8046-tw-from-ic-substrate
+  parent: role-ic-substrate
+  child: company-8046-tw
+- id: taxonomy-3189-tw-from-ic-substrate
+  parent: role-ic-substrate
+  child: company-3189-tw
+- id: taxonomy-abf-substrate-from-ic-substrate
+  parent: role-ic-substrate
+  child: product-abf-substrate
+- id: taxonomy-test-service-from-chip-test
+  parent: application-chip-test
+  child: role-test-service
+- id: taxonomy-2449-tw-from-test-service
+  parent: role-test-service
+  child: company-2449-tw
+- id: taxonomy-3264-two-from-test-service
+  parent: role-test-service
+  child: company-3264-two
+- id: taxonomy-chip-test-service-from-test-service
+  parent: role-test-service
+  child: product-chip-test-service
+- id: taxonomy-test-contact-interface-from-chip-test
+  parent: application-chip-test
+  child: role-test-contact-interface
+- id: taxonomy-6223-two-from-test-contact-interface
+  parent: role-test-contact-interface
+  child: company-6223-two
+- id: taxonomy-6515-tw-from-test-contact-interface
+  parent: role-test-contact-interface
+  child: company-6515-tw
+- id: taxonomy-probe-card-from-test-contact-interface
+  parent: role-test-contact-interface
+  child: product-probe-card
+- id: taxonomy-test-socket-from-test-contact-interface
+  parent: role-test-contact-interface
+  child: product-test-socket
+- id: taxonomy-ate-system-from-chip-test
+  parent: application-chip-test
+  child: role-ate-system
+- id: taxonomy-ter-from-ate-system
+  parent: role-ate-system
+  child: company-ter
+- id: taxonomy-6857-t-from-ate-system
+  parent: role-ate-system
+  child: company-6857-t
+- id: taxonomy-ate-system-from-ate-system
+  parent: role-ate-system
+  child: product-ate-system
+- id: taxonomy-advanced-logic-foundry-from-chip-manufacturing
+  parent: application-chip-manufacturing
+  child: role-advanced-logic-foundry
+- id: taxonomy-tsmc-from-advanced-logic-foundry
+  parent: role-advanced-logic-foundry
+  child: company-tsmc
+- id: taxonomy-005930-ks-from-advanced-logic-foundry
+  parent: role-advanced-logic-foundry
+  child: company-005930-ks
+- id: taxonomy-advanced-logic-wafer-from-advanced-logic-foundry
+  parent: role-advanced-logic-foundry
+  child: product-advanced-logic-wafer
+- id: taxonomy-mature-specialty-foundry-from-chip-manufacturing
+  parent: application-chip-manufacturing
+  child: role-mature-specialty-foundry
+- id: taxonomy-2303-tw-from-mature-specialty-foundry
+  parent: role-mature-specialty-foundry
+  child: company-2303-tw
+- id: taxonomy-gfs-from-mature-specialty-foundry
+  parent: role-mature-specialty-foundry
+  child: company-gfs
+- id: taxonomy-0981-hk-from-mature-specialty-foundry
+  parent: role-mature-specialty-foundry
+  child: company-0981-hk
+- id: taxonomy-mature-specialty-wafer-from-mature-specialty-foundry
+  parent: role-mature-specialty-foundry
+  child: product-mature-specialty-wafer
+- id: taxonomy-lithography-from-chip-manufacturing
+  parent: application-chip-manufacturing
+  child: role-lithography
+- id: taxonomy-asml-from-lithography
+  parent: role-lithography
+  child: company-asml
+- id: taxonomy-lithography-system-from-lithography
+  parent: role-lithography
+  child: product-lithography-system
+- id: taxonomy-lithography-track-from-chip-manufacturing
+  parent: application-chip-manufacturing
+  child: role-lithography-track
+- id: taxonomy-8035-t-from-lithography-track
+  parent: role-lithography-track
+  child: company-8035-t
+- id: taxonomy-coater-developer-from-lithography-track
+  parent: role-lithography-track
+  child: product-coater-developer
+- id: taxonomy-deposition-etch-from-chip-manufacturing
+  parent: application-chip-manufacturing
+  child: role-deposition-etch
+- id: taxonomy-amat-from-deposition-etch
+  parent: role-deposition-etch
+  child: company-amat
+- id: taxonomy-lrcx-from-deposition-etch
+  parent: role-deposition-etch
+  child: company-lrcx
+- id: taxonomy-8035-t-from-deposition-etch
+  parent: role-deposition-etch
+  child: company-8035-t
+- id: taxonomy-deposition-etch-tool-from-deposition-etch
+  parent: role-deposition-etch
+  child: product-deposition-etch-tool
+- id: taxonomy-process-control-from-chip-manufacturing
+  parent: application-chip-manufacturing
+  child: role-process-control
+- id: taxonomy-klac-from-process-control
+  parent: role-process-control
+  child: company-klac
+- id: taxonomy-inspection-metrology-from-process-control
+  parent: role-process-control
+  child: product-inspection-metrology
+- id: taxonomy-wet-process-from-chip-manufacturing
+  parent: application-chip-manufacturing
+  child: role-wet-process
+- id: taxonomy-3131-two-from-wet-process
+  parent: role-wet-process
+  child: company-3131-two
+- id: taxonomy-3583-tw-from-wet-process
+  parent: role-wet-process
+  child: company-3583-tw
+- id: taxonomy-wet-process-tool-from-wet-process
+  parent: role-wet-process
+  child: product-wet-process-tool
+- id: taxonomy-silicon-wafer-from-chip-manufacturing
+  parent: application-chip-manufacturing
+  child: role-silicon-wafer
+- id: taxonomy-3436-t-from-silicon-wafer
+  parent: role-silicon-wafer
+  child: company-3436-t
+- id: taxonomy-6488-two-from-silicon-wafer
+  parent: role-silicon-wafer
+  child: company-6488-two
+- id: taxonomy-5483-two-from-silicon-wafer
+  parent: role-silicon-wafer
+  child: company-5483-two
+- id: taxonomy-silicon-wafer-from-silicon-wafer
+  parent: role-silicon-wafer
+  child: product-silicon-wafer
+- id: taxonomy-photoresist-from-chip-manufacturing
+  parent: application-chip-manufacturing
+  child: role-photoresist
+- id: taxonomy-4186-t-from-photoresist
+  parent: role-photoresist
+  child: company-4186-t
+- id: taxonomy-photoresist-from-photoresist
+  parent: role-photoresist
+  child: product-photoresist
+- id: taxonomy-contamination-control-from-chip-manufacturing
+  parent: application-chip-manufacturing
+  child: role-contamination-control
+- id: taxonomy-entg-from-contamination-control
+  parent: role-contamination-control
+  child: company-entg
+- id: taxonomy-filtration-purification-from-contamination-control
+  parent: role-contamination-control
+  child: product-filtration-purification
+- id: taxonomy-specialty-gas-from-chip-manufacturing
+  parent: application-chip-manufacturing
+  child: role-specialty-gas
+- id: taxonomy-lin-from-specialty-gas
+  parent: role-specialty-gas
+  child: company-lin
+- id: taxonomy-specialty-gas-from-specialty-gas
+  parent: role-specialty-gas
+  child: product-specialty-gas
+- id: taxonomy-eda-tools-from-chip-design
+  parent: application-chip-design
+  child: role-eda-tools
+- id: taxonomy-cdns-from-eda-tools
+  parent: role-eda-tools
+  child: company-cdns
+- id: taxonomy-snps-from-eda-tools
+  parent: role-eda-tools
+  child: company-snps
+- id: taxonomy-eda-software-from-eda-tools
+  parent: role-eda-tools
+  child: product-eda-software
+- id: taxonomy-processor-ip-from-chip-design
+  parent: application-chip-design
+  child: role-processor-ip
+- id: taxonomy-arm-from-processor-ip
+  parent: role-processor-ip
+  child: company-arm
+- id: taxonomy-processor-ip-from-processor-ip
+  parent: role-processor-ip
+  child: product-processor-ip
+- id: taxonomy-memory-security-ip-from-chip-design
+  parent: application-chip-design
+  child: role-memory-security-ip
+- id: taxonomy-3529-two-from-memory-security-ip
+  parent: role-memory-security-ip
+  child: company-3529-two
+- id: taxonomy-nvm-security-ip-from-memory-security-ip
+  parent: role-memory-security-ip
+  child: product-nvm-security-ip
+- id: taxonomy-interface-ip-from-chip-design
+  parent: application-chip-design
+  child: role-interface-ip
+- id: taxonomy-6643-two-from-interface-ip
+  parent: role-interface-ip
+  child: company-6643-two
+- id: taxonomy-snps-from-interface-ip
+  parent: role-interface-ip
+  child: company-snps
+- id: taxonomy-interface-ip-from-interface-ip
+  parent: role-interface-ip
+  child: product-interface-ip
+- id: taxonomy-switch-silicon-from-ai-networking
+  parent: application-ai-networking
+  child: role-switch-silicon
+- id: taxonomy-avgo-from-switch-silicon
+  parent: role-switch-silicon
+  child: company-avgo
+- id: taxonomy-ethernet-switch-asic-from-switch-silicon
+  parent: role-switch-silicon
+  child: product-ethernet-switch-asic
+- id: taxonomy-optical-dsp-from-ai-networking
+  parent: application-ai-networking
+  child: role-optical-dsp
+- id: taxonomy-mrvl-from-optical-dsp
+  parent: role-optical-dsp
+  child: company-mrvl
+- id: taxonomy-optical-dsp-from-optical-dsp
+  parent: role-optical-dsp
+  child: product-optical-dsp
+- id: taxonomy-electrical-connectivity-from-ai-networking
+  parent: application-ai-networking
+  child: role-electrical-connectivity
+- id: taxonomy-crdo-from-electrical-connectivity
+  parent: role-electrical-connectivity
+  child: company-crdo
+- id: taxonomy-alab-from-electrical-connectivity
+  parent: role-electrical-connectivity
+  child: company-alab
+- id: taxonomy-retimer-from-electrical-connectivity
+  parent: role-electrical-connectivity
+  child: product-retimer
+- id: taxonomy-active-electrical-cable-from-electrical-connectivity
+  parent: role-electrical-connectivity
+  child: product-active-electrical-cable
+- id: taxonomy-optical-chip-from-ai-networking
+  parent: application-ai-networking
+  child: role-optical-chip
+- id: taxonomy-optical-epiwafer-from-ai-networking
+  parent: application-ai-networking
+  child: role-optical-epiwafer
+- id: taxonomy-optical-epiwafer-from-optical-epiwafer
+  parent: role-optical-epiwafer
+  child: product-optical-epiwafer
+- id: taxonomy-3081-two-from-optical-epiwafer
+  parent: role-optical-epiwafer
+  child: company-3081-two
+- id: taxonomy-inp-laser-chip-from-optical-chip
+  parent: role-optical-chip
+  child: product-inp-laser-chip
+- id: taxonomy-optical-module-from-ai-networking
+  parent: application-ai-networking
+  child: role-optical-module
+- id: taxonomy-4979-two-from-optical-module
+  parent: role-optical-module
+  child: company-4979-two
+- id: taxonomy-optical-transceiver-from-optical-module
+  parent: role-optical-module
+  child: product-optical-transceiver
+- id: taxonomy-switch-system-from-ai-networking
+  parent: application-ai-networking
+  child: role-switch-system
+- id: taxonomy-2345-tw-from-switch-system
+  parent: role-switch-system
+  child: company-2345-tw
+- id: taxonomy-datacenter-switch-from-switch-system
+  parent: role-switch-system
+  child: product-datacenter-switch
+- id: taxonomy-rack-power-supply-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-rack-power-supply
+- id: taxonomy-delta-electronics-from-rack-power-supply
+  parent: role-rack-power-supply
+  child: company-delta-electronics
+- id: taxonomy-2301-tw-from-rack-power-supply
+  parent: role-rack-power-supply
+  child: company-2301-tw
+- id: taxonomy-6282-tw-from-rack-power-supply
+  parent: role-rack-power-supply
+  child: company-6282-tw
+- id: taxonomy-power-shelf-psu-from-rack-power-supply
+  parent: role-rack-power-supply
+  child: product-power-shelf-psu
+- id: taxonomy-board-power-conversion-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-board-power-conversion
+- id: taxonomy-mpwr-from-board-power-conversion
+  parent: role-board-power-conversion
+  child: company-mpwr
+- id: taxonomy-vicr-from-board-power-conversion
+  parent: role-board-power-conversion
+  child: company-vicr
+- id: taxonomy-pmic-voltage-regulator-from-board-power-conversion
+  parent: role-board-power-conversion
+  child: product-pmic-voltage-regulator
+- id: taxonomy-power-module-from-board-power-conversion
+  parent: role-board-power-conversion
+  child: product-power-module
+- id: taxonomy-power-switch-device-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-power-switch-device
+- id: taxonomy-ifx-de-from-power-switch-device
+  parent: role-power-switch-device
+  child: company-ifx-de
+- id: taxonomy-on-from-power-switch-device
+  parent: role-power-switch-device
+  child: company-on
+- id: taxonomy-wolf-from-power-switch-device
+  parent: role-power-switch-device
+  child: company-wolf
+- id: taxonomy-power-transistor-from-power-switch-device
+  parent: role-power-switch-device
+  child: product-power-transistor
+- id: taxonomy-power-control-mcu-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-power-control-mcu
+- id: taxonomy-4919-tw-from-power-control-mcu
+  parent: role-power-control-mcu
+  child: company-4919-tw
+- id: taxonomy-power-control-ic-from-power-control-mcu
+  parent: role-power-control-mcu
+  child: product-power-control-ic
+- id: taxonomy-discrete-rectifier-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-discrete-rectifier
+- id: taxonomy-2481-tw-from-discrete-rectifier
+  parent: role-discrete-rectifier
+  child: company-2481-tw
+- id: taxonomy-rectifier-protection-from-discrete-rectifier
+  parent: role-discrete-rectifier
+  child: product-rectifier-protection
+- id: taxonomy-power-materials-process-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-power-materials-process
+- id: taxonomy-wolf-from-power-materials-process
+  parent: role-power-materials-process
+  child: company-wolf
+- id: taxonomy-3016-tw-from-power-materials-process
+  parent: role-power-materials-process
+  child: company-3016-tw
+- id: taxonomy-3707-two-from-power-materials-process
+  parent: role-power-materials-process
+  child: company-3707-two
+- id: taxonomy-power-epitaxy-foundry-from-power-materials-process
+  parent: role-power-materials-process
+  child: product-power-epitaxy-foundry
+- id: taxonomy-high-speed-laminate-from-server-assembly
+  parent: application-server-assembly
+  child: role-high-speed-laminate
+- id: taxonomy-2383-tw-from-high-speed-laminate
+  parent: role-high-speed-laminate
+  child: company-2383-tw
+- id: taxonomy-6274-tw-from-high-speed-laminate
+  parent: role-high-speed-laminate
+  child: company-6274-tw
+- id: taxonomy-high-speed-ccl-from-high-speed-laminate
+  parent: role-high-speed-laminate
+  child: product-high-speed-ccl
+- id: taxonomy-server-pcb-from-server-assembly
+  parent: application-server-assembly
+  child: role-server-pcb
+- id: taxonomy-2368-tw-from-server-pcb
+  parent: role-server-pcb
+  child: company-2368-tw
+- id: taxonomy-3044-tw-from-server-pcb
+  parent: role-server-pcb
+  child: company-3044-tw
+- id: taxonomy-ttmi-from-server-pcb
+  parent: role-server-pcb
+  child: company-ttmi
+- id: taxonomy-server-multilayer-pcb-from-server-pcb
+  parent: role-server-pcb
+  child: product-server-multilayer-pcb
+- id: taxonomy-high-speed-connector-from-server-assembly
+  parent: application-server-assembly
+  child: role-high-speed-connector
+- id: taxonomy-3533-tw-from-high-speed-connector
+  parent: role-high-speed-connector
+  child: company-3533-tw
+- id: taxonomy-aph-from-high-speed-connector
+  parent: role-high-speed-connector
+  child: company-aph
+- id: taxonomy-high-speed-connector-from-high-speed-connector
+  parent: role-high-speed-connector
+  child: product-high-speed-connector
+- id: taxonomy-cable-harness-from-server-assembly
+  parent: application-server-assembly
+  child: role-cable-harness
+- id: taxonomy-3665-tw-from-cable-harness
+  parent: role-cable-harness
+  child: company-3665-tw
+- id: taxonomy-3023-tw-from-cable-harness
+  parent: role-cable-harness
+  child: company-3023-tw
+- id: taxonomy-cable-assembly-from-cable-harness
+  parent: role-cable-harness
+  child: product-cable-assembly
+- id: taxonomy-liquid-quick-disconnect-from-server-assembly
+  parent: application-server-assembly
+  child: role-liquid-quick-disconnect
+- id: taxonomy-aph-from-liquid-quick-disconnect
+  parent: role-liquid-quick-disconnect
+  child: company-aph
+- id: taxonomy-liquid-quick-disconnect-from-liquid-quick-disconnect
+  parent: role-liquid-quick-disconnect
+  child: product-liquid-quick-disconnect
+- id: taxonomy-server-rail-from-server-assembly
+  parent: application-server-assembly
+  child: role-server-rail
+- id: taxonomy-2059-tw-from-server-rail
+  parent: role-server-rail
+  child: company-2059-tw
+- id: taxonomy-server-slide-rail-from-server-rail
+  parent: role-server-rail
+  child: product-server-slide-rail
+- id: taxonomy-rack-system-integration-from-server-assembly
+  parent: application-server-assembly
+  child: role-rack-system-integration
+- id: taxonomy-hon-hai-from-rack-system-integration
+  parent: role-rack-system-integration
+  child: company-hon-hai
+- id: taxonomy-2382-tw-from-rack-system-integration
+  parent: role-rack-system-integration
+  child: company-2382-tw
+- id: taxonomy-3231-tw-from-rack-system-integration
+  parent: role-rack-system-integration
+  child: company-3231-tw
+- id: taxonomy-6669-tw-from-rack-system-integration
+  parent: role-rack-system-integration
+  child: company-6669-tw
+- id: taxonomy-2356-tw-from-rack-system-integration
+  parent: role-rack-system-integration
+  child: company-2356-tw
+- id: taxonomy-ai-rack-system-from-rack-system-integration
+  parent: role-rack-system-integration
+  child: product-ai-rack-system
+- id: taxonomy-server-brand-from-server-assembly
+  parent: application-server-assembly
+  child: role-server-brand
+- id: taxonomy-smci-from-server-brand
+  parent: role-server-brand
+  child: company-smci
+- id: taxonomy-dell-from-server-brand
+  parent: role-server-brand
+  child: company-dell
+- id: taxonomy-2376-tw-from-server-brand
+  parent: role-server-brand
+  child: company-2376-tw
+- id: taxonomy-branded-ai-server-from-server-brand
+  parent: role-server-brand
+  child: product-branded-ai-server
+- id: taxonomy-rack-manifold-from-ai-rack-cooling
+  parent: application-ai-rack-cooling
+  child: role-rack-manifold
+- id: taxonomy-auras-from-rack-manifold
+  parent: role-rack-manifold
+  child: company-auras
+- id: taxonomy-rack-manifold-from-rack-manifold
+  parent: role-rack-manifold
+  child: product-rack-manifold
+- id: taxonomy-air-cooling-module-from-server-air-cooling
+  parent: application-server-air-cooling
+  child: role-air-cooling-module
+- id: taxonomy-avc-from-air-cooling-module
+  parent: role-air-cooling-module
+  child: company-avc
+- id: taxonomy-vapor-chamber-air-module-from-air-cooling-module
+  parent: role-air-cooling-module
+  child: product-vapor-chamber-air-module
+- id: taxonomy-server-fan-from-server-air-cooling
+  parent: application-server-air-cooling
+  child: role-server-fan
+- id: taxonomy-2421-tw-from-server-fan
+  parent: role-server-fan
+  child: company-2421-tw
+- id: taxonomy-server-fan-from-server-fan
+  parent: role-server-fan
+  child: product-server-fan
+- id: taxonomy-hyperscale-operator-from-ai-capacity
+  parent: application-ai-capacity
+  child: role-hyperscale-operator
+- id: taxonomy-msft-from-hyperscale-operator
+  parent: role-hyperscale-operator
+  child: company-msft
+- id: taxonomy-googl-from-hyperscale-operator
+  parent: role-hyperscale-operator
+  child: company-googl
+- id: taxonomy-amzn-from-hyperscale-operator
+  parent: role-hyperscale-operator
+  child: company-amzn
+- id: taxonomy-meta-from-hyperscale-operator
+  parent: role-hyperscale-operator
+  child: company-meta
+- id: taxonomy-hyperscale-ai-capacity-from-hyperscale-operator
+  parent: role-hyperscale-operator
+  child: product-hyperscale-ai-capacity
+- id: taxonomy-ai-cloud-provider-from-ai-capacity
+  parent: application-ai-capacity
+  child: role-ai-cloud-provider
+- id: taxonomy-orcl-from-ai-cloud-provider
+  parent: role-ai-cloud-provider
+  child: company-orcl
+- id: taxonomy-crwv-from-ai-cloud-provider
+  parent: role-ai-cloud-provider
+  child: company-crwv
+- id: taxonomy-gpu-cloud-service-from-ai-cloud-provider
+  parent: role-ai-cloud-provider
+  child: product-gpu-cloud-service
+- id: taxonomy-auras-from-chip-heat-capture
+  parent: role-chip-heat-capture
+  child: company-auras
+- id: taxonomy-boyd-from-chip-heat-capture
+  parent: role-chip-heat-capture
+  child: company-boyd
+- id: taxonomy-vertiv-from-coolant-distribution
+  parent: role-coolant-distribution
+  child: company-vertiv
+- id: taxonomy-auras-from-coolant-distribution
+  parent: role-coolant-distribution
+  child: company-auras
+- id: taxonomy-package-layers-explanation
+  parent: application-chip-integration
+  child: concept-package-layers
+- id: taxonomy-hbm-stack-explanation
+  parent: application-ai-memory
+  child: concept-hbm-stack
+- id: taxonomy-network-tiers-explanation
+  parent: application-ai-networking
+  child: concept-network-tiers
+- id: taxonomy-power-conversion-chain-explanation
+  parent: application-ai-rack-power
+  child: concept-power-conversion-chain
+- id: taxonomy-laminate-to-board-explanation
+  parent: application-server-assembly
+  child: concept-laminate-to-board
+- id: taxonomy-test-insertions-explanation
+  parent: application-chip-test
+  child: concept-test-insertions
+- id: taxonomy-avc-from-chip-heat-capture
+  parent: role-chip-heat-capture
+  child: company-avc
+- id: taxonomy-2421-tw-from-chip-heat-capture
+  parent: role-chip-heat-capture
+  child: company-2421-tw
+- id: taxonomy-aph-from-cable-harness
+  parent: role-cable-harness
+  child: company-aph
+- id: taxonomy-avgo-from-optical-chip
+  parent: role-optical-chip
+  child: company-avgo
+- id: taxonomy-mrvl-from-switch-silicon
+  parent: role-switch-silicon
+  child: company-mrvl
+- id: taxonomy-mrvl-from-electrical-connectivity
+  parent: role-electrical-connectivity
+  child: company-mrvl
+- id: taxonomy-crdo-from-optical-dsp
+  parent: role-optical-dsp
+  child: company-crdo
+- id: taxonomy-4979-two-from-optical-chip
+  parent: role-optical-chip
+  child: company-4979-two
+- id: taxonomy-3711-tw-from-test-service
+  parent: role-test-service
+  child: company-3711-tw
+- id: taxonomy-6239-tw-from-test-service
+  parent: role-test-service
+  child: company-6239-tw
+- id: taxonomy-amkr-from-test-service
+  parent: role-test-service
+  child: company-amkr
+- id: taxonomy-amkr-from-interposer-integration
+  parent: role-interposer-integration
+  child: company-amkr
+offerings:
+- id: offering-auras-cold-plate
+  company: company-auras
+  product: product-cold-plate
+  role: role-chip-heat-capture
+  conditions:
+  - 依 2025 官方展會新聞核對產品範圍，實際平台及交付仍需個別驗證
+  claim-refs:
+  - entity-id: company-auras
+    claim-id: cold-plate-portfolio
+- id: offering-vertiv-l2l-cdu
+  company: company-vertiv
+  product: product-liquid-to-liquid-cdu
+  role: role-coolant-distribution
+  conditions:
+  - 限 CoolChip 液對液型號，需相容設施水路及指定運轉條件
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: coolchip-l2l-capability
+- id: offering-auras-rack-manifold
+  company: company-auras
+  product: product-rack-manifold
+  role: role-rack-manifold
+  conditions:
+  - 依 114 年度年報列出的分歧管方案，未揭露客戶或出貨量
+  claim-refs:
+  - entity-id: company-auras
+    claim-id: liquid-cooling-system-scope
+- id: offering-auras-l2l-cdu
+  company: company-auras
+  product: product-liquid-to-liquid-cdu
+  role: role-coolant-distribution
+  conditions:
+  - 年報列為可提供的水對水 CDU 方案；2025 展會新聞曾以研發措辭描述，出貨與收入未揭露
+  claim-refs:
+  - entity-id: company-auras
+    claim-id: liquid-cooling-system-scope
+- id: offering-avc-cold-plate
+  company: company-avc
+  product: product-cold-plate
+  role: role-chip-heat-capture
+  conditions:
+  - 年報列出水冷板為散熱產品之一，未揭露平台、客戶或出貨量
+  claim-refs:
+  - entity-id: company-avc
+    claim-id: product-scope
+- id: offering-avc-vapor-chamber-air-module
+  company: company-avc
+  product: product-vapor-chamber-air-module
+  role: role-air-cooling-module
+  conditions:
+  - 年報列出熱管／均熱板、3D VC 與散熱模組
+  claim-refs:
+  - entity-id: company-avc
+    claim-id: product-scope
+- id: offering-2421-tw-server-fan
+  company: company-2421-tw
+  product: product-server-fan
+  role: role-server-fan
+  conditions:
+  - 散熱風扇為主要營收來源；伺服器用比例未揭露
+  claim-refs:
+  - entity-id: company-2421-tw
+    claim-id: revenue-mix
+- id: offering-2421-tw-cold-plate
+  company: company-2421-tw
+  product: product-cold-plate
+  role: role-chip-heat-capture
+  conditions:
+  - 年報列出水冷板／水冷散熱器，未揭露平台、客戶或出貨量
+  claim-refs:
+  - entity-id: company-2421-tw
+    claim-id: liquid-module-products
+- id: offering-delta-electronics-power-shelf-psu
+  company: company-delta-electronics
+  product: product-power-shelf-psu
+  role: role-rack-power-supply
+  conditions:
+  - 年報列出機架式 DC/DC 電源、電容系統與列間電源系統，未揭露客戶或出貨
+  claim-refs:
+  - entity-id: company-delta-electronics
+    claim-id: ai-power-products
+- id: offering-2301-tw-power-shelf-psu
+  company: company-2301-tw
+  product: product-power-shelf-psu
+  role: role-rack-power-supply
+  conditions:
+  - 雲端及物聯網部門列有伺服器電源及儲能系統解決方案，未揭露客戶或出貨
+  claim-refs:
+  - entity-id: company-2301-tw
+    claim-id: segment-mix
+- id: offering-6282-tw-power-shelf-psu
+  company: company-6282-tw
+  product: product-power-shelf-psu
+  role: role-rack-power-supply
+  conditions:
+  - 年報列出伺服器電源與資料中心機櫃級電源系統，未揭露客戶或出貨
+  claim-refs:
+  - entity-id: company-6282-tw
+    claim-id: server-power-products
+- id: offering-mpwr-pmic-voltage-regulator
+  company: company-mpwr
+  product: product-pmic-voltage-regulator
+  role: role-board-power-conversion
+  conditions:
+  - 10-K 將 DC to DC 方案用於伺服器與 AI 系統，未揭露具體平台或客戶
+  claim-refs:
+  - entity-id: company-mpwr
+    claim-id: end-market-mix
+- id: offering-vicr-power-module
+  company: company-vicr
+  product: product-power-module
+  role: role-board-power-conversion
+  conditions:
+  - 10-K 描述 Power-on-Package 與垂直供電模組，未揭露具體平台或客戶
+  claim-refs:
+  - entity-id: company-vicr
+    claim-id: product-categories
+- id: offering-3533-tw-high-speed-connector
+  company: company-3533-tw
+  product: product-high-speed-connector
+  role: role-high-speed-connector
+  conditions:
+  - 年報列出伺服器用連接器、連接線與插槽，未揭露具體平台或客戶
+  claim-refs:
+  - entity-id: company-3533-tw
+    claim-id: revenue-and-products
+- id: offering-3665-tw-cable-assembly
+  company: company-3665-tw
+  product: product-cable-assembly
+  role: role-cable-harness
+  conditions:
+  - 資訊科技與數據傳播產品占營收 42.4%，未揭露具體平台或客戶
+  claim-refs:
+  - entity-id: company-3665-tw
+    claim-id: product-mix
+- id: offering-3023-tw-cable-assembly
+  company: company-3023-tw
+  product: product-cable-assembly
+  role: role-cable-harness
+  conditions:
+  - 年報描述客製化連接線組，但未把 AI 伺服器或資料中心列為主要應用
+  claim-refs:
+  - entity-id: company-3023-tw
+    claim-id: custom-cable-business
+- id: offering-aph-high-speed-connector
+  company: company-aph
+  product: product-high-speed-connector
+  role: role-high-speed-connector
+  conditions:
+  - 10-K 描述 IT datacom 高速與電源互連用於 AI 系統，未揭露具體平台或客戶
+  claim-refs:
+  - entity-id: company-aph
+    claim-id: it-datacom-share
+- id: offering-aph-cable-assembly
+  company: company-aph
+  product: product-cable-assembly
+  role: role-cable-harness
+  conditions:
+  - Communications Solutions 含高速、電源與光纖線纜，未揭露 AI 伺服器出貨
+  claim-refs:
+  - entity-id: company-aph
+    claim-id: it-datacom-share
+- id: offering-aph-liquid-quick-disconnect
+  company: company-aph
+  product: product-liquid-quick-disconnect
+  role: role-liquid-quick-disconnect
+  conditions:
+  - 官方產品頁列出系列與應用，未揭露客戶或出貨
+  claim-refs:
+  - entity-id: company-aph
+    claim-id: liquid-cooling-portfolio
+- id: offering-2059-tw-server-slide-rail
+  company: company-2059-tw
+  product: product-server-slide-rail
+  role: role-server-rail
+  conditions:
+  - 年報的導軌即 1U–7U 伺服器用 rail kit，占營收 98%
+  claim-refs:
+  - entity-id: company-2059-tw
+    claim-id: rail-revenue-share
+- id: offering-avgo-custom-ai-asic
+  company: company-avgo
+  product: product-custom-ai-asic
+  role: role-custom-asic-partner
+  conditions:
+  - 10-K 描述客製加速器（XPU）設計與交付，未揭露客戶或個別專案
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: custom-silicon
+- id: offering-avgo-ethernet-switch-asic
+  company: company-avgo
+  product: product-ethernet-switch-asic
+  role: role-switch-silicon
+  conditions:
+  - 10-K 描述資料中心 Ethernet 交換晶片，未拆分收入
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: ethernet-switching
+- id: offering-avgo-inp-laser-chip
+  company: company-avgo
+  product: product-inp-laser-chip
+  role: role-optical-chip
+  conditions:
+  - 10-K 說明以自有晶圓廠生產光纖通訊用 InP 與 GaAs 雷射，未揭露收入或客戶
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: manufacturing-partners
+- id: offering-mrvl-custom-ai-asic
+  company: company-mrvl
+  product: product-custom-ai-asic
+  role: role-custom-asic-partner
+  conditions:
+  - 10-K 描述客製晶片平台，未揭露客戶或個別專案
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: custom-asic
+- id: offering-mrvl-optical-dsp
+  company: company-mrvl
+  product: product-optical-dsp
+  role: role-optical-dsp
+  conditions:
+  - 10-K 描述 PAM 與 coherent 光 DSP，未拆分收入
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: interconnect-portfolio
+- id: offering-mrvl-ethernet-switch-asic
+  company: company-mrvl
+  product: product-ethernet-switch-asic
+  role: role-switch-silicon
+  conditions:
+  - 10-K 描述 Teralynx 與 Prestera 交換晶片，未拆分收入
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: ethernet-switches
+- id: offering-mrvl-retimer
+  company: company-mrvl
+  product: product-retimer
+  role: role-electrical-connectivity
+  conditions:
+  - 10-K 描述 PCIe retimer 與 AEC DSP，未拆分收入
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: interconnect-portfolio
+- id: offering-crdo-active-electrical-cable
+  company: company-crdo
+  product: product-active-electrical-cable
+  role: role-electrical-connectivity
+  conditions:
+  - 10-K 說明 AEC 放量貢獻營收增量逾 99%，AEC 由貿聯代工
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: aec-revenue
+- id: offering-crdo-retimer
+  company: company-crdo
+  product: product-retimer
+  role: role-electrical-connectivity
+  conditions:
+  - 10-K 列出 Ethernet 與 PCIe retimer，未拆分收入
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: product-portfolio
+- id: offering-crdo-optical-dsp
+  company: company-crdo
+  product: product-optical-dsp
+  role: role-optical-dsp
+  conditions:
+  - 10-K 列出光 Ethernet DSP，未拆分收入
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: product-portfolio
+- id: offering-alab-retimer
+  company: company-alab
+  product: product-retimer
+  role: role-electrical-connectivity
+  conditions:
+  - 10-K 列出 Aries PCIe／CXL retimer，未拆分收入
+  claim-refs:
+  - entity-id: company-alab
+    claim-id: product-families
+- id: offering-alab-active-electrical-cable
+  company: company-alab
+  product: product-active-electrical-cable
+  role: role-electrical-connectivity
+  conditions:
+  - 10-K 列出 Aries 與 Taurus 智慧線纜模組，是裝入線纜的模組，不是整條線纜
+  claim-refs:
+  - entity-id: company-alab
+    claim-id: product-families
+- id: offering-2345-tw-datacenter-switch
+  company: company-2345-tw
+  product: product-datacenter-switch
+  role: role-switch-system
+  conditions:
+  - 年報列出 200G／400G／800G 資料中心交換器，網路交換器占營收 35%
+  claim-refs:
+  - entity-id: company-2345-tw
+    claim-id: product-mix
+- id: offering-3081-two-optical-epiwafer
+  company: company-3081-two
+  product: product-optical-epiwafer
+  role: role-optical-epiwafer
+  conditions:
+  - 年報揭露磊晶片及加工品占營收 99.21%，客戶為光通訊元件廠
+  claim-refs:
+  - entity-id: company-3081-two
+    claim-id: epiwafer-business
+- id: offering-4979-two-optical-transceiver
+  company: company-4979-two
+  product: product-optical-transceiver
+  role: role-optical-module
+  conditions:
+  - 主動元件及模組占 86.35%，含資料中心光學引擎與相干光模組，未拆分資料中心收入
+  claim-refs:
+  - entity-id: company-4979-two
+    claim-id: product-mix
+- id: offering-4979-two-inp-laser-chip
+  company: company-4979-two
+  product: product-inp-laser-chip
+  role: role-optical-chip
+  conditions:
+  - 年報稱 CW DFB 雷射晶粒已獲數家主要客戶採用，晶粒營收占 11.05%
+  claim-refs:
+  - entity-id: company-4979-two
+    claim-id: cw-laser-and-engines
+- id: offering-tsmc-advanced-logic-wafer
+  company: company-tsmc
+  product: product-advanced-logic-wafer
+  role: role-advanced-logic-foundry
+  conditions:
+  - 年報揭露 7 奈米及以下占晶圓銷售 74%，未揭露客戶別營收
+  claim-refs:
+  - entity-id: company-tsmc
+    claim-id: revenue-and-nodes
+- id: offering-tsmc-2p5d-interposer-package
+  company: company-tsmc
+  product: product-2p5d-interposer-package
+  role: role-interposer-integration
+  conditions:
+  - 年報說明 CoWoS 各版本量產狀態，未揭露封裝營收或客戶
+  claim-refs:
+  - entity-id: company-tsmc
+    claim-id: three-d-fabric
+- id: offering-3711-tw-flip-chip-package-service
+  company: company-3711-tw
+  product: product-flip-chip-package-service
+  role: role-osat-assembly
+  conditions:
+  - 封裝營收 NT$308,342.6 百萬元，未拆分覆晶與其他封裝
+  claim-refs:
+  - entity-id: company-3711-tw
+    claim-id: revenue-mix
+- id: offering-3711-tw-chip-test-service
+  company: company-3711-tw
+  product: product-chip-test-service
+  role: role-test-service
+  conditions:
+  - 測試營收 NT$71,900.2 百萬元，成長 31.8%
+  claim-refs:
+  - entity-id: company-3711-tw
+    claim-id: revenue-mix
+- id: offering-3711-tw-2p5d-interposer-package
+  company: company-3711-tw
+  product: product-2p5d-interposer-package
+  role: role-interposer-integration
+  conditions:
+  - 20-F 列出 2.5D 與 CoWoS 類技術，未揭露營收或客戶
+  claim-refs:
+  - entity-id: company-3711-tw
+    claim-id: advanced-packaging
+- id: offering-6239-tw-flip-chip-package-service
+  company: company-6239-tw
+  product: product-flip-chip-package-service
+  role: role-osat-assembly
+  conditions:
+  - IC 封裝服務占 61.76%，以記憶體封裝為主，含覆晶與扇出型封裝
+  claim-refs:
+  - entity-id: company-6239-tw
+    claim-id: revenue-mix
+- id: offering-6239-tw-chip-test-service
+  company: company-6239-tw
+  product: product-chip-test-service
+  role: role-test-service
+  conditions:
+  - IC 測試與晶圓級測試合計約 22%，以記憶體測試為主
+  claim-refs:
+  - entity-id: company-6239-tw
+    claim-id: revenue-mix
+- id: offering-amkr-flip-chip-package-service
+  company: company-amkr
+  product: product-flip-chip-package-service
+  role: role-osat-assembly
+  conditions:
+  - 10-K 描述覆晶、扇出、晶圓級與 SiP 封裝，未拆分各型態營收
+  claim-refs:
+  - entity-id: company-amkr
+    claim-id: technology-portfolio
+- id: offering-amkr-chip-test-service
+  company: company-amkr
+  product: product-chip-test-service
+  role: role-test-service
+  conditions:
+  - 10-K 描述晶圓針測、預燒、系統級與最終測試，未拆分測試營收
+  claim-refs:
+  - entity-id: company-amkr
+    claim-id: technology-portfolio
+- id: offering-amkr-2p5d-interposer-package
+  company: company-amkr
+  product: product-2p5d-interposer-package
+  role: role-interposer-integration
+  conditions:
+  - 10-K 列 2.5D 整合為技術能力，未揭露量產規模或客戶
+  claim-refs:
+  - entity-id: company-amkr
+    claim-id: technology-portfolio
+relations:
+- id: relation-vertiv-delta-competition
+  source: company-vertiv
+  target: company-delta-electronics
+  kind: competition
+  direction: symmetric
+  mechanism: Vertiv 10-K 將台達電列為特定產品領域的利基型競爭者
+  conditions:
+  - 競爭限於重疊的產品領域，不代表所有業務直接競爭
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: named-competitors
+- id: relation-tsmc-supplies-avgo
+  source: company-tsmc
+  target: company-avgo
+  kind: named-supply
+  direction: directed
+  mechanism: Broadcom 10-K 將 TSMC 列為外包前段晶圓製造與封裝測試的代工廠
+  conditions:
+  - 10-K 未揭露採購金額或產品別
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: manufacturing-partners
+- id: relation-3711-tw-supplies-avgo
+  source: company-3711-tw
+  target: company-avgo
+  kind: named-supply
+  direction: directed
+  mechanism: Broadcom 10-K 將日月光投控旗下的 Advanced Semiconductor Engineering 與矽品列為封裝測試代工
+  conditions:
+  - 10-K 具名的是子公司；未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: manufacturing-partners
+- id: relation-amkr-supplies-avgo
+  source: company-amkr
+  target: company-avgo
+  kind: named-supply
+  direction: directed
+  mechanism: Broadcom 10-K 將 Amkor 列為封裝測試代工
+  conditions:
+  - 10-K 未揭露採購金額或產品別
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: manufacturing-partners
+- id: relation-mrvl-avgo-competition
+  source: company-mrvl
+  target: company-avgo
+  kind: competition
+  direction: symmetric
+  mechanism: Marvell 10-K 將 Broadcom 列為直接競爭者
+  conditions:
+  - 競爭限於重疊的產品線，如客製 ASIC、交換晶片與互連
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: named-competitors
+- id: relation-mrvl-crdo-competition
+  source: company-mrvl
+  target: company-crdo
+  kind: competition
+  direction: symmetric
+  mechanism: Marvell 10-K 將 Credo 列為直接競爭者
+  conditions:
+  - 競爭限於重疊的互連產品，如 AEC DSP 與光 DSP
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: named-competitors
+- id: relation-mrvl-alab-competition
+  source: company-mrvl
+  target: company-alab
+  kind: competition
+  direction: symmetric
+  mechanism: Marvell 10-K 將 Astera Labs 列為直接競爭者
+  conditions:
+  - 競爭限於重疊的互連產品，如 PCIe retimer 與交換晶片
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: named-competitors
+- id: relation-mrvl-3661-tw-competition
+  source: company-mrvl
+  target: company-3661-tw
+  kind: competition
+  direction: symmetric
+  mechanism: Marvell 10-K 將世芯（Alchip）列為直接競爭者
+  conditions:
+  - 競爭限於客製 ASIC 設計服務
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: named-competitors
+- id: relation-mrvl-3443-tw-competition
+  source: company-mrvl
+  target: company-3443-tw
+  kind: competition
+  direction: symmetric
+  mechanism: Marvell 10-K 將創意（GUC）列為直接競爭者
+  conditions:
+  - 競爭限於客製 ASIC 設計服務
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-mrvl
+    claim-id: named-competitors
+- id: relation-3665-tw-supplies-crdo
+  source: company-3665-tw
+  target: company-crdo
+  kind: named-supply
+  direction: directed
+  product: product-active-electrical-cable
+  mechanism: Credo 10-K 說明其 AEC 產品由貿聯製造
+  conditions:
+  - 10-K 未揭露採購金額或是否為唯一製造商
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: manufacturing-partners
+- id: relation-tsmc-supplies-crdo
+  source: company-tsmc
+  target: company-crdo
+  kind: named-supply
+  direction: directed
+  mechanism: Credo 10-K 說明 FY2026 晶圓全部由 TSMC 生產
+  conditions:
+  - 10-K 未揭露採購金額或製程節點
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: manufacturing-partners
+- id: relation-3711-tw-supplies-crdo
+  source: company-3711-tw
+  target: company-crdo
+  kind: named-supply
+  direction: directed
+  mechanism: Credo 10-K 將日月光投控旗下的 ASE 列為 IC 封裝廠
+  conditions:
+  - 10-K 具名的是子公司；未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: manufacturing-partners
+- id: relation-amkr-supplies-crdo
+  source: company-amkr
+  target: company-crdo
+  kind: named-supply
+  direction: directed
+  mechanism: Credo 10-K 將 Amkor 列為 IC 封裝廠
+  conditions:
+  - 10-K 未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: manufacturing-partners
+- id: relation-2449-tw-supplies-crdo
+  source: company-2449-tw
+  target: company-crdo
+  kind: named-supply
+  direction: directed
+  mechanism: Credo 10-K 將京元電子（KYEC）列為 IC 測試廠
+  conditions:
+  - 10-K 未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: manufacturing-partners
+- id: relation-crdo-avgo-competition
+  source: company-crdo
+  target: company-avgo
+  kind: competition
+  direction: symmetric
+  mechanism: Credo 10-K 將 Broadcom 列為主要競爭者
+  conditions:
+  - 競爭限於重疊的連接產品
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: named-competitors
+- id: relation-crdo-alab-competition
+  source: company-crdo
+  target: company-alab
+  kind: competition
+  direction: symmetric
+  mechanism: Credo 10-K 將 Astera Labs 列為主要競爭者；Astera Labs 10-K 也列出 Credo
+  conditions:
+  - 競爭限於重疊的 retimer 與主動線纜產品
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: named-competitors
+- id: relation-tsmc-supplies-alab
+  source: company-tsmc
+  target: company-alab
+  kind: named-supply
+  direction: directed
+  mechanism: Astera Labs 10-K 說明所有 IC 由 TSMC 製造
+  conditions:
+  - 10-K 未揭露採購金額或製程節點
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-alab
+    claim-id: manufacturing-partners
+- id: relation-3711-tw-supplies-alab
+  source: company-3711-tw
+  target: company-alab
+  kind: named-supply
+  direction: directed
+  mechanism: Astera Labs 10-K 將日月光投控旗下的 Advanced Semiconductor Engineering 列為封裝測試廠
+  conditions:
+  - 10-K 具名的是子公司；未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-alab
+    claim-id: manufacturing-partners
+- id: relation-amkr-supplies-alab
+  source: company-amkr
+  target: company-alab
+  kind: named-supply
+  direction: directed
+  mechanism: Astera Labs 10-K 將 Amkor 列為封裝測試廠
+  conditions:
+  - 10-K 未揭露採購金額
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-alab
+    claim-id: manufacturing-partners
+- id: relation-alab-avgo-competition
+  source: company-alab
+  target: company-avgo
+  kind: competition
+  direction: symmetric
+  mechanism: Astera Labs 10-K 將 Broadcom 列為主要競爭者
+  conditions:
+  - 競爭限於重疊的 retimer 與 PCIe 交換產品
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-alab
+    claim-id: named-competitors
+- id: relation-4979-two-avgo-competition
+  source: company-4979-two
+  target: company-avgo
+  kind: competition
+  direction: symmetric
+  mechanism: 華星光年報將 Broadcom 列為 10G／25G 雷射的主要競爭者
+  conditions:
+  - 競爭限於雷射晶粒，且年報列名針對 10G／25G 世代
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-4979-two
+    claim-id: named-competitors
+- id: relation-3711-tw-tsmc-competition
+  source: company-3711-tw
+  target: company-tsmc
+  kind: competition
+  direction: symmetric
+  mechanism: 日月光 20-F 以台積電提供 InFO 等先進封裝技術，說明封測業面臨來自供應鏈其他層級的競爭
+  conditions:
+  - 競爭限於先進封裝；兩者在晶圓代工與封測其他業務上是上下游
+  confidence: well-supported
+  reviewed: '2026-10-18'
+  claim-refs:
+  - entity-id: company-3711-tw
+    claim-id: competition
+- id: relation-3189-tw-supplies-6239-tw
+  source: company-3189-tw
+  target: company-6239-tw
+  kind: named-supply
+  direction: directed
+  mechanism: 力成年報把景碩列為主要基板供應商之一
+  conditions:
+  - 年報未揭露採購金額或品項
+  confidence: well-supported
+  reviewed: '2026-10-19'
+  claim-refs:
+  - entity-id: company-6239-tw
+    claim-id: named-materials
+- id: relation-amkr-3711-tw-competition
+  source: company-amkr
+  target: company-3711-tw
+  kind: competition
+  direction: symmetric
+  mechanism: Amkor 10-K 將 ASE Technology 列為主要封測競爭者
+  conditions:
+  - 競爭限於委外封裝與測試
+  confidence: well-supported
+  reviewed: '2026-10-19'
+  claim-refs:
+  - entity-id: company-amkr
+    claim-id: named-competitors
+- id: relation-amkr-6239-tw-competition
+  source: company-amkr
+  target: company-6239-tw
+  kind: competition
+  direction: symmetric
+  mechanism: Amkor 10-K 將 Powertech Technology（力成）列為主要封測競爭者
+  conditions:
+  - 競爭限於重疊的封裝與測試類型；力成以記憶體封測為主
+  confidence: well-supported
+  reviewed: '2026-10-19'
+  claim-refs:
+  - entity-id: company-amkr
+    claim-id: named-competitors

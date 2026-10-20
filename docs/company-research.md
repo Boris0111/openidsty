@@ -1,6 +1,8 @@
 # 公司識別與關係維護
 
-`data/company-research.yaml` 保存補充 aliases、官方 CIK 與企業關係。環節／角色仍來自 `industry-map/`，不在此建立第二份地圖。修改後執行地圖匯入，驗證失敗時資料庫保留原投影。
+新版公司的穩定身分、aliases、listing 及官方識別只維護 `industry-map/companies/`；格式唯一規範在 [Schema](../industry-map/README.md)。目前 95 家基本索引保留原 100 筆角色與舊 ticker／PRIVATE 映射，不把遷移當新一輪研究。改名或換代號時保留 entity-id，未上市公司 listings 為空。
+
+`data/company-research.yaml` 暫留為舊 API 匯入相容輸入與舊企業關係來源。不要在兩處各自維護新研究；新投影依 registry 身分解析，既有關係仍保留原證據與狀態。以下說明舊關係欄位，並非新版另一份 Schema。
 
 每筆關係須有唯一 id、canonical source／target ticker、kind、direction、review_status、relevance、evidence、reason、source_url、checked。source／target 必須存在於地圖。
 

@@ -2,18 +2,11 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "IndustryFlow 前端開發",
-      "runtimeExecutable": "npm.cmd",
-      "runtimeArgs": ["run", "dev"],
-      "cwd": "${workspaceFolder}/frontend",
-      "port": 3010
-    },
-    {
-      "name": "IndustryFlow API 開發（Docker）",
-      "runtimeExecutable": "docker",
-      "runtimeArgs": ["compose", "-f", "compose.yaml", "-f", "compose.dev.yaml", "up", "api"],
+      "name": "IndustryFlow 新研究服務（隔離 Docker）",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["scripts/research_lab.py", "up"],
       "cwd": "${workspaceFolder}",
-      "port": 8010
+      "port": 3014
     }
   ]
 }

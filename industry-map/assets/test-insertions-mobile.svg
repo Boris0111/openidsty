@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="492" viewBox="0 0 360 492">
+  <title>晶片測試的插入點</title>
+  <desc>晶圓測試在封裝前篩出不良 die；成品測試確認封裝後功能；系統層測試在接近實際使用的環境補找供電、熱與韌體相關失效。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#267a97"/></marker></defs>
+  <rect width="360" height="492" rx="8" fill="#f3f6f7"/>
+  <g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#16343a">
+    <text x="22" y="36" font-size="18" font-weight="700">晶片測試的插入點</text>
+    <text x="22" y="70" font-size="15" font-weight="700">晶圓測試</text>
+    <rect x="22" y="80" width="316" height="38" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="32" y="104" font-size="14">探針卡</text>
+    <rect x="22" y="124" width="316" height="38" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="32" y="148" font-size="14">ATE</text>
+    <path d="M180 168V188" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="202" font-size="15" font-weight="700">封裝</text>
+    <rect x="22" y="212" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="236" font-size="14">封裝後成品</text>
+    <path d="M180 256V276" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="290" font-size="15" font-weight="700">成品測試</text>
+    <rect x="22" y="300" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="324" font-size="14">測試座</text>
+    <rect x="22" y="344" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="368" font-size="14">ATE</text>
+    <path d="M180 388V408" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="22" y="422" font-size="15" font-weight="700">系統層</text>
+    <rect x="22" y="432" width="316" height="38" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="32" y="456" font-size="14">SLT</text>
+  </g>
+</svg>

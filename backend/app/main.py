@@ -5,9 +5,37 @@ from datetime import date, datetime, time, timedelta, timezone
 from .db import get_session
 from .models import Company, Segment, Theme, Role, Event, Financial, Source, IngestionRun, EventSegment
 from .research_api import event_query, event_payloads, event_order, theme_payload, coverage, coverage_markdown
-from .graph import LAYERS, industry_graph, company_graph, impact_paths
+from .graph import LAYERS, industry_graph, company_graph, impact_paths,segment_relations
 
 app = FastAPI(title='IndustryFlow 產業情報', version='0.1.0', docs_url='/api/docs', openapi_url='/api/openapi.json', redoc_url=None)
+from .research_v2 import router as research_router
+from .research_graph_v2 import router as research_graph_router
+from .research_search import router as research_search_router
+from .research_assets import router as research_assets_router
+from .research_http import install as install_research_http
+from .research_auth import router as research_auth_router
+from .research_drafts import router as research_drafts_router
+from .research_publication import router as research_publication_router
+from .financial_imports import router as financial_imports_router
+from .source_updates import router as source_updates_router
+from .research_financials import router as research_financials_router
+from .research_events import router as research_events_router
+from .research_coverage import router as research_coverage_router
+from .research_updates import router as research_updates_router
+app.include_router(research_coverage_router)
+app.include_router(research_updates_router)
+app.include_router(research_financials_router)
+app.include_router(research_events_router)
+app.include_router(source_updates_router)
+app.include_router(financial_imports_router)
+app.include_router(research_publication_router)
+app.include_router(research_drafts_router)
+app.include_router(research_auth_router)
+app.include_router(research_graph_router)
+app.include_router(research_search_router)
+app.include_router(research_assets_router)
+app.include_router(research_router)
+install_research_http(app)
 
 def columns(row, exclude=()):
     return {c.name:getattr(row,c.name) for c in row.__table__.columns if c.name not in exclude}
@@ -30,8 +58,10 @@ def company_detail(session, ticker):
 @app.middleware('http')
 async def cache_headers(request, call_next):
     response = await call_next(request)
-    if request.method=='GET' and response.status_code==200:
-        response.headers['Cache-Control'] = 'no-store' if request.url.path in ('/api/health','/api/sources','/api/coverage','/api/coverage/report','/api/theme-updates') else 'public, max-age=30'
+    from .research_cache import reader_cache
+    response = await reader_cache(request,response)
+    if request.method=='GET' and 'Cache-Control' not in response.headers:
+        response.headers['Cache-Control'] = 'no-store'
     response.headers['X-Content-Type-Options'] = 'nosniff'
     if response.headers.get('Content-Type') == 'application/json':
         response.headers['Content-Type'] = 'application/json; charset=utf-8'
@@ -62,9 +92,13 @@ def segment_list(industry:str|None=None,session:DbSession=Depends(get_session)):
 @app.get('/api/segments/{sid}')
 def segment(sid:str, session:DbSession=Depends(get_session)):
     s = require(session,Segment,sid)
-    neighbors={n:require(session,Segment,n) for n in s.data['upstream']+s.data['downstream']}
-    return dict(s.data, prose=s.prose, themes_detail=[theme_payload(t) for key in s.data['themes'] if (t:=session.get(Theme,key)) and t.active],
-        neighbors=[{'id':n,'name':v.name,'layer':v.layer} for n,v in neighbors.items()],
+    keys=s.data['upstream']+s.data['downstream']
+    neighbors={n.id:n for n in session.scalars(select(Segment).where(Segment.id.in_(keys)))} if keys else {}
+    if any(key not in neighbors for key in keys):raise HTTPException(404,'找不到這筆資料')
+    linked={t.id:t for t in session.scalars(select(Theme).where(Theme.id.in_(s.data['themes']),Theme.active.is_(True)))} if s.data['themes'] else {}
+    return dict(s.data, prose=s.prose, themes_detail=[theme_payload(linked[key]) for key in s.data['themes'] if key in linked],
+        relations=segment_relations(s,neighbors),
+        neighbors=[{'id':n,'name':neighbors[n].name,'layer':neighbors[n].layer} for n in dict.fromkeys(keys)],
         events=event_payloads(session,list(session.scalars(event_query(segment=sid).limit(8)))))
 
 @app.get('/api/themes')
@@ -74,8 +108,9 @@ def themes(session:DbSession=Depends(get_session)):
 @app.get('/api/themes/{tid}')
 def theme(tid:str,session:DbSession=Depends(get_session)):
     t=require(session,Theme,tid)
-    segments=[require(session,Segment,sid) for sid in t.data['segments']]
-    return dict(theme_payload(t),segments_detail=[{'id':s.id,'name':s.name,'layer':s.layer} for s in segments],
+    segments={s.id:{'id':s.id,'name':s.name,'layer':s.layer} for s in session.execute(select(Segment.id,Segment.name,Segment.layer).where(Segment.id.in_(t.data['segments'])))}
+    if any(key not in segments for key in t.data['segments']):raise HTTPException(404,'找不到這筆資料')
+    return dict(theme_payload(t),segments_detail=[segments[key] for key in t.data['segments']],
         events=event_payloads(session,list(session.scalars(event_query(theme=tid).limit(20)))))
 
 @app.get('/api/themes/{tid}/assessment')
@@ -97,6 +132,18 @@ def assessment_versions(tid:str,limit:int=Query(20,ge=1,le=100),offset:int=Query
     query=select(ThemeAssessmentVersion).where(ThemeAssessmentVersion.theme_id==tid).order_by(ThemeAssessmentVersion.version_number.desc())
     rows=list(session.scalars(query.limit(limit).offset(offset)))
     return {'theme_id':tid,'current_version_id':current.id if current else None,'total':session.scalar(select(func.count()).select_from(ThemeAssessmentVersion).where(ThemeAssessmentVersion.theme_id==tid)),'versions':[version_payload(row) for row in rows]}
+
+@app.get('/api/themes/{tid}/indicators/{iid}/revisions')
+def indicator_revisions(tid:str,iid:str,limit:int=Query(20,ge=1,le=100),offset:int=Query(0,ge=0),session:DbSession=Depends(get_session)):
+    from .models import IndicatorObservation,ThemeIndicator
+    from .indicator_api import observation_payload
+    from sqlalchemy import func
+    require(session,Theme,tid)
+    if session.get(ThemeIndicator,(tid,iid)) is None:raise HTTPException(404,'指標不屬於此題材')
+    q=select(IndicatorObservation).where(IndicatorObservation.indicator_id==iid)
+    total=session.scalar(select(func.count()).select_from(q.subquery()))
+    rows=session.scalars(q.order_by(IndicatorObservation.period_end.desc(),IndicatorObservation.revision.desc(),IndicatorObservation.id.desc()).limit(limit).offset(offset))
+    return {'total':total,'limit':limit,'offset':offset,'items':[observation_payload(row) for row in rows]}
 
 def require_version(session,tid,version_id):
     from .models import ThemeAssessmentVersion
@@ -143,6 +190,16 @@ def theme_updates(ids:str=Query('',max_length=2000),session:DbSession=Depends(ge
 @app.get('/api/coverage')
 def data_coverage(session:DbSession=Depends(get_session)):
     return coverage(session)
+
+@app.get('/api/technical-documents')
+def technical_documents(limit:int=Query(20,ge=1,le=50),offset:int=Query(0,ge=0),segment:str|None=None,theme:str|None=None,session:DbSession=Depends(get_session)):
+    from .technical_documents import list_documents
+    return list_documents(session,limit,offset,segment,theme)
+
+@app.get('/api/technical-documents/{did}')
+def technical_document(did:str,limit:int=Query(10,ge=1,le=50),offset:int=Query(0,ge=0),session:DbSession=Depends(get_session)):
+    from .technical_documents import document_detail
+    return document_detail(session,did,limit,offset)
 
 @app.get('/api/coverage/report')
 def coverage_report(session:DbSession=Depends(get_session)):

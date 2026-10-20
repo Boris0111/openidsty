@@ -32,7 +32,7 @@ coverage 可不 cache，每列有 research_available、configured_sources、succ
 
 題材回應 additive 新增 assessment_summary（available、summary、confidence、reviewed），不移除舊欄位。assessment 查詢分開傳回 available、status／checked、authored assessment、evidence_sources 與 source_warnings；paths 在讀取時固定標 inference，不寫回 JSON。無 assessment 時回 available=false／assessment=null，原研究仍可讀；未知題材 404，POST 405。
 
-候選資訊只含直接分類、非例行、已發布的內容，真正發布日的台北日期必須晚於研究 reviewed，且時間不在未來。candidates 最多列 8 筆、candidate_count 保留總數；發布日期未知另列 unknown_date_count 與最多 8 筆 undated_candidates，不以 reported／activity／fetched 代替。current_version_id 在 P3 建立版本前為 null。evidence_sources 以 canonical ID 提供 registry 名稱與目前 runtime 狀態；source_warnings 不是重新查核結果。
+舊 assessment API 的 candidates 欄位只為本機相容保留：讀者入口（gateway）不轉送舊 `/api`，舊題材頁自 task 6.5 也不再顯示；維護者改由 `/api/admin/coverage` 的 `assessment_candidates` 查閱（見 [研究覆蓋](research-coverage.md)）。候選資訊只含直接分類、非例行、已發布的內容，真正發布日的台北日期必須晚於研究 reviewed，且時間不在未來。candidates 最多列 8 筆、candidate_count 保留總數；發布日期未知另列 unknown_date_count 與最多 8 筆 undated_candidates，不以 reported／activity／fetched 代替。current_version_id 在 P3 建立版本前為 null。evidence_sources 以 canonical ID 提供 registry 名稱與目前 runtime 狀態；source_warnings 不是重新查核結果。
 
 coverage 題材 row 新增 assessment_available／assessment_checked，與全文研究分開；環節 row 不適用者為 null。indicator_count／available_indicator_count 及 indicator_gaps 分開保存指標設定與取得狀態；未設定時明示缺口，不以新聞或來源成功補值。Markdown report 保留原 30／90 日表，另附題材判讀／指標區塊。
 
@@ -41,3 +41,17 @@ GET /api/themes/{id}/indicators?limit=12（1–36）：Decimal 以字串回傳�
 版本列表／詳情／compare 見 [版本操作](theme-version-operations.md)，皆為 GET。inactive 題材一般 API 回 404、列表／搜尋／覆蓋不列入；DB 歷史保留。
 
 GET /api/theme-updates?ids=...：去重後最多 20 項，不存在／inactive 逐項回報；版本與兩種內容 token 獨立。只提供公開資料，無關注或已讀 POST／PUT endpoint，細節見 [theme-watchlist](theme-watchlist.md)。
+# 環節關係擴充
+
+`GET /api/industries/{layer}/graph` 保留原 `id=source:target`、source、target、direction 與全部原拓樸；環節 edge.kind 為 supply／demand-feedback／unreviewed。公司關係圖仍使用原 kind，與此分類分開。
+
+環節 edge 新增 source_name／target_name、relation（summary、items、dependencies、conditions、confidence、evidence、gaps、reviewed）。舊檔沒有 metadata 時回傳 unreviewed 與具體缺口，不假定是已核實供應。`GET /api/segments/{sid}` 新增相同 edge 結構的 relations 陣列，包含上游與下游，供文字閱讀使用。
+
+`upstream`／`downstream` 仍是拓樸權威；kind 不更動上下游、題材或共同下游手足遍歷，也不移除需求回饋環。來源端 frontmatter 是關係說明唯一存放處；任何結構邊都不證明特定公司之間已發生交易。
+
+
+技術文件唯讀 API：`GET /api/technical-documents?segment=<id>&theme=<id>&limit=20&offset=0` 回傳 as_of、items、total、limit、offset（limit 1–50）。摘要區分 doc_kind、已核對 versions 與 pending_count。`GET /api/technical-documents/{id}?limit=10&offset=0` 回傳 definition（各固定版本與 locators）、runtime source 及有界 history。未知文件 404，超限 422；沒有公開 POST／review 寫入入口。歷史退役定義仍可讀。API／proxy 全部 no-store，讀取不呼叫外部來源。
+
+指標修訂：`GET /api/themes/{tid}/indicators/{iid}/revisions?limit=20&offset=0`，limit 1–100，回傳 items／total／limit／offset，跨題材指標 404。原 indicators payload 的 revisions 改為最多 20 筆，另有 revisions_total、revisions_limit；畫面提供載入更多。最新值先按 identity／revision 排名，再取最多 limit 個期別，失效最新版不回退同 identity 舊修訂。coverage 使用一致 REPEATABLE READ 唯讀快照、共同 reference 及 SQL COUNT DISTINCT／window top-3，未知日、背景、提及與例行維持原計數語意。
+
+事件 payload 另提供 optional source_name（目前來源顯示名稱），保留原 source_id。名稱在同次 request 內批次讀取並重用；舊資料沒有名稱時 UI 明示待補，原識別在進階資訊可核對。

@@ -1,0 +1,190 @@
+﻿{
+    "reference":  "2026-10-15T16:00:00+00:00",
+    "counts":  {
+                   "companies":  95,
+                   "indicators":  9,
+                   "ingestion_runs":  119,
+                   "segments":  17,
+                   "sources":  53,
+                   "themes":  7,
+                   "events":  2915,
+                   "financials":  147,
+                   "indicator_observations":  11,
+                   "relations":  5,
+                   "roles":  100,
+                   "theme_assessment_versions":  7,
+                   "theme_indicators":  9,
+                   "event_segments":  1420,
+                   "event_themes":  225
+               },
+    "fingerprints":  {
+                         "events":  "8687dfb2748778cddd09e1609f6e6d2526a62dd2ac6ba01c57d8187dff51e87f",
+                         "financials":  "8b2827aeacac444f869a3c8e916b316f02f004393695e85ad45d2a5fd8828cfb",
+                         "indicator_observations":  "750580605856f4d685dbd13412fea8a6c4140b40e540d8712110d88438e68516",
+                         "theme_assessment_versions":  "55d53e5ae9bc20eda400a5d833bd76d65a564c5ce03f52ff743a3fb0f8a79956"
+                     },
+    "queries":  {
+                    "coverage":  {
+                                     "sql_count":  76,
+                                     "ms":  738.1546560209244
+                                 },
+                    "updates":  {
+                                    "sql_count":  116,
+                                    "ms":  836.5144010167569
+                                }
+                },
+    "segments":  [
+                     {
+                         "id":  "advanced-packaging",
+                         "name":  "先進封裝"
+                     },
+                     {
+                         "id":  "compute",
+                         "name":  "運算晶片"
+                     },
+                     {
+                         "id":  "datacenter",
+                         "name":  "資料中心與雲端業者"
+                     },
+                     {
+                         "id":  "eda-ip",
+                         "name":  "EDA 工具與矽智財"
+                     },
+                     {
+                         "id":  "equipment",
+                         "name":  "半導體設備"
+                     },
+                     {
+                         "id":  "foundry",
+                         "name":  "晶圓代工"
+                     },
+                     {
+                         "id":  "interconnect",
+                         "name":  "連接器、線材與滑軌"
+                     },
+                     {
+                         "id":  "materials",
+                         "name":  "半導體材料"
+                     },
+                     {
+                         "id":  "memory",
+                         "name":  "記憶體"
+                     },
+                     {
+                         "id":  "networking",
+                         "name":  "網通與光通訊"
+                     },
+                     {
+                         "id":  "odm",
+                         "name":  "系統組裝與機櫃整合"
+                     },
+                     {
+                         "id":  "pcb",
+                         "name":  "印刷電路板與銅箔基板"
+                     },
+                     {
+                         "id":  "power",
+                         "name":  "電源與供電架構"
+                     },
+                     {
+                         "id":  "power-discrete",
+                         "name":  "功率與分離式元件"
+                     },
+                     {
+                         "id":  "substrate",
+                         "name":  "ABF 載板"
+                     },
+                     {
+                         "id":  "test",
+                         "name":  "測試與探針"
+                     },
+                     {
+                         "id":  "thermal",
+                         "name":  "散熱"
+                     }
+                 ],
+    "themes":  [
+                   {
+                       "id":  "800vdc",
+                       "name":  "高壓直流供電架構"
+                   },
+                   {
+                       "id":  "advanced-node-2nm",
+                       "name":  "先進製程節點推進"
+                   },
+                   {
+                       "id":  "cpo-silicon-photonics",
+                       "name":  "共同封裝光學與矽光子"
+                   },
+                   {
+                       "id":  "custom-asic-vs-gpu",
+                       "name":  "客製 ASIC 與通用 GPU 的路線競爭"
+                   },
+                   {
+                       "id":  "hbm4",
+                       "name":  "HBM4 世代轉換"
+                   },
+                   {
+                       "id":  "liquid-cooling",
+                       "name":  "液冷散熱"
+                   },
+                   {
+                       "id":  "power-bottleneck",
+                       "name":  "資料中心電力瓶頸"
+                   }
+               ],
+    "tokens":  {
+                   "value":  [
+                                 {
+                                     "theme_id":  "800vdc",
+                                     "current_version_id":  1,
+                                     "version_number":  1,
+                                     "indicator_token":  "47a3e6669589e0a179f412d92bf0a15cd89ea331e2f91f7aaaf977d8a4b9a97b",
+                                     "candidate_token":  "fd5ed5d18196bb0303ecb7eef55978faa8fc797fd76b9d4a0f535beb8d87b256"
+                                 },
+                                 {
+                                     "theme_id":  "advanced-node-2nm",
+                                     "current_version_id":  2,
+                                     "version_number":  1,
+                                     "indicator_token":  "380d6189d620baf0f77255099ad6f4c7120ba81a98474104e8bea0791c657765",
+                                     "candidate_token":  "92e153865de083ea3c802de48b90af0d543c50c05662101c2224eb9b36f19b47"
+                                 },
+                                 {
+                                     "theme_id":  "cpo-silicon-photonics",
+                                     "current_version_id":  3,
+                                     "version_number":  1,
+                                     "indicator_token":  "7989c3fe9856d7e1cfe6d04194a373326eeb12ef77925aaf885e31bbcb61e8a4",
+                                     "candidate_token":  "d3c7be3faeb852552d6763328c4cb7b7e9dcca863beb4894f5bcecf67bae5893"
+                                 },
+                                 {
+                                     "theme_id":  "custom-asic-vs-gpu",
+                                     "current_version_id":  4,
+                                     "version_number":  1,
+                                     "indicator_token":  "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                                     "candidate_token":  "528d3160e2de6c2a8f9b61b01d9b190add9ead0e90bb709587613c1ea983259d"
+                                 },
+                                 {
+                                     "theme_id":  "hbm4",
+                                     "current_version_id":  5,
+                                     "version_number":  1,
+                                     "indicator_token":  "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                                     "candidate_token":  "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                                 },
+                                 {
+                                     "theme_id":  "liquid-cooling",
+                                     "current_version_id":  6,
+                                     "version_number":  1,
+                                     "indicator_token":  "84b728fe11eada8d61e96ce74f8c9d53238f1d32e2f2dacc219e6df4839f029d",
+                                     "candidate_token":  "f90951e2cc27f25ab4615a0eb4ea862e5fd370ae5d3f07453579b696efc57802"
+                                 },
+                                 {
+                                     "theme_id":  "power-bottleneck",
+                                     "current_version_id":  7,
+                                     "version_number":  1,
+                                     "indicator_token":  "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+                                     "candidate_token":  "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+                                 }
+                             ],
+                   "Count":  7
+               }
+}

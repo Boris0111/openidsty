@@ -12,12 +12,105 @@
 industry-map/
 ├─ README.md              # 本文件
 ├─ sources.yaml           # 資訊來源註冊表（欄位規範見下方）
+├─ technical-documents.yaml # optional，已核對文件版本與定位，不是第二份來源表
 ├─ ai-server/*.md         # AI 伺服器層環節
 ├─ semiconductor/*.md     # 半導體層環節
-└─ themes/*.md            # 題材
+├─ themes/*.md            # 題材
+├─ companies/*.md         # research-v1 穩定公司身分與基本／深研頁
+├─ applications/*.md      # 應用
+├─ roles/*.md             # 可替換供應角色／子領域
+├─ products/*.md          # 產品類別或具名產品，必須說明邊界
+├─ concepts/*.md          # 術語、圖解與有條件比較
+├─ research/*.md          # 跨物件研究頁（選用）
+├─ research-relations.yaml # 分類、公司產品能力、具型別關係（選用）
+└─ research-assets.yaml   # 內容定址圖解清單（選用）
 ```
 
 檔名（去掉 `.md`）必須等於該檔 frontmatter 的 `segment` 或 `theme` 識別碼。
+
+新版目錄的檔名等於 `entity-id`；原有 segment/theme 檔名及 ticker 主鍵不變。
+
+## Research-v1：穩定身分與研究內容
+
+本節是新版 authoring 格式的唯一規範。檔案先經整份驗證，再在發布時編譯為 release snapshot；讀者請求不掃描工作目錄。沒有新版檔案的舊地圖仍可驗證。有 `companies/` 時，全部既有 ticker／PRIVATE 必須恰好映射到一個公司，不能漏掉或自動按名稱合併。
+
+### 共通 frontmatter
+
+| 欄位 | 規範 |
+|---|---|
+| schema-version | 固定 `research-v1` |
+| entity-id／kind | 不可變 ID，`<kind>-<kebab-case>`；kind 為 company／application／role／product／concept／research。舊物件投影使用 `segment-<segment>`／`theme-<theme>` |
+| name-zh／summary | 非空中文名稱與具體摘要，改名不改 ID |
+| aliases | 非空字串陣列，可空；不同實體可以同 alias，搜尋必須回候選而非合併。只把同一法律主體的別稱放在公司 aliases |
+| reviewed | 已查核有效 `YYYY-MM-DD` 字串或 null；基本索引未重新研究時用 null，不以遷移日代填 |
+| claims | 主張陣列，可空；每筆有局部唯一 kebab-case id、statement、confidence、conditions、reviewed、evidence。confidence 為 well-supported／inference／needs-verification，conditions 至少一筆非空文字，reviewed 必須日精度 |
+| gaps | 陣列，可空；沒有 claims 時至少一筆。每筆為 `{status, reason}`（只有這兩個鍵），或非空文字（舊格式，維護矩陣列為「未分類」）。status 定義見下方 |
+
+gap status 只描述「為什麼這裡沒有結論」，reason 必須寫出具體項目與依據：
+
+| status | 中文 | 使用時機 |
+|---|---|---|
+| not-researched | 未研究 | 還沒有查核這一項，例如尚未讀財報或只走讀部分供應商 |
+| not-public | 未公開 | 已查官方來源，公司確實沒有揭露，例如未揭露產品別營收或具名客戶 |
+| not-obtained | 未取得 | 資料可能存在，但目前無法取得或讀取，例如來源 403、付費、只提供部分歷史 |
+| not-applicable | 不適用 | 該項不適用此物件，例如未上市公司沒有公開財報、分類頁不承載產品證據 |
+
+不屬於四類的研究限制（例如「額定能力不等於場址驗收」）維持文字。讀者頁只顯示 reason；status 與統計只在維護矩陣使用。
+
+`claims[].evidence` 至少一筆，使用本文件既有「公開頁面」或「固定文件」引用格式，另必填 `stance: supporting | counter` 與非空 `applicable-period`。引用保存讀過哪一段、什麼適用期間；支持網頁存在不表示量產或交易成立。固定文件版本不解析為 latest，文件性質沿用 technical-documents manifest。必要短摘錄不取代原文全文。
+
+### 公司：公司與證券分離
+
+公司檔另外必填以下欄位；散文至少有 `## 供應角色`、`## 研究界線`。完整深研另包含 `## 產品與用途`、`## 商業模式`、`## 客戶與供應商`、`## 競爭與替代`、`## 業務曝險`、`## 風險`、`## 財務可取性`，不能用未填模板冒充已研究。
+
+| 欄位 | 規範 |
+|---|---|
+| legacy-keys | 舊 ticker／PRIVATE 鍵的非空字串陣列，可空；一個鍵不能指向多家公司。不隨改名刪除舊鍵 |
+| listings | 陣列，可空；每筆 ticker、market（TW／US／KR／JP／HK／DE／NL）、exchange（MIC 或 UNKNOWN）、share-class（非空文字）、valid-from／valid-to（有效日日期或 null）。未知交易所或股別不猜測；期間不得倒置；同市場／交易所／ticker 的有效區間不得重疊 |
+| source-identifiers | 陣列，可空；每筆 provider、value 為非空文字，`sec-cik` 為 1–10 位數字文字；同 provider/value 不可對應不同法律主體 |
+| research-depth | basic／deep。basic 是保留既有角色的索引，並非已查核新產品或客戶；deep 仍需逐項來源與閱讀驗收 |
+| financial-reporting | optional 公司財務設定；primary-source-family 為來源族 kebab-case，confidence 為三種證據程度之一，reviewed 為查核日，evidence 至少一筆沿用本 Schema 的頁面／固定文件證據格式。若宣告 fiscal-year-end（MM-DD），須同時提供 calendar-valid-from（日期）及 calendar-valid-to（日期或 null），範圍不得倒置；僅 well-supported 日曆可用於自動推導日期。財年設定不代表已取得數值或可比較口徑 |
+| roles | 舊角色的相容基準陣列：segment-id、description、tier（1–3）、baseline-path（該 segment 相對地圖路徑）。保留遷移前角色數與描述，不把它當新交易證據；新增產品能力放 offerings |
+
+`PRIVATE:boyd` 是 legacy key，Boyd 的 listings 為空。跨市場同一法律主體可有多個 listing；ADR／普通股的 share-class 分開，不換算 EPS。母公司與子公司即使名稱相似也各有 ID，關係另外表達。初次遷移的 `company-2330-tw` 等含代號 ID 亦只是不可變字串，日後代號改變不可重新計算 ID；既有 registry 檔案才是真實來源。
+
+### 應用、角色、產品與術語
+
+application／role／product 另外必填 `definition`、`purpose`、`boundary`（各非空文字），以及 `adoption-conditions`、`bottlenecks`、`substitution-limits`（各至少一筆非空文字）。散文至少有 `## 定義與用途`、`## 採用條件與限制`；產品另有 `## 供應角色與公司`。只以可彼此替換的交付角色分類，不按公司切分類。
+
+application 可另填兩個閱讀欄位，供供應鏈頁、手機步驟與產品頁位置列使用：
+
+- `question`：讀者問題，非空文字，例如「AI 機櫃的熱，怎麼送出去？」。
+- `flow-steps`：至少兩步，依閱讀順序排列。每步只能有三個欄位：
+  - `label`：必填；
+  - `note`：選填；
+  - `products`：選填，為產品 ID 陣列。產品必須經 taxonomy 屬於該應用之下，同一應用內不可重複。
+
+這兩個欄位只描述閱讀順序，不構成研究主張或供應關係，其他 kind 不得使用。有圖解時，步驟名稱與圖解既有的標示一致；圖解只畫出部分流程時，其餘步驟依同一順序接續。沒有圖解時，步驟就是讀者看到的文字流程。不在任何步驟的產品，仍會以同一應用的其他產品呈現，不必為了列入而硬塞進步驟。
+
+concept 另外必填 `definition`、`scope`（非空文字）、`related-ids`（可解析 entity 陣列）、`diagram-assets`（至少一個資產 ID）、`comparisons`（可空；每筆 left／right 為產品或術語 ID，conditions／limitations 各至少一筆文字）。散文至少有 `## 中文解釋`、`## 圖解`、`## 適用範圍`。比較必須保留距離、速率、功耗或成本等條件，不宣稱無條件可互換。
+
+research 為跨物件研究頁，另填 `related-ids`（至少一筆），散文至少有 `## 研究問題`、`## 判斷與限制`。一般研究內容不放 parser 錯誤、內部 queue 或通用進階資訊。
+
+### 分類、能力與關係檔
+
+`research-relations.yaml` 為 mapping，`schema-version: research-v1`，以及三個可空陣列 `taxonomy`、`offerings`、`relations`。所有 ID 全檔唯一，端點引用不可猜測或按名稱自動建立。
+
+- taxonomy：每筆 `id: taxonomy-...`、parent、child；全部分類邊必須無環。這與允許真實回路的供需圖不同。
+- offerings：每筆 `id: offering-...`、company（company ID）、product（product ID）、role（role ID）、conditions（至少一筆文字）、claim-refs（至少一筆）。這是公司交付產品的能力，不是對具名客戶的交易。
+- relations：每筆 `id: relation-...`、source、target、kind、direction、mechanism、conditions、confidence、reviewed、claim-refs；kind 為 capability／named-supply／partnership／competition／demand-feedback，direction 為 directed／symmetric（僅 partnership／competition 可 symmetric）；mechanism 非空，conditions 至少一筆，confidence 及 reviewed 同主張。可選 product／application context 也必須解析到對應 kind。
+
+每個 claim-ref 是 `{entity-id: company-example, claim-id: product-boundary}`，必須引用該 entity 已有主張。named-supply 的 source／target 必須是公司，direction 為 directed，且引用 well-supported 主張；維護者仍必須讀原文核對雙方及具體交付，validator 不能證明交易。capability 只允許 company → product。對稱關係以端點排序去重，只維護一筆事實，反向查詢由投影處理。供應與需求回饋保留方向、適用條件與三種影響走法；不可把共同題材改成具名供應。
+
+### 圖解資產
+
+`research-assets.yaml` 為 `schema-version: research-v1`、assets 陣列；每筆 id 為 `asset-<kebab-case>`、path 為 `assets/` 內相對路徑、sha256 為實際 bytes 的 64 位小寫 hex、media-type 為 image/png、image/jpeg、image/webp 或 image/svg+xml、alt（中文圖意）、license、attribution（各非空文字）。只加入原創或有使用權資產。單檔上限 10 MiB，拒絕 symlink、越界路徑及不符格式；SVG 禁止 script、事件屬性、foreignObject、DTD／entity 及外部引用。資產引用在發布後以 hash 定址，修改圖必須產生新的 hash。
+
+### 維護與相容流程
+
+新增公司前先搜尋 ID、legacy keys、listing 與官方識別；無法確認同一法律主體時保留獨立身分，不按近似名合併。新研究的 aliases／CIK 只維護 `companies/`；`data/company-research.yaml` 保留為舊匯入相容輸入，其舊關係不因搬移而升級確定性。`scripts/bootstrap_company_registry.py` 僅供首次遷移，目錄已存在就拒絕覆寫；不是日常產生 ID 的工具。經兩入口編輯時仍走同一 draft／驗證／發布，不直接寫正式 DB。
+
+修改後執行 `python scripts/validate_map.py`；涉及 validator 時另跑 `python tests/run_validator_tests.py`。完整文件、歷史版本及原查核日期必須能由正式 Git commit 重建，動態事件與財務另由 DB 維護。
 
 ---
 
@@ -234,7 +327,7 @@ kind 為 direct／proxy／background；unit 為 amount／percent，amount 需 US
 
 `python -m app.indicator_definitions`（在 backend 執行）驗證所有欄位、來源／題材／公司引用後才匯入；不因定義存在而宣稱已取得值。其具體升級與數值投影操作見 `docs/theme-indicators.md`。新定義匯入會更新目前關聯，不刪除未關聯的歷史觀測。
 
-`sources.yaml` 是一般 YAML，沒有 Markdown frontmatter 或散文。最外層依市場分組，目前使用 `tw`、`us`；市場表示研究入口的分類，不限制網站語言或其報導的公司國籍。第二層固定使用下列資料類型，其下為來源條目的陣列：
+`sources.yaml` 是一般 YAML，沒有 Markdown frontmatter 或散文。最外層依市場分組，使用 `tw`、`us`、`global`（跨市場技術來源）；市場表示研究入口的分類，不限制網站語言或其報導的公司國籍。第二層固定使用下列資料類型，其下為來源條目的陣列：
 
 | 分組／`type` | 用途 |
 |---|---|
@@ -242,6 +335,7 @@ kind 為 direct／proxy／background；unit 為 amount／percent，amount 需 US
 | `earnings_call` | 公司免費法說會、簡報、逐字稿或 webcast 入口 |
 | `industry_media` | 免費公開的產業文章、協會新聞稿；只收可直接閱讀的部分 |
 | `official_stats` | 政府／官方統計報告、表格與公開查詢網頁 |
+| `technical-documents` | 公開技術文件／規格組織入口；文件性質與商業採用分開 |
 
 ### 來源欄位與完整範例
 
@@ -251,13 +345,13 @@ kind 為 direct／proxy／background；unit 為 amount／percent，amount 需 US
 | `provider` | 否 | 跨 feed 提供者識別，例如 `technews`；不同提供者不按標題合併 |
 | `name` | 是 | 能辨識提供者及來源範圍的文字名稱 |
 | `url` | 是 | 免費公開網頁或文件的完整 HTTPS 位址；不包含憑證、API key 或登入後專屬連結 |
-| `type` | 是 | 上表四值之一，必須等於所在第二層分組 |
+| `type` | 是 | 上表五值之一，必須等於所在第二層分組 |
 | `access` | 是 | 只允許 `free`；需付費、私有憑證或 API key 的來源不得加入 |
 | `reachability` | 是 | `verified` 或 `unverified`，判定方式見下方流程 |
 | `checked` | 是 | 最後實際查核日期，`YYYY-MM-DD`，加引號保留為字串 |
 | `segments` | 否 | 環節識別碼陣列，每筆須能解析；一般全市場申報入口可省略，不表示沒有覆蓋 |
 | `themes` | 否 | 題材識別碼陣列，每筆須能解析；設定涵蓋不表示已取得直接事件 |
-| `ingestion` | 否 | 自動擷取設定；省略等同 manual。`adapter` 可為 manual／tw／tsmc／delta／nvidia／microsoft／sec-submissions／sec-facts／rss／tpca／moea／census／eia／aaon-metrics／tsmc-metrics；`url`、`fallback` 為 HTTPS；`max_pages` 1–200；`paged` 表示 RSS 支援頁碼；`kind` 為 tw 的 announcements／revenue／financials；`per_company` 將 SEC URL 的 `{cik}` 展開為有 CIK 的公司；兩個指標 adapter 另有 `max_reports` 1–8、`history_days` 1–730，首次受限回補，其後核對最新兩季 |
+| `ingestion` | 否 | 自動擷取設定；省略等同 manual。`adapter` 可為 manual／tw／tsmc／delta／nvidia／microsoft／sec-submissions／sec-facts／rss／tpca／moea／census／eia／aaon-metrics／tsmc-metrics；`url`、`fallback` 為 HTTPS；`max_pages` 1–200；`paged` 表示 RSS 支援頁碼；`kind` 為 tw 的 announcements／revenue／financials／balance（balance 僅新版 research 財務流程支援）；`per_company` 將 SEC URL 的 `{cik}` 展開為有 CIK 的公司；兩個指標 adapter 另有 `max_reports` 1–8、`history_days` 1–730，首次受限回補，其後核對最新兩季 |
 | `notes` | 否 | 說明免費內容邊界、查核方法／結果、未驗證原因及統計口徑；為維護者閱讀用文字 |
 
 下例可獨立解析；若加入既有檔案，只把條目併入既有 `us.filings` 陣列，**不要重複建立 `us:` 或 `filings:` 鍵**。名稱與 URL 的用途須人工確認，驗證器不會證明頁面真的免費或內容正確。
@@ -289,6 +383,92 @@ us:
 ---
 
 ## 執行驗證
+
+### Optional 技術研究與關係說明
+
+下列擴充均 optional：舊檔沒有這些欄位、沒有文件 manifest 仍合法。只要宣告，就完整驗證；不合法的引用會拒絕整次匯入。新欄位以 kebab-case 命名，既有 `source_id` 等欄位保持相容。DB／API 投影可將鍵明確轉成 snake_case，但原始研究 JSON 保留 authored 鍵。
+
+`downstream-relations` 是環節檔的 mapping，key 只能是本檔 `downstream` 既有 target；說明只存在 source 這一側，不能在上游檔複製。每筆欄位：
+
+| 欄位 | 規則 |
+|---|---|
+| kind | `supply`／`demand-feedback`；沒有 metadata 的舊邊由閱讀端顯示 `unreviewed` |
+| summary | 非空中文說明，僅描述環節角色，不證明公司交易 |
+| items | 至少一筆非空文字；供應項目或需求形成機制 |
+| dependencies／conditions | 各至少一筆非空文字；介面依賴與成立條件 |
+| confidence | `well-supported`／`inference`／`needs-verification` |
+| evidence／gaps | 引用陣列／非空文字陣列；可個別空，但合計至少一筆 |
+| reviewed | 有效、加引號 YYYY-MM-DD；這是說明查核日 |
+
+拓樸仍由 `upstream`／`downstream` 雙向顯式宣告，型別不改變 visited 與三種遍歷。下面只是結構範例，來源內容須另行核對：
+
+```yaml
+downstream-relations:
+  odm:
+    kind: supply
+    summary: 散熱零組件需由整機整合者驗證適配。
+    items: [冷板與熱管理模組]
+    dependencies: [機構空間與水路介面]
+    conditions: [實際平台驗證通過且有採購]
+    confidence: inference
+    evidence: []
+    gaps: [此關係未取得特定客戶、料號與交付紀錄。]
+    reviewed: "2026-10-16"
+```
+
+環節及題材的 `technical-profile` 欄位如下；不變更六個環節固定段落，也不取代 assessment：
+
+| 欄位 | 規則 |
+|---|---|
+| product-boundary | 非空文字，產品／責任邊界 |
+| adoption-conditions／bottlenecks／substitution-limits | 各至少一筆非空文字 |
+| claims | 陣列；每筆唯一 kebab-case id、非空 statement、confidence、至少一筆 evidence 引用 |
+| assessment-claim-ids | optional 陣列，僅題材可用，引用同檔 assessment.claims 的 id，不複製原論述 |
+| evidence-gaps | 非空文字陣列；可空，但 claims 與 assessment-claim-ids 皆空時至少一筆 |
+| reviewed | 有效、加引號 YYYY-MM-DD，與 assessment.reviewed 獨立 |
+
+evidence 引用只有兩種，不能混填身分：
+
+- 公開頁面：`{source-id: sample-source, url: "https://example.org/technical", locator: "產品說明／介面責任", read-scope: "已讀公開產品說明，未讀規格全文"}`。source-id 必須在單一來源表，locator／read-scope 非空；URL 為完整 HTTPS，不含憑證。選填 excerpt 為必要短摘錄。
+- 固定文件：`{document-id: sample-document, version-id: rev-one, locator: boundary}`。三個鍵須分別解析到 manifest 文件、該版本、該版本 locators.id；不能使用 latest 或將新版默默代入舊引用。
+
+### Optional 已核對文件 manifest
+
+`technical-documents.yaml` 最外層 `schema-version: technical-documents-v1` 與 `documents` 陣列（可空）。一份文件只有一個穩定 kebab-case id；必填 source-id（引用 sources.yaml）、title、publisher、doc-kind、segments／themes 陣列（至少一個 scope 引用）、versions（至少一筆）。doc-kind 為 `formal-specification`／`draft`／`roadmap`／`vendor-explanation`／`informative`，不等於 confidence、HTTP 健康或商業採用。
+
+每版必填唯一 kebab-case id、label（官方版號文字或 null）、url（完整 HTTPS）、published（日期文字或 null）、published-precision（day／month／year／unknown）、reviewed（日精度）、read-scope、access-limitations、scope（非空文字）與 locators（至少一筆）。發布日依精度使用 YYYY-MM-DD／YYYY-MM／YYYY；未知必須 null＋unknown，不用取得日代填。各 locator 有唯一 id、非空 section、excerpt（必要短摘錄，不保存公開全文）。reviewed 表示實際已讀範圍，不表示閱讀全部條文。
+
+```yaml
+schema-version: technical-documents-v1
+documents:
+  - id: sample-document
+    source-id: sample-source
+    title: 結構範例，並非真實查核文件
+    publisher: 範例機構
+    doc-kind: informative
+    segments: [thermal]
+    themes: []
+    versions:
+      - id: public-overview
+        label: null
+        url: https://example.org/technical
+        published: null
+        published-precision: unknown
+        reviewed: "2026-10-16"
+        read-scope: 僅公開介紹
+        access-limitations: 尚未取得完整規格
+        scope: 冷卻元件責任邊界，不能證明訂單
+        locators:
+          - id: boundary
+            section: 元件介紹
+            excerpt: 僅保留足以定位論述的短摘錄。
+```
+
+已實際下載並使用同一解析版本計算的版本可附 `content-hash`（正規化主體 SHA256）、`parser-version`（非空）、`raw-hash`（原 bytes SHA256）。這些欄位必須由實際檔案計算，不能用已讀摘要冒充全文 hash；hash 不代表研究者核讀全部條文。若解析器升版，只能在已確認相同 raw-hash、不同 parser-version 且提供非空 normalization-note 的情況下更新正規化基準；它不是官方新版，舊觀測保留，不能生成待核對通知。只核讀摘錄的基準不填主體 hash，首次可靠全文觀測仍需核對。
+
+舊版引用需保留。文件 optional `reviews` 為核對紀錄陣列：content-hash（正規化主體 SHA256）、official-version（文字或 null）、disposition（adopted／no-impact）、reviewed（日精度）與 reason（非空文字）。adopted 還需 version-id 引用已補入 versions 的核對版本；no-impact 不變更原研究。相同 hash／official-version 不能重複處置。監測只追加觀測與待核對候選；本機維護者編修 manifest 再匯入，沒有公開 review 寫入 API。
+
+技術來源預設 manual。自動技術來源的 ingestion.adapter 為 `technical-documents`；設定 `document-ids` 明列本來源文件，不能掃任意網站。`max-pages` 1–2（預設 2）、`max-documents` 1–10（10）、`html-bytes` 1–2097152、`document-bytes` 1–15728640、`timeout-seconds` 1–20、`interval-hours` 至少 24（預設 24）；所有上限只能縮小。`allowed-hosts` 必須明列來源及文件使用的官方 hostname，轉向也須符合；不登入、不送申請表。無可靠抽取的來源保持 manual 並在 notes 記錄限制。這些新鍵不改變舊 adapter 的 max_pages 等設定。
 
 ```bash
 python scripts/validate_map.py              # 全量檢查

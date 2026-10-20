@@ -50,21 +50,25 @@ test('all 17 segments and seven themes expose full research and evidence links',
     await page.goto(`/?layer=${s.layer}&segment=${s.id}`);
     await expect(heading(page,s.name)).toBeVisible();
     const reading=page.locator('#segment-reading');
-    await expect(reading.getByRole('heading',{name:'監測指標與轉折訊號'})).toBeVisible();
-    await expect(reading.getByRole('heading',{name:'代表公司'})).toBeAttached();
+    await expect(reading.getByRole('heading',{name:'供應與需求關係'})).toBeVisible();
+    await expect(reading.getByRole('heading',{name:'代表公司與供應角色'})).toBeVisible();
+    await reading.getByRole('tab',{name:'技術與限制'}).click();
+    await expect(reading.getByRole('heading',{name:'技術變數',exact:true})).toBeVisible();
     expect(await reading.locator('.prose a[href^="https://"]').count()).toBeGreaterThan(0);
-    await expect(reading.locator('details')).toHaveCount(0);
+    await reading.getByRole('tab',{name:'追蹤重點'}).click();
+    await expect(reading.getByRole('heading',{name:'監測指標與轉折訊號'})).toBeVisible();
   }
   await page.goto('/themes');await expect(page.locator('.theme-list article')).toHaveCount(7);
   const themes=await (await page.request.get('/api/themes')).json();
   for(const t of themes){
     await page.goto(`/themes/${t.theme}`);await expect(page.getByRole('heading',{name:t.name_zh,exact:true})).toBeVisible();
     await expect(page.getByText(`狀態查核 ${t.checked}`,{exact:false})).toBeVisible();
-    await expect(page.getByRole('heading',{name:'預期里程碑與查核點'})).toBeAttached();
-    await expect(page.getByRole('heading',{name:'已發布的相關事件'})).toBeAttached();
+    await page.getByRole('tab',{name:'數據與追蹤'}).click();
+    await expect(page.getByRole('heading',{name:'里程碑與實際進展'})).toBeVisible();
+    await expect(page.getByRole('heading',{name:'已發布的相關事件'})).toBeVisible();
     expect(await page.locator('.theme-research a[href^="https://"]').count()).toBeGreaterThan(0);
   }
-  await page.goto('/themes/liquid-cooling');await expect(page.getByRole('heading',{name:'預期里程碑與查核點'})).toBeAttached();await page.screenshot({path:'test-results/desktop-theme.png',fullPage:true});
+  await page.goto('/themes/liquid-cooling');await expect(page.getByRole('heading',{name:'目前判讀'})).toBeVisible();await page.screenshot({path:'test-results/desktop-theme.png',fullPage:true});
   await page.locator('.theme-tags a[href*="segment=thermal"]').click();await expect(heading(page,'散熱')).toBeVisible();
 });
 
@@ -94,19 +98,18 @@ test('mobile readable list, immediate reading, local map, fullscreen and keyboar
   const modal=page.getByRole('dialog',{name:'全螢幕完整產業圖'});await expect(modal).toBeVisible();await readyGraph(modal.getByTestId('network'));
   await page.screenshot({path:'test-results/mobile-fullscreen.png'});
   await modal.getByRole('button',{name:'運算晶片',exact:true}).click();await expect(modal).toBeHidden();await expect(heading(page,'運算晶片')).toBeVisible();
-  const search=page.getByRole('textbox',{name:'搜尋環節、題材或公司'});await search.fill('臺積電');
+  const search=page.getByRole('textbox',{name:'搜尋公司、產品、環節或題材'});await search.fill('臺積電');
   await expect(page.locator('.search-results a').first()).toContainText('台積電');await search.press('ArrowDown');await page.keyboard.press('Enter');
-  await expect(page).toHaveURL(/companies\/2330.TW/);await expect(page.getByRole('heading',{name:'台積電',exact:true})).toBeVisible();
-  await search.fill('液冷');await expect(page.locator('.search-results a').first()).toContainText('液冷');await search.press('Enter');await expect(page).toHaveURL(/themes\/liquid-cooling/);
-  await search.fill('不存在的搜尋');await expect(page.getByText('找不到結果，請嘗試名稱或識別碼。')).toBeVisible();await search.press('Escape');await expect(page.locator('.search-results')).toHaveCount(0);
+  await expect(page).toHaveURL(/focus=company-tsmc/);await expect(page.locator('.rs-detail > h2')).toHaveText('台積電');
+  await search.fill('液冷');await page.locator('.search-results a[href="/themes/liquid-cooling"]').click();await expect(page).toHaveURL(/themes\/liquid-cooling/);
+  await search.fill('不存在的搜尋');await expect(page.getByText('找不到結果，請試公司代號、產品或環節名稱。')).toBeVisible();await search.press('Escape');await expect(page.locator('.search-results')).toHaveCount(0);
 });
 
-test('lightweight company and legacy comparison redirect preserve navigation',async({page})=>{
-  await page.goto('/companies/2330.TW');await expect(page.getByRole('heading',{name:'台積電',exact:true})).toBeVisible();await expect(page.locator('.role-row')).toHaveCount(2);
-  await expect(page.getByRole('heading',{name:'基本財報'})).toHaveCount(0);await expect(page.getByTestId('network')).toHaveCount(0);await expect(page.getByRole('button',{name:'加入比較'})).toHaveCount(0);
-  await page.locator('.role-row a[href*="segment=foundry"]').click();await expect(heading(page,'晶圓代工')).toBeVisible();
-  await page.goto('/compare?tickers=NVDA,AMD');await expect(page).toHaveURL(/notice=compare-retired/);await expect(page.locator('.notice')).toContainText('公司比較入口已調整');
-  await page.goto('/companies/UNKNOWN');await expect(page.getByRole('main').getByRole('alert')).toContainText('找不到');
+test('old company and comparison URLs open the new research pages',async({page})=>{
+  await page.goto('/companies/2330.TW');await expect(page).toHaveURL(/focus=company-tsmc/);await expect(page.locator('.rs-detail > h2')).toHaveText('台積電');
+  await expect(page.getByRole('navigation',{name:'主要導覽'}).getByRole('link',{name:'公司',exact:true})).toHaveAttribute('aria-current','page');
+  await page.goto('/compare?tickers=NVDA,AMD');await expect(page).toHaveURL(/\/next\?view=compare/);
+  await page.goto('/companies/UNKNOWN');await expect(page.getByRole('heading',{name:'無法開啟這家公司的研究'})).toBeVisible();
 });
 
 test('event filtering, provenance, day precision and official background statistics',async({page})=>{

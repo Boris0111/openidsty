@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="256" viewBox="0 0 760 256">
+  <title>晶片測試的插入點</title>
+  <desc>晶圓測試在封裝前篩出不良 die；成品測試確認封裝後功能；系統層測試在接近實際使用的環境補找供電、熱與韌體相關失效。</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#267a97"/></marker></defs>
+  <rect width="760" height="256" rx="8" fill="#f3f6f7"/>
+  <g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#16343a">
+    <text x="30" y="38" font-size="20" font-weight="700">晶片測試的插入點</text>
+    <text x="36" y="78" font-size="15" font-weight="700">晶圓測試</text>
+    <rect x="30" y="92" width="157" height="44" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="40" y="119" font-size="14">探針卡</text>
+    <rect x="30" y="146" width="157" height="44" rx="6" fill="#fae9e4" stroke="#c14c38" stroke-width="1.5"/>
+    <text x="40" y="173" font-size="14">ATE</text>
+    <path d="M189 114H209" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="217" y="78" font-size="15" font-weight="700">封裝</text>
+    <rect x="211" y="92" width="157" height="44" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="221" y="119" font-size="14">封裝後成品</text>
+    <path d="M370 114H390" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="398" y="78" font-size="15" font-weight="700">成品測試</text>
+    <rect x="392" y="92" width="157" height="44" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="402" y="119" font-size="14">測試座</text>
+    <rect x="392" y="146" width="157" height="44" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="402" y="173" font-size="14">ATE</text>
+    <path d="M551 114H571" stroke="#267a97" stroke-width="2" marker-end="url(#arrow)"/>
+    <text x="579" y="78" font-size="15" font-weight="700">系統層</text>
+    <rect x="573" y="92" width="157" height="44" rx="6" fill="#e3eef3" stroke="#267a97" stroke-width="1.5"/>
+    <text x="583" y="119" font-size="14">SLT</text>
+    <text x="30" y="234" font-size="13" fill="#526575">圖為原創流程示意，由左到右是測試先後。</text>
+  </g>
+</svg>

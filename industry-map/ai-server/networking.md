@@ -45,6 +45,65 @@ kpis:
 signals:
   - 交換器晶片世代轉換時程
   - 共同封裝光學的導入與試產進度
+downstream-relations:
+  odm:
+    kind: supply
+    summary: 網通與光通訊至系統組裝與機櫃整合：交換器／網路模組、光電轉換與系統介面。
+    items:
+    - 交換器／網路模組、光電轉換與系統介面
+    dependencies:
+    - 通道、控制管理、散熱與網路拓樸
+    conditions:
+    - 所需協議、距離、功耗及維修方式在整機驗證通過
+    confidence: inference
+    evidence: []
+    gaps:
+    - 缺少特定 ASIC／DSP／模組與 ODM 平台的互通實測與採購證據，不能由同一環節推定相同產品。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 先區分 scale-up、scale-out 與跨機房；再拆 switch ASIC、DSP、光元件、模組及系統。CMIS
+    管理層、電氣通道及光學傳輸是不同證據範圍。
+  adoption-conditions:
+  - 按所需協議、拓樸、距離、錯誤修正、管理與熱條件驗證整條鏈路，不只看交換容量。
+  - 銅、可插拔、LPO／CPO 須分別核對端點、模組與系統的互通、測試及維修責任。
+  bottlenecks:
+  - 光／電測試點、雷射與散熱整合、管理能力和維修流程都可能限制採用，單一介面相容不能代表系統互通。
+  substitution-limits:
+  - OIF 這份 CPO 模組含 DSP 功能，不能把 CPO 概括為所有 DSP 消失；LPO 的系統條件需另查。
+  - 整體耗電需含雷射、交換器、控制與冷卻；本輪沒有跨路線同口徑每 bit／距離實測，不能宣稱普遍優勝。
+  claims:
+  - id: network-domains
+    statement: NVIDIA 公開網路介紹區分 NVLink scale-up、InfiniBand／Ethernet scale-out 與跨資料中心；是其平台分工說明。
+    confidence: well-supported
+    evidence:
+    - source-id: nvidia-networking-technical
+      url: https://www.nvidia.com/en-us/networking/
+      locator: Introduction／Networking Purpose-Built
+      read-scope: 已讀指定公開段落，未取得完整設計／認證檔
+  - id: cpo-module-interfaces
+    statement: OIF CPO Module IA 描述特定模組與 ASIC 間電氣、光學及熱介面；不能據此推定全產業採用。
+    confidence: well-supported
+    evidence:
+    - document-id: oif-cpo-module
+      version-id: module-01-0
+      locator: module-scope
+    - document-id: oif-cpo-module
+      version-id: module-01-0
+      locator: thermal-interface
+    - document-id: oif-cpo-module
+      version-id: module-01-0
+      locator: test-points
+  - id: cmis-scope
+    statement: CMIS 5.4 的核讀範圍是 host／module 管理互動，不代替光學或電氣性能驗證。
+    confidence: well-supported
+    evidence:
+    - document-id: oif-cmis
+      version-id: revision-5-4
+      locator: management-scope
+  evidence-gaps:
+  - 缺少同拓樸、距離與流量負載下銅／可插拔／LPO／CPO 的系統功耗、BER 與現場維修比較。
+  - 未取得候選公司逐料號、客戶導入與產品收入對照；本輪僅核讀 IA 的指定章節。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

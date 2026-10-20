@@ -10,4 +10,8 @@ Session = sessionmaker(engine, expire_on_commit=False)
 
 def get_session():
     with Session() as session:
+        if session.bind.dialect.name=='postgresql':
+            session.connection(execution_options={'isolation_level':'REPEATABLE READ'})
+            from sqlalchemy import text
+            session.execute(text('SET TRANSACTION READ ONLY'))
         yield session

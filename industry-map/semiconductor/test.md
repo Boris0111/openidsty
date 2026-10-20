@@ -42,6 +42,41 @@ kpis:
 signals:
   - 高階加速器測試時間拉長帶動的設備需求
   - 探針卡規格世代轉換
+downstream-relations:
+  advanced-packaging:
+    kind: supply
+    summary: 測試與探針至先進封裝：晶圓／已知良品 die、封裝後與系統相關測試服務及介面。
+    items:
+    - 晶圓／已知良品 die、封裝後與系統相關測試服務及介面
+    dependencies:
+    - 測試程式、探針／socket、功耗散熱與良品判準
+    conditions:
+    - 測試涵蓋封裝失效風險且治具與目標產品相容
+    confidence: inference
+    evidence: []
+    gaps:
+    - 缺少具名封裝的測試覆蓋、良率分解、重測與探針／ATE 資格，不能只由封裝產量估算測試收入。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: wafer sort、final test、SLT、ATE 與探針／socket 各有角色；測試服務、設備及接觸介面採不同收入單位。
+  adoption-conditions:
+  - 按目標失效機制、電力／溫控、接觸介面與測試程式核對覆蓋及誤判率。
+  bottlenecks:
+  - 測試時間、並行度、接觸壽命與熱控可能限制產能；工時延長不一定等比例增加收入。
+  substitution-limits:
+  - SLT 補充系統環境驗證，不能直接替代全部 ATE 或封裝前 KGD 篩選。
+  claims:
+  - id: slt-complement
+    statement: Teradyne 公開文章將 SLT 與 ATE 視為互補，並列供電、熱、互連及韌體失效範圍；不構成全產業份額證據。
+    confidence: well-supported
+    evidence:
+    - source-id: teradyne-slt-technical
+      url: https://www.teradyne.com/2026/08/24/slt-in-the-ai-era-validating-reliability-at-scale/
+      locator: Why System-Level Test Matters Now／SLT as a Complement
+      read-scope: 已讀指定公開說明；沒有取得客戶完整設計、測試或認證檔
+  evidence-gaps:
+  - 未取得指定 chiplet／HBM 產品的測試覆蓋、重測、良率分解與治具資格。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

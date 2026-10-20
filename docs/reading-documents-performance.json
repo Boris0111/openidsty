@@ -1,0 +1,177 @@
+{
+  "as_of": "2026-10-15T18:53:03.328714+00:00",
+  "origin": "http://127.0.0.1:3013",
+  "host": "Windows-11-10.0.26200-SP0",
+  "readers": 10,
+  "warmup_seconds": 60,
+  "measured_seconds": 300.09276819997467,
+  "requested_seconds": 300,
+  "acceptance_run": true,
+  "segment_ids": [
+    "memory",
+    "substrate",
+    "pcb",
+    "interconnect",
+    "power",
+    "compute",
+    "networking",
+    "thermal",
+    "advanced-packaging",
+    "odm",
+    "datacenter",
+    "equipment",
+    "eda-ip",
+    "materials",
+    "power-discrete",
+    "foundry",
+    "test"
+  ],
+  "theme_ids": [
+    "800vdc",
+    "advanced-node-2nm",
+    "cpo-silicon-photonics",
+    "custom-asic-vs-gpu",
+    "hbm4",
+    "liquid-cooling",
+    "power-bottleneck"
+  ],
+  "workload": [
+    [
+      "documents",
+      "/api/technical-documents?limit=20&offset=0"
+    ],
+    [
+      "document-detail",
+      "/api/technical-documents/ieee-irds-overview?limit=10&offset=0"
+    ],
+    [
+      "document-detail",
+      "/api/technical-documents/ocp-cold-plate-overview?limit=10&offset=0"
+    ],
+    [
+      "document-detail",
+      "/api/technical-documents/ocp-cold-plate-requirements?limit=10&offset=0"
+    ],
+    [
+      "document-detail",
+      "/api/technical-documents/ocp-rack-power-overview?limit=10&offset=0"
+    ],
+    [
+      "document-detail",
+      "/api/technical-documents/oif-cmis?limit=10&offset=0"
+    ],
+    [
+      "document-detail",
+      "/api/technical-documents/oif-cpo-module?limit=10&offset=0"
+    ],
+    [
+      "document-detail",
+      "/api/technical-documents/oif-document-categories?limit=10&offset=0"
+    ],
+    [
+      "document-detail",
+      "/api/technical-documents/ucie-public-specifications?limit=10&offset=0"
+    ]
+  ],
+  "cold": [
+    {
+      "category": "documents",
+      "path": "/api/technical-documents?limit=20&offset=0",
+      "ms": 16.763299936428666,
+      "bytes": 2340,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "document-detail",
+      "path": "/api/technical-documents/ieee-irds-overview?limit=10&offset=0",
+      "ms": 43.547899927943945,
+      "bytes": 1869,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "document-detail",
+      "path": "/api/technical-documents/ocp-cold-plate-overview?limit=10&offset=0",
+      "ms": 30.772099969908595,
+      "bytes": 1935,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "document-detail",
+      "path": "/api/technical-documents/ocp-cold-plate-requirements?limit=10&offset=0",
+      "ms": 31.885300064459443,
+      "bytes": 2718,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "document-detail",
+      "path": "/api/technical-documents/ocp-rack-power-overview?limit=10&offset=0",
+      "ms": 30.328899854794145,
+      "bytes": 1896,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "document-detail",
+      "path": "/api/technical-documents/oif-cmis?limit=10&offset=0",
+      "ms": 16.516500152647495,
+      "bytes": 2161,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "document-detail",
+      "path": "/api/technical-documents/oif-cpo-module?limit=10&offset=0",
+      "ms": 16.20689989067614,
+      "bytes": 2908,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "document-detail",
+      "path": "/api/technical-documents/oif-document-categories?limit=10&offset=0",
+      "ms": 29.957100050523877,
+      "bytes": 2012,
+      "status": 200,
+      "error": null
+    },
+    {
+      "category": "document-detail",
+      "path": "/api/technical-documents/ucie-public-specifications?limit=10&offset=0",
+      "ms": 32.033400144428015,
+      "bytes": 2132,
+      "status": 200,
+      "error": null
+    }
+  ],
+  "summary": {
+    "documents": {
+      "samples": 2524,
+      "errors": 0,
+      "p50_ms": 121.052399976179,
+      "p95_ms": 166.68569995090365,
+      "p99_ms": 196.49110012687743,
+      "throughput": 8.410732504950158,
+      "mean_bytes": 2340.0,
+      "target_ms": 500,
+      "passed": true
+    },
+    "document-detail": {
+      "samples": 20176,
+      "errors": 0,
+      "p50_ms": 132.03409989364445,
+      "p95_ms": 177.0552999805659,
+      "p99_ms": 211.29470015875995,
+      "throughput": 67.23254319329413,
+      "mean_bytes": 2203.8081879460747,
+      "target_ms": 500,
+      "passed": true
+    }
+  },
+  "new_document_baseline": null,
+  "node_version": "24.21.0",
+  "environment_match": true
+}

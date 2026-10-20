@@ -50,6 +50,41 @@ kpis:
 signals:
   - 機櫃世代轉換與規格變更
   - 專案份額在代工廠之間的移轉
+downstream-relations:
+  datacenter:
+    kind: supply
+    summary: 系統組裝與機櫃整合至資料中心與雲端業者：伺服器、整櫃組裝與部署整合服務。
+    items:
+    - 伺服器、整櫃組裝與部署整合服務
+    dependencies:
+    - 設施供電、冷卻、網路與維修責任交界
+    conditions:
+    - 整櫃完成交付、上架、接電及客戶驗收
+    confidence: inference
+    evidence: []
+    gaps:
+    - 未逐案取得工廠驗收、現場驗收、可用 IT 容量與收入認列的對照；出貨不必然代表已上線。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 整合運算、記憶體、板、網路、供電、散熱及韌體，交付單機或整櫃；出廠、到貨、接電及現場驗收是不同階段。
+  adoption-conditions:
+  - 整份 BOM 齊料，電氣／液路／機構及韌體共同驗證；場址供電排熱與維修責任須明確。
+  bottlenecks:
+  - 缺料、工廠測試、液路完整性及場址條件可能推遲驗收；最高價晶片到貨不等於整櫃可交付。
+  substitution-limits:
+  - 品牌整合與 ODM 的設計、採購及服務責任不同，不能以含高價晶片轉售的總營收推估組裝份額。
+  claims:
+  - id: rack-facility-interface
+    statement: Supermicro 公開方案分列 system／in-rack、in-row 與 site infrastructure 以及冷板、歧管、CDU；能力介紹不等於指定場址已驗收。
+    confidence: well-supported
+    evidence:
+    - source-id: supermicro-rack-technical
+      url: https://www.supermicro.com/en/solutions/liquid-cooling
+      locator: System-Level & In-Rack／In-Row／Site Infrastructure
+      read-scope: 已讀指定公開說明；沒有取得客戶完整設計、測試或認證檔
+  evidence-gaps:
+  - 尚缺個別專案 FAT／SAT、場址條件、保固責任與收入認列對照；未取得各 ODM 的指定平台配置與客戶驗收。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

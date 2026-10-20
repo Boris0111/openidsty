@@ -42,6 +42,83 @@ kpis:
 signals:
   - 長約簽訂條件與價格調整
   - 新製程世代的材料規格切換
+downstream-relations:
+  foundry:
+    kind: supply
+    summary: 半導體材料至晶圓代工：矽晶圓、光阻、氣體、化學品與污染控制等材料子類。
+    items:
+    - 矽晶圓、光阻、氣體、化學品與污染控制等材料子類
+    dependencies:
+    - 純度、缺陷、製程配方與供應認證
+    conditions:
+    - 材料在指定製程及供應批次完成資格驗證
+    confidence: inference
+    evidence: []
+    gaps:
+    - 缺少客戶材料清單、純度／缺陷限值與用量；不能把所有材料公司視為同種耗材供應者。
+    reviewed: '2026-10-16'
+  advanced-packaging:
+    kind: supply
+    summary: 半導體材料至先進封裝：封裝材料與製程污染控制的供應角色。
+    items:
+    - 封裝材料與製程污染控制的供應角色
+    dependencies:
+    - 封裝材料、製程、熱機械應力及可靠度
+    conditions:
+    - 材料符合指定封裝路線並完成可靠度驗證
+    confidence: inference
+    evidence: []
+    gaps:
+    - 尚缺各封裝平台對矽中介層、封裝化學品及污染控制的實際用料，不能由擴產推定全清單受惠。
+    reviewed: '2026-10-16'
+  substrate:
+    kind: supply
+    summary: 半導體材料至ABF 載板：材料資格與規格傳導，尚非本清單公司直接交易證據。
+    items:
+    - 材料資格與規格傳導，尚非本清單公司直接交易證據
+    dependencies:
+    - 載板樹脂、銅材、製程化學品與設計規則
+    conditions:
+    - 先核對具名材料與載板認證，才判定直接供應
+    confidence: needs-verification
+    evidence: []
+    gaps:
+    - 目前半導體材料公司清單不足以證明 ABF 膜或其他載板材料的直接供應，缺具名材料料號與供應商資格。
+    reviewed: '2026-10-16'
+  pcb:
+    kind: supply
+    summary: 半導體材料至印刷電路板與銅箔基板：材料規格傳導，需另核對板材及製程材料子角色。
+    items:
+    - 材料規格傳導，需另核對板材及製程材料子角色
+    dependencies:
+    - CCL／樹脂／銅箔、損耗、加工及可靠度
+    conditions:
+    - 具名材料適用 PCB 堆疊且完成板廠資格驗證
+    confidence: needs-verification
+    evidence: []
+    gaps:
+    - 本材料清單不直接代表低損耗 CCL／銅箔供應商；尚缺板材配方、料號與實際供應對照。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 矽晶圓、光阻、特殊氣體、化學品及污染控制是不同材料子類；本清單不直接證明供應 ABF 膜或 CCL。
+  adoption-conditions:
+  - 按製程、純度、顆粒／金屬污染、接液相容與批次品質完成材料資格認證。
+  bottlenecks:
+  - 純化、過濾、交期與批次穩定性要連同製程良率驗證，名目供給不等於合格供給。
+  substitution-limits:
+  - 不同製程配方與污染控制條件限制直接換料；矽晶圓、樹脂與板材不能因同屬材料就互替。
+  claims:
+  - id: contamination-control-role
+    statement: Entegris 公開說明涵蓋液體、氣體與空氣的純化／過濾，支持污染控制角色；不揭露各客戶認證。
+    confidence: well-supported
+    evidence:
+    - source-id: entegris-materials-technical
+      url: https://www.entegris.com/en/home/our-science/by-solution-area/contamination-control.html
+      locator: Contamination Control／purification and filtration
+      read-scope: 已讀指定公開說明；沒有取得客戶完整設計、測試或認證檔
+  evidence-gaps:
+  - 缺少指定客戶的材料限值、實際用量與資格測試；材料到載板／PCB 僅保留具體待核實供應缺口。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

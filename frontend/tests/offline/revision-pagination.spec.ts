@@ -1,0 +1,9 @@
+import {test,expect} from '@playwright/test';
+import {installOfflineApi} from './fixture-data';
+test('超過預設上限的修訂有總數且可載入更多',async({page})=>{
+ const unexpected=await installOfflineApi(page);
+ const rows=Array.from({length:26},(_,index)=>({id:index+1,identity:'same-period',revision:26-index,content_hash:'test',source_id:'test',original_period:'2026 Q2',period_start:'2026-04-01',period_end:'2026-06-30',basis:'quarterly',scope:'測試產品',unit:'amount',currency:'USD',value:String(index),published_at:null,reported_at:null,published_precision:'unknown',date_semantics:'unknown',fetched_at:'2026-10-16T00:00:00Z',url:'https://example.org/report',raw_excerpt:'離線必要摘錄',valid:true,invalid_reason:null}));
+ await page.route('**/api/themes/liquid-cooling/indicators',r=>r.fulfill({json:{theme_id:'liquid-cooling',indicators:[{id:'test',name:'測試修訂指標',kind:'direct',scope:'測試產品',limitations:'離線數據',latest:rows[0],status:'available',data_age_days:1,source:{id:'test',name:'測試來源',status:'success',last_success:null,error:null},comparison:{value:null,reason:'缺少前期'},observations:[rows[0]],revisions:rows.slice(0,20),revisions_total:26,revisions_limit:20,trend:[],gaps:[]}]}}));
+ await page.route('**/api/themes/liquid-cooling/indicators/test/revisions?*',r=>{expect(new URL(r.request().url()).searchParams.get('offset')).toBe('20');return r.fulfill({json:{items:rows.slice(20),total:26,limit:20,offset:20}});});
+ await page.goto('/themes/liquid-cooling#indicators');await page.getByText('期別、來源與修訂明細').click();await expect(page.getByText('已載入 20／26 筆修訂。')).toBeVisible();await page.getByRole('button',{name:'載入更多修訂'}).click();await expect(page.getByText('已載入 26／26 筆修訂。')).toBeVisible();await expect(page.locator('.theme-indicators tbody tr')).toHaveCount(26);await expect(page.getByRole('button',{name:'載入更多修訂'})).toHaveCount(0);expect(unexpected).toEqual([]);
+});

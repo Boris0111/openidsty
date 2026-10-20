@@ -1,0 +1,338 @@
+# 新研究服務實作紀錄
+
+## 採用規劃與查核紀錄
+
+- 2026-10-16：Boris 在提案提交 `4592dff` 呈現後明確啟動 `$openspec-apply-change`，依 task 1.1 採用該版 proposal、design、9 份 specs 與來源限制，開始 `expand-industry-research-service`。
+- 程式與驗證只在 `feat/expand-industry-research-service` 的獨立 worktree 進行；原 `main`、保存分支、既有服務及兩個 completed change 不作修改。
+- 免費資料不足以保證全部公司／指標／歷史自動取得；官方補錄、明示缺口與來源核對仍屬必要行為。
+- Task 3.4 的第一條真實研究流程需要桌機／手機畫面與 Boris 閱讀回饋；尚未取得回饋前不得將該項標為完成或越過其完整管理／全批深研驗收條件。
+
+本文件隨實際驗證補充結果；未執行的功能與容量目標不記為成果。
+
+## 還原及啟停驗證（2026-10-16）
+
+來源為 `industryflow-reading-db / industry_reading`，還原至獨立 `industry_research`。Alembic 版本 `0006`；19 張 public 表的筆數與排序內容 MD5 全部一致，包含 companies 95、roles 100、segments 17、themes 7、events 2915、financials 147、assessment versions 7、技術文件／觀測／核對各 8。備份 SHA-256 為 `f77196bf261d29894683fb67176459769b9ef396856581fc48df9087f2a8787a`。
+
+新版網站 3014 與 API 8014 啟動、停止、重啟後均回 200；原有 12 個容器的 ID、image、started_at、restart、mount 與 port fingerprints 未變。機器可讀紀錄保存在忽略目錄 `.work/research-lab/restore.json` 與 `isolation.json`，不含憑證。初始化改用 SQL，避免 Windows CRLF 令 shell shebang 失效；保留既有新 volume，以獨立建立 Prefect DB 修復首次初始化，沒有刪除任何 volume。共享 app image 改成只 build api 一次後以同 image 啟動 initializer，避免重複 image export。
+
+## 研究身分與結構驗證
+
+`research-v1` authoring 格式加入唯一 Schema 文件。95 家公司各有不可變 kind-prefixed ID；原 95 個 ticker／PRIVATE 鍵、100 筆角色、既有 aliases 與 CIK 完整對應，Boyd 沒有 listing。18 項新測試通過，涵蓋改名不改 ID、跨市場證券同主體、同名母子公司不合併、legacy／官方識別重複、listing 區間重疊、分類環、供需環、證據與資產。跨市場測試使用明確標記的合成資料，未把它寫進正式研究。
+
+基本公司頁仍標示尚未深研，沒有添加未讀來源或升級既有判讀。全量地圖驗證通過（17 環節、7 題材、53 個現行來源）；DB 中其他來源及歷史未刪除。
+
+`tests/run_validator_tests.py` 通過既有 66 類失敗案例、合法基準及新增 18 項 research-v1 測試；供需回路通過、分類回路拒絕。分類採有界 iterative traversal，不依賴 Python recursion depth。
+
+## PostgreSQL 遷移及權限驗證
+
+隔離新版已升級至 `0008`。獨立 `industry_research_test` 的 6 項 PostgreSQL 契約通過，包含跨 release FK、Numeric(38,10) 精度、A → B → A 修訂、raw fact／job 唯一鍵、ready head 拒絕、reader 的管理表拒絕與 RLS、writer 不可重寫 published 內容或建立資料表。實際 reader／writer login 均非 superuser／BYPASSRLS；reader 即使關閉預設 read-only 設定仍沒有 INSERT grant。
+
+既有 public 表的欄位、型別、nullability、default 與所有公司／角色主鍵保持原狀。除 Alembic 版本及既有 initializer 重新匯入的 sources metadata 外，其他 17 張資料表的排序內容 hash 仍與備份相同；sources 仍有 73 筆，未刪歷史，不能把 metadata 刷新宣稱成重新研究。原服務的 fingerprints 再次核對一致。Docker 的 mount 清單先排序再比較，差異會留存安全診斷檔，避免順序差異誤報。
+
+操作與資料模型見 [research-data-model](research-data-model.md)。本段只驗證資料模型；發布、登入、財務 adapters 及新版讀者功能仍依後續 tasks 交付。
+
+Backend 回歸：150 passed、8 skipped（需專用 PostgreSQL 的 6 項與既有 reading PG 2 項）；新增 6 項已另在真實 PostgreSQL 執行通過。既有 Starlette/httpx deprecation warning 保留，不在此更換依賴。Git diff 格式檢查通過。
+
+## Git 編譯與重建驗證
+
+從 `dad167a94fafe9499702356fc8842d6f79b858ce` 的 Git archive 編譯 119 個物件（17／7／95），兩次內容 hash 均為 `412609b03e6a66b7aa62da819f19487690c7ab48c13527f3053786d3a9a8a6a1`。在獨立 PostgreSQL 的 rollback-only transaction 逐筆核對實際 Markdown、metadata、日期與 hash，保留 7 份判讀、9 個指標定義、11 筆觀測及技術文件／觀測／核對各 8 筆，沒有將測試資料寫進 application DB。5 項編譯單元測試通過，含惡意 archive 路徑與 symlink 拒絕。
+
+初期檢查時未建立 application head；首條內容提交後已從 `8480da4af6d6cac11c6f62836a1fcc2feced4012` 完成一次 bootstrap。Release 為 `03799774-3553-5ff6-9910-13a68468af15`，125 物件的內容 hash 為 `3d39adcbc033817b0d8d9da4cd0c6934a3c19cbd48c0bbc37acdb3a958caa0c6`。同一提交在 PostgreSQL rollback-only transaction 重建比對一致，原歷史筆數仍保留。管理發布與後續切換不在本 bootstrap CLI 假裝完成。
+
+## V2 讀取契約
+
+加入搜尋後共 22 項 PostgreSQL／API／圖形／搜尋契約通過，另保存 119 物件的 reader SQL EXPLAIN 計畫。功能、查詢限制與量測範圍見 [research-search](research-search.md)；未把單條 SQL 時間當成容量保證。
+
+Typed graph 與三種 impact 加入後共 19 項 PostgreSQL／圖形契約通過；原地圖的真實供需環可終止，thermal 經共同下游 odm 找到 pcb，題材與線性理由分別保留，超限顯示 truncated。能力沒有被轉為具名供應，SQL 每層有數量限制。
+
+新增 manifest、catalog、清單／詳情、舊識別解析及固定引用，保留舊 API。獨立 PostgreSQL 共 13 項契約通過（6 資料模型＋7 API），涵蓋分頁／篩選／pin、歧義 409、未知 404、ready／preparing 拒絕、未引用或未發布文件拒絕、legacy version key 與資料庫故障 503。技術維護歷史另由 `0009` 的 RLS 保留在管理側，固定引用只提供來源及必要摘錄。完整契約見 [research-api-v2](research-api-v2.md)。
+
+## 隔離設定驗證
+
+`compose.research.yaml` 為獨立設定，經 Docker Compose 解析確認所有共用 app image 的服務都使用新版 tag，port 只綁 loopback，PG volume／network 使用新版 namespace，排程預設不啟動。額外注入五種不安全設定（舊 initialize image、公網 API bind、原 PG volume、external volume、取消 worker profile）皆被操作工具拒絕。
+
+`.env.research` 已獨立產生，DB／session／reader／writer 祕密各自不同且由 Git 忽略。啟停、設定核對與還原方法見 [research-lab](research-lab.md)。DB roles 已另驗證；owner 管理與私人網路 gateway 尚待後續 tasks。
+
+## 首條流程的技術驗證與閱讀回饋
+
+最新 backend 回歸 158 passed、21 skipped；新版的 19 項 PostgreSQL 契約另以真實 DB 驗證，連同 3 項圖形走法共 22 項通過。其餘 2 項既有 reading PG 情境本輪未重跑，留待完整整合驗收。既有 offline browser 36 項通過。新 live browser 6 項通過，涵蓋產品—公司—來源、固定版分享／返回、鍵盤搜尋、手機與文字連線、慢回應、圖解失敗仍可讀研究。Production build 與地圖 full 驗證通過（17／7、58 現行來源），validator 的 66 類突變及 18 項新測試通過。
+
+桌機與手機截圖在 `.work/first-flow-review/`，另以新手機 viewport 檢視公司頁，修正小圖自動排版將標籤縮得過小的問題。2026-10-16 Boris 回覆「目前頁面操作體驗尚可，可依此模式繼續其他分析產出」，task 3.4 已完成。技術驗證與 agent 截圖仍與使用者回饋分開保存，不將繼續指示擴張成全部研究內容及完整導覽驗收。回饋與走讀範圍見 [research-first-flow-review](research-first-flow-review.md)；其關於新舊地圖操作關係的提問，現況與後續方向見 [research-navigation](research-navigation.md)。完整管理、動態財務、全鏈導覽與 26 家深研仍由後續 tasks 交付，沒有切換或合併 main。
+
+## Owner 實作與環境阻礙
+
+Task 4.1 的 owner 設定／重設、session、CSRF、Origin、到期與持久登入限流程式已加入。Docker 中斷當時尚未通過真實 PostgreSQL 及瀏覽器驗證，因此當時 checkbox 保持未完成；恢復後結果見下段。Docker 於 2026-10-16 23:41 發生 BuildKit history nil pointer panic，VM 隨後關閉，Desktop backend 殘留使重新開啟 UI 未恢復 engine。唯讀診斷、可信程度及恢復後的檢查順序見 [runtime incident](research-runtime-incident-20261017.md)。本輪未重設或刪除任何 Docker／WSL 資料。
+
+2026-10-17 恢復後，Boris 授權暫停不重要服務並繼續 apply；已停止原版與 Valuflow 的 7 個容器，僅保留新版研究環境。34 項真實 PostgreSQL／API 契約通過（含 12 項 owner），production build 通過，3 項管理代理與 6 項研究走讀共 9 項 live browser 通過，task 4.1 完成。沒有設定實際 owner 密碼或重新 bootstrap 研究。登入操作與安全設定見 [research-owner](research-owner.md)。
+
+## 草稿及 managed Git（tasks 4.2–4.3）
+
+`/admin` 提供表單／Markdown、修訂、diff、整份驗證及私有閱讀預覽；CLI 以原始研究檔案交換相同草稿，不保存登入憑證。預覽共用正式 detail／graph 與前端內容元件，在 savepoint rollback 臨時投影；正式 head 不動。Managed Git 僅在專用 volume 及臨時 worktree 寫入研究 allowlist，保留不可改寫的 release refs。資產先檢查內容／SVG，再以 hash 保存，讀者仍只能取得已發布版本引用的資產。操作範例見 [research-drafts](research-drafts.md)。
+
+2026-10-17 實際結果：71 項隔離 PostgreSQL／Linux 容器測試全部通過，含真實研究編譯、表單／檔案同結果、修訂衝突、預覽無殘留、匿名管理拒絕、資產、symlink、managed worktree 與開發 index 不變。Windows 同樣實跑 managed worktree／index 及 CLI，原先往返測試揭露 CRLF 自動轉換，已改成保留 bytes 並以 LF／CRLF 案例驗證；Windows 不具建立 symlink 的權限，因此該項在 Linux 容器實跑，未宣稱 Windows 已跑過。唯一現有 warning 為 Starlette 的 httpx 測試介面棄用提示。
+
+Production build、typecheck 通過，13 項 live browser 全通過：6 項既有讀者、3 項 session proxy、4 項草稿桌機／手機／入口／資產邊界。編輯情境採合成 API 回應，真實寫入／驗證／預覽另由 PostgreSQL 整合測試覆蓋；未在 application DB 設定合成密碼。桌機／手機截圖已檢視，保存在忽略的 `.work/editor-review/`，不視為 Boris 對管理 UI 的使用者驗收。
+
+本輪已初始化 managed clone 並保護目前發布 commit；公開研究仍是原 bootstrap release。原版／Valuflow 仍停止，只運行研究版 web、API、DB。Task 4.4 的持久發布與恢復、4.5 還原及同步、4.6 完整管理流程尚未完成，不把草稿功能當成發布交付。
+
+## 持久發布與管理流程（tasks 4.4–4.6）
+
+後續已加入持久 outbox、Prefect 派送／每分鐘 reconciliation、job／release refs、候選投影與單交易 head 啟用；重複請求回原 job，基準衝突保留草稿，還原不修改財務或事件。`research/published` 同步作業重讀當前 head，避免晚到同步倒退。Owner 管理頁已提供發布理由、進度、失敗重試、已發布版閱讀、還原、來源健康及操作紀錄；草稿另可與目前正式版本比較。操作見 [research-publication](research-publication.md)。
+
+驗證：88 項真實 PostgreSQL／容器測試完整通過，另以最新程式通過 1 項完整檔案介面流程（CLI 檔案交換→import→preview→publish→HTTP retry→restore，並以真正 reader login 查閱前後內容）。故障注入涵蓋 Git／asset／投影實際操作失敗、六個中斷位置、啟用交易回滾、回應遺失、基準競爭、相同內容不假更新、Prefect client 暫時失效及 lease 到期補送。另讓 child worker `os._exit(77)` 後由全新程序續跑，同一 job 僅一筆發布稽核。Prefect transport 本輪以 client 契約替身驗證；實際啟動 scheduler、流程註冊與消費作業的 runtime 整合仍由 task 9.1 驗收，不宣稱已在 application DB 實際發布。
+
+測試期間曾誤開兩個共用測試 DB 的程序，造成最後一個 projection 案例與另一輪 owner setup 互相干擾；該輪結果未採計為完整通過。已在測試入口加入 DB session advisory lock，鎖定遷移與整輪 pytest，隨後序列重跑 88 項通過。Application DB 另核對：head 仍為 `03799774-3553-5ff6-9910-13a68468af15`、owner 0、publish jobs 0。未把測試帳密、候選版本或合成內容放進 application DB。
+
+唯讀 gateway 使用相同 app image 的 opt-in reader profile，沒有 DB／session 憑證及持久 volumes；3 項原生安全測試、2 項真實 gateway browser 通過，研究、圖解與公司導覽可讀，管理／legacy 診斷／偽造 cookie／Host／寫入被拒絕。Gateway 測完已停止，仍只保留 web／API／DB。13 項管理及既有閱讀 browser 通過；管理寫入畫面採合成 API，真實 DB 行為由上述整合測試覆蓋。Build／typecheck 通過，未增加讀者端維護資料。跨裝置 TLS／私人網路設定尚未執行，條件見 [research-reader-entry](research-reader-entry.md)。
+
+## 財務基礎（task 5.1）
+
+新增 13 個明確口徑的 metric 定義（含毛利輔助值）、Decimal／Numeric(38,10)、raw fact／canonical group 雙身分、同值新申報只補 provenance、重編與晚到歷史、同日衝突核對、公式版本與 input lineage。基本／稀釋 EPS 及普通股／ADR 不互換，EPS／比率／期末值禁止相減；缺前期或相容申報時回缺口，不填零。Migration `0011` 保護 raw fact、group 與觀測值不被改寫，最新值依申報日而不是單看 revision。
+
+`pg-check --suite financial-core` 實際 35 passed（24 計算／身分、5 writer storage、6 原有 PG 模型／權限），包含千元倍率、有效零、同值新申報、重編後回到舊值、晚到歷史不蓋新值、非曆年 Q4、同日歧義及不可改寫。未抓取外部來源或填入合成 application 財務；指標與限制見 [research-financial-metrics](research-financial-metrics.md)。台美 adapter、官方補錄與查詢／比較仍按 tasks 5.2–5.6 接續。
+
+## 台灣官方摘要（task 5.2）
+
+2026-10-17 實讀 TWSE／TPEx 六個 JSON 入口及 MOPS 單位／累計表頭，保存台積電與雙鴻原始列及來源 hash。新版解析保留別名、千元倍率、EPS 元、母公司與總淨利差異、期末負債、缺值與有效零。未提供申報日／合併範圍時不杜撰，季度須先有已核對財年；非曆年或未知財年保留原列與缺口。出表日期使用 migration `0012` 的 source_as_of，不混成公司申報日。詳見 [台灣摘要能力及限制](research-financial-tw.md)。
+
+最新 `pg-check --suite financial-core` 56 passed（既有 35＋台灣 21），在獨立測試 DB 通過 migration、真實 writer 入庫、同值新出表日不假更新、晚到資料不蓋新值、原始高精度 JSON 數字保存及日期模式隔離。Full 地圖驗證通過（17 環節、7 題材、60 來源），兩筆新負債來源先 manual 註冊，避免誤交 legacy adapter；到期流程由 task 5.5 串接。未自動發布研究或把樣本寫進 application DB。
+
+此次接續時 Docker 引擎原為停止，啟動 Desktop 後恢復三個新版容器；原版／Valuflow 仍停止，隔離測試核對 protected services 不變。沒有執行 reset、prune、volume 刪除或重新 bootstrap。
+
+## SEC 財務接續點（task 5.3 尚未完成）
+
+已實作 US GAAP 標準 tag mapping、原始 accession／日期／可取得 context／股別、不同期間與淨利口徑、未知／自訂 tag 缺口、同一申報衝突拒絕及 Decimal storage。所有 SEC HTTP（包含 retry、redirect 與一般 IR 跳入 SEC）共用 PostgreSQL session gate，每次間距至少 0.5 秒；不使用各 client 獨立的 SEC 限流，也不向外部 redirect 洩露聯絡 email。
+
+2026-10-17 `pg-check --suite financial-sec` 最新 16 passed，含真實 DB 修訂／冪等及三個獨立程序限流；數字場景為明示合成，HTTP 使用 MockTransport。另既有擷取／來源診斷與財務原生回歸 102 passed、4 skipped，這四項須獨立 PostgreSQL，已分別由 financial-core／financial-sec 執行；最後新增 IR→SEC 跳轉契約另包含在最新 16 項。
+
+**待使用者設定：** 新版 `.env.research` 尚無有效 SEC_USER_AGENT。未自行填假 email，實際 SEC companyfacts 樣本仍未取得，task 5.3 checkbox 保留未完成。設定步驟與官方限制見 [SEC adapter](research-financial-sec.md)；接手先確認設定存在（不印值），再用共用 gate 擷取官方樣本、保存 hash／selected fixtures、逐項核對並重跑測試，才能完成 5.3，再續 5.4 官方補錄。這是資料來源設定前提，並非 Docker 或測試失敗。
+
+隔離 application 已升級 `0012`，health、manifest、`/next` 均 HTTP 200；head 仍為原 `03799774-3553-5ff6-9910-13a68468af15`，owner／publish jobs／新 financial observations 均 0，legacy events 2915、financials 147。Initializer 只加入指標定義及來源 metadata，不把測試數值寫入 application DB。
+
+## SEC 官方樣本補驗（task 5.3 完成）
+
+Boris 設定後已核對 SEC_USER_AGENT 存在、唯一及格式有效，未輸出內容。以隔離 initialize 的當次環境、既有 HTTP 與 PostgreSQL gate 實際取得 Vertiv／NVIDIA companyfacts，各 HTTP 200；來源 hash、UTC 時間及精確 Decimal selected fixtures 已保存，不含請求 header。補驗揭露非 US GAAP namespace 不一定為 issuer extension，已修正為 unmapped-taxonomy 缺口，避免誤標 ECD 等標準分類。
+
+最新 `pg-check --suite financial-sec` 19 passed，包含官方年度值、NVIDIA 非曆年期間、實際 comparative EPS 重列、同值新申報只補 provenance，整批重新入庫沒有假修訂；原有合成邊界及三程序共用限流亦通過。只在可回滾的獨立 test DB 驗證，沒有向 application 寫入這批數字或啟動定時抓取。詳見 [SEC adapter](research-financial-sec.md)。
+
+## 官方財務補錄（task 5.4）
+
+新增 JSON／CSV 同格式驗證、1 MiB／100 列界線、原始數值／倍率／期間／原幣／範圍／定位預覽，以及 owner 明確核對後確認入庫。Payload hash 綁定輸入與當時數值基準，確認重試使用同一 key／原結果；過期預覽、同日衝突缺修訂依據、未知官方主機、缺欄與錯誤數值拒絕。確認將 raw facts、觀測修訂、批次結果及 audit 原子寫入，整批任一錯誤回滾。Migration `0013` 保護已確認批次／結果及原預覽不可改寫，詳見 [補錄操作與 API](research-financial-imports.md)。
+
+`pg-check --suite financial-imports` 最新 **90 passed**：21 補錄解析／真實 API、24 財務 core、5 storage、21 台灣、19 SEC／限流；原先測試固定 key 被前一案例使用後遭正確拒絕，已改成每批獨立 key，未把該失敗輪視為通過。共同群組鎖採排序，人工與自動 adapters 沿用同一順序。
+
+Admin 新增「財務補錄」、JSON／CSV 空白範本、文件連結與差異表、明確勾選／理由及重試；修改內容即清舊預覽。Production build（隔離 Compose）、typecheck、16 項 live browser 通過（新增 3 財務，既有 13）；加入空白範本下載檢查後另重跑 3 項通過。桌機 1440×1000／手機 390×844 截圖已實際檢視，存於忽略的 `.work/financial-import-review/`。畫面寫入使用明示合成 API，真實 DB 行為另由上述測試覆蓋；未將截圖當 Boris 使用者驗收。
+
+Application 已升級 `0013`，head 不變；owner、financial observations、financial import batches 均 0。僅研究版 web／API／DB 運行，scheduler 仍關閉。下一項為 5.5 到期排程、共用重試、來源隔離及單次更新。
+
+## 來源到期更新完成（task 5.5）
+
+Migration `0014` 保存 source jobs、每 URL 重試預算、提供者退避及有界派送索引。每小時檢查到期來源、財務每日到期；單次更新與 CLI／Prefect 共用相同流程。429 持久保存 Retry-After，403／外殼停止當輪，資料交易失敗保留舊值。程序中斷可續原 job，不重設預算或製造財務修訂；事件 official／report／rumor 與 direct／mention／background 分開，研究 head 及正式關係不變。來源操作見 [research-source-updates](research-source-updates.md)。
+
+台灣兩筆負債 adapter 已接入新流程；同一官方回應兼供 canonical／相容 legacy 投影。季度日期只採用同一 published release 中有證據、信心與適用期間的 `financial-reporting` 設定，未知或失效設定保留缺口，不為填圖表猜財年。Schema／validator 同步擴充，尚未替實際公司填入未核對設定。
+
+驗證：`pg-check --suite source-updates` **17 passed**（HTTP、真實 writer、429 跨 client、實際子程序 exit 77 後續跑、派送失敗恢復、日曆適用期與傳聞隔離）；`financial-imports` **90 passed**；既有 ingestion／technical／metric 六套原生測試 **78 passed**；full 地圖驗證及 validator **66 類失敗案例＋20 research tests** 通過。早先 JSON／JSONB fixture 錯誤已修正，失敗輪未列入通過。
+
+Typecheck、隔離 production build 通過；live browser **19 passed、2 skipped**（唯讀 gateway 未啟動，該兩項不列通過）。來源手機走查發現表格橫向操作不便，改為逐筆上下排列並補明確 table roles；狀態 cell 的輔助標籤納入可存取名稱後修正測試比對，最新來源三項 **3 passed**。桌機與手機截圖實際檢視，位於忽略的 `.work/source-update-review/`，畫面是合成 API，非 Boris 驗收。
+
+Application 為 `0014`，已確認 history index、兩筆 balance adapter；head 仍 `03799774-3553-5ff6-9910-13a68468af15`，owner／publish jobs／financial observations／financial import batches／source jobs 均 0。僅新版 web／API／DB 運行，scheduler 仍關閉；原 project fingerprints 未變。Prefect 真實服務整合另由 task 9.1 驗證，沒有宣稱排程已開啟。下一項為 5.6 財務、事件、觀察與比較 API。
+
+## 動態讀取與比較完成（task 5.6）
+
+新增財務清單／單筆／修訂及公式輸入入口、2–4 公司研究與財務比較、官方／報導事件及獨立傳聞觀察。資料保持原幣、實際期間、單季／累計／全年／期末與股別，金額以 Decimal 字串傳輸。SQL 有界窗口／分頁，主要來源缺口、異幣／財季／範圍、EPS／ADR 及候選歧義都不能變成混合排名。先選合併範圍再限制候選；同一期末不同起日保留歧義，不按較晚起算日任選。完整契約及可比較／不可比較範例見 [dynamic API](research-dynamic-api.md)。
+
+Migration `0015` 提供 curated fact citations view 及索引，reader 仍不能 SELECT 原始 facts payload。第一輪讀者權限測試發現原始表拒讀，採新增 view 提供必要引用欄位，沒有放寬 raw 權限；早先失敗輪不列通過。既有事件以可續跑、每批 500 的純索引流程對應已發布 stable IDs，不擷取網站或新增事件。Initializer 亦執行索引維護。
+
+最新完整 `pg-check` **220 passed**，含新增 **20 項 dynamic reader** 與 **18 項 source updates**，以及原有 publication／restart／auth／graph／search／financial／reader gateway 契約。執行 589.51 秒；先前一輪因誤判緩衝輸出而中止，不列為通過，已更正診斷並完整重跑。Typecheck、隔離 production build、7 項 live browser（新增真實 API／代理 1 項＋原研究閱讀 6 項）通過。
+
+Application 為 `0015` 並確認引用索引存在；2915 筆既有事件保留，其中 1970 筆可連到發布物件。不能解析的事件不猜公司或角色。Research head 及 34 筆既有關係保留，owner／publish jobs／financial observations／financial import batches／source jobs 均 0。舊 Float 財務仍由 legacy 契約保留，不冒充精確 canonical 值。未開啟 scheduler 或真實 Prefect worker。下一項為 6.1 完整目錄及新舊入口往返。
+
+## 完整研究導覽（task 6.1）
+
+接續上輪尚未提交的導覽草稿，已接上七類目錄、公司市場／角色／應用篩選及分頁；從目錄閱讀後可回原篩選頁。舊地圖與 ticker 公司頁透過已發布 resolve 進入新版穩定身分，後續閱讀保留原地圖位置。直接分享連結可由同版 taxonomy 祖先取得地圖入口，無對應不猜。操作與入口見 [研究導覽](research-navigation-design.md)。
+
+Typed graph 的圖例依實際型別顯示；圖形及文字選單共用 `edge` URL，兩端研究、條件與來源可繼續閱讀。補上明確局部範圍、截斷、鍵盤縮放按鈕與比例；resize 保留 pan／zoom。一般閱讀沒有新增維護資料。實查揭露應用篩公司原先只讀分類樹，會漏掉 offering 連入的公司，已在同版 SQL 加入產品／角色子樹對應。私人 gateway 只將合法地圖選取轉到 v2，沒有開放 legacy／admin。
+
+最新 `pg-check --suite reader-navigation` **21 passed**，涵蓋 v2 清單／固定引用／返回、typed graph／三種 traversal／真實回路、搜尋及 gateway 邊界；離線瀏覽器 **6 passed**（新版 3＋既有導覽 3）；真實 release 瀏覽器 **10 passed**（新版導覽 3＋原研究 6＋動態代理 1）。早先兩個瀏覽器 selector 同時匹配 Next announcer 或散文 h2，已改為明確區域，失敗輪不列通過。Typecheck、原生 production build 與隔離 Compose production build 通過。
+
+實際確認 17 環節、7 題材、95 公司可由目錄到達；舊散熱圖 → 應用 → 晶片端角色 → 冷板 → 雙鴻 → 原地圖及舊 ticker 往返通過。桌機 1440×1000／手機 390×844 無橫向溢出，圖形縮放／平移後來回 resize 的畫布截圖一致。四張真實畫面已實際檢視，保存於忽略的 `.work/research-navigation-review/`；截圖與自動測試不是 Boris 的閱讀驗收，也不代表 task 8 的全鏈分類／26 家深研已完成。
+
+Application 仍為 `0015`／原 research head，2915 事件、1970 linked events、34 關係不變；owner、publish jobs、canonical financial observations、financial import batches、source jobs 均 0。只有新版 web／API／DB 運行，scheduler／Prefect worker 仍關閉，原服務 fingerprints 無變更。下一項為 6.2 公司／產品／術語內容、技術比較與固定版本引用。
+
+## 公司／產品／術語與固定引用完成（task 6.2，2026-10-18）
+
+公司保留同一身分及各環節角色，完整研究的段落目錄只取實際 Markdown；基本索引不新增空白深研標題。產品補回先前未呈現的全文，術語顯示比較對象、條件與互補／替代限制。圖解共用同一 reader／owner renderer，使用固定 hash 及手機資產，失效保留說明；既有走讀不重複同一張圖。相關研究與比較對象在 SQL 解析同版中文名稱，輸出有界，未解析的引用不向其他 release 補查。操作見 [內容閱讀](research-content-reading.md)。
+
+引用直接保留原始來源、期間及章節。「查閱這份引用」按需讀取固定 document revision，顯示適用範圍、已讀／未讀部分及可合法保存的摘錄；失效不改查 latest、不刪主張。HTTP／JavaScript 外殼等取證方法不放進一般閱讀。Owner 預覽只使用候選引用的內嵌資料，瀏覽器契約確認不呼叫 public draft URL。
+
+最新 `pg-check --suite reader-navigation` **22 passed**，含同版關聯／比較、未發布 ID 不洩漏、固定引用與既有圖／搜尋；`publication-interfaces` **1 passed**，完整走過檔案匯入、owner HTTP 發布、失敗重試、還原與真實 reader role。離線瀏覽器 **7 passed**（新內容 4＋導覽 3）；隔離預覽瀏覽器 **15 passed**（新內容 2＋editor 4＋導覽 3＋原走讀 6）。Typecheck、原生及隔離 production build 通過。早先分頁返回測試未等待 router URL 提交、手機狀態 cell 的可存取名稱多出標籤，以及一次回歸早於容器重建完成，均已分別修正測試／執行順序，失敗輪不列通過。
+
+桌機 1440×1000、手機 390×844 真實內容及來源展開已走查，四張截圖實際檢視並保存於忽略的 `.work/research-content-review/`，不當作 Boris 閱讀驗收。官方原文另實讀 Vertiv／NVIDIA；雙鴻新聞本環境僅取得頁面外殼，已在閱讀文件記錄限制，未改寫舊研究／查核日，也沒有以 HTTP 200 當作重新證實。全鏈分類與 26 家深研仍留 task 8。
+
+財務頁面驗收尚未完成：6.3 未實作，application canonical observations／source jobs 均 0；雙鴻與 Vertiv 財務 API 實際 HTTP 200、空 items 及明確缺口。官方樣本只在獨立 test DB 驗證，沒有把 fixtures 或舊 Float 補入預覽。已提供 [財務驗收狀態與步驟](research-financial-acceptance.md)，區分後端證據、目前空資料與頁面交付。本輪依指定範圍完成 6.2 後儲存；若續 6.3，再加入財務趨勢／修訂／比較及真實官方資料查核。
+
+Application 仍為 `0015`、原 head `03799774-3553-5ff6-9910-13a68468af15`，2915 事件／1970 linked events／34 關係不變；owner、publish jobs、financial observations、financial import batches、source jobs 均 0。僅研究版 web／API／DB 運作，原服務 fingerprints 未變，未開啟來源排程或 Prefect worker。
+
+## 財務、比較與獨立觀察（task 6.3，2026-10-18）
+
+公司研究下方接上基本財務／官方與報導／傳聞觀察，研究上方有直接跳到資料區的入口。財務支援 13 個指標及全年／單季／累計／月／期末選擇；同來源、範圍、原幣、股別及單位才組成同一圖。缺期、累計、期末及未核對股別的 EPS 不連線，沒有值即列缺口。精確字串保留在原值提示及可存取名稱，圖形座標只作視覺定位。歷史按需讀取，來源保留原值／倍率、申報日／提供者日期、固定觀測修訂及公式輸入。
+
+公司比較支援搜尋選 2–4 家，列出已有的業務／角色／產品／風險；尚未深研不加空模板。財務可比性依 API，不自行換匯、拼期間或排名。比較散文連結保留同一 release。傳聞使用獨立 observations 查詢及入口，正式資訊只讀 official／report，未知發布日不以收錄時間補上。篩選／分頁／修訂／比較公司可分享、返回；一般閱讀移除 Companyfacts XML context 擷取方法，保留真正影響數值判讀的精度與範圍限制。閱讀設計見 [財務閱讀](research-financial-reading.md)。
+
+為回應頁面無值的驗收需求，這次用既有共用更新機制單次讀 TWSE／TPEx 月營收及 NVIDIA／Vertiv companyfacts，各一次 HTTP、四個 jobs 全成功，application 實查 **1793** canonical observations。未匯入 fixtures／舊 Float；沒有開啟常駐來源排程或 Prefect worker。雙鴻月營收、Vertiv 年度／季度與 NVIDIA 非曆年期間已對照原值／官方來源。台灣季度財年、primary family／合併範圍／EPS 股別未核對則仍保留限制；不是全面完成所有公司財務或 task 8 深研。來源 hashes、原值及驗收入口見 [財務驗收](research-financial-acceptance.md)。
+
+Application 保持 migration `0015`、head `03799774-3553-5ff6-9910-13a68468af15`、34 正式關係、2915 事件／1970 linked events，owner／publish jobs／financial import batches 均 0；source jobs 4、financial observations 1793。只有研究版 web／API／DB 運作，原服務 fingerprints 未變。本輪依指定完成 6.3 後儲存，不接續 6.4 的快取／manifest 採用。
+
+驗證：`pg-check --suite research-dynamic` **20 passed**；離線瀏覽器 **13 passed**（新增財務 6＋內容／導覽 7），真實 release 回歸 **15 passed**（新增財務 3＋動態 API 1＋既有內容／導覽／走讀 11）。最後修整手機欄寬、日期不斷行及隱藏 XML 擷取方法後，另重跑財務離線 **6 passed**、真實財務 **3 passed**。Typecheck、原生及隔離 Compose production build 通過。初輪 label 精確匹配含 option 文字，以及手機 table 繼承全域 nowrap 造成溢出，已分別修正 selector 與局部排版；失敗輪不列通過。
+
+桌機 1440×1000／手機 390×844 的真實 SEC 趨勢、原期間表、台灣來源與修訂、比較原值及觀察清單已實際檢視；截圖保存在忽略的 `.work/research-financial-review/`，無橫向溢出。這是工程查核，不代表 Boris 已完成閱讀驗收。研究內容 release 不變，來源資料保存在隔離 DB volume；本次程式／文件以 feature branch 儲存，未合併 main 或歸檔 change。
+
+## 版本固定、更新採用與快取（task 6.4，2026-10-18）
+
+讀者在同一 published release 內閱讀，manifest 在進入／導覽／手動更新、回到可見頁面及可見時每 60 秒重查。新發布或還原只提示，接受後才切整頁 context；清除跨版 cursor／連線／修訂選取，原目錄篩選及原地圖返回保留。採用時清動態快取，避免還原舊研究也帶回瀏覽過的舊財務。一般頁將「檢查更新」放在原分享操作旁，只有新版本或 manifest 失敗時才有提示列，沒有另加維護資訊。
+
+指定 release 的研究 GET 提供 weak ETag／24h，財務／事件／觀察／比較及含有效值／歷史清單的 observation wrapper 最多 30 秒，固定 hash 合法資產長快取。manifest、未指定 release、admin／session、錯誤均 no-store。後端仍先執行 published／引用授權及 SQL，再判斷 304；Next／私人 gateway 轉送 If-None-Match、ETag、Age 及必要標頭。Tag 排除單純讀取時鐘變動，304 保留原 payload 及 as_of，不偽裝財務更新。
+
+新增瀏覽器成功項 LRU 100、相同 in-flight 合併與消費者計數，最後一個離開才取消；錯版、失敗及取消的舊 generation 不進成功快取。動態資料在可見時有界重驗，no-store 也不密集重送。失敗保留同一 key 成功內容並可重試，首次失敗不填空成功。引用及來源歷史仍按需讀取，沒有前端 owner 快取或 Redis。完整策略、操作及重現命令見 [版本與快取](research-reading-cache.md)。
+
+驗證：`research-dynamic` **25 passed**（新增快取 5＋動態契約 20）、`reader-navigation` **22 passed**、`publication-interfaces` **1 passed**，共 **48 項** PostgreSQL 契約；包含真正 Git／owner HTTP 發布、失敗重試／還原後，舊版和新版的條件式讀取仍一致。Node transport **6 passed**，覆蓋 LRU、共用取消、晚到回應、30 秒重驗／304、錯版與錯誤拒存。離線瀏覽器 **19 passed**（新增快取 6＋既有 13）；真實預覽 **18 passed**（新增 cache／proxy 3＋既有 15）。Typecheck、原生及隔離 Compose production build、diff 格式與 OpenSpec validate 通過。
+
+桌機 1440×1000／手機 390×844 的新版提示（明示合成 API）、真實研究＋模擬暫時失敗已實際檢視，截圖位於忽略的 `.work/research-cache-review/`。真實 Next proxy、304 空 body、資產已發布檢查與同路徑共享均已查核；沒有在 application 為展示做假發布、製造傳聞或改財務。這是工程走查，並非 Boris 的閱讀驗收，也不代表 task 9.2 的 10 人 p95 已量測。
+
+Application 仍為 migration `0015`／head `03799774-3553-5ff6-9910-13a68468af15`，1793 financial observations、4 source jobs、34 正式關係、2915 事件／1970 linked events；owner／publish jobs／financial import batches 均 0。只有研究版 web／API／DB 運作，來源排程及 Prefect worker 仍關閉、原服務 fingerprints 未變。依指定完成 6.4 後儲存；下一項為 6.5 覆蓋與研究缺口分工，本輪不接續。
+
+## 研究覆蓋與缺口分工（task 6.5，2026-10-18）
+
+開始前依 Boris 選擇，把研究 Schema 的 gaps 擴充為 `{status, reason}` 或文字：四類為未研究／未公開／未取得／不適用，文字列為未分類。README、validator 與正反例測試同步更新；6 筆能明確歸類的缺口改為結構化，93 筆 basic 模板與 2 筆研究限制維持文字。讀者 API 只輸出 reason，status 不進一般閱讀。
+
+新增 owner 專用 `GET /api/admin/coverage`（環節／題材的事件分開計數、技術文件已核對版本／查核日／論述定位、待核對候選與處理狀態、題材待納入判讀事件）與 `GET /api/admin/coverage/entities`（正式 release 研究物件的四類缺口與未分類，cursor 分頁）。統計都在 SQL 聚合；新增 30 則事件後同一請求的 SQL 次數不變，候選與樣本各最多 5 筆。`/admin` 增加「研究覆蓋」分頁。舊題材頁 `#candidates` 改為一句轉向說明，候選清單與發布日待確認清單移出讀者頁；舊 v1 關注頁移除候選提示。搜尋、比較與影響遍歷的候選保留。契約與操作見 [研究覆蓋](research-coverage.md)。
+
+驗證：`run_validator_tests` 66 類失敗案例＋22 項 schema 測試通過（新增 gap 格式 2 項）；`validate_map` 通過。`pg-check --suite admin-read` **7 passed**（新增 coverage 6 項，在 rolled-back 交易內匯入真實地圖）；`reader-navigation` 22、`research-dynamic` 25、`publication-interfaces` 1 passed。容器內離線 pytest **281 passed、110 skipped**（skipped 為需 PostgreSQL 的案例，已由上列 pg-check 覆蓋）。前端 typecheck、production build 通過；離線瀏覽器 **55 passed**（候選相關 3 個舊斷言改為新契約）；隔離預覽 **20 passed**（新增 admin 覆蓋桌機／手機 2 項，合成 admin API）。截圖存於忽略的 `.work/research-coverage-review/`，修正一次技術文件清單的小字黏連後重拍；這是工程走查，不是 Boris 閱讀驗收。
+
+Application 仍為 migration `0015`、head `03799774-3553-5ff6-9910-13a68468af15`，34 正式關係、2915 事件、1793 financial observations、4 source jobs；owner／publish jobs 均 0。結構化缺口是 authoring 檔案變更，尚未經發布進入 application release，所以真實 admin 缺口矩陣目前全為未分類＋basic 未研究。研究版 web／API 已重建，原服務 fingerprints 未變，來源排程及 Prefect worker 仍關閉。
+
+## 此裝置收藏與更新摘要（task 7.1，2026-10-18）
+
+新增 `POST /api/v2/updates/query`，依收藏物件本身回傳研究、數值、事件三個面向：
+- 研究：物件 semantic hash 加上觸及它的關係與產品能力。
+- 數值：公司各財務序列目前有效的 observation；題材沿用 v1 指標 token，已抽成共用函式，v1 結果不變。
+- 事件：已讀到的事件 ID，新事件分成依發布日與發布日未知兩類。
+
+整站發布但物件沒變、同值新申報、來源重試與未發布草稿都不會產生未讀。私人 gateway 原本預留的 `api/v2/updates` 改為 design 指定的 `/api/v2/updates/query`，Next proxy 只放行這個 POST。
+
+`/next` 新增「加入收藏」（公司／產品／題材／研究頁）與「此裝置收藏」頁，localStorage key `industryflow.research-watchlist.v2`，上限 100：
+- 首次基準以畫面上的 release 建立；無法取得時標「待確認」，不自動全部已讀。
+- 「標為已讀」只記錄畫面上的回應。
+- 頁面說明收藏不含研究全文、不跨瀏覽器同步。
+- 收藏頁隱藏「分享這份研究」，因為清單只存在本機。
+
+詳見 [此裝置收藏](research-watchlist.md)。
+
+驗證：
+- PostgreSQL：`research-dynamic` **29 passed**（新增 4 項）、`reader-navigation` **23 passed**（新增 gateway POST 1 項）。
+- 容器內離線 pytest **282 passed、114 skipped**。
+- 前端 typecheck、build 通過；離線瀏覽器全套 **60 passed**（新增收藏 5 項）。
+- 隔離預覽：收藏、讀者流程、快取、覆蓋、編輯與來源更新共 **25 passed**，新增真實 Vertiv／冷板收藏的桌機與手機案例。真實資料重查沒有出現假更新。截圖存於忽略的 `.work/research-watchlist-review/`；這是工程走查，不是 Boris 的閱讀驗收。
+
+Application 資料未改動：migration `0015`、head `03799774-3553-5ff6-9910-13a68468af15`。研究版 web／API 已重建，原服務 fingerprints 未變。v1 題材遷移留給 7.2，匯出入留給 7.3。
+
+
+## 舊題材遷移與收藏備份（task 7.2、7.3，2026-10-18）
+
+**7.2 遷移**：同網址第一次開啟新版時，把 v1 題材關注轉成 `theme-<id>` 收藏。
+- 數值基準直接沿用 v1 指標 token；新增後端測試證明它與 v2 題材數值 token 相同。
+- 研究與事件標「待確認」，不自動標已讀。
+- 完成後寫入 `v1_migrated` 標記，移除的收藏不會因重新整理被加回；v1 清單永遠保留。
+- 部分損壞只匯入有效題材；儲存被拒絕時每次只在記憶體遷移，重跑不重複。
+- 存檔後讀回比對，確認新格式真的寫入成功。
+
+**7.3 備份**：收藏頁新增「備份與交換」。
+- 匯出只含身分、名稱與已讀基準。
+- 匯入整份拒絕：超過 1 MiB、非 JSON、格式不符、不安全欄位、超過 100 項、合併後超額。
+- 逐項列出並略過：無效項目、目前已發布研究找不到的項目。
+- 先預覽再確認；已存在的項目保留本機已讀狀態。
+
+文件提供跨 host／port／瀏覽器的交換步驟，見 [此裝置收藏](research-watchlist.md)。
+
+驗證：
+- 容器內 `test_theme_updates` **4 passed**（新增 token 一致性 1 項）。
+- 離線瀏覽器全套 **67 passed**（新增遷移 4、備份 3）。
+- 隔離預覽收藏 **3 passed**，新增「真實資料匯出，到另一個全新瀏覽器 context 匯入」。截圖在 `.work/research-watchlist-review/`；這是工程走查，不是 Boris 的閱讀驗收。
+
+Application 資料未改動；研究版 web／API 已重建，原服務 fingerprints 未變。
+
+## 全鏈分類索引（task 8.1，2026-10-18）
+
+依 Boris 指示，第 8 段只改 authoring 檔並 commit，不經 admin 發布到預覽環境；checkbox 以讀過依據、完成查核為準。
+
+17 個環節整理成 11 個應用、55 個可替換供應角色（新增 53）、56 個產品類別。95 家公司依既有環節角色全部落入至少一個角色，以 taxonomy 連結，不新增能力主張；公司與產品的 `offerings` 留到 8.2–8.16 有公司主張後再建。
+
+新增 6 個術語頁：封裝分層、HBM 與伺服器 DRAM、網路距離層、供電轉換鏈、板材到成板、測試插入點。每頁附原創桌機／手機 SVG 圖解與有條件比較，並新增全鏈分類索引研究頁。分類邊界的裁決（互連拆四角、液冷／氣冷分開、谷歌列自研、跨角色公司不合併收入等）記錄在 [全鏈分類矩陣](research-classification-matrix.md)。
+
+驗證：
+- `validate_map` 通過；validator 測試通過。
+- `rebuild-check --commit 43ffb01` 編譯出 252 個研究物件，同一 commit 重建一致，歷史對應完整。
+- 修正 `research_rebuild_check`：在只會 rollback 的檢查交易內先清掉測試 DB 既有的 head，避免其他 pg-check suite 留下的狀態擋住重建驗證。
+- 圖解已實際渲染檢查；HBM 圖的主記憶體欄改為虛線對照，不以箭頭暗示供應或組成關係。
+
+
+## 26 家深研與總核對（task 8.2–8.17，2026-10-18 至 10-19）
+
+26 家依官方原文深研：台灣公司用公開資訊觀測站的 114 年度股東會年報，美國公司用 SEC 10-K；日月光投控的中文年報多數頁面無法擷取文字，改用 20-F。表格欄位錯位時以 `pdftotext -table` 或合計重核，台積電的跨頁排版以閱讀順序重抽。逐家定位見 [交付表](research-deep-delivery-matrix.md)，總核對見 [總核對](research-final-review.md)。
+
+分類調整：新增「晶片端取熱」與「光通訊磊晶片」兩個角色及「III-V 族光通訊磊晶片」產品；聯亞改列磊晶片角色；伺服器滑軌加「導軌」「rail kit」別名；多家公司依原文加列角色（例如日月光、力成、Amkor 加列測試服務）。所有變更與原歸類記在分類矩陣與相關頁面。
+
+總核對時修正：寫入工具覆蓋了台積電與台達電的既有別名（已補回並改為合併）；7 家美國公司的 SEC CIK 補登到 `data/company-research.yaml`；71 個純文字缺口改為四種結構化狀態。
+
+驗證：
+- `validate_map` 通過，內部連結 0 失效；validator 測試在補回別名與 CIK 後通過。
+- `rebuild-check --commit f22ffd2` 編譯出 254 個研究物件，同一 commit 重建一致。
+- 後端離線 pytest（臨時容器，唯讀掛載 worktree）282 passed、114 skipped、1 failed：快照數寫死為 125 的測試自 8.1 起失效，改為由檔案推導後該模組 34 passed。
+- 內容審查與程式測試的完整紀錄見 [總核對](research-final-review.md)；這不是 Boris 的閱讀驗收（最終驗收為 10.5，原 9.4）。
+
+## 小群讀取效能（task 9.2，2026-10-18 至 10-20）
+
+在還原演練環境用兩組資料跑 10 人、5 分鐘的負載，期間同時做一次真實來源更新：一組是真實資料，另一組是擴大到 300 家公司、3,034 條關係、100,275 筆財務觀測的資料。完整數據見 [效能基準](research-performance.md)。
+
+- **coverage**：短測 p95 3.6 秒。`a5980e2` 改為依內容指紋重用結果 30 秒後，完整那輪是 576 ms。
+- **financial（擴大資料）**：p95 5.9 秒，8.5% 回 503。原因與修正：
+  - 讀者 RLS 與引用 view 每次都先算出全部已發布資料，成本越過 JIT 門檻；平行 hash 又用光 `/dev/shm`。
+  - migration `0016` 把三張大表的讀者 policy 改為以鍵值逐列檢查上層列，並讓讀者角色關閉 JIT。
+  - 引用來源改為逐筆的 LATERAL 查詢。可見範圍不變，由新增的 PostgreSQL 契約測試驗證；`pg-check --suite all` 共 241 項通過。
+- **修正後兩組都達標**：
+  - 擴大資料：financial p95 431 ms，coverage 712 ms，0 錯誤，每秒 44.6 個請求。
+  - 真實資料：financial p95 314 ms，coverage 637 ms，0 錯誤。
+- **新工具**：`research_drill.py migrate` 讓還原的舊版 schema 升級到目前版本。
+- **預覽套用時點**：9.2 期間只升級演練環境；預覽在 9.4 首輪（2026-10-20）以 `research_lab.py up` 重建並套用 `0016`。
+- **草稿路徑的限制**：關係數上限約 1,700 條、每次儲存全量驗證約 3 秒。依 Boris 決定另開 change，這裡只記錄。
+
+## 首輪驗收與移交（task 9.4，2026-10-20）
+
+完整紀錄見 [驗收文件](research-acceptance.md)。
+
+- **預覽**：先備份，再重建並套用 `0016`。Boris 發布最新內容，成為 release `a7c1bb50…`，內容與 `dde7db9` 重建結果一致。
+- **自動回歸全部通過**：地圖、validator、後端離線、PostgreSQL、typecheck、build、前端離線 e2e、預覽 live e2e、唯讀入口。
+- **走查**：桌機／手機各 12 頁走查通過。走查發現分享的 `#company-data` 財務連結不會停在財務區，已修正並補離線測試（`e79240b`）。
+- **閱讀驗收未通過**，有三點：
+  - 新舊站互動不清；
+  - 只有液冷有專屬入口與圖解；
+  - 財務只有近期資料。
+- **後續處理**：
+  - 前兩項依 Boris 決定改由第 10 段處理（統一外框、供應鏈版型，本輪只統一版型）。
+  - 財務歷史另開 change。
+  - 最終驗收移到 10.5。tasks.md 的 9.4 勾選只代表驗收已移交，不代表驗收完成。
+
+## 統一閱讀外框與供應鏈版型（task 10.1–10.5，2026-10-20 至 10-21）
+
+依首輪閱讀驗收的回饋調整，現行導覽見 [讀者導覽](research-navigation.md)，驗收紀錄見 [驗收文件](research-acceptance.md)。
+
+- **10.1 閱讀欄位**（`9d406c9`）：應用新增可選的 `question`／`flow-steps`，validator 檢查步驟數、欄位與產品歸屬；12 個應用補上欄位，並修正液冷文字與證據的矛盾。
+- **10.2 共用外框**（`95b57a6`）：所有讀者頁共用頁首、單一 v2 搜尋與麵包屑；舊公司頁、收藏與比較改為轉址；事件頁分成兩個分頁；唯讀入口放行地圖、題材與事件頁。
+- **10.3 供應鏈**（`d313b37`）：新增 `/api/v2/chains` 與詳情的 `chain`／`chains`；12 條鏈同一版型，沒有圖解的用文字步驟；產品與角色頁放位置列；公司頁獨立；移除液冷專屬頁籤。
+- **10.4 文件與走查**（`b212316`）：重寫導覽文件；在演練環境走查 12 條鏈，桌機與手機都通過。
+- **10.5 最終驗收**：
+  - 全套回歸通過；
+  - Boris 發布 release `a5df290c…`，與 HEAD 重建一致；
+  - 預覽走查通過；
+  - Boris 閱讀驗收通過。
+  - 財務中長期歷史另開 change。

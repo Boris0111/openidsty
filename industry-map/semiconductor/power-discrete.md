@@ -46,6 +46,41 @@ kpis:
 signals:
   - 高壓直流架構對元件規格的要求變動
   - 碳化矽與氮化鎵在伺服器供電的導入進度
+downstream-relations:
+  power:
+    kind: supply
+    summary: 功率與分離式元件至電源與供電架構：功率開關、控制及電力轉換所需元件子角色。
+    items:
+    - 功率開關、控制及電力轉換所需元件子角色
+    dependencies:
+    - 額定電壓電流、損耗、散熱及保護控制
+    conditions:
+    - 元件在實際拓樸、溫度與安全條件完成設計驗證
+    confidence: inference
+    evidence: []
+    gaps:
+    - 缺少指定 PSU／DC-DC／高壓架構的元件 BOM 與認證；Si、SiC、GaN 不能僅憑材料名互替。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: 功率切換、整流、保護及控制元件、磊晶與特殊製程分工；整體 PSU／DC-DC 模組在電源環節。
+  adoption-conditions:
+  - 按拓樸、實際工作電壓／電流、頻率、損耗、驅動、熱與可靠度設計選型。
+  bottlenecks:
+  - 材料缺陷、封裝、驅動保護與設計資格都可能限制採用，不只看晶圓面積或材料名。
+  substitution-limits:
+  - Si、SiC、GaN 有不同適用條件；800VDC 架構不是每顆元件的額定電壓，也不是單一材料必勝證據。
+  claims:
+  - id: multiple-materials
+    statement: Infineon 公開 AI 供電說明將 Si、SiC、GaN 分工並列，支持按轉換位置與性能條件選型；不代表每種材料都有具名訂單。
+    confidence: well-supported
+    evidence:
+    - source-id: infineon-power-technical
+      url: https://www.infineon.com/technology/ai/we-power-ai
+      locator: 'Si, SiC and GaN: a hybrid approach'
+      read-scope: 已讀指定公開說明；沒有取得客戶完整設計、測試或認證檔
+  evidence-gaps:
+  - 缺少各候選公司的 AI 電源指定料號、實際拓樸 BOM、認證與收入拆分；不以汽車或工業收入填題材收入。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

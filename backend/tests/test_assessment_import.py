@@ -39,7 +39,7 @@ def test_optional_assessment_legacy_theme_remains_readable(db, tmp_path):
     copied = tmp_path / 'map'; shutil.copytree(MAP_DIR, copied)
     file = copied / 'themes/liquid-cooling.md'
     _, header, body = file.read_text(encoding='utf-8').split('---', 2)
-    data = yaml.safe_load(header); data.pop('assessment')
+    data = yaml.safe_load(header); data.pop('assessment'); data.pop('technical-profile',None)
     for milestone in data['milestones']: milestone.pop('id')
     file.write_text('---\n' + yaml.safe_dump(data, allow_unicode=True, sort_keys=False) + '---' + body, encoding='utf-8')
     import_map(db, copied)

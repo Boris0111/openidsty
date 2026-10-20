@@ -42,6 +42,44 @@ kpis:
 signals:
   - 次世代 HBM 認證通過與供給分配變動
   - 傳統記憶體轉產 HBM 造成的排擠
+downstream-relations:
+  advanced-packaging:
+    kind: supply
+    summary: 記憶體至先進封裝：HBM 等記憶體 die／stack 與整合需求。
+    items:
+    - HBM 等記憶體 die／stack 與整合需求
+    dependencies:
+    - 記憶體控制器、封裝內互連、熱與測試介面
+    conditions:
+    - 堆疊與基底 die、封裝製程及客戶平台完成共同驗證
+    confidence: inference
+    evidence: []
+    gaps:
+    - 未取得指定 HBM stack／base die 組合的客戶認證、測試覆蓋與封裝良率，不能由送樣推定量產。
+    reviewed: '2026-10-16'
+technical-profile:
+  product-boundary: HBM DRAM stack、邏輯 base die、伺服器 DRAM 與 NAND／控制器是不同產品與製造分工；同環節不表示都是
+    HBM4 供應商。
+  adoption-conditions:
+  - 按指定控制器、封裝與客戶平台核對 HBM stack／base die 的共同認證。
+  - 容量、頻寬、功耗與熱限制須在同一產品世代核對。
+  bottlenecks:
+  - 堆疊、鍵合、測試與封裝配合共同影響良品供給，不能只看晶圓或層數。
+  substitution-limits:
+  - DRAM、HBM 與 NAND 不能直接互替；產線排擠幅度仍取決於實際製程與資本配置。
+  claims:
+  - id: base-die-partnership
+    statement: SK hynix 2024 年公開合作公告區分 HBM base die、DRAM 堆疊與台積電製程／CoWoS 合作；計畫不是目前每位客戶的量產證據。
+    confidence: well-supported
+    evidence:
+    - source-id: skhynix-hbm-technical
+      url: https://news.skhynix.com/en/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/
+      locator: 2024-04-19 公告／base die 與 CoWoS 段落
+      read-scope: 已讀指定公開說明；沒有取得客戶完整設計、測試或認證檔
+  evidence-gaps:
+  - 未取得 HBM4 指定客戶、stack／base die 組合的良率與驗證報告。
+  - JEDEC 搜尋頁可讀不等於 HBM4 規格全文已取得；尚不能核對完整介面條文。
+  reviewed: '2026-10-16'
 ---
 
 ## 環節定義

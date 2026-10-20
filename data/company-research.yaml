@@ -30,6 +30,27 @@ companies:
   VRT:
     cik: '1674101'
     aliases: [Vertiv]
+  MPWR:
+    cik: '1280452'
+    aliases: [Monolithic Power Systems]
+  VICR:
+    cik: '751978'
+    aliases: [Vicor]
+  APH:
+    cik: '820313'
+    aliases: [Amphenol]
+  MRVL:
+    cik: '1835632'
+    aliases: [Marvell]
+  CRDO:
+    cik: '1807794'
+    aliases: [Credo]
+  ALAB:
+    cik: '1736297'
+    aliases: [Astera Labs]
+  AMKR:
+    cik: '1047127'
+    aliases: [Amkor]
   '2330.TW':
     aliases: [台積電, 臺積電, TSMC, Taiwan Semiconductor]
   '2308.TW':

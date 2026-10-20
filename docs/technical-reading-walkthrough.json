@@ -1,0 +1,895 @@
+{
+  "origin": "http://127.0.0.1:3013",
+  "checked": "2026-10-15T19:11:32.335Z",
+  "matrix": [
+    {
+      "id": "memory",
+      "name": "記憶體",
+      "url": "/?layer=ai-server&segment=memory",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://news.skhynix.com/en/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "substrate",
+      "name": "ABF 載板",
+      "url": "/?layer=ai-server&segment=substrate",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.ibiden.com/product/electronics/merchandise/fliptippkg/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "pcb",
+      "name": "印刷電路板與銅箔基板",
+      "url": "/?layer=ai-server&segment=pcb",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.tpca.org.tw/web/news_detail.php?menu_no=196&mod_no=32&news_no=15550"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "interconnect",
+      "name": "連接器、線材與滑軌",
+      "url": "/?layer=ai-server&segment=interconnect",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-serviceability"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-materials-flow"
+        },
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.kingslide.com/blog/post/news/identifier/company-news-018-jp/"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-module-scope"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "power",
+      "name": "電源與供電架構",
+      "url": "/?layer=ai-server&segment=power",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-generation-of-ai-factories/"
+        },
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://developer.nvidia.com/blog/building-the-800-vdc-ecosystem-for-efficient-scalable-ai-factories/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "compute",
+      "name": "運算晶片",
+      "url": "/?layer=ai-server&segment=compute",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/data-center/nvlink/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "networking",
+      "name": "網通與光通訊",
+      "url": "/?layer=ai-server&segment=networking",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/networking/"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-module-scope"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-thermal-interface"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-test-points"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cmis?version=revision-5-4#locator-management-scope"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "thermal",
+      "name": "散熱",
+      "url": "/?layer=ai-server&segment=thermal",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-loop-boundary"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-materials-flow"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-serviceability"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "advanced-packaging",
+      "name": "先進封裝",
+      "url": "/?layer=ai-server&segment=advanced-packaging",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ucie-public-specifications?version=public-overview-20261016#locator-package-interface"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ucie-public-specifications?version=public-overview-20261016#locator-test-manageability"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "odm",
+      "name": "系統組裝與機櫃整合",
+      "url": "/?layer=ai-server&segment=odm",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.supermicro.com/en/solutions/liquid-cooling"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "datacenter",
+      "name": "資料中心與雲端業者",
+      "url": "/?layer=ai-server&segment=datacenter",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "equipment",
+      "name": "半導體設備",
+      "url": "/?layer=semiconductor&segment=equipment",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.asml.com/en/products/euv-lithography-systems"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "eda-ip",
+      "name": "EDA 工具與矽智財",
+      "url": "/?layer=semiconductor&segment=eda-ip",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ucie-public-specifications?version=public-overview-20261016#locator-package-interface"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "materials",
+      "name": "半導體材料",
+      "url": "/?layer=semiconductor&segment=materials",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.entegris.com/en/home/our-science/by-solution-area/contamination-control.html"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "power-discrete",
+      "name": "功率與分離式元件",
+      "url": "/?layer=semiconductor&segment=power-discrete",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.infineon.com/technology/ai/we-power-ai"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "foundry",
+      "name": "晶圓代工",
+      "url": "/?layer=semiconductor&segment=foundry",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.tsmc.com/english/dedicatedFoundry/technology/logic/l_2nm"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "test",
+      "name": "測試與探針",
+      "url": "/?layer=semiconductor&segment=test",
+      "type": "segment",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.teradyne.com/2026/08/24/slt-in-the-ai-era-validating-reliability-at-scale/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "800vdc",
+      "name": "高壓直流供電架構",
+      "url": "/themes/800vdc",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://developer.nvidia.com/blog/building-the-800-vdc-ecosystem-for-efficient-scalable-ai-factories/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "advanced-node-2nm",
+      "name": "先進製程節點推進",
+      "url": "/themes/advanced-node-2nm",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.asml.com/en/products/euv-lithography-systems"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "cpo-silicon-photonics",
+      "name": "共同封裝光學與矽光子",
+      "url": "/themes/cpo-silicon-photonics",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-module-scope"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-thermal-interface"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cmis?version=revision-5-4#locator-management-scope"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "custom-asic-vs-gpu",
+      "name": "客製 ASIC 與通用 GPU 的路線競爭",
+      "url": "/themes/custom-asic-vs-gpu",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/networking/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "hbm4",
+      "name": "HBM4 世代轉換",
+      "url": "/themes/hbm4",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://news.skhynix.com/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "liquid-cooling",
+      "name": "液冷散熱",
+      "url": "/themes/liquid-cooling",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-loop-boundary"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "power-bottleneck",
+      "name": "資料中心電力瓶頸",
+      "url": "/themes/power-bottleneck",
+      "type": "theme",
+      "viewport": "1440x1000",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "memory",
+      "name": "記憶體",
+      "url": "/?layer=ai-server&segment=memory",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://news.skhynix.com/en/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "substrate",
+      "name": "ABF 載板",
+      "url": "/?layer=ai-server&segment=substrate",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.ibiden.com/product/electronics/merchandise/fliptippkg/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "pcb",
+      "name": "印刷電路板與銅箔基板",
+      "url": "/?layer=ai-server&segment=pcb",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.tpca.org.tw/web/news_detail.php?menu_no=196&mod_no=32&news_no=15550"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "interconnect",
+      "name": "連接器、線材與滑軌",
+      "url": "/?layer=ai-server&segment=interconnect",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-serviceability"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-materials-flow"
+        },
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.kingslide.com/blog/post/news/identifier/company-news-018-jp/"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-module-scope"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "power",
+      "name": "電源與供電架構",
+      "url": "/?layer=ai-server&segment=power",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://developer.nvidia.com/blog/nvidia-800-v-hvdc-architecture-will-power-the-next-generation-of-ai-factories/"
+        },
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://developer.nvidia.com/blog/building-the-800-vdc-ecosystem-for-efficient-scalable-ai-factories/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "compute",
+      "name": "運算晶片",
+      "url": "/?layer=ai-server&segment=compute",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/data-center/nvlink/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "networking",
+      "name": "網通與光通訊",
+      "url": "/?layer=ai-server&segment=networking",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/networking/"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-module-scope"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-thermal-interface"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-test-points"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cmis?version=revision-5-4#locator-management-scope"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "thermal",
+      "name": "散熱",
+      "url": "/?layer=ai-server&segment=thermal",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-loop-boundary"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-materials-flow"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-serviceability"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "advanced-packaging",
+      "name": "先進封裝",
+      "url": "/?layer=ai-server&segment=advanced-packaging",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ucie-public-specifications?version=public-overview-20261016#locator-package-interface"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ucie-public-specifications?version=public-overview-20261016#locator-test-manageability"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "odm",
+      "name": "系統組裝與機櫃整合",
+      "url": "/?layer=ai-server&segment=odm",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.supermicro.com/en/solutions/liquid-cooling"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "datacenter",
+      "name": "資料中心與雲端業者",
+      "url": "/?layer=ai-server&segment=datacenter",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "equipment",
+      "name": "半導體設備",
+      "url": "/?layer=semiconductor&segment=equipment",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.asml.com/en/products/euv-lithography-systems"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "eda-ip",
+      "name": "EDA 工具與矽智財",
+      "url": "/?layer=semiconductor&segment=eda-ip",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ucie-public-specifications?version=public-overview-20261016#locator-package-interface"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "materials",
+      "name": "半導體材料",
+      "url": "/?layer=semiconductor&segment=materials",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.entegris.com/en/home/our-science/by-solution-area/contamination-control.html"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "power-discrete",
+      "name": "功率與分離式元件",
+      "url": "/?layer=semiconductor&segment=power-discrete",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.infineon.com/technology/ai/we-power-ai"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "foundry",
+      "name": "晶圓代工",
+      "url": "/?layer=semiconductor&segment=foundry",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.tsmc.com/english/dedicatedFoundry/technology/logic/l_2nm"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "test",
+      "name": "測試與探針",
+      "url": "/?layer=semiconductor&segment=test",
+      "type": "segment",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.teradyne.com/2026/08/24/slt-in-the-ai-era-validating-reliability-at-scale/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "800vdc",
+      "name": "高壓直流供電架構",
+      "url": "/themes/800vdc",
+      "type": "theme",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://developer.nvidia.com/blog/building-the-800-vdc-ecosystem-for-efficient-scalable-ai-factories/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "advanced-node-2nm",
+      "name": "先進製程節點推進",
+      "url": "/themes/advanced-node-2nm",
+      "type": "theme",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.asml.com/en/products/euv-lithography-systems"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "cpo-silicon-photonics",
+      "name": "共同封裝光學與矽光子",
+      "url": "/themes/cpo-silicon-photonics",
+      "type": "theme",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-module-scope"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cpo-module?version=module-01-0#locator-thermal-interface"
+        },
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/oif-cmis?version=revision-5-4#locator-management-scope"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "custom-asic-vs-gpu",
+      "name": "客製 ASIC 與通用 GPU 的路線競爭",
+      "url": "/themes/custom-asic-vs-gpu",
+      "type": "theme",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.nvidia.com/en-us/networking/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "hbm4",
+      "name": "HBM4 世代轉換",
+      "url": "/themes/hbm4",
+      "type": "theme",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://news.skhynix.com/sk-hynix-partners-with-tsmc-to-strengthen-hbm-technological-leadership/"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "liquid-cooling",
+      "name": "液冷散熱",
+      "url": "/themes/liquid-cooling",
+      "type": "theme",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "查閱固定文件版本與章節",
+          "url": "/technical-documents/ocp-cold-plate-requirements?version=revision-one#locator-loop-boundary"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    },
+    {
+      "id": "power-bottleneck",
+      "name": "資料中心電力瓶頸",
+      "url": "/themes/power-bottleneck",
+      "type": "theme",
+      "viewport": "390x844",
+      "facets": 5,
+      "evidence": [
+        {
+          "text": "閱讀原始來源 ↗",
+          "url": "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary"
+        }
+      ],
+      "keyboard": true,
+      "overflow": false
+    }
+  ],
+  "coverage_rows": 24,
+  "source_failure": {
+    "id": "ocp-cold-plate-requirements",
+    "status": "failed",
+    "error_present": true,
+    "retained_version": "revision-one",
+    "retained_locator": "loop-boundary"
+  },
+  "errors": []
+}

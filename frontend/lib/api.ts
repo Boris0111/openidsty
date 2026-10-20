@@ -1,24 +1,20 @@
 'use client';
-import {useEffect, useState} from 'react';
-export function useApi<T>(path:string) {
-  const [revision,setRevision]=useState(0);
-  const key=`${path}|${revision}`;
-  const [state,setState]=useState<{key:string;data:T|null;error:string;loading:boolean}>({key:'',data:null,error:'',loading:true});
+import {useEffect,useState,useRef} from 'react';
+import {subscribeRequest,requestKey,empty,type Snapshot} from './request-cache';
+export function useApi<T>(path:string|null){
+  const subscriptionRef=useRef<ReturnType<typeof subscribeRequest>|null>(null);
+  const key=path?requestKey(path):'';const [state,setState]=useState<{key:string;value:Snapshot}>({key:'',value:empty});
   useEffect(()=>{
-    const controller=new AbortController();
-    setState({key,data:null,error:'',loading:true});
-    fetch(path,{signal:controller.signal,cache:'no-store'}).then(async r=>{
-      const body=await r.json();
-      if (!r.ok) throw new Error(typeof body.detail==='string'?body.detail:'資料暫時無法取得');
-      if(!controller.signal.aborted)setState({key,data:body,error:'',loading:false});
-    }).catch(e=>{if(!controller.signal.aborted)setState({key,data:null,error:e.message,loading:false})});
-    return ()=>controller.abort();
-  },[path,key]);
-  return {...(state.key===key?state:{data:null,error:'',loading:true}),retry:()=>setRevision(v=>v+1)};
+    if(!key)return;
+    const subscription=subscribeRequest(key,value=>setState({key,value}));
+    subscriptionRef.current=subscription;return ()=>{subscription.unsubscribe();if(subscriptionRef.current===subscription)subscriptionRef.current=null;};
+  },[key]);
+  const value=state.key===key?state.value:empty;
+  return {data:value.data as T|null,error:value.error,loading:key?value.loading:false,retry:()=>subscriptionRef.current?.retry()};
 }
 export const companyUrl=(ticker:string)=>`/companies/${encodeURIComponent(ticker)}`;
 export const segmentUrl=(id:string,layer:string)=>`/?layer=${layer}&segment=${id}`;
-export const themeStatus:Record<string,string>={emerging:'萌芽',validating:'驗證中',scaling:'擴張',mature:'成熟',fading:'降溫'};
+export {lifecycleLabel as themeStatus} from './display';
 export function dateLabel(value:string|null,precision='minute') {
   if(!value)return '尚未更新';
   if(precision==='day')return new Date(value).toLocaleDateString('sv-SE',{timeZone:'Asia/Taipei'});

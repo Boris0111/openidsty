@@ -1,5 +1,5 @@
 from datetime import datetime, timezone
-from sqlalchemy import String, JSON, DateTime, Date, Numeric, ForeignKey, UniqueConstraint, Text, Integer, Float, Boolean
+from sqlalchemy import String, JSON, DateTime, Date, Numeric, ForeignKey, UniqueConstraint, Text, Integer, Float, Boolean,Index
 from datetime import date
 from decimal import Decimal
 from sqlalchemy.orm import Mapped, mapped_column
@@ -103,6 +103,7 @@ class Event(Base):
 
 class EventSegment(Base):
     __tablename__ = 'event_segments'
+    __table_args__ = (Index('ix_event_segments_scope_relevance','segment_id','relevance','event_id'),)
     event_id: Mapped[int] = mapped_column(ForeignKey('events.id', ondelete='CASCADE'), primary_key=True)
     segment_id: Mapped[str] = mapped_column(ForeignKey('segments.id', ondelete='CASCADE'), primary_key=True)
     relevance: Mapped[str] = mapped_column(String(20))
@@ -110,6 +111,7 @@ class EventSegment(Base):
 
 class EventTheme(Base):
     __tablename__ = 'event_themes'
+    __table_args__ = (Index('ix_event_themes_scope_relevance','theme_id','relevance','event_id'),)
     event_id: Mapped[int] = mapped_column(ForeignKey('events.id', ondelete='CASCADE'), primary_key=True)
     theme_id: Mapped[str] = mapped_column(ForeignKey('themes.id', ondelete='CASCADE'), primary_key=True)
     relevance: Mapped[str] = mapped_column(String(20))
@@ -186,3 +188,36 @@ class IndicatorObservation(Base):
     content_hash: Mapped[str] = mapped_column(String(64))
     valid: Mapped[bool] = mapped_column(Boolean, default=True)
     invalid_reason: Mapped[str | None] = mapped_column(Text)
+
+class TechnicalDocument(Base):
+    __tablename__ = 'technical_documents'
+    id: Mapped[str] = mapped_column(String(100), primary_key=True)
+    source_id: Mapped[str] = mapped_column(ForeignKey('sources.id'), index=True)
+    title: Mapped[str] = mapped_column(Text)
+    doc_kind: Mapped[str] = mapped_column(String(40))
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    data: Mapped[dict] = mapped_column(JSON)
+
+class TechnicalObservation(Base):
+    __tablename__ = 'technical_observations'
+    __table_args__ = (UniqueConstraint('document_id','observation_key',name='uq_document_observation'),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    document_id: Mapped[str] = mapped_column(ForeignKey('technical_documents.id'), index=True)
+    observation_key: Mapped[str] = mapped_column(String(64))
+    official_version: Mapped[str | None] = mapped_column(String(200))
+    content_hash: Mapped[str] = mapped_column(String(64))
+    raw_hash: Mapped[str | None] = mapped_column(String(64))
+    parser_version: Mapped[str] = mapped_column(String(60))
+    url: Mapped[str] = mapped_column(Text)
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    data: Mapped[dict] = mapped_column(JSON)
+
+class TechnicalReview(Base):
+    __tablename__ = 'technical_reviews'
+    __table_args__ = (UniqueConstraint('observation_id',name='uq_document_review'),)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    observation_id: Mapped[int] = mapped_column(ForeignKey('technical_observations.id'),index=True)
+    status: Mapped[str] = mapped_column(String(30))
+    reviewed: Mapped[str | None] = mapped_column(String(10))
+    reason: Mapped[str | None] = mapped_column(Text)
+    version_id: Mapped[str | None] = mapped_column(String(100))

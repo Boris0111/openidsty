@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="590" viewBox="0 0 360 590">
+  <title>液對液冷卻：冷板、CDU 與設施水路</title>
+  <desc>直式示意：冷板由晶片取熱，二次側液體經 CDU 交換熱量，設施水路再將熱帶走；兩側液體分離。</desc>
+  <defs>
+    <marker id="blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#267a97"/></marker>
+    <marker id="red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10Z" fill="#c14c38"/></marker>
+  </defs>
+  <rect width="360" height="590" rx="8" fill="#f3f6f7"/>
+  <g font-family="Microsoft JhengHei, PingFang TC, sans-serif" fill="#16343a">
+    <text x="23" y="34" font-size="20" font-weight="700">熱交換，液體不混合</text>
+    <rect x="88" y="65" width="184" height="103" rx="8" fill="#fff" stroke="#203d46" stroke-width="2"/>
+    <rect x="116" y="83" width="128" height="29" rx="4" fill="#e3eef3" stroke="#267a97"/>
+    <text x="163" y="104" font-size="17">冷板</text>
+    <rect x="149" y="124" width="62" height="28" rx="3" fill="#fae9e4" stroke="#c14c38"/>
+    <text x="164" y="144" font-size="16">晶片</text>
+    <path d="M180 122V113" stroke="#c14c38" stroke-width="2" marker-end="url(#red)"/>
+    <rect x="88" y="258" width="184" height="115" rx="8" fill="#fff" stroke="#203d46" stroke-width="2"/>
+    <text x="126" y="285" font-size="19" font-weight="700">液對液 CDU</text>
+    <path d="M137 313H222M137 327H222" stroke="#203d46" stroke-width="4"/>
+    <path d="M180 297V343" stroke="#c14c38" stroke-width="2" marker-end="url(#red)"/>
+    <text x="135" y="360" font-size="15">控制／換熱</text>
+    <rect x="88" y="455" width="184" height="76" rx="8" fill="#fff" stroke="#203d46" stroke-width="2"/>
+    <text x="143" y="485" font-size="18" font-weight="700">設施散熱</text>
+    <text x="115" y="510" font-size="15">水路與排熱設備</text>
+    <path d="M124 256V170" stroke="#267a97" stroke-width="4" marker-end="url(#blue)"/>
+    <path d="M236 170V256" stroke="#c14c38" stroke-width="4" marker-end="url(#red)"/>
+    <path d="M124 453V375" stroke="#267a97" stroke-width="4" marker-end="url(#blue)"/>
+    <path d="M236 375V453" stroke="#c14c38" stroke-width="4" marker-end="url(#red)"/>
+    <text x="28" y="205" font-size="15">較冷供液</text><text x="253" y="205" font-size="15">帶熱回流</text>
+    <text x="135" y="227" font-size="15">伺服器二次側</text>
+    <text x="46" y="409" font-size="15">供水</text><text x="253" y="409" font-size="15">帶熱回水</text>
+    <text x="143" y="431" font-size="15">設施水路</text>
+    <text x="24" y="561" font-size="14" fill="#526575">原創功能示意，非特定設備工程配管圖。</text>
+  </g>
+</svg>
