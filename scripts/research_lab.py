@@ -16,8 +16,9 @@ ROOT = Path(__file__).resolve().parents[1]
 PROJECT = 'industryflow-research'
 ENV_FILE = ROOT / '.env.research'
 APP_SERVICES = ('initialize', 'api', 'prefect', 'deploy', 'worker', 'ingestion')
-PORTS = {'api': (8014, 8000), 'web': (3014, 3010), 'prefect': (4204, 4200), 'reader': (3015, 8000)}
+PORTS = {'api': (8010, 8000), 'web': (3010, 3010), 'prefect': (4201, 4200), 'reader': (3015, 8000)}
 PROTECTED = ('industryflow-', 'industryflow-reading-')
+LEGACY_PROJECT = 'industryflow'
 SECRET_KEYS = ('RESEARCH_POSTGRES_PASSWORD', 'RESEARCH_SESSION_SECRET',
                'RESEARCH_READER_PASSWORD', 'RESEARCH_WRITER_PASSWORD')
 
@@ -128,6 +129,41 @@ def protected_snapshot():
                        'started_at': r['State']['StartedAt'], 'restarts': r['RestartCount'],
                        'mounts': sorted([[m['Source'], m['Destination'], m['RW']] for m in r['Mounts']]),
                        'ports': r['HostConfig']['PortBindings']} for r in records}
+
+
+def running_containers():
+    """Running containers as name -> (Compose project, published host ports)."""
+    lines = run(['docker', 'ps', '--format', '{{.Names}}\t{{.Label "com.docker.compose.project"}}\t{{.Ports}}'],
+                text=True).splitlines()
+    containers = {}
+    for line in filter(None, lines):
+        name, project, ports = (line.split('\t') + ['', ''])[:3]
+        containers[name] = (project, {int(p) for p in re.findall(r':(\d+)->', ports)})
+    return containers
+
+
+def listening_ports():
+    found = set()
+    for port, _ in PORTS.values():
+        with socket.socket() as probe:
+            if probe.connect_ex(('127.0.0.1', port)) == 0:
+                found.add(port)
+    return found
+
+
+def exclusion_conflicts(containers, listening, ports):
+    """The research service and the original service share 3010/8010/4201 and must never run together.
+    Only report conflicts; stopping the original service is the maintainer's decision."""
+    conflicts = []
+    legacy = sorted(name for name, (project, _) in containers.items() if project == LEGACY_PROJECT)
+    if legacy:
+        conflicts.append('Original service still running: ' + ', '.join(legacy))
+    own = set().union(*[published for project, published in containers.values() if project == PROJECT])
+    for port in ports:
+        if port in listening and port not in own:
+            holders = sorted(name for name, (_, published) in containers.items() if port in published)
+            conflicts.append(f'Port {port} occupied by ' + (', '.join(holders) or 'a non-Docker process'))
+    return conflicts
 
 
 def verify_protected(before):
@@ -373,18 +409,17 @@ def main():
         report['protected_services_unchanged'] = True
     elif args.action in {'up', 'start', 'stop'}:
         before = protected_snapshot()
+        if args.action in {'up', 'start'}:
+            conflicts = exclusion_conflicts(running_containers(), listening_ports(), [p for p, _ in PORTS.values()])
+            if conflicts:
+                raise RuntimeError('; '.join(conflicts))
         if args.action == 'up':
-            existing = bool(compose('ps', '-q', 'api').strip())
-            if not existing:
-                for port, _ in PORTS.values():
-                    with socket.socket() as probe:
-                        if probe.connect_ex(('127.0.0.1', port)) == 0:
-                            raise RuntimeError(f'Preview port {port} already occupied')
             # Build the shared app image once; parallel initialize/api exports race.
             compose('build', 'api', 'web')
             compose('up', '-d', '--no-build', '--wait', 'api', 'web')
         elif args.action == 'stop':
-            compose('stop', 'web', 'api')
+            # Release every shared port (and stop fetching) so the original service can take the origin back.
+            compose('--profile', 'scheduler', '--profile', 'reader', 'stop', 'reader', 'worker', 'prefect', 'web', 'api')
         else:
             compose('start', 'api', 'web')
         verify_protected(before)

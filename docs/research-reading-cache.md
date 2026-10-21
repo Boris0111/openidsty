@@ -43,7 +43,7 @@ npm run build
 npx playwright test --config playwright.offline.config.ts research-cache.spec.ts research-financial.spec.ts research-content.spec.ts research-navigation.spec.ts
 # 隔離 preview up 完成且 API healthy 後：
 $env:RESEARCH_E2E='1'
-$env:E2E_BASE_URL='http://127.0.0.1:3014'
+$env:E2E_BASE_URL='http://127.0.0.1:3010'
 npx playwright test research-cache.spec.ts research-dynamic.spec.ts research-financial.spec.ts research-service.spec.ts research-navigation.spec.ts research-content.spec.ts
 ```
 

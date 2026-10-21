@@ -245,3 +245,79 @@ Boris 認為整體結構與功能拆分可行，但必須調整以下三點：
    - 備份排程指向正式環境；
    - 原服務停止前保留可回復的 image。
 9. **歸檔**：依 `add-evidence-based-theme-assessments` → `improve-industry-reading-and-technical-evidence` → 本 change 的順序同步主 specs。本 change 退役 `theme-watchlist`（`retire_capabilities: true`）。
+
+## 七、2026-10-21 正式切換紀錄
+
+依第六節檢查表執行，Boris 於 2026-10-21 授權。程式版本為 `main` 的 `1f2a716`（PR #1 合併），加上 change `cutover-research-service-to-original-origin` 的 port 與互斥檢查修改。各步驟的原始輸出存在 `.work/cutover-20261021/`。
+
+| 步驟 | 結果 |
+|---|---|
+| 2. 切換前備份 | `research_lab.py backup --secondary D:\backups\industryflow-research`：`20261021T093452Z`，release `a5df290c…`（第 4 代），C／D 兩份 5 個檔案的 SHA-256 相符。原服務 volume（`industryflow_pg-data`、`industryflow_caddy-*`、`industryflow-reading-db` 的匿名 volume）打包到 `D:\backups\industryflow-original\20261021\`，附 `SHA256SUMS` |
+| 2. 演練還原 | 把同一份備份還原到 `industryflow-research-drill`：全表筆數與內容、release、Git refs、資產全部相符，`/next` 回 200，RTO 55.7 秒；`migrate` 前後都是 `0016`。演練完成後以 `research_drill.py down` 移除 |
+| 3. 回復路徑 | 見下方「回復步驟」。schema 都是 additive，沒有 destructive downgrade |
+| 4. 祕密 | 在主專案產生新的 `.env.research`（DB、session、reader、writer 四組都是新的隨機值；只沿用 `SEC_USER_AGENT`），以 `ALTER ROLE` 與 initialize 換掉三個 DB 帳號的密碼。從 Compose 網路實測：新密碼可連線，預覽的舊密碼全部被拒絕。Boris 在自己的終端執行 `research_owner reset`，`credential_version` 1→2（17:49）；session secret 換新後，舊 session 全部失效 |
+| 5. 私人網路 | **延後**：Boris 決定這次不做。目前只綁 loopback，沒有跨裝置讀取 |
+| 6. 排程與限流 | 演練環境已移除，原服務停止，只剩研究服務一個環境；scheduler 的啟用與補抓另外記錄 |
+| 7. 原 origin | 研究服務改綁 web 3010、API 8010、Prefect 4201，reader 3015 不變；3014／8014 已不再監聽。active release 切換前後都是 `a5df290c…`，volume 名稱不變。`research_lab.py up`／`start` 會在原服務有容器運行或 port 被他人占用時拒絕 |
+
+### 在 3010 的驗收
+
+| 項目 | 結果 |
+|---|---|
+| 後端離線（容器內 `pytest tests`） | 281 passed、118 skipped、2 failed。失敗的 2 項是 `test_financial_sec.py` 的官方樣本 hash：主專案 checkout 以 CRLF 寫出 `backend/tests/fixtures/official-sec-20261017/*.json`（`git ls-files --eol` 為 `w/crlf`），與 provenance 的 LF hash 不符；worktree 的 LF checkout 在 10.5 回歸時通過。這與 port 修改無關，另案處理 |
+| 互斥檢查單元測試 | `python -m unittest tests.test_research_lab_exclusion`：5 passed（原服務運行中、port 被他人占用、被自己占用、演練 project 不誤判、`docker ps` 解析） |
+| live e2e（3010） | 讀者、管理、收藏、來源更新、財務補錄共 36 passed；2 skipped 是唯讀入口的 spec，由下一列執行 |
+| live e2e（唯讀入口 3015） | `reader-start` 後 2 passed，跑完 `reader-stop` |
+| 舊 ticker 深連結 | `/companies/3324.TW` → `/next?focus=company-auras&release_id=a5df290c…`，標題「雙鴻」 |
+| 舊題材網址 | `/themes/liquid-cooling` 回 200，標題「液冷散熱」 |
+| `#candidates` | `/themes/liquid-cooling#candidates` 開在「數據與追蹤」分頁，錨點可見 |
+| v1 收藏遷移 | 只放 v1 清單（`industryflow.theme-watchlist.v1`，2 個題材）的新瀏覽器環境：首次開啟遷移成 2 個 v2 題材目標、`v1_migrated: true`、v1 原值保留；重新整理後沒有重複遷移 |
+
+### 3014 上的收藏
+
+瀏覽器的 localStorage 依網址隔離，在 3014 預覽存的收藏不會出現在 3010，切換時也沒有自動搬移。
+
+- 若 3014 時期已用「收藏 → 匯出備份」存過 JSON：到 `http://127.0.0.1:3010/watchlist` 選「匯入」，預覽合併結果後確認。
+- 若沒有匯出過：3014 的資料仍在同一個瀏覽器裡，但要有服務在 3014 才能開頁面匯出。可以暫時把 3014 轉到 3010（例如 `docker run --rm -p 127.0.0.1:3014:3014 alpine/socat TCP-LISTEN:3014,fork TCP:host.docker.internal:3010`），在 `http://127.0.0.1:3014/watchlist` 匯出後停止轉送，再到 3010 匯入。轉送期間管理入口會拒絕 3014 的 Origin，這是預期行為。
+- 原服務 3010 上的 v1 題材收藏不受影響，第一次開啟新版時會自動遷移。
+
+### 回復步驟
+
+```powershell
+cd C:\Users\User\openspec_pjt
+python scripts/research_lab.py stop    # 停止 reader、scheduler、web、API，釋放 3010／8010／4201；volume 保留
+docker compose up -d                   # 原服務以原 image 與原資料回到 3010
+```
+
+原服務的 image 與 volume 都沒有刪除。研究內容與資料庫的還原要分開操作，見 [備份與還原](research-backup.md)。
+
+### 排程、補抓與切換後檢查
+
+**排程**：`--profile scheduler` 啟動 Prefect（4201）、登錄 deployments（`official-information/hourly` 每小時第 7 分鐘，以及 publication／source 的 refresh 與每分鐘補派），並啟動 worker。研究服務是唯一在抓取的環境。
+
+**補抓**：排程停擺期間，最後一次自動抓取是 10-15 23:07，最後一筆入庫事件是 10-18 00:07。以 `ingestion` 服務執行一次 `python -m app.ingest`（不帶 `--backfill-days`，沿用各來源預設的回補範圍：RSS／產業 90 天、SEC 申報 120 天）。59 個來源中，49 個成功、6 個部分成功、4 個失敗；事件 2,915 → 3,096 筆，10-19 有 34 筆、10-20 有 48 筆。紀錄在 `.work/cutover-20261021/ingest-backfill.log`。
+
+- 部分成功的 6 個（SEC `mpwr`／`vicr` 財務、TWSE／TPEx 財務與資產負債）：官方內容已取得，但有欄位或財年待核對，和既往狀態相同。
+- 失敗的 4 個（`ir-nvidia`、`ir-tsmc`、`tsmc-node-metrics`、`ocp-cold-plate`）都是 HTTP 403：這些官方網站封鎖自動擷取，切換前就是如此，不是停擺造成的。
+
+**無法補回的缺口：台股重大訊息**。`twse-announcements`／`tpex-announcements` 的 OpenAPI 只提供最近一個交易日的資料（10-21 抓到的是 10-20 的公告）。因此 **10-15（四）、10-16（五）、10-19（一）** 三個交易日的重大訊息沒有入庫；前後交易日每天約 7～13 筆。現有 adapter 無法依日期查歷史；若要補回，需另開 change，寫 MOPS 依日期查詢的 adapter。這三天以後的 TSMC、雙鴻等台股公司事件，閱讀時要知道有這個空窗。
+
+**備份排程**：Windows 工作排程器的 `IndustryFlow Research Daily Backup`（每日 03:30）原本的工作目錄是 worktree，已改為 `C:\Users\User\openspec_pjt`。手動觸發一次結果為 `ok`（`20261021T102926Z`，61.9 秒），D 槽也有一份。worktree 裡 `backups\research\` 的舊備份保留不動，D 槽有同樣的副本。
+
+**抽查 5 家公司財務**（`/api/v2/companies/<id>/financials`，經 3010）：
+
+| 公司 | 來源 | 最新營收期間 |
+|---|---|---|
+| 台積電 | `tw-mops-summary`，official＋derived | 2026-09 月營收，來源彙整日 10-17 |
+| 雙鴻 | `tw-mops-summary`，official＋derived | 2026-09 月營收 |
+| NVIDIA | `sec`，official＋derived | 截至 2026-07-26 的年初至今 |
+| Vertiv | `sec`，official | 2026-06-30 季 |
+| AMD | `sec`，official＋derived | 2026-06-27 季 |
+
+五家都沒有回報 gap。台股 10 月營收要到 11 月上旬才公布，所以月營收停在 9 月是正常的。
+
+### 已知問題（另案處理）
+
+- `prefect` 與 `worker` 在 `compose.research.yaml` 沒有 `restart` 設定，Docker 或主機重開機後排程不會自己恢復，要重新以 `--profile scheduler` 啟動。
+- 主專案 checkout 的 SEC 測試 fixtures 是 CRLF，造成 2 項 hash 測試失敗（見上方驗收表）。可在 `.gitattributes` 對 `backend/tests/fixtures/**` 設定 `-text` 或 `eol=lf` 修正。
+- 第 5 步私人網路延後。

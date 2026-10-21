@@ -38,7 +38,7 @@ python scripts/research_lab.py pg-check --suite admin-read   # owner 邊界、�
 cd frontend
 npx playwright test --config playwright.offline.config.ts   # 舊題材頁與關注頁不再顯示候選
 # 隔離 preview up 後：
-$env:RESEARCH_E2E='1'; $env:E2E_BASE_URL='http://127.0.0.1:3014'
+$env:RESEARCH_E2E='1'; $env:E2E_BASE_URL='http://127.0.0.1:3010'
 npx playwright test research-coverage.spec.ts
 ```
 

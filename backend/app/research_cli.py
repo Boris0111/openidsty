@@ -120,7 +120,7 @@ def import_directory(directory):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--base-url', default='http://127.0.0.1:3014')
+    parser.add_argument('--base-url', default='http://127.0.0.1:3010')
     parser.add_argument('action', choices=['create', 'export', 'import', 'validate', 'preview', 'upload-asset', 'publish', 'status'])
     parser.add_argument('--draft')
     parser.add_argument('--directory', type=Path)

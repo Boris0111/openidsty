@@ -1,6 +1,8 @@
-# 新研究服務的隔離預覽
+# 研究服務的啟動與維運
 
-在新版 worktree 根目錄執行，Python 可使用已安裝相同鎖定依賴的環境。此獨立 Compose 不讀原 `.env`，也不啟動原 project；預設不啟動 Prefect 或抓取 worker。
+2026-10-21 起這是正式研究服務，在主專案 `C:\Users\User\openspec_pjt` 根目錄執行，不再使用 worktree。Python 可使用已安裝相同鎖定依賴的環境。此獨立 Compose 不讀原 `.env`，也不啟動原 project；`up` 預設不啟動 Prefect 或抓取 worker。
+
+研究服務與原服務（project `industryflow`）共用 3010／8010／4201，兩者不可同時運行。`up`／`start` 偵測到原服務有容器在運行，或 port 被其他程式占用時，會拒絕並列出占用者，但不會自動停止任何服務。`stop` 會一併停止 reader、scheduler、web 與 API，釋放全部共用 port。
 
 ```powershell
 python scripts/research_lab.py setup
@@ -16,7 +18,7 @@ python scripts/research_lab.py rebuild-check
 python scripts/research_lab.py bootstrap --commit <完整commit>
 ```
 
-預覽為 http://127.0.0.1:3014，API 為 http://127.0.0.1:8014；Prefect 預留 4204。`setup` 產生隨機且互不相同的 DB／session 祕密於被 Git 及 Docker build 忽略的 `.env.research`，不複製正式憑證。`check` 只顯示安全摘要，不輸出 Compose 內含憑證的完整 JSON。
+網站為 http://127.0.0.1:3010，API 為 http://127.0.0.1:8010，Prefect 為 4201（2026-10-21 切換前的預覽使用 3014／8014／4204）。`setup` 產生隨機且互不相同的 DB／session 祕密於被 Git 及 Docker build 忽略的 `.env.research`，不複製正式憑證。`check` 只顯示安全摘要，不輸出 Compose 內含憑證的完整 JSON。
 
 所有 app 服務使用 `industryflow-research-api:dev`，web 使用 `industryflow-research-web:dev`；DB volume 與 network 由 `industryflow-research` 命名。沒有固定 container_name、host network、external volume、Docker socket 或可寫的原專案 bind mount。啟動前檢查 ports；停止不刪除 volumes。
 
@@ -41,6 +43,6 @@ python scripts/research_lab.py bootstrap --commit <完整commit>
 ```powershell
 $env:PLAYWRIGHT_CHROME='1'
 $env:RESEARCH_E2E='1'
-$env:E2E_BASE_URL='http://127.0.0.1:3014'
+$env:E2E_BASE_URL='http://127.0.0.1:3010'
 npx playwright test tests/research-service.spec.ts
 ```
