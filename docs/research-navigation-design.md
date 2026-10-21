@@ -46,7 +46,7 @@ npm run typecheck
 npm run build
 npm run test:e2e:offline -- research-navigation.spec.ts navigation.spec.ts
 $env:RESEARCH_E2E='1'
-$env:E2E_BASE_URL='http://127.0.0.1:3014'
+$env:E2E_BASE_URL='http://127.0.0.1:3010'
 npx playwright test research-navigation.spec.ts research-service.spec.ts
 ```
 

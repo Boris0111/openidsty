@@ -4,7 +4,7 @@
 
 ## 設定及重設
 
-先在新版 worktree 啟動隔離預覽，再於本機互動終端執行：
+在主專案根目錄啟動研究服務，再於本機互動終端執行：
 
 ```powershell
 python scripts/research_lab.py up
@@ -34,7 +34,7 @@ Session 行為依據：[OWASP Session Management](https://cheatsheetseries.owasp
 
 ## HTTP 開發例外與 HTTPS
 
-未設定 `RESEARCH_ADMIN_MODE` 時管理入口停用。隔離 Compose 明確使用 `loopback-http`：只允許 `http://127.0.0.1:3014` 及 `http://localhost:3014` 的 Origin，web／API ports 綁 `127.0.0.1`；cookie 仍為 HttpOnly、SameSite=Strict、Path=/api/admin，僅此開發模式不設 Secure。API Host 允許明列的本機入口與容器內 `api:8000`，不接受任意 Host 或轉送主機 header。
+未設定 `RESEARCH_ADMIN_MODE` 時管理入口停用。隔離 Compose 明確使用 `loopback-http`：只允許 `http://127.0.0.1:3010` 及 `http://localhost:3010` 的 Origin，web／API ports 綁 `127.0.0.1`；cookie 仍為 HttpOnly、SameSite=Strict、Path=/api/admin，僅此開發模式不設 Secure。API Host 允許明列的本機入口與容器內 `api:8000`，不接受任意 Host 或轉送主機 header。
 
 跨裝置／私人網路須另完成 reader gateway 與 TLS 設定。HTTPS 管理模式為 `RESEARCH_ADMIN_MODE=https`，`RESEARCH_ADMIN_ORIGINS` 必須全部為 `https://`，cookie 設 Secure；Next 同樣要設定完全一致的 Origin allowlist。不能只將 HTTP profile 的 bind 改成 `0.0.0.0`，或藉由偽造 `X-Forwarded-Proto` 取得開發例外。cookie 安全模式由伺服器明確設定，不從客戶端 header 猜測。
 

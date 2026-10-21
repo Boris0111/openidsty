@@ -4,9 +4,9 @@
 
 ## 本機開始
 
-在 `openspec_pjt-research-service` 執行 `python scripts/research_lab.py seed-git`，把目前分支的 Git bundle 初始化到隔離的 managed Git volume。既有 repository 不會被覆寫；目前已發布版本會保留在不可改寫的 `refs/research/releases/<release UUID>`。API 僅唯讀掛載這個 volume；後續發布 worker 才有 Git 寫入權。
+在主專案根目錄（2026-10-21 切換前為 worktree `openspec_pjt-research-service`）執行 `python scripts/research_lab.py seed-git`，把目前分支的 Git bundle 初始化到隔離的 managed Git volume。既有 repository 不會被覆寫；目前已發布版本會保留在不可改寫的 `refs/research/releases/<release UUID>`。API 僅唯讀掛載這個 volume；後續發布 worker 才有 Git 寫入權。
 
-依 [維護者設定](research-owner.md) 建立自己的密碼，開啟 `http://127.0.0.1:3014/admin`。登入後「從目前正式研究建立草稿」，選擇研究檔案。表單可改名稱、摘要、查核日期及內文；其他欄位用「切換 Markdown」編輯。YAML manifest 直接使用文字編輯。`industry-map/README.md` 是 Schema 說明，不允許透過草稿變更。
+依 [維護者設定](research-owner.md) 建立自己的密碼，開啟 `http://127.0.0.1:3010/admin`。登入後「從目前正式研究建立草稿」，選擇研究檔案。表單可改名稱、摘要、查核日期及內文；其他欄位用「切換 Markdown」編輯。YAML manifest 直接使用文字編輯。`industry-map/README.md` 是 Schema 說明，不允許透過草稿變更。
 
 範例：選 `industry-map/companies/company-auras.md`，在摘要末尾加一段自己的草稿說明，儲存、驗證、與基準比較，再按閱讀預覽。預覽顯示同一份研究的判斷、來源、圖解及關係圖；正式 `/next` 的摘要應保持原狀。修改真實研究判斷仍須核對來源，結構驗證不代表研究內容正確。
 

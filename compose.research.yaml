@@ -14,8 +14,8 @@ x-app: &app
     SEC_USER_AGENT: ${SEC_USER_AGENT:-}
     RESEARCH_SESSION_SECRET: ${RESEARCH_SESSION_SECRET:?Run research_lab.py setup}
     RESEARCH_ADMIN_MODE: loopback-http
-    RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3014,http://localhost:3014
-    RESEARCH_ADMIN_HOSTS: api:8000,127.0.0.1:8014,localhost:8014
+    RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3010,http://localhost:3010
+    RESEARCH_ADMIN_HOSTS: api:8000,127.0.0.1:8010,localhost:8010
   init: true
   networks: [app]
 
@@ -48,7 +48,7 @@ services:
     environment:
       <<: *app-env
       DATABASE_URL: postgresql+psycopg://research_reader_login:${RESEARCH_READER_PASSWORD}@db:5432/industry_research
-    ports: ["127.0.0.1:8014:8000"]
+    ports: ["127.0.0.1:8010:8000"]
     depends_on:
       initialize: {condition: service_completed_successfully}
     healthcheck:
@@ -64,8 +64,8 @@ services:
       dockerfile: frontend/Dockerfile
     environment:
       API_ORIGIN: http://api:8000
-      RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3014,http://localhost:3014
-    ports: ["127.0.0.1:3014:3010"]
+      RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3010,http://localhost:3010
+    ports: ["127.0.0.1:3010:3010"]
     depends_on:
       api: {condition: service_healthy}
     networks: [app]
@@ -77,11 +77,11 @@ services:
     environment:
       <<: *app-env
       PREFECT_API_DATABASE_CONNECTION_URL: postgresql+asyncpg://industry:${RESEARCH_POSTGRES_PASSWORD}@db:5432/prefect
-      PREFECT_UI_API_URL: http://localhost:4204/api
+      PREFECT_UI_API_URL: http://localhost:4201/api
       PREFECT_UI_STATIC_DIRECTORY: /home/app/.prefect/ui
       PREFECT_SERVER_DOCKET_URL: memory://
     command: [prefect, server, start, --host, 0.0.0.0]
-    ports: ["127.0.0.1:4204:4200"]
+    ports: ["127.0.0.1:4201:4200"]
     depends_on:
       db: {condition: service_healthy}
     healthcheck:

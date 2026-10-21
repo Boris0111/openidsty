@@ -10,7 +10,7 @@ from app.research_db import get_admin_connection
 from app.research_http import ResearchError
 from app.research_owner import set_owner
 
-ORIGIN = 'http://localhost:3014'
+ORIGIN = 'http://localhost:3010'
 PASSWORD = 'synthetic owner password only'
 
 
@@ -24,7 +24,7 @@ def owner(monkeypatch):
         raise RuntimeError('Refusing owner tests outside the disposable research DB')
     monkeypatch.setenv('RESEARCH_ADMIN_MODE', 'loopback-http')
     monkeypatch.setenv('RESEARCH_ADMIN_ORIGINS', ORIGIN)
-    monkeypatch.setenv('RESEARCH_ADMIN_HOSTS', 'localhost:3014')
+    monkeypatch.setenv('RESEARCH_ADMIN_HOSTS', 'localhost:3010')
     monkeypatch.setenv('RESEARCH_SESSION_SECRET', 'a' * 64)
     monkeypatch.setattr(auth, 'writer_engine', lambda: engine)
     def connection():
@@ -157,16 +157,16 @@ def test_challenge_expiry_and_anonymous_cannot_logout(owner, monkeypatch):
 def test_secure_cookie_and_no_private_http_exception(owner, monkeypatch):
     client, _ = owner
     monkeypatch.setenv('RESEARCH_ADMIN_MODE', 'https')
-    monkeypatch.setenv('RESEARCH_ADMIN_ORIGINS', 'https://localhost:3014')
-    https = TestClient(app, base_url='https://localhost:3014')
+    monkeypatch.setenv('RESEARCH_ADMIN_ORIGINS', 'https://localhost:3010')
+    https = TestClient(app, base_url='https://localhost:3010')
     challenge = https.get('/api/admin/session')
     assert all('; Secure' in value for value in challenge.headers.get_list('set-cookie'))
     result = https.post('/api/admin/session', json={'password': PASSWORD},
-        headers={'Origin': 'https://localhost:3014', 'X-CSRF-Token': challenge.json()['csrf_token']})
+        headers={'Origin': 'https://localhost:3010', 'X-CSRF-Token': challenge.json()['csrf_token']})
     assert result.status_code == 200
     assert all('; Secure' in value for value in result.headers.get_list('set-cookie'))
     monkeypatch.setenv('RESEARCH_ADMIN_MODE', 'loopback-http')
-    monkeypatch.setenv('RESEARCH_ADMIN_ORIGINS', 'http://192.168.1.2:3014')
+    monkeypatch.setenv('RESEARCH_ADMIN_ORIGINS', 'http://192.168.1.2:3010')
     assert client.get('/api/admin/session').status_code == 503
 
 
@@ -190,11 +190,11 @@ def test_malformed_origin_config_and_challenge_are_rejected(monkeypatch):
     from starlette.requests import Request
     monkeypatch.setenv('RESEARCH_ADMIN_MODE', 'https')
     monkeypatch.setenv('RESEARCH_ADMIN_ORIGINS', 'https://[bad')
-    monkeypatch.setenv('RESEARCH_ADMIN_HOSTS', 'localhost:3014')
+    monkeypatch.setenv('RESEARCH_ADMIN_HOSTS', 'localhost:3010')
     monkeypatch.setenv('RESEARCH_SESSION_SECRET', 'a' * 64)
     with pytest.raises(ResearchError):
         auth.admin_config()
-    config = auth.AdminConfig(False, frozenset({ORIGIN}), frozenset({'localhost:3014'}), b'a' * 32)
+    config = auth.AdminConfig(False, frozenset({ORIGIN}), frozenset({'localhost:3010'}), b'a' * 32)
     nonce, challenge = auth.signed_challenge(config)
     for supplied, saved in [('bad', challenge), (nonce, challenge[:-1] + 'x'), ('é', challenge)]:
         request = Request({'type': 'http', 'headers': [(b'x-csrf-token', supplied.encode('latin-1')),

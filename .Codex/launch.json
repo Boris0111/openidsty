@@ -6,7 +6,7 @@
       "runtimeExecutable": "python",
       "runtimeArgs": ["scripts/research_lab.py", "up"],
       "cwd": "${workspaceFolder}",
-      "port": 3014
+      "port": 3010
     }
   ]
 }

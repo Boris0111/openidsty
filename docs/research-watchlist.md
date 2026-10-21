@@ -42,7 +42,7 @@
 
 ## 備份與跨瀏覽器交換（task 7.3）
 
-不同瀏覽器、裝置，或同一台電腦上的不同網址（例如 `127.0.0.1:3014` 與私人網路 gateway 的 `:3015`，或 `localhost` 與 `127.0.0.1`）各有自己的 localStorage，彼此看不到，也不會自動同步。交換方式：
+不同瀏覽器、裝置，或同一台電腦上的不同網址（例如 `127.0.0.1:3010` 與私人網路 gateway 的 `:3015`，或 `localhost` 與 `127.0.0.1`）各有自己的 localStorage，彼此看不到，也不會自動同步。交換方式：
 
 1. 在原處開啟「此裝置收藏」→「匯出收藏 JSON」，下載 `industryflow-watchlist-YYYY-MM-DD.json`。
 2. 用任何方式把檔案帶到另一台裝置或另一個瀏覽器（隨身碟、雲端硬碟、自己寄信）。
@@ -70,6 +70,6 @@ python scripts/research_lab.py pg-check --suite reader-navigation  # gateway 只
 cd frontend
 npx playwright test --config playwright.offline.config.ts research-watchlist.spec.ts research-watchlist-migration.spec.ts research-watchlist-backup.spec.ts
 # 隔離 preview up 後：
-$env:RESEARCH_E2E='1'; $env:E2E_BASE_URL='http://127.0.0.1:3014'
+$env:RESEARCH_E2E='1'; $env:E2E_BASE_URL='http://127.0.0.1:3010'
 npx playwright test research-watchlist.spec.ts
 ```

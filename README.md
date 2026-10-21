@@ -4,7 +4,24 @@
 
 產業結構以 `industry-map/` Markdown 為唯一來源；FastAPI 將環節與題材全文匯入 PostgreSQL，另外保存媒體事件、官方背景統計與既有財報。Next.js／Cytoscape.js 提供介面，Prefect 每小時更新免費公開來源；版本化規則產生內容分類證據。Redis 與 Neo4j 尚未引入。
 
-## 快速啟動（Windows PowerShell）
+## 正式研究服務（2026-10-21 起）
+
+2026-10-21 起，`http://127.0.0.1:3010` 由新版研究服務（Compose project `industryflow-research`，`compose.research.yaml`）提供；API 為 8010，Prefect 為 4201，唯讀入口為 3015。啟停、祕密與檢查見 [research-lab](docs/research-lab.md)，切換紀錄見 [research-acceptance](docs/research-acceptance.md)。
+
+```powershell
+cd C:\Users\User\openspec_pjt
+python scripts/research_lab.py up      # 原服務仍在運行或 port 被占用時會拒絕，不會自動停止任何服務
+python scripts/research_lab.py stop
+```
+
+下方「快速啟動」以後各節說明的是**原服務**（project `industryflow`，`compose.yaml`），現在只用於回復，**不可與研究服務同時啟動**，因為兩者使用同一組 port。回復步驟：
+
+```powershell
+python scripts/research_lab.py stop    # 只停止，研究服務的 volumes 保留
+docker compose up -d                   # 以原 image 與原資料回到 3010
+```
+
+## 快速啟動（Windows PowerShell，原服務）
 
 需要 Docker Desktop（Linux containers）。第一次建置需要網路與數分鐘。以下命令只使用本專案 `industryflow` 的容器與 volumes，不會停止其他專案。
 
