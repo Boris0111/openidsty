@@ -19,8 +19,9 @@
 - [ ] 3.1 新增 `frontend/tests/offline/layout.ts`，匯出 `expectNoHorizontalOverflow(page)`，以 `expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true)` 實作；`npm run typecheck` 通過
 - [ ] 3.2 把 12 處單次的 `scrollWidth` 斷言全部改為呼叫 helper，涵蓋 assessment、documents、reading（2 處）、relations、research-cache（38、80）、research-chains、research-content、research-financial、research-navigation、research-watchlist；改完以 `grep -rn "expect(await page.evaluate(()=>document.documentElement.scrollWidth" frontend/tests/offline` 確認沒有結果
 - [ ] 3.3 修改 `research-cache.spec.ts` 的「可見時每 60 秒查 manifest」測試：在設定 `hidden` 之前，以 `expect.poll` 等 60 秒快轉觸發的 manifest 與財務請求達到預期數量，之後才記錄 `hidden` 基準；以 `--repeat-each 30` 重跑這個測試，0 次失敗
-- [ ] 3.4 證明 helper 仍會擋下真正的回歸：暫時在測試頁注入一個 2000px 寬的元素，確認 `expectNoHorizontalOverflow` 在 timeout 後失敗，驗證完移除注入；在本 tasks 記錄結果
-- [ ] 3.5 在 `docs/frontend.md` 的離線測試段落補上慣例：非同步結果用 `expect(locator)` 或 `expect.poll`，不用單次的 `expect(await …)`；溢出檢查用 `expectNoHorizontalOverflow`；CI 刻意不設 retries 及其理由。以 grep 確認段落存在
+- [ ] 3.4 依 design D5 修改 `research-navigation.spec.ts` 的「七類目錄」測試：按下一頁後，先以 `expect(locator)` 等待下一頁專屬內容出現才點選；第 39 行的請求檢查改用 `expect.poll`。以 `--repeat-each 30` 重跑這個測試，0 次失敗
+- [ ] 3.5 證明 helper 仍會擋下真正的回歸：暫時在測試頁注入一個 2000px 寬的元素，確認 `expectNoHorizontalOverflow` 在 timeout 後失敗，驗證完移除注入；在本 tasks 記錄結果
+- [ ] 3.6 在 `docs/frontend.md` 的離線測試段落補上慣例：非同步結果用 `expect(locator)` 或 `expect.poll`，不用單次的 `expect(await …)`；溢出檢查用 `expectNoHorizontalOverflow`；CI 刻意不設 retries 及其理由。以 grep 確認段落存在
 
 ## 4. 整合驗證
 

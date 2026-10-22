@@ -52,6 +52,19 @@
 - `research-cache.spec.ts:56` 在設定 `hidden` 之前，先等 60 秒快轉觸發的請求都抵達：以 `expect.poll` 等 manifest 與財務的請求數達到預期值，之後才記錄基準。
 - **不選：用 `waitForLoadState('networkidle')`。** 這個測試裝了 fake clock，networkidle 的判定與 fake clock 的互動不直觀，結果不夠確定。
 
+### D5：導覽後先等新內容，再進行下一步
+
+- **失敗案例**：`research-navigation.spec.ts:39` 在 PR #4 的 pull_request run 失敗（run 39860457607，2026-10-22 22:04 UTC）；同一個 commit 的 push run 通過。
+- **推論的時序**（inference，沒有 trace 證實）：
+  1. 第 33 行按「下一頁」後，只等到 URL 出現 `cursor=synthetic-next`。
+  2. 第 34 行立刻點 `.rs-directory li a`，這時畫面可能還是第一頁的那一筆。
+  3. 頁面導走，帶 cursor 的 companies 請求被取消，或根本沒有發出。
+  4. 之後「回原目錄」若命中快取，也不會補發這個請求。
+  5. 第 39 行一次性檢查請求清單時，就找不到它。
+- **不能只改用 `expect.poll`**：如果那個請求根本沒有發出，等多久都不會出現。
+- **做法**：按下一頁後，用 `expect(locator)` 等待只有下一頁才有的內容（fixture 中下一頁的那一筆）出現，再點選；第 39 行的檢查改用 `expect.poll`。
+- **驗證**：apply 時以 `--repeat-each 30` 重跑；若仍失敗，用 trace 修正。
+
 ### D4：慣例寫進文件，不靠 lint
 - `docs/frontend.md` 的離線測試段落寫明：非同步結果要用 `expect(locator)` 或 `expect.poll`，溢出檢查要用 helper。
 - 目前沒有 ESLint，這次不為了一條規則引入 lint 工具。
