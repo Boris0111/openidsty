@@ -95,4 +95,4 @@
 
 ## Open Questions
 
-- Prefect server 遇到 DB 暫時不可用時，會結束還是持續重試？這會在 Risks 中的重啟演練得到答案。不論結果如何，都只會影響是否追加 healthcheck，不改變 spec 或做法。
+- ~~Prefect server 遇到 DB 暫時不可用時，會結束還是持續重試？~~ 已在 2026-10-23 的演練中回答：Docker 重啟後，`prefect` 與 `worker` 在同一秒啟動，RestartCount 都是 0。worker 約 20 秒後自行連上 Prefect，沒有結束，也沒有卡住，所以不追加 healthcheck。演練同時發現整點 run 延遲 26 分鐘（見 `docs/research-acceptance.md` 第八節），這個問題另案處理。

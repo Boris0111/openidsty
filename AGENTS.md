@@ -80,3 +80,5 @@ openspec list --specs                         # 已歸檔的主 specs
 **apply 的進度記錄在該 change 的 `tasks.md` checkbox 裡**，不在對話裡。接手時跑 `openspec status` 就知道做到哪，從未勾選的第一項繼續。
 
 規劃與實作分離：propose 只產生規劃文件、不碰程式碼；要實作必須另外啟動 apply。
+
+**先驗證、再 merge**：change 的 tasks 全部勾完（包括要在正式服務上做的演練）並在 branch 上 archive 之後，PR 才交給維護者 merge；還有未驗證的 task 時不要建議 merge。需要正式服務的驗證，在主 checkout 暫時切到該 PR 的 branch 進行，不要在 worktree 跑：worktree 沒有 `.env.research`，`scripts/research_lab.py` 會產生與既有 DB volume 不符的新祕密。切換主 checkout 的 branch 或重啟 Docker Desktop 前，先徵得維護者同意。
