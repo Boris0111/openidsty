@@ -6,13 +6,13 @@
 python scripts/research_lab.py backup --secondary "D:\backups\industryflow-research" --keep-days 30
 ```
 
-Windows 工作排程器已註冊 `IndustryFlow Research Daily Backup`：每天 03:30 以 `C:\Users\User\openspec_pjt\.venv\Scripts\python.exe` 在本 worktree 執行上列命令。錯過的時段（關機、休眠）在下次可執行時補跑，單次上限 1 小時，同時只跑一份。它只在 Boris 登入時執行，因為 Docker Desktop 依附使用者工作階段；Docker 沒啟動時備份會失敗並記錄，不會產生半套備份。移除排程：
+Windows 工作排程器已註冊 `IndustryFlow Research Daily Backup`：每天 03:30 以 `C:\Users\User\openspec_pjt\.venv\Scripts\python.exe` 在主專案 `C:\Users\User\openspec_pjt` 執行上列命令（2026-10-21 由 worktree 改過來）。錯過的時段（關機、休眠）在下次可執行時補跑，單次上限 1 小時，同時只跑一份。它只在 Boris 登入時執行，因為 Docker Desktop 依附使用者工作階段；Docker 沒啟動時備份會失敗並記錄，不會產生半套備份。移除排程：
 
 ```powershell
 Unregister-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"
 ```
 
-每份備份是一個以 UTC 時間命名的資料夾（例如 `20261018T214852Z`），主副本在 worktree 的 `backups/research/`（Git 忽略），第二份在 `D:\backups\industryflow-research`。C 槽與 D 槽是兩顆不同的實體 SSD（Intel 與 Kingston），第二份複製後逐檔核對 SHA-256。
+每份備份是一個以 UTC 時間命名的資料夾（例如 `20261018T214852Z`），主副本在主專案的 `backups/research/`（Git 忽略；2026-10-21 前的舊備份留在原 worktree 的同一路徑），第二份在 `D:\backups\industryflow-research`。C 槽與 D 槽是兩顆不同的實體 SSD（Intel 與 Kingston），第二份複製後逐檔核對 SHA-256。
 
 | 檔案 | 內容 |
 |---|---|
@@ -78,7 +78,7 @@ python research_drill.py down      # 只移除演練 project 的容器與 volume
 3. **比對差異**：拿第 1 步的備份與第 2 步的資料比對。
    - **研究 release**：比對 `manifest.json` 的 `active_release` 與 `git_refs`。較新的 release 若仍在第 1 步的 Git bundle 裡，就從那個 commit 建立新草稿並重新發布，不要直接改 DB。
    - **財務與事件**：較新的部分由來源單次更新重新取得。owner 補錄的財務批次則重新匯入原檔。
-4. **切換**：演練環境（3016）可以先暫時作為服務使用，原預覽的 volume 保留不刪，供事後比對。要把資料併回 3014 時，先停止預覽的 web 與 API，再依 `research-lab.md` 的方式還原到新 DB，核對後才啟動。任何步驟都不使用 `git reset` 回復資料，也不刪除原 volume。
+4. **切換**：演練環境（3016）可以先暫時作為服務使用，研究服務的 volume 保留不刪，供事後比對。要把資料併回 3010 時，先停止研究服務的 web 與 API，再依 `research-lab.md` 的方式還原到新 DB，核對後才啟動。任何步驟都不使用 `git reset` 回復資料，也不刪除原 volume。
 5. **研究還原與資料庫還原分開**：只是內容發布錯誤時，用管理介面的 release 還原（`/api/admin/releases/{id}/restore`）回到前一版即可，不需要還原整個 DB。
 
 ## 排程實際執行紀錄

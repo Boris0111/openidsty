@@ -79,4 +79,4 @@ EXPLAIN ANALYZE 完整結果：[改善前](reading-query-plans-before.json)、[�
 
 量測最終版本使用與 baseline 相同的 Node 24.21.0 及 Python 直接／間接依賴，基底 image layers 一致；新 PDF 解析依賴僅 pypdf 6.20.1。曾隨浮動 tag／間接依賴裝到 Node 24.22.0、Pydantic 2.14.1 等，該輪只作診斷，未當最終同環境驗收。Dockerfile 與 runtime-constraints 固定此基準，更新時須明確重驗。
 
-最後畫面走查補正事件卡片的來源名稱，source_id 與未知類型留在進階資訊；API additive 提供 source_name。segment 的鄰接環節與題材、theme 的環節名稱改為批次讀取，避免為名稱顯示增加逐筆查詢。coverage／assessment 共用已讀來源名稱，不新增其統計查詢；原 SQL 次數仍為 20／7。所有核心 endpoint 在此修正後重新以原備份快照量測，完整結果為上表。
+最後畫面走查補正事件卡片的來源名稱，source_id 與未知類型留在進階資訊（此面板後來已全站移除，識別碼只留在 API payload）；API additive 提供 source_name。segment 的鄰接環節與題材、theme 的環節名稱改為批次讀取，避免為名稱顯示增加逐筆查詢。coverage／assessment 共用已讀來源名稱，不新增其統計查詢；原 SQL 次數仍為 20／7。所有核心 endpoint 在此修正後重新以原備份快照量測，完整結果為上表。

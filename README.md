@@ -1,8 +1,8 @@
 # openidsty｜IndustryFlow 半導體與 AI 產業情報地圖
 
-以產業探索為入口：選產業 → 理解環節 → 查看題材與近期事件 → 追溯來源。完整研究、監測訊號與風險直接呈現，公司提供定位與相關資訊。公開唯讀、不需帳號；股價、行情估值與 AI 摘要留待後續 change。
+以產業探索為入口：選產業 → 理解環節 → 查看題材與近期事件 → 追溯來源。完整研究、監測訊號與風險直接呈現，公司提供定位與相關資訊。目前只在本機 loopback（127.0.0.1）提供唯讀閱讀，尚未對外公開，不需帳號；股價、行情估值與 AI 摘要不在範圍內。
 
-產業結構以 `industry-map/` Markdown 為唯一來源；FastAPI 將環節與題材全文匯入 PostgreSQL，另外保存媒體事件、官方背景統計與既有財報。Next.js／Cytoscape.js 提供介面，Prefect 每小時更新免費公開來源；版本化規則產生內容分類證據。Redis 與 Neo4j 尚未引入。
+產業結構以 `industry-map/` Markdown 為唯一來源；FastAPI 將環節與題材全文匯入 PostgreSQL，另外保存媒體事件、官方背景統計與既有財報。Next.js／Cytoscape.js 提供介面；啟用 scheduler profile 後，Prefect 每小時更新免費公開來源，並在 Docker 重啟後自動恢復（見 [research-lab](docs/research-lab.md)）；版本化規則產生內容分類證據。Redis 與 Neo4j 尚未引入。
 
 ## 正式研究服務（2026-10-21 起）
 
@@ -189,6 +189,8 @@ Invoke-RestMethod http://localhost:8010/api/sources
 
 ## 自架公開部署
 
+目前沒有任何對外部署。本節是原服務（`compose.yaml`）的公開部署參考；正式研究服務（`compose.research.yaml`）沒有公開 profile，只綁 127.0.0.1。
+
 在有 Docker 的主機複製 repo 與安全保存的 `.env`，設定 PUBLIC_DOMAIN（自己的網域）及 ACME_EMAIL，讓 DNS 指向主機，開放 80／443；不要公開 5432、8010 或 4201。
 
 ```bash
@@ -206,15 +208,16 @@ Caddy 自動申請 TLS，僅代理網站及其唯讀 API。預設 localhost port
 | `frontend/` | Next.js 與瀏覽器流程測試 |
 | `data/` | 可審查的公司研究補充資料 |
 | `docs/api.md`／`sources.md`／`frontend.md` | API 契約、來源設定與前端操作 |
-| `compose.yaml`／`compose.dev.yaml` | 執行與 hot reload |
+| `compose.research.yaml` | 正式研究服務（web、API、Prefect、worker、唯讀入口）；操作見 [research-lab](docs/research-lab.md) |
+| `compose.yaml`／`compose.dev.yaml` | 原服務的執行與 hot reload；原服務維持停止，不與研究服務同時運行 |
 
 本 repo 已初始化 OpenSpec，無須再次 init。全域 CLI 是共用工具，規格在本 repo 的 `openspec/`；implementation 進度在各 change 的 tasks checkbox，不等於 planning artifacts 的完成數。
 
 ```powershell
 openspec.cmd list
-openspec.cmd status --change refocus-industry-explorer
-openspec.cmd instructions apply --change refocus-industry-explorer --json
-openspec.cmd validate refocus-industry-explorer --type change --strict
+openspec.cmd status --change <name>
+openspec.cmd instructions apply --change <name> --json
+openspec.cmd validate <name> --type change --strict
 ```
 
 新工作一律在此 repo；舊 `financeinfost` 只供參考。Codex 可用 `$openspec-propose`／`$openspec-apply-change`／`$openspec-archive-change`；歸檔須另行啟動。

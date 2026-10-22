@@ -54,4 +54,4 @@ GET /api/theme-updates?ids=...：去重後最多 20 項，不存在／inactive �
 
 指標修訂：`GET /api/themes/{tid}/indicators/{iid}/revisions?limit=20&offset=0`，limit 1–100，回傳 items／total／limit／offset，跨題材指標 404。原 indicators payload 的 revisions 改為最多 20 筆，另有 revisions_total、revisions_limit；畫面提供載入更多。最新值先按 identity／revision 排名，再取最多 limit 個期別，失效最新版不回退同 identity 舊修訂。coverage 使用一致 REPEATABLE READ 唯讀快照、共同 reference 及 SQL COUNT DISTINCT／window top-3，未知日、背景、提及與例行維持原計數語意。
 
-事件 payload 另提供 optional source_name（目前來源顯示名稱），保留原 source_id。名稱在同次 request 內批次讀取並重用；舊資料沒有名稱時 UI 明示待補，原識別在進階資訊可核對。
+事件 payload 另提供 optional source_name（目前來源顯示名稱），保留原 source_id。名稱在同次 request 內批次讀取並重用；舊資料沒有名稱時 UI 明示待補；原 source_id 保留在 payload 供核對，讀者介面不顯示逐事件識別碼。

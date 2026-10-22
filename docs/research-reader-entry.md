@@ -17,7 +17,7 @@ Gateway 檢查 Host、路徑、方法與大小，拒絕 dot traversal、雙重�
 
 TLS 憑證、主機名稱及裝置信任須依實際私人網路設定；本輪沒有安裝 CA、調整防火牆、開啟 LAN bind 或對外部署。這和在本機 HTTP 的 owner 開發例外是兩回事；若未來改成跨裝置管理，還需要 [research-owner](research-owner.md) 的 HTTPS owner 設定。
 
-目前 gateway 只供新版研究入口，legacy `/` 會導向 `/next`，不把舊版診斷整套公開。完整新舊研究導覽仍由 task 6.1 接續；此入口不能被描述為已完成全站切換。不同 port／host 的收藏各自存在瀏覽器，交換功能依 task 7 實作。
+目前 gateway 只供新版研究入口，legacy `/` 會導向 `/next`，不把舊版診斷整套公開。完整新舊研究導覽已完成，入口對照見 [research-navigation](research-navigation.md)；此入口不能被描述為已完成全站切換。不同 port／host 的收藏各自存在瀏覽器，可用收藏 JSON 匯出／匯入交換，見 [research-watchlist](research-watchlist.md)。
 
 ## 驗證方式
 
