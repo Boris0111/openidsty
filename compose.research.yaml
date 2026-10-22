@@ -90,6 +90,7 @@ services:
       timeout: 5s
       start_period: 40s
       retries: 20
+    restart: unless-stopped
   deploy:
     <<: *app
     profiles: [scheduler]
@@ -107,6 +108,7 @@ services:
     command: [prefect, worker, start, --pool, industryflow, --type, process, --limit, "1"]
     depends_on:
       deploy: {condition: service_completed_successfully}
+    restart: unless-stopped
   ingestion:
     <<: *app
     volumes: ["research-assets:/home/app/research-assets"]

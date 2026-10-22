@@ -78,15 +78,15 @@
   - → `research-lab.md` 寫明「原服務只能 stop、不要 up」。`research_lab.py` 既有的互斥檢查仍會在 `up` 時拒絕。重開機時是 daemon 直接拉起容器、不經過這個檢查，所以這點只能靠操作規則。
 - **[取捨] 重開機後排程自動恢復，代表維護者暫停排程時必須明確執行 `stop`，不能指望重開機來關掉排程。**
   - → 文件寫明暫停排程的指令。
-- **[風險] 既有 Windows checkout 套用 `-text` 後，fixtures 會顯示為已修改（工作區 CRLF ≠ index LF）。**
-  - → Migration Plan 提供一次性的還原指令；執行前先確認 fixtures 沒有本機修改。
+- **[風險] 既有 Windows checkout 套用 `-text` 後，工作區仍是 CRLF，`git status` 卻因 stat 快取顯示乾淨，hash 測試照樣失敗。**
+  - → Migration Plan 提供一次性的「刪除再取出」指令；執行前先確認 fixtures 沒有本機修改。
 - **[取捨] SEC 那兩項 hash 測試會在 `remove-company-financials` 中隨 `test_financial_sec.py` 一起刪除。**
   - → 這次仍然修，因為規則保護的是所有 fixtures，不只這兩項。
 
 ## Migration Plan
 
 1. 合併後，在主 checkout 先執行 `git status -- backend/tests/fixtures tests/fixtures`，確認這兩個目錄沒有本機修改。
-2. 執行 `git checkout -- backend/tests/fixtures tests/fixtures`，讓工作區改回 LF。
+2. 刪除工作區的這些 fixtures 後再取出：`git ls-files -z -- backend/tests/fixtures tests/fixtures | xargs -0 rm --`，接著 `git checkout -- backend/tests/fixtures tests/fixtures`。單純執行 `git checkout --` 不會改寫：git 依 stat 快取判定檔案未修改而略過（apply 時實測）。最後以 `git ls-files --eol` 確認為 `w/lf`。
 3. 在研究服務目錄執行 `python scripts/research_lab.py check`，確認新的設定檢查通過。
 4. 以 `--profile scheduler up -d` 重新建立 `prefect` 與 `worker` 容器。restart 是容器建立時的設定，既有容器不會自動套用。
 5. 依 Risks 做一次重開機演練，結果記錄到 `docs/research-acceptance.md`。

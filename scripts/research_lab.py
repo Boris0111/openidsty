@@ -61,6 +61,15 @@ def setup():
             output.write('\n' + ''.join(f'{key}={secrets.token_hex(32)}\n' for key in missing))
 
 
+def validate_restart(services):
+    """Long-running scheduler services return after a reboot; a manual stop still keeps them down."""
+    for name in ('prefect', 'worker'):
+        if services[name].get('restart') != 'unless-stopped':
+            raise ValueError(f'Scheduler service {name} must restart unless-stopped')
+    if services['deploy'].get('restart', 'no') != 'no':
+        raise ValueError('Scheduler deploy must stay one-shot')
+
+
 def validate_config(config):
     if config.get('name') != PROJECT:
         raise ValueError('Unexpected Compose project')
@@ -109,6 +118,7 @@ def validate_config(config):
     for name in ('prefect', 'deploy', 'worker'):
         if services[name].get('profiles') != ['scheduler']:
             raise ValueError('Scheduler must be opt-in')
+    validate_restart(services)
     return {'project': PROJECT, 'services': sorted(services),
             'images': sorted({s['image'] for s in services.values()}),
             'ports': {k: v[0] for k, v in PORTS.items()},
