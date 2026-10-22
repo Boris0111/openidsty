@@ -5,7 +5,7 @@
 - [x] 1.1 在 `compose.research.yaml` 的 `prefect` 與 `worker` 加上 `restart: unless-stopped`，`deploy` 維持不設 restart；以 `docker compose -f compose.research.yaml --profile scheduler config` 確認兩者帶有該設定、`deploy` 沒有
 - [x] 1.2 在 `scripts/research_lab.py` 的 `validate_config` 加入規則：`prefect`、`worker` 必須是 `unless-stopped`，`deploy` 不得設 restart，違反時以服務名稱報錯；以 `python scripts/research_lab.py check` 驗證現行設定通過
 - [x] 1.3 在 `tests/` 新增不需 Docker 的測試：以 PyYAML 解析 `compose.research.yaml`，斷言 1.2 的規則；另以缺少 restart 與替 deploy 設 restart 的設定，斷言 `validate_config` 拒絕。以 `python -m unittest discover -s tests -p "test_*.py"` 驗證全部通過
-- [ ] 1.4 更新 `docs/research-lab.md`：說明重開機後自動恢復的服務、如何確認排程恢復（`docker ps` 加上 Prefect 下一個整點的 flow run）、暫停排程要明確 `stop`、原服務只能 stop 不能 up；刪除第 27 行「不要提前啟用 scheduler profile」這句過時說明。以文件中的確認指令實際跑一次核對
+- [x] 1.4 更新 `docs/research-lab.md`：說明重開機後自動恢復的服務、如何確認排程恢復（`docker ps` 加上 Prefect 下一個整點的 flow run）、暫停排程要明確 `stop`、原服務只能 stop 不能 up；刪除第 27 行「不要提前啟用 scheduler profile」這句過時說明。以文件中的確認指令實際跑一次核對
 
 ## 2. 自動檢查與 runtime 一致
 
@@ -34,12 +34,12 @@
 
 ## 4. 整合驗證
 
-- [ ] 4.1 重開機演練：
+- [x] 4.1 重開機演練（2026-10-23，紀錄見 `docs/research-acceptance.md` 第八節。PR #3 先於演練 merge，所以演練是在主 checkout 的 `main` 上做的。5 個常駐服務自動恢復，RestartCount 皆為 0，`deploy` 沒有重跑，原服務維持停止；21:07 整點 run 已完成，但因補跑舊 run 與 `--limit 1` 而晚了 26 分鐘，此處只記錄，另案處理）：
   - 以 `--profile scheduler up -d` 重建 `prefect` 與 `worker`
   - 重啟 Docker Desktop
   - 確認 `db`、`api`、`web`、`prefect`、`worker` 都回到 running，`deploy` 沒有重跑，原服務容器維持停止，下一個整點出現 `official-information/hourly` 的 flow run
   - 若 worker 卡住而不是結束，記錄現象，再依 design 的 Risks 評估是否追加 healthcheck
-- [ ] 4.2 在 `docs/research-acceptance.md` 的「已知問題」記錄處理結果：restart 與 CRLF 已處理、私人網路仍延後，並附上 4.1 的演練結果與日期
+- [x] 4.2 在 `docs/research-acceptance.md` 的「已知問題」記錄處理結果：restart 與 CRLF 已處理、私人網路仍延後，並附上 4.1 的演練結果與日期
 - [x] 4.3 執行完整離線檢查（2026-10-23：CI 全過，backend 284 passed、E2E 67 passed；本機 Windows 另有 `test_managed_git_does_not_touch_development_index_or_allow_schema_edits` 1 項失敗，main 的程式碼在本機同樣失敗，屬既有的 Windows `git worktree` 環境問題，與本 change 無關）：
   - `python scripts/validate_map.py`
   - `python -m unittest discover -s tests -p "test_*.py"`

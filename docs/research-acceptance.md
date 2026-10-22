@@ -318,6 +318,32 @@ docker compose up -d                   # 原服務以原 image 與原資料回�
 
 ### 已知問題（另案處理）
 
-- `prefect` 與 `worker` 在 `compose.research.yaml` 沒有 `restart` 設定，Docker 或主機重開機後排程不會自己恢復，要重新以 `--profile scheduler` 啟動。
-- 主專案 checkout 的 SEC 測試 fixtures 是 CRLF，造成 2 項 hash 測試失敗（見上方驗收表）。可在 `.gitattributes` 對 `backend/tests/fixtures/**` 設定 `-text` 或 `eol=lf` 修正。
+- ~~`prefect` 與 `worker` 在 `compose.research.yaml` 沒有 `restart` 設定，Docker 或主機重開機後排程不會自己恢復~~：已由 `harden-research-operations`（PR #3）處理，演練結果見第八節。
+- ~~主專案 checkout 的 SEC 測試 fixtures 是 CRLF，造成 2 項 hash 測試失敗~~：已由 PR #3 以 `-text` 處理，主 checkout 於 2026-10-23 重新取出，42 個 fixtures 皆為 LF。
 - 第 5 步私人網路延後。
+
+## 八、2026-10-23 排程自動恢復演練
+
+change `harden-research-operations`（tasks 1.4、4.1）。PR #3 先於演練合併（merge commit `1b1d197`），演練在主 checkout 的 `main` 上進行；此後的 change 改為先驗證再 merge（見 `AGENTS.md`）。
+
+**修正前的實況**：Docker Desktop 於約 19:37 UTC 啟動後，`db`、`api`、`web` 自動回來，`prefect`、`worker` 停在 `Exited (255)`，也就是上次關機時被終止的狀態。排程從啟動後就沒有運作，這正是這次修正的問題。
+
+| 步驟（UTC） | 結果 |
+|---|---|
+| 20:10 fixtures 刪除後重新取出 | 42 個皆為 `w/lf attr/-text`，工作區無其他變動 |
+| 20:10 `research_lab.py check` | 通過，含新的 restart 規則 |
+| 20:11 `--profile scheduler up -d` | 只重建 `prefect`、`worker`，`deploy`、`initialize` 重跑後 Exited (0)；`db`、`api`、`web` 未重建。RestartPolicy：`prefect`、`worker`、`db`、`api`、`web` 為 `unless-stopped`，`deploy` 為 `no` |
+| 20:12 重建後 | worker 連上 Prefect，`research-publication-reconciliation` 執行完成 |
+| 20:12:37 `docker desktop restart` | 20:13:19 完成 |
+| 20:13:25 重啟後 | 5 個常駐服務在同一秒自動啟動；`deploy`、`initialize` 未重跑；原服務 `industryflow-*` 與 `reader` 維持停止 |
+| 20:13:47 worker 開始提交 flow run | `prefect`、`worker` 的 RestartCount 皆為 0：worker 與 Prefect 同時啟動，約 20 秒後自行連上，既沒有結束也沒有卡住，不需追加 healthcheck |
+| 21:07 整點 `official-information/hourly`（`stalwart-rook`） | **Completed**，但 21:32:51 才開始、21:33:00 結束，晚了 26 分鐘。原因是 worker 先補跑停機前已排好的 10-21 12:07／13:07／14:07 三筆（20:32–20:45 執行，其中一筆 4 分鐘），而 `--limit 1` 的名額又要與每 60 秒一次的 3 個 reconciliation flow 共用 |
+
+**停機空窗**：10-21 15:07 到 10-22 20:07 之間沒有任何 hourly run。Prefect 停機期間不會建立排程，所以約 30 小時沒有抓取，這次的自動恢復修正也補不回來。重大訊息：10-21 有入庫（TWSE 6 筆、TPEx 3 筆）。10-22 在 21:11 UTC 時是 0 筆，但 OpenAPI 要到隔天白天才提供前一個交易日的資料，要等台北時間 10-23 白天的抓取後才能判斷，目前待確認。
+
+**限制**：這次重啟的是 Docker Desktop，沒有重開整台主機。Docker Desktop 依附使用者登入，所以實際行為是「登入並啟動 Docker Desktop 後自動恢復」（見 [research-lab](research-lab.md)）。
+
+**後續（另案）**：
+- **整點延遲**：hourly 與每分鐘的 reconciliation 共用 `--limit 1` 的 worker；恢復後，停機前排好的舊 run 也會依序補跑。可評估分開 work queue、提高 worker 上限，或讓過期太久的 run 直接略過。
+- **停機空窗回補**：要靠 MOPS 依日期查詢的 adapter。
+- **10-22 重大訊息**：台北時間 10-23 白天之後查 `events` 確認有沒有入庫。
