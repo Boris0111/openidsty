@@ -1,4 +1,5 @@
 import {test,expect,Page} from '@playwright/test';
+import {expectNoHorizontalOverflow} from './layout';
 
 // Synthetic API responses only. No application database writes.
 const release='11111111-1111-4111-8111-111111111111';
@@ -108,7 +109,7 @@ test('手機、鍵盤、分享 URL 與快速換公司不殘留前一家公司數
   await fixtures(page,{delay:true});await page.setViewportSize({width:390,height:844});await page.goto('/next?focus=company-a&release_id='+release);
   const basis=page.getByRole('combobox',{name:'財務口徑',exact:true});await basis.focus();await page.keyboard.press('Home');await page.keyboard.press('ArrowDown');await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/basis=quarterly/);await expect(page.locator('.rf-series')).toHaveCount(2);
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  await expectNoHorizontalOverflow(page);
   const shared=await context.newPage();await fixtures(shared);await shared.goto(page.url());await expect(shared.getByRole('combobox',{name:'財務口徑',exact:true})).toHaveValue('quarterly');await shared.close();
   await page.getByLabel('搜尋公司、產品、環節或題材').fill('合成');await page.locator('.search-results').getByRole('link').nth(1).click();
   await expect(page.locator('.rs-detail > h2')).toHaveText('合成乙公司');await expect(page.locator('.rf-series')).toHaveCount(0);await expect(page.getByText('尚未取得此口徑，不代表零。')).toBeVisible();

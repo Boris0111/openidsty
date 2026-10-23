@@ -26,6 +26,8 @@ Node.js 24，在 frontend 執行 `npm ci`、`npm run dev`，proxy 預設 http://
 
 `npm run test:e2e:offline` 使用本次 production build 的 3011 伺服器與 browser-only API 回應，不需要 Docker／live API；先執行 build。此 suite 與 live E2E 分開，CI 只用離線 suite。fixture 不會匯入正式 app 或資料庫。
 
+離線 E2E 的斷言要等到結果穩定：畫面用 `expect(locator)`，請求數或計算值用 `expect.poll`，不要在 resize、導覽或快轉時鐘之後立刻寫單次的 `expect(await …)`。溢出檢查一律呼叫 `tests/offline/layout.ts` 的 `expectNoHorizontalOverflow`。導覽之後要先等新內容出現，再進行下一步操作。CI 刻意不設 Playwright retries：重試會把偶發失敗和真正的回歸一起蓋掉，偶發失敗要在測試裡修。
+
 配色：紙白 #F7F8FA、深墨 #182C3A、互動藍 #2563EB、題材青 #0D9488、線條灰 #CBD5E1；正文 16px、主標題 28–32px、主要圖標籤至少 14px。系統繁中字體不依賴外部 font CDN。圖形提供結構，閱讀內容提供研究依據。
 
 題材頁的「數據與追蹤」提供指標與商業化核對。至少兩筆同口徑觀測才連線；單笔顯示原期別，修訂與來源可展開。direct 僅為具名產品；proxy 是公司總營收。核對與預期時間分開，來源失敗或數值上升不改題材狀態。

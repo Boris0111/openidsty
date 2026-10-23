@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {expectNoHorizontalOverflow} from './layout';
 import {installOfflineApi,assessment,event,source} from './fixture-data';
 
 test('judgment precedes prose and evidence is keyboard accessible',async({page})=>{
@@ -31,7 +32,7 @@ test('mobile has readable conditions and evidence without overflow',async({page}
   await expect(page.getByRole('heading',{name:'成立條件',exact:true})).toBeVisible();
   await page.locator('.assessment-claim summary').first().click();
   await expect(page.locator('.assessment-evidence blockquote')).toBeVisible();
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await expectNoHorizontalOverflow(page,0);
   await page.screenshot({path:'test-results/assessment-mobile.png',fullPage:true});
 });
 
