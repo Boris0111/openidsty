@@ -65,4 +65,5 @@ playwright-report/
 # --- Public snapshot (exported research and static builds) ---
 /public-snapshot/
 /frontend/.static-build/
+/frontend/.static-fixture/
 /frontend/out/

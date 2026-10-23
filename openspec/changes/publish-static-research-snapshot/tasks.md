@@ -49,8 +49,8 @@
 
 ## 3. 公開版建置與驗證
 
-- [ ] 3.1 新增 `scripts/write-fixture-snapshot.mjs` 與 `tests/static/fixture-snapshot.ts`：用 TypeScript 型別寫一份小而完整的研究世界（環節、題材、公司、產品、角色、應用、供應鏈與圖解），依路由表寫成快照目錄。驗證：產生的目錄能通過 1.2 同一套外洩規則的 node 版檢查。
-- [ ] 3.2 新增 `scripts/build-static.mjs` 與 `npm run build:static -- --snapshot <dir>`，依序做以下幾件事：
+- [x] 3.1 （2026-10-23：寫出 58 個檔案，node 版外洩檢查通過；node 版規則在 `scripts/snapshot-leaks.mjs`，`tests/snapshot-leaks.node.cjs` 確認禁用欄位清單與 Python 相同；fixture 一開始帶了 `runtime: []`，被這個檢查抓到並修正）新增 `scripts/write-fixture-snapshot.mjs` 與 `tests/static/fixture-snapshot.ts`：用 TypeScript 型別寫一份小而完整的研究世界（環節、題材、公司、產品、角色、應用、供應鏈與圖解），依路由表寫成快照目錄。驗證：產生的目錄能通過 1.2 同一套外洩規則的 node 版檢查。
+- [x] 3.2 （2026-10-23：以 fixture 快照建置成功，輸出只有 `/`、`/companies`、`/next`、`/themes`、`/themes/<id>` 與快照；建置前另檢查快照內的圖解、引用與技術文件都存在。暫存副本保留 `.next/cache`；在 agent 環境中 Next.js 16.4.0 每隔一次建置會因安全升級提示中止，重跑即可，CI 不受影響）新增 `scripts/build-static.mjs` 與 `npm run build:static -- --snapshot <dir>`，依序做以下幾件事：
   - 複製原始碼到 `.static-build/`（列入 `.gitignore`）。
   - 刪除排除的路由。
   - 以 `output: 'export'` 建置。
@@ -59,7 +59,7 @@
   - 對輸出做外洩掃描。
 
   驗證：以 fixture 快照建置成功，`out/` 不含 `api`、`admin`、`events`、`coverage`、`sources` 頁面。
-- [ ] 3.3 新增 `scripts/serve-static.mjs`（clean URL 與 404.html，行為比照 Cloudflare Pages）與 `playwright.static.config.ts`、`tests/static/*.spec.ts`。測試以 fixture 公開版逐頁瀏覽，確認以下幾點：
+- [x] 3.3 （2026-10-23：`build:static` 含爬頁 52 passed，其中通用爬頁 44 項、fixture 行為 8 項；刻意刪掉一家公司的快照檔時，該頁以「公開版未收錄」失敗）新增 `scripts/serve-static.mjs`（clean URL 與 404.html，行為比照 Cloudflare Pages）與 `playwright.static.config.ts`、`tests/static/*.spec.ts`。測試以 fixture 公開版逐頁瀏覽，確認以下幾點：
   - 每頁完整載入，沒有「公開版未收錄」。
   - 沒有任何 `/api` 請求。
   - 沒有事件、指標、收藏、覆蓋的入口。
