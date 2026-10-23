@@ -2,13 +2,13 @@
 
 ## 1. 基準與備份（修改前）
 
-- [ ] 1.1 唯讀查詢正式 DB，記錄 7 家代理指標公司（AVC、TSMC、Delta、Landmark、MU、AVGO、VRT）在題材指標中最新的觀測期別、數值與來源，以及 `research.financial_*` 7 張表與 `events` 中 `kind='financials'` 的筆數。結果存到 `.work/remove-company-financials/baseline.json`，並在本 tasks 摘要。
-- [ ] 1.2 執行 `python scripts/research_lab.py backup`，確認備份資料夾的 `manifest.json` 含上述表的筆數與 SHA-256，並在本 tasks 記錄備份資料夾名稱。
+- [x] 1.1 （2026-10-23 02:27 UTC：7 家代理指標皆有最新觀測，台股 4 家為 2026-09 月營收，SEC 3 家為最近一季；代理觀測 25 筆；舊 `financials` 326 列；`kind='financials'` 事件 147 筆；v2 表 `financial_groups` 14,205、`financial_raw_facts` 29,505、`financial_observations` 14,991、`observation_provenance` 29,527、`financial_derivations` 2,486、`financial_metric_definitions` 13、`financial_import_batches` 0）唯讀查詢正式 DB，記錄 7 家代理指標公司（AVC、TSMC、Delta、Landmark、MU、AVGO、VRT）在題材指標中最新的觀測期別、數值與來源，以及 `research.financial_*` 7 張表與 `events` 中 `kind='financials'` 的筆數。結果存到 `.work/remove-company-financials/baseline.json`，並在本 tasks 摘要。
+- [x] 1.2 （2026-10-23：備份 `20261023T022816Z`，主副本在主 checkout `backups/research/`，第二份在 `D:\backups\industryflow-research\`；manifest 中各財務表筆數與 1.1 一致）執行 `python scripts/research_lab.py backup`，確認備份資料夾的 `manifest.json` 含上述表的筆數與 SHA-256，並在本 tasks 記錄備份資料夾名稱。
 
 ## 2. 共用函式搬家（純重構，行為不變）
 
-- [ ] 2.1 新增 `backend/app/payloads.py`，把 `encoded`、`raw_payload`、`_json`、`decimal_text`、`decimal_value` 逐字搬過去；`source_http.py`、`source_updates.py`、`source_ingestion.py` 改從新模組 import。為 `payloads.py` 補單元測試，涵蓋 Decimal、非有限值拒絕、date、float 拒絕與巢狀結構，`pytest backend/tests` 全數通過。
-- [ ] 2.2 把 `as_of` 搬到 `research_v2.py`，`research_events.py`、`research_updates.py` 改從新位置 import。以 `pytest backend/tests` 確認行為不變，並以 grep 確認這兩個檔案不再 import `research_financials`。
+- [x] 2.1 （2026-10-23：本機全套 288 passed，失敗的 1 項是既有的 Windows managed-git 測試，與本 change 無關）新增 `backend/app/payloads.py`，把 `encoded`、`raw_payload`、`_json`、`decimal_text`、`decimal_value` 逐字搬過去；`source_http.py`、`source_updates.py`、`source_ingestion.py` 改從新模組 import。為 `payloads.py` 補單元測試，涵蓋 Decimal、非有限值拒絕、date、float 拒絕與巢狀結構，`pytest backend/tests` 全數通過。
+- [x] 2.2 把 `as_of` 搬到 `research_v2.py`，`research_events.py`、`research_updates.py` 改從新位置 import。以 `pytest backend/tests` 確認行為不變，並以 grep 確認 `research_events.py` 不再 import `research_financials`（`research_updates.py` 只剩 `VALUES_SQL` 用的 `LATEST`，於 5.2 隨 `VALUES_SQL` 一併移除）。
 
 ## 3. 營收路徑改接（題材代理指標不中斷）
 

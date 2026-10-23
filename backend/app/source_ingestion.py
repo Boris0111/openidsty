@@ -8,7 +8,7 @@ from .ingest import ingest_one
 from .connectors import fetch_source,parse_tw,parse_sec_facts
 from .financial_tw import parse_taiwan,TwIssuer,persist_taiwan,capabilities as tw_capabilities
 from .financial_sec import parse_companyfacts,SecIssuer,persist_sec,capabilities as sec_capabilities
-from .financial_store import raw_payload
+from .payloads import raw_payload
 
 
 def company_mappings(session,release):

@@ -8,9 +8,9 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import text
 from .research_db import get_research_session
 from .research_http import ResearchError
-from .research_v2 import require_release
+from .research_v2 import require_release, as_of
 from .research_compile import digest
-from .research_financials import LATEST, as_of
+from .research_financials import LATEST
 from .theme_updates import indicator_tokens
 
 router = APIRouter(prefix='/api/v2', tags=['research-updates'])
