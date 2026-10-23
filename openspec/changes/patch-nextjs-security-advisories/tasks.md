@@ -2,12 +2,18 @@
 
 ## 1. 升級與離線驗證
 
-- [ ] 1.1 先把 branch rebase 到最新的 `main`。若 PR #7 已 merge，就包含公開快照的腳本；若還沒 merge，在本 task 註明，1.3 改為不適用。接著執行 `npm install next@16.4.3 --save-exact`。驗證：
+- [x] 1.1 先把 branch rebase 到最新的 `main`。若 PR #7 已 merge，就包含公開快照的腳本；若還沒 merge，在本 task 註明，1.3 改為不適用。接著執行 `npm install next@16.4.3 --save-exact`。驗證：
   - `package.json` 只有 `next` 那一行改變。
   - `npm ls next` 顯示 `16.4.3`。
   - `npm audit` 回報 0 個漏洞。
-- [ ] 1.2 驗證：`npm run typecheck`、`npm run build`（standalone）、`npm run test:e2e:offline` 全部通過；若 PR #7 已 merge，再加上 `npm run test:unit`。
-- [ ] 1.3 若 PR #7 已 merge，以合成快照執行 `node scripts/write-fixture-snapshot.mjs` 與 `npm run build:static`（含爬頁）。驗證：靜態頁面測試全部通過，並記錄建置時是否還出現 Next.js 的安全升級提示。
+
+  結果（2026-10-24）：PR #7 已 merge。原 proposal branch 已 push 且被另一個 session 的 worktree 鎖住，因此改從最新 `main`（`6bb4669`）開新 branch `worktree-apply-patch-nextjs-security-advisories`，以 merge 帶入 proposal commit，效果等同 rebase、不需 force-push。`package.json` 只改 `next` 一行；lockfile 只有 `next` 與 `@next/*` 共 10 處 `16.4.0 → 16.4.3`；`npm ls next` 為 `16.4.3`；`npm audit` 回報 0 個漏洞。
+- [x] 1.2 驗證：`npm run typecheck`、`npm run build`（standalone）、`npm run test:e2e:offline` 全部通過；若 PR #7 已 merge，再加上 `npm run test:unit`。
+
+  結果（2026-10-24）：typecheck 通過；standalone build 成功，標頭為 `Next.js 16.4.3 (Turbopack)`；`test:unit` 16/16 通過；`test:e2e:offline` 64/64 通過。
+- [x] 1.3 若 PR #7 已 merge，以合成快照執行 `node scripts/write-fixture-snapshot.mjs` 與 `npm run build:static`（含爬頁）。驗證：靜態頁面測試全部通過，並記錄建置時是否還出現 Next.js 的安全升級提示。
+
+  結果（2026-10-24）：合成快照寫入成功並通過外洩檢查；`build:static -- --snapshot .static-fixture/00000000-0000-4000-8000-000000000001`（含爬頁）52/52 通過，另跑 `test:e2e:static` 也是 52/52。本次在 agent 環境共建置兩次（standalone 與公開版），都沒有出現 Next.js 的安全升級提示，也沒有中止。
 - [ ] 1.4 驗證：PR 的 CI 通過。
 
 ## 2. 正式服務
