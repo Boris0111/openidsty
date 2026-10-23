@@ -32,7 +32,7 @@
 
 ## 6. migration 0017 與 PostgreSQL 驗證
 
-- [ ] 6.1 新增 `backend/migrations/versions/0017_drop_company_financials.py`，依 design D4 的順序刪除 view、表與 `research.guard_financial_import()`，保留 `research.guard_immutable_row()`，downgrade raise。`test_research_postgres.py` 移除財務 lineage／引用的測試，新增「0017 之後 `research.financial_*` 不存在、reader 仍可讀已發布研究與事件」的測試。
+- [x] 6.1 （2026-10-23：臨時 PostgreSQL 升到 0017 後跑完整 PG 套件，138 passed、1 skipped；唯一失敗為 `test_research_documents.py::test_managed_git...`，Windows 既有問題，`main` 同樣失敗）新增 `backend/migrations/versions/0017_drop_company_financials.py`，依 design D4 的順序刪除 view、表與 `research.guard_financial_import()`，保留 `research.guard_immutable_row()`，downgrade raise。`test_research_postgres.py` 移除財務 lineage／引用的測試，新增「0017 之後 `research.financial_*` 不存在、reader 仍可讀已發布研究與事件」的測試。
 - [x] 6.2 演練：以 1.2 的備份 `database.dump` 還原，用本 branch 的程式碼升級到 0017，再做一次 `twse-revenue` 更新，並與 1.1 的基準比對。
   - **apply 時改變做法**：演練環境沿用正式服務的 `industryflow-research-api:dev` image tag，用 worktree 程式碼重 build 會覆蓋正式 image。所以改在臨時、獨立的 PostgreSQL 容器中還原同一份真實備份，以 worktree 程式碼升級並更新。這樣不動 `research_drill.py`，也不動正式 image；驗證目標與原做法相同。
   - **2026-10-23 結果**（`.work/remove-company-financials/verify-0017.json`）：
