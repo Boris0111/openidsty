@@ -254,6 +254,15 @@ def test_source_changed_to_manual_does_not_run_queued_definition(source_context)
     with engine.connect() as connection:assert connection.execute(text('SELECT status FROM public.sources WHERE id=:id'),{'id':source['id']}).scalar_one()=='manual'
 
 
+def test_retired_source_refuses_manual_refresh(source_context):
+    client,engine,_,headers,make,_=source_context
+    source,_=make()
+    with engine.begin() as connection:
+        connection.execute(text("UPDATE public.sources SET status='retired' WHERE id=:id"),{'id':source['id']})
+    response=client.post('/api/admin/sources/'+source['id']+'/refresh',headers=headers)
+    assert response.status_code==409 and response.json()['code']=='source-retired'
+
+
 def test_dispatch_failure_keeps_outbox_then_reconciliation_delivers(source_context,monkeypatch):
     from app.source_updates import dispatch,reconcile
     from types import SimpleNamespace

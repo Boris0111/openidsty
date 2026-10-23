@@ -11,7 +11,7 @@ from .research_db import writer_engine,get_admin_connection
 from .research_http import ResearchError
 from .research_drafts import respond
 from .models import Source,Company,Event,now
-from .registry import source_definitions
+from .registry import source_definitions,retire_missing
 from .source_http import SourceHttp,RequestBudget,SourceDeferred
 
 UTC=timezone.utc
@@ -33,7 +33,8 @@ def refresh_registry(engine):
             row.name=definition['name'];row.url=definition['url']
             row.data={**(row.data or {}),**definition}
             if definition['adapter']=='manual':row.status='manual'
-            elif row.status=='manual':row.status='not_run'
+            elif row.status in ('manual','retired'):row.status='not_run'
+        retire_missing(session,definitions)
         session.commit()
     return definitions
 
@@ -76,8 +77,9 @@ def job_payload(row):
 
 @router.post('/sources/{source_id}/refresh',status_code=202)
 def request_refresh(source_id:str,background:BackgroundTasks,owner=Depends(require_owner_write),connection=Depends(get_admin_connection)):
-    source=connection.execute(text('SELECT id,name,url,data FROM public.sources WHERE id=:id'),{'id':source_id}).mappings().first()
+    source=connection.execute(text('SELECT id,name,url,status,data FROM public.sources WHERE id=:id'),{'id':source_id}).mappings().first()
     if not source:raise ResearchError(404,'source-not-found','找不到這個來源。')
+    if source['status']=='retired':raise ResearchError(409,'source-retired','此來源已停用，不再更新；既有事件保留。')
     definition={**source['data'],'id':source_id,'name':source['name'],'url':source['url'],'adapter':source['data'].get('adapter','manual')}
     result=queue(connection,definition,True)
     connection.commit()

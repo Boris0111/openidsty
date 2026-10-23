@@ -6,6 +6,7 @@ from sqlalchemy import select, text, or_
 from .db import Session
 from .models import Source, Company, Event, Financial, IngestionRun, now
 from .connectors import OfficialHttp, source_definitions, fetch_source
+from .registry import retire_missing
 from .classify import classify_event, rules
 from .event_dates import normalize_dates
 from .industry_connectors import canonical_url
@@ -37,7 +38,8 @@ def register_sources(session):
             session.add(row)
         row.name=d['name']; row.url=d['url']; row.data=dict(d, **{k:v for k,v in (row.data or {}).items() if k in ('fetch_meta','backfill_meta','backfill_completed_at','last_error_kind','last_http_status','runtime')})
         if d['adapter']=='manual': row.status='manual'
-        elif row.status=='manual': row.status='not_run'
+        elif row.status in ('manual','retired'): row.status='not_run'
+    retire_missing(session,definitions)
     session.commit()
     return definitions
 

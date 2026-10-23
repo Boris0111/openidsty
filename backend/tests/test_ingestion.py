@@ -101,3 +101,13 @@ def test_ir_navigation_ignores_mailto_queries_and_external_hosts():
     url='https://www.microsoft.com/en-us/investor/earnings/fy-2026-q4/press-release-webcast'
     html=f'<a href="/en-us/Investor/earnings/FY-2026-Q4/press-release-webcast">Quarter</a><a href="mailto:?body={url.replace("2026-q4","2027-q1")}">Share</a><a href="https://example.com/en-us/investor/earnings/fy-2028-q1/press-release-webcast">External</a><a href="/?body={url}">Share URL</a>'
     assert official_page_links(html,url,'www.microsoft.com',r'/en-us/investor/earnings/fy-\d{4}-q[1-4]/press-release-webcast/?')=={url}
+
+def test_sources_dropped_from_registry_are_retired_not_deleted(db):
+    register_sources(db)
+    # A source removed from sources.yaml keeps its row because events still reference it.
+    db.add(Source(id='twse-financials',name='上市財務摘要',url='https://official.test/fin',status='partial',new_count=3));db.commit()
+    register_sources(db)
+    assert db.get(Source,'twse-financials').status=='retired' and db.get(Source,'twse-revenue').status!='retired'
+    db.get(Source,'twse-revenue').status='retired';db.commit()
+    register_sources(db)
+    assert db.get(Source,'twse-revenue').status=='not_run'

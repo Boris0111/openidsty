@@ -143,3 +143,8 @@
 ## Open Questions
 
 - 被移除的 4 個來源在管理端要「保留但標示停用」，還是「直接不列出」？取決於 apply 時 `/api/sources` 的實際呈現，不影響其他設計。
+  - **2026-10-23 決定：保留但標示停用。**
+    - 原因：`events`、legacy `financials` 都以 FK 指向 `sources.id`，事件依決策保留，所以來源列不能刪。
+    - 實際呈現：`register_sources` 原本只新增或更新，不處理移除的來源，舊列會以最後狀態（`partial`）照常列在後台與 `/api/sources`，「更新一次」也能按，送出後必定失敗。排程 `enqueue_due` 只用 registry 定義，原本就不會自動派工。
+    - 做法：`registry.retire_missing` 在每次同步 registry 時，把不在定義中的來源設為 `status='retired'`；來源回到 registry 時恢復為 `not_run`。手動更新 retired 來源回 409 `source-retired`；後台顯示「已停用（不再更新，既有事件保留）」並停用按鈕，公開來源頁顯示「已停用」。
+    - 真實備份上共有 6 列會被停用：4 個財務來源，加上 `sec-facts`、`sec-submissions` 兩個 per-company 展開前的基底列（`not_run`、0 筆事件，程式只用展開後的 ID）。
