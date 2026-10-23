@@ -1,4 +1,4 @@
-"""Task 9.2 scaled dataset in the restore drill: 300 companies, 3,000 relations, >=100,000 financial observations.
+"""Task 9.2 scaled dataset in the restore drill: 300 companies and 3,000 relations.
 
 python scripts/research_scale.py            # restore drill must already serve the real data with the drill owner
 
@@ -6,12 +6,11 @@ python scripts/research_scale.py            # restore drill must already serve t
    relations until there are 300 companies and 3,000 relations; validate it with the real map validator.
 2. Try the normal owner draft import (recorded: a 3,000-relation manifest exceeds the draft YAML token limit),
    then project it as the drill's head with research_compile in one drill-DB transaction (test-only path).
-3. Copy company-nvda's financial groups, observations, raw facts and provenance to synthetic companies
-   until the drill holds >=100,000 observations. Everything stays in the drill DB, never the preview.
+   Everything stays in the drill DB, never the preview. Company financials were removed, so no financial
+   observations are generated.
 """
 import io
 import json
-import math
 import os
 from pathlib import Path
 import random
@@ -29,7 +28,7 @@ from research_drill import env_values  # noqa: E402
 from research_integration import Session  # noqa: E402
 
 TREE = ROOT / '.work/research-scale/tree'
-COMPANIES, RELATIONS, OBSERVATIONS = 300, 3000, 100_000
+COMPANIES, RELATIONS = 300, 3000
 DAY = '2026-10-19'
 SOURCE = 'synthetic-load-test'
 HEADINGS = ('供應角色', '研究界線', '產品與用途', '商業模式', '客戶與供應商', '競爭與替代', '業務曝險', '風險', '財務可取性')
@@ -159,39 +158,6 @@ def sql(statement):
     return subprocess.run(DB, input=statement, capture_output=True, text=True, encoding='utf-8', check=True).stdout.strip()
 
 
-def financials(synthetic):
-    existing, template = int(sql('SELECT count(*) FROM research.financial_observations;')), int(sql(
-        "SELECT count(*) FROM research.financial_observations o JOIN research.financial_groups g USING (group_id) WHERE g.company_id='company-nvda';"))
-    needed = math.ceil(max(0, OBSERVATIONS - existing) / template)
-    targets = ','.join(f"'{c}'" for c in synthetic[:needed])
-    # Deterministic new IDs per target; supersedes, facts and provenance are remapped the same way.
-    sql(f"""BEGIN;
-CREATE TEMP TABLE targets AS SELECT unnest(ARRAY[{targets}]) AS company;
-INSERT INTO research.financial_groups (group_id, company_id, source_family, metric_id, period_start, period_end, basis, scope, unit, currency, share_class)
-  SELECT encode(sha256(convert_to(g.group_id || t.company, 'UTF8')), 'hex'), t.company, g.source_family, g.metric_id, g.period_start,
-         g.period_end, g.basis, g.scope, g.unit, g.currency, g.share_class
-  FROM research.financial_groups g CROSS JOIN targets t WHERE g.company_id = 'company-nvda';
-INSERT INTO research.financial_raw_facts (fact_id, company_id, source_family, accession, tag, context_hash, value, filed_at, source_url, payload)
-  SELECT md5(f.fact_id::text || t.company)::uuid, t.company, f.source_family, f.accession, f.tag, f.context_hash, f.value, f.filed_at,
-         f.source_url, jsonb_build_object('synthetic', true)
-  FROM research.financial_raw_facts f CROSS JOIN targets t WHERE f.company_id = 'company-nvda';
-INSERT INTO research.financial_observations (observation_id, group_id, revision, value, semantic_hash, filed_at, recorded_at, supersedes,
-                                             provenance_kind, limitations, source_as_of)
-  SELECT md5(o.observation_id::text || t.company)::uuid, encode(sha256(convert_to(o.group_id || t.company, 'UTF8')), 'hex'), o.revision,
-         o.value, o.semantic_hash, o.filed_at, o.recorded_at, CASE WHEN o.supersedes IS NULL THEN NULL ELSE md5(o.supersedes::text || t.company)::uuid END,
-         o.provenance_kind, o.limitations, o.source_as_of
-  FROM research.financial_observations o JOIN research.financial_groups g USING (group_id) CROSS JOIN targets t
-  WHERE g.company_id = 'company-nvda' ORDER BY o.revision;
-INSERT INTO research.observation_provenance (observation_id, fact_id)
-  SELECT md5(p.observation_id::text || t.company)::uuid, md5(p.fact_id::text || t.company)::uuid
-  FROM research.observation_provenance p JOIN research.financial_observations o USING (observation_id)
-  JOIN research.financial_groups g USING (group_id) CROSS JOIN targets t WHERE g.company_id = 'company-nvda';
-ANALYZE research.financial_groups, research.financial_raw_facts, research.financial_observations, research.observation_provenance;
-COMMIT;""")
-    return {'template_observations': template, 'synthetic_companies_with_financials': needed,
-            'observations': int(sql('SELECT count(*) FROM research.financial_observations;'))}
-
-
 def main():
     synthetic, relation_count = build_tree()
     owner = Session()
@@ -207,7 +173,7 @@ def main():
         'companies': int(sql("SELECT count(*) FROM research.entity_snapshots s JOIN research.release_head h USING (release_id) WHERE s.kind='company';")),
         'relations': int(sql('SELECT count(*) FROM research.relations r JOIN research.release_head h USING (release_id);')),
         'authored_relations': relation_count}
-    report = {'draft_path': draft, 'projection': projected, 'release': counts, 'financials': financials(synthetic)}
+    report = {'draft_path': draft, 'projection': projected, 'release': counts}
     folder = ROOT / '.work/research-load'
     folder.mkdir(parents=True, exist_ok=True)
     (folder / 'scaled-dataset.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')

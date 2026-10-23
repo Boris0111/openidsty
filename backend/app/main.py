@@ -3,7 +3,7 @@ from sqlalchemy import select, or_, text
 from sqlalchemy.orm import Session as DbSession
 from datetime import date, datetime, time, timedelta, timezone
 from .db import get_session
-from .models import Company, Segment, Theme, Role, Event, Financial, Source, IngestionRun, EventSegment
+from .models import Company, Segment, Theme, Role, Event, Source, IngestionRun, EventSegment
 from .research_api import event_query, event_payloads, event_order, theme_payload, coverage, coverage_markdown
 from .graph import LAYERS, industry_graph, company_graph, impact_paths,segment_relations
 
@@ -16,20 +16,16 @@ from .research_http import install as install_research_http
 from .research_auth import router as research_auth_router
 from .research_drafts import router as research_drafts_router
 from .research_publication import router as research_publication_router
-from .financial_imports import router as financial_imports_router
 from .source_updates import router as source_updates_router
-from .research_financials import router as research_financials_router
 from .research_compare import router as research_compare_router
 from .research_events import router as research_events_router
 from .research_coverage import router as research_coverage_router
 from .research_updates import router as research_updates_router
 app.include_router(research_coverage_router)
 app.include_router(research_updates_router)
-app.include_router(research_financials_router)
 app.include_router(research_compare_router)
 app.include_router(research_events_router)
 app.include_router(source_updates_router)
-app.include_router(financial_imports_router)
 app.include_router(research_publication_router)
 app.include_router(research_drafts_router)
 app.include_router(research_auth_router)
@@ -51,11 +47,10 @@ def require(session, model, key):
 def company_detail(session, ticker):
     company = require(session, Company, ticker)
     roles = [{'segment':r.segment_id, 'segment_name':s.name, 'layer':s.layer, 'role':r.role} for r,s in session.execute(select(Role,Segment).join(Segment,Role.segment_id==Segment.id).where(Role.ticker==ticker))]
-    financials = list(session.scalars(select(Financial).where(Financial.ticker==ticker).order_by(Financial.period_end.desc(),Financial.published_at.desc()).limit(24)))
     events = list(session.scalars(event_query(ticker=ticker,include_routine=True).limit(20)))
     # Mention-only events are a distinct collection; issuer always remains the primary company.
     mentioned = [e for e in session.scalars(select(Event).order_by(*event_order())) if ticker in e.mentioned][:20]
-    return dict(columns(company, ('cik',)), roles=roles, financials=[columns(f,('raw',)) for f in financials], events=event_payloads(session,events), mentioned_events=event_payloads(session,mentioned))
+    return dict(columns(company, ('cik',)), roles=roles, events=event_payloads(session,events), mentioned_events=event_payloads(session,mentioned))
 
 @app.middleware('http')
 async def cache_headers(request, call_next):
@@ -217,13 +212,6 @@ def companies(q:str=Query('',max_length=100), session:DbSession=Depends(get_sess
     all_companies = list(session.scalars(select(Company).order_by(Company.ticker)))
     needle = q.casefold()
     return [columns(c,('cik',)) for c in all_companies if not q or any(needle in a.casefold() for a in c.aliases)]
-
-@app.get('/api/compare')
-def compare(tickers:str=Query(...,max_length=200), session:DbSession=Depends(get_session)):
-    choices = list(dict.fromkeys(t.strip() for t in tickers.split(',') if t.strip()))
-    if not 2 <= len(choices) <= 4:
-        raise HTTPException(422, '請選擇 2–4 家不同公司')
-    return {'companies':[company_detail(session,t) for t in choices]}
 
 @app.get('/api/companies/{ticker}')
 def company(ticker:str, session:DbSession=Depends(get_session)):

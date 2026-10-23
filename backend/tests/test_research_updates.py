@@ -48,17 +48,21 @@ def publish_copy(connection, base, change=lambda values: values, extra=(), relat
     return newer
 
 
-def test_research_values_and_events_change_separately_per_object(dynamic):
-    client, keys, _, _, add, event, _ = dynamic
+def test_company_values_are_not_applicable_and_events_change_per_object(dynamic):
+    client, keys, _, _, event, _ = dynamic
     first = query(client, ('company', keys[0], None), ('company', keys[1], None))
     assert first[keys[0]]['research']['changed'] is None and first[keys[0]]['events']['changed'] is None  # no baseline: pending
+    # Company financial statements were removed; companies carry no tracked values.
+    assert first[keys[0]]['values'] == {'applicable': False, 'token': None, 'changed': False}
     baseline = {key: seen(item) for key, item in first.items()}
-    add('120', index=0)
     event(index=1)
     event(index=1, known=False)
     after = query(client, *[('company', key, baseline[key]) for key in keys[:2]])
-    assert (after[keys[0]]['values']['changed'], after[keys[0]]['research']['changed'], after[keys[0]]['events']['changed']) == (True, False, False)
+    assert (after[keys[0]]['values']['applicable'], after[keys[0]]['research']['changed'], after[keys[0]]['events']['changed']) == (False, False, False)
     assert (after[keys[1]]['values']['changed'], after[keys[1]]['events']['changed']) == (False, True)
+    # A value baseline saved before the removal is ignored rather than reported as a change.
+    legacy = query(client, ('company', keys[0], {**baseline[keys[0]], 'values': 'saved-before-removal'}))[keys[0]]
+    assert legacy['values'] == {'applicable': False, 'token': None, 'changed': False}
     assert (after[keys[1]]['events']['new_dated'], after[keys[1]]['events']['new_undated']) == (1, 1)
     # Marking only what was displayed: a later event stays unread.
     displayed = seen(after[keys[1]])
@@ -68,7 +72,7 @@ def test_research_values_and_events_change_separately_per_object(dynamic):
 
 
 def test_new_release_only_updates_objects_whose_research_changed(dynamic):
-    client, keys, release, _, _, _, connection = dynamic
+    client, keys, release, _, _, connection = dynamic
     before = query(client, *[('company', key, None) for key in keys[:3]])
     marks = {key: seen(item) for key, item in before.items()}
     revised = lambda values: {**values, 'summary': '合成研究已修訂', 'semantic_hash': 'd' * 64} if values['entity_id'] == keys[1] else values
@@ -82,10 +86,8 @@ def test_new_release_only_updates_objects_whose_research_changed(dynamic):
 
 
 def test_retries_same_values_and_unpublished_drafts_do_not_create_unread(dynamic):
-    client, keys, _, ready, add, _, connection = dynamic
-    add('100', index=0)
+    client, keys, _, ready, _, connection = dynamic
     mark = seen(query(client, ('company', keys[0], None))[keys[0]])
-    add('100', index=0)  # Same value re-filed: no new revision, so no new token.
     as_writer(connection)
     connection.execute(text("UPDATE public.sources SET status='failed',last_attempt=now(),error='synthetic retry' WHERE id LIKE 'dynamic-%'"))
     insert(connection, 'entity_snapshots', {'release_id': ready, 'entity_id': keys[0], 'kind': 'company', 'name': '未發布草稿',
@@ -98,7 +100,7 @@ def test_retries_same_values_and_unpublished_drafts_do_not_create_unread(dynamic
 
 
 def test_unknown_targets_are_itemised_and_requests_are_bounded(dynamic):
-    client, keys, release, _, _, _, connection = dynamic
+    client, keys, release, _, _, connection = dynamic
     theme = 'theme-updates-' + uuid.uuid4().hex[:8]
     publish_copy(connection, release, extra=[(theme, 'theme')])
     items = query(client, ('company', keys[0], None), ('company', 'company-missing-target', None),

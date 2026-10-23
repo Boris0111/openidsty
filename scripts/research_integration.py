@@ -262,24 +262,20 @@ def security(owner, report, draft):
 
 
 def source_failure(owner, report):
-    def fin():
-        payload = json.load(urllib.request.urlopen(API + '/api/v2/companies/company-delta-electronics/financials', timeout=30))
-        payload['data'].pop('as_of')  # response time, not data
-        return payload
-    before = {'observations': db('SELECT count(*) FROM research.financial_observations'),
-              'raw_facts': db('SELECT count(*) FROM research.financial_raw_facts'), 'financials': fin(),
-              'release': db('SELECT release_id FROM research.release_head')}
+    # Revenue rows only feed theme proxy indicators; a failed refresh must leave both untouched.
+    def state():
+        return {'revenue_rows': db(f"SELECT count(*) FROM public.financials WHERE source_id='{SOURCE}'"),
+                'indicator_observations': db('SELECT count(*) FROM public.indicator_observations'),
+                'release': db('SELECT release_id FROM research.release_head')}
+    before = state()
     result = drill('offline-refresh', '--source', SOURCE)
     source = owner.call('GET', f'/api/admin/sources/{SOURCE}')[1]
-    after = {'observations': db('SELECT count(*) FROM research.financial_observations'),
-             'raw_facts': db('SELECT count(*) FROM research.financial_raw_facts'), 'financials': fin(),
-             'release': db('SELECT release_id FROM research.release_head')}
+    after = state()
     report['source_failure'] = {'refresh_result': result, 'source_status': source.get('status'),
                                 'source_error_present': bool(source.get('error')), 'last_job_status': (source.get('last_job') or {}).get('status'),
                                 'last_success_kept': source.get('last_success'),
-                                'observations_unchanged': before['observations'] == after['observations'],
-                                'raw_facts_unchanged': before['raw_facts'] == after['raw_facts'],
-                                'reader_financials_unchanged': before['financials'] == after['financials'],
+                                'revenue_rows_unchanged': before['revenue_rows'] == after['revenue_rows'],
+                                'indicator_observations_unchanged': before['indicator_observations'] == after['indicator_observations'],
                                 'release_unchanged': before['release'] == after['release']}
 
 

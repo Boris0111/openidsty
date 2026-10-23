@@ -205,4 +205,4 @@ def test_readonly_api_filters_coverage_and_direct_impact(client,db):
     assert next(r for r in data['rows'] if r['id']=='hbm4')['unknown_date']==1
     assert next(r for r in data['rows'] if r['id']=='datacenter')['direct_90d']==0
     assert '近 90 日' in client.get('/api/coverage/report').text
-    assert client.get('/api/compare?tickers=NVDA,AMD').status_code==200
+    assert client.get('/api/compare?tickers=NVDA,AMD').status_code==404  # legacy comparison removed with company financials

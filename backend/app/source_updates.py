@@ -20,7 +20,7 @@ INFLIGHT=('queued','running','deferred')
 
 
 def interval(definition):
-    return 24 if definition.get('kind') in ('revenue','financials','balance') or definition['adapter'] in (
+    return 24 if definition.get('kind')=='revenue' or definition['adapter'] in (
         'sec-facts','aaon-metrics','tsmc-metrics','technical-documents') else 1
 
 
@@ -139,18 +139,10 @@ def allowed_hosts(definition):
 
 
 def describe_capabilities(definition):
-    adapter=definition.get('adapter','manual');metrics={}
-    if adapter=='tw' and definition.get('kind') in ('revenue','financials','balance'):
-        from .financial_tw import capabilities
-        metrics=capabilities(definition['kind'])
-    elif adapter=='sec-facts':
-        from .financial_sec import capabilities
-        metrics=capabilities()
-    from .financial_core import METRICS
+    adapter=definition.get('adapter','manual')
     return {'can_refresh':adapter!='manual','frequency_hours':interval({**definition,'adapter':adapter}),
         'source_nature':'report' if definition.get('type')=='industry_media' else 'official',
-        'metrics':[{'metric_id':key,'label':METRICS[key][0],**value} for key,value in metrics.items()],
-        'history_limit':'財務依官方實際提供的期間；事件首次嘗試 90 日，受 feed／分頁與可讀範圍限制。',
+        'history_limit':'營收依官方實際提供的期間；事件首次嘗試 90 日，受 feed／分頁與可讀範圍限制。',
         'classification_limit':'媒體文字涉及匿名／傳聞時另列觀察；自動分類不提升研究主張確定性。'}
 
 

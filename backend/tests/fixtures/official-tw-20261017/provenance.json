@@ -11,28 +11,6 @@
     "selection": "2330 or 3324; original raw object substrings"
   },
   {
-    "id": "twse-income",
-    "url": "https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci",
-    "status": 200,
-    "bytes": 1418112,
-    "sha256": "5f9277ef8b30009664aae8354638597755329d3cc9c89d7cd94bd7d8b355e6a1",
-    "rows": 1049,
-    "selected_sha256": "68f19c7c163bd3e6a4d0e599e3194ea69281094bb4efea32b1f6efd0f60f0b18",
-    "captured_at": "2026-10-16T19:13:37.373119+00:00",
-    "selection": "2330 or 3324; original raw object substrings"
-  },
-  {
-    "id": "twse-balance",
-    "url": "https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci",
-    "status": 200,
-    "bytes": 894108,
-    "sha256": "1a406d0fc5766cbfac46683d481b8e01e2f52fdf2160af052c22e2f1a0554a61",
-    "rows": 1049,
-    "selected_sha256": "c38fa8d1d9386f4d18898d79ed7ea94ecfcd94607d9966afb1bb5b55f7e1b23b",
-    "captured_at": "2026-10-16T19:13:38.051660+00:00",
-    "selection": "2330 or 3324; original raw object substrings"
-  },
-  {
     "id": "tpex-revenue",
     "url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap05_O",
     "status": 200,
@@ -41,28 +19,6 @@
     "rows": 893,
     "selected_sha256": "edb4f44b5509b3e53c58cf9ae763660582c26580fa06b0295303192cc90d4c02",
     "captured_at": "2026-10-16T19:13:38.712861+00:00",
-    "selection": "2330 or 3324; original raw object substrings"
-  },
-  {
-    "id": "tpex-income",
-    "url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci",
-    "status": 200,
-    "bytes": 1184673,
-    "sha256": "4d196a600214be4ff2c1697ac2f5643d7ae2221b6d70d59e07f6fc9b40488293",
-    "rows": 886,
-    "selected_sha256": "66de00c4c631b22f1cc845543a226ad04c0088b9bbc551fde81f64d0e69f2931",
-    "captured_at": "2026-10-16T19:13:40.518360+00:00",
-    "selection": "2330 or 3324; original raw object substrings"
-  },
-  {
-    "id": "tpex-balance",
-    "url": "https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci",
-    "status": 200,
-    "bytes": 761386,
-    "sha256": "ee6502729751162af25f409673899d84b29f2be1a892f583f7c1323664af2dc6",
-    "rows": 886,
-    "selected_sha256": "09ef51022de2fd2801d9037d7918c909b206d87d1204175d7c9b3bcf3b96fe06",
-    "captured_at": "2026-10-16T19:13:41.265426+00:00",
     "selection": "2330 or 3324; original raw object substrings"
   }
 ]

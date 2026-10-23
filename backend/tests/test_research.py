@@ -16,7 +16,7 @@ def test_research_rejects_ambiguous_records(db,field,value):
     with pytest.raises(ValueError):
         validate_research(data,{c.ticker for c in db.scalars(select(Company))})
 
-def test_event_detail_inference_and_financial_missing(client,db):
+def test_revenue_event_detail_inference_without_company_financials(client,db):
     register_sources(db)
     fixture=(Path(__file__).parent/'fixtures/tw-revenue.json').read_text(encoding='utf-8')
     events,financials=parse_tw(fixture,'revenue','https://official.test',{'2330':'2330.TW'})
@@ -31,5 +31,5 @@ def test_event_detail_inference_and_financial_missing(client,db):
     assert detail['reported_at'] is not None
     assert detail['raw']['公司代號']=='2330'
     company=client.get('/api/companies/2330.TW').json()
-    assert company['financials'][0]['gross_margin'] is None
+    assert 'financials' not in company
     assert len(company['roles'])==2

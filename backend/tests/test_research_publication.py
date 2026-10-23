@@ -141,7 +141,7 @@ def test_restore_preserves_dynamic_history_and_late_ref_sync_uses_current_head(p
     target = str(published['target_release_id'])
     with engine.connect() as connection:
         events = connection.execute(text('SELECT count(*) FROM public.events')).scalar_one()
-        financial = connection.execute(text('SELECT count(*) FROM research.financial_observations')).scalar_one()
+        indicators = connection.execute(text('SELECT count(*) FROM public.indicator_observations')).scalar_one()
         late_sync = connection.execute(text("SELECT job_id FROM research.publish_jobs WHERE operation='sync-ref' AND target_release_id=:target ORDER BY created_at DESC LIMIT 1"), {'target':target}).scalar_one()
     restore_headers = {**headers, 'Idempotency-Key': uuid.uuid4().hex}
     payload = {'base_release_id':target, 'reason':'Synthetic return to known complete research'}
@@ -155,7 +155,7 @@ def test_restore_preserves_dynamic_history_and_late_ref_sync_uses_current_head(p
         assert str(publication.active(connection)['release_id']) == base
         original = publication.base_release(connection, base)
         assert connection.execute(text('SELECT count(*) FROM public.events')).scalar_one() == events
-        assert connection.execute(text('SELECT count(*) FROM research.financial_observations')).scalar_one() == financial
+        assert connection.execute(text('SELECT count(*) FROM public.indicator_observations')).scalar_one() == indicators
         assert publication.job(connection, late_sync)['target_release_id'] == original['release_id']
     assert ManagedGit().command('rev-parse', 'refs/heads/research/published').decode().strip() == original['git_commit']
 

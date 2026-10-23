@@ -245,31 +245,6 @@ tw:
       adapter: tw
       kind: revenue
       fallback: https://mopsfin.twse.com.tw/opendata/t187ap05_L.csv
-  - id: twse-financials
-    provider: twse
-    name: TWSE 累計損益表
-    url: https://openapi.twse.com.tw/v1/opendata/t187ap06_L_ci
-    type: filings
-    access: free
-    reachability: verified
-    checked: '2026-10-17'
-    notes: HTTP 200 JSON；實讀台積電一般業損益樣本。各季為年度截至該季累計、金額千元、EPS 元；未明列合併／個體旗標與正式申報日，需核對財務年度起點。未提供現金流等項目。
-    ingestion:
-      adapter: tw
-      kind: financials
-      fallback: https://mopsfin.twse.com.tw/opendata/t187ap06_L_ci.csv
-  - id: twse-balance
-    provider: twse
-    name: TWSE 一般業資產負債摘要
-    url: https://openapi.twse.com.tw/v1/opendata/t187ap07_L_ci
-    type: filings
-    access: free
-    reachability: verified
-    checked: '2026-10-17'
-    ingestion:
-      adapter: tw
-      kind: balance
-    notes: HTTP 200 JSON；實讀台積電負債總計，金額千元。未提供現金及約當現金，不將負債總計當有息負債。由新版研究財務流程每日檢查，legacy 財報不支援；財年尚未核對時保留原列與缺口，不猜季度日期。
   - id: tpex-announcements
     provider: tpex
     name: TPEX 重大訊息
@@ -293,30 +268,6 @@ tw:
     ingestion:
       adapter: tw
       kind: revenue
-  - id: tpex-financials
-    provider: tpex
-    name: TPEX 累計損益表
-    url: https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap06_O_ci
-    type: filings
-    access: free
-    reachability: verified
-    checked: '2026-10-17'
-    notes: HTTP 200 JSON；實讀雙鴻一般業累計損益。識別及年度／季別使用英文字段，與 TWSE 別名不同；金額千元、EPS 元，範圍旗標及申報日未提供。
-    ingestion:
-      adapter: tw
-      kind: financials
-  - id: tpex-balance
-    provider: tpex
-    name: TPEx 一般業資產負債摘要
-    url: https://www.tpex.org.tw/openapi/v1/mopsfin_t187ap07_O_ci
-    type: filings
-    access: free
-    reachability: verified
-    checked: '2026-10-17'
-    ingestion:
-      adapter: tw
-      kind: balance
-    notes: HTTP 200 JSON；實讀雙鴻負債總計，金額千元。公司代號／日期為英文字段，年度／季別為中文；沒有現金及約當現金。由新版研究財務流程每日檢查，未核對財年時保留原列與缺口。
   earnings_call:
   - name: 台積電季度法說會與財報
     url: https://investor.tsmc.com/english/quarterly-results

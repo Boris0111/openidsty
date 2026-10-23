@@ -39,7 +39,7 @@ def test_compare_is_pinned_research_and_long_cached(v2):
 
 
 def test_head_publish_restore_keeps_pinned_profiles(dynamic):
-    client,keys,release,ready,_,_,connection=dynamic
+    client,keys,release,ready,_,connection=dynamic
     path='/api/v2/companies/'+keys[0]
     original=client.get(path,params={'release_id':str(release)})
     connection.execute(text('RESET ROLE'))
@@ -61,7 +61,7 @@ def test_head_publish_restore_keeps_pinned_profiles(dynamic):
 
 
 def test_events_revalidate_and_failures_never_become_success_cache(dynamic):
-    client,_,release,ready,_,event,_=dynamic
+    client,_,release,ready,event,_=dynamic
     params={'release_id':str(release)}
     result=client.get('/api/v2/events',params=params)
     event()

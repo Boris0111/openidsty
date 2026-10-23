@@ -36,9 +36,9 @@ def test_readonly_endpoints_and_complete_graph(client):
         assert len({e['id'] for e in graph['edges']})==len(graph['edges'])
     assert client.post('/api/companies',json={}).status_code==405
     assert client.get('/api/companies/UNKNOWN').status_code==404
-    assert client.get('/api/compare?tickers=NVDA').status_code==422
-    result=client.get('/api/compare?tickers=NVDA,AMD').json()
-    assert result['companies'][0]['financials']==[]
+    # Company financial statements and the legacy comparison were removed.
+    assert client.get('/api/compare?tickers=NVDA,AMD').status_code==404
+    assert 'financials' not in client.get('/api/companies/NVDA').json()
     assert client.get('/api/sources').headers['cache-control']=='no-store'
 
 def test_company_graph_filters_and_keeps_neighbor_edges(db,client):
