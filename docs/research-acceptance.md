@@ -392,3 +392,30 @@ change `harden-research-operations`（tasks 1.4、4.1）。PR #3 先於演練合
 - **正式服務跑的是 PR branch**：merge 前 api、web 跑的是 PR branch 的程式；worker、prefect 是重啟原容器，仍是舊 image（`88e0440c…`）。
 - **可以隨時從 `main` 重建**：這個 change 沒有 migration，從 `main` 重建 image 不會失敗，只是少了匯出模組。
 - **Next.js 的安全升級提示**：在 agent 環境中，`build:static` 每隔一次會因 Next.js 16.4.0 的安全升級提示中止，重跑即可。這次步驟 4 是第二次才通過。
+
+## 十一、2026-10-23 第一次公開部署（publish-static-research-snapshot task 4.3）
+
+維護者選定 Cloudflare Pages、專案名稱 `industryflow`，同意上傳並以自己的帳號完成 `wrangler login`。部署用的帳號是 crv57485@gmail.com。
+
+| 步驟 | 結果 |
+|---|---|
+| 1. 建立專案 | wrangler 4.152 把 `pages project create` 轉交給新版流程，結果失敗，沒有建立任何東西；改加 `--force`，直接建立在 Cloudflare Pages 上，正式網址 `https://industryflow.pages.dev` |
+| 2. 第一次部署 | 上傳第十節建置的 `frontend/out`（`d0e6c08`），952 檔加 `_headers`，部署 `5e29d050` |
+| 3. 抽查發現問題 | 頁面、全站安全標頭與快取標頭都正確，但圖解沒有套上 sandbox CSP。原因是 `_headers` 規則 `/snapshot/*/assets/*` 用了兩個 `*`，Cloudflare Pages 不認得 |
+| 4. 修正並重新部署 | 規則改為 `/snapshot/:release/assets/*`（`6b9d693`）。主 checkout 前進到該 commit，重跑 `build:static`，爬頁 398 passed；保存 `public-snapshot/a5df290c…-site` 後重新部署為 `fdc59bb4`，只上傳 61 個有變動的檔案 |
+
+**公開網址抽查（部署 `fdc59bb4`）：**
+
+- **狀態碼**：`/`、`/themes/liquid-cooling`、`/next`、`/companies`、快照 manifest 都是 200。`/events`、`/admin`、`/api/v2/manifest` 都是 404。
+- **標頭**：
+  - 全站有 CSP（含 `frame-ancestors 'none'`）、`X-Content-Type-Options: nosniff`、`X-Frame-Options: DENY`、Referrer-Policy、Permissions-Policy。
+  - HTML 是 `max-age=0, must-revalidate`；`/_next/static/*` 與快照檔是 `max-age=31536000, immutable`。
+  - 圖解另外帶有 `default-src 'none'; style-src 'unsafe-inline'; sandbox`，兩條 CSP 同時生效。
+- **瀏覽器檢查**：
+  - 地圖（散熱）、題材「液冷散熱」、台積電、台股公司目錄、供應鏈都正常顯示。代號 `2330.TW` 會轉到台積電。
+  - 搜尋「台積」得到台積電，比較頁並列台積電與廣達。
+  - 頁尾顯示「研究快照：2026-10-21 發布的研究版本」與免責聲明。
+  - 沒有 `/api` 請求、快照檔錯誤或頁面錯誤。
+  - 公開網址上等不到 `networkidle`，所以這次抽查改用「讀取中文字消失後等 1.5 秒」判斷頁面已載入。
+
+**回復**：重新部署 `public-snapshot/a5df290c…-site`，或在 Cloudflare 後台把部署回復到先前版本。

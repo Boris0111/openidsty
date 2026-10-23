@@ -67,3 +67,4 @@ playwright-report/
 /frontend/.static-build/
 /frontend/.static-fixture/
 /frontend/out/
+.wrangler/

@@ -94,7 +94,7 @@
   - 跑 parity 腳本，結果要全部一致。
   - 外洩掃描。
   - 停止私人服務後，再讀一次公開版的地圖、公司、題材、搜尋與比較，然後恢復服務。
-- [ ] 4.3 公開部署：由維護者選定主機與專案名稱，並同意第一次公開部署後，上傳 4.2 的輸出。在公開網址抽查以下幾點，結果記錄到 `docs/research-acceptance.md`：
+- [x] 4.3 （2026-10-23：Cloudflare Pages 專案 `industryflow`，正式網址 `https://industryflow.pages.dev`，目前部署 `fdc59bb4`。抽查時發現圖解的 sandbox CSP 沒有生效，修正 `_headers` 規則後重建並重新部署；結果記錄在 `docs/research-acceptance.md` 第十一節）公開部署：由維護者選定主機與專案名稱，並同意第一次公開部署後，上傳 4.2 的輸出。在公開網址抽查以下幾點，結果記錄到 `docs/research-acceptance.md`：
   - 地圖、公司、題材、搜尋、比較都能讀。
   - 安全標頭與快取標頭符合 `_headers`。
   - 網路請求中沒有 `/api`。

@@ -66,14 +66,17 @@ Cloudflare Pages 與 Netlify 都讀得懂 `_headers`。快照放在 `/snapshot/<
 
 ### Cloudflare Pages（建議）
 
-免費方案不限頻寬，網址是 `<專案>.pages.dev`。
+免費方案不限頻寬。正式網址是 `https://industryflow.pages.dev`，專案 `industryflow` 已在 2026-10-23 建立。
 
 ```powershell
 npx wrangler@4 login                      # 第一次；或設定 CLOUDFLARE_API_TOKEN 與 CLOUDFLARE_ACCOUNT_ID
-npx wrangler@4 pages deploy frontend/out --project-name <專案名稱> --branch main
+npx wrangler@4 pages deploy frontend/out --project-name industryflow --branch main --commit-hash <commit> --commit-message "public snapshot <release_id>"
 ```
 
-儀表板的拖放上傳有檔案數上限（needs verification）。公開版有上千個檔案，建議使用 wrangler。
+- **新建專案時要加 `--force`**：wrangler 4.152 會把 `pages project create` 轉交給「併入 Workers 的新版 Pages」流程，結果失敗。新建專案時要加 `--force`，直接建立在 Cloudflare Pages 上。`industryflow` 已經建好，之後部署不需要也不應該加 `--force`。
+- **`_headers` 一條規則只能有一個 `*`**：Cloudflare Pages 不認得 `/snapshot/*/assets/*` 這種寫法，圖解的 sandbox 規則因此改用 `/snapshot/:release/assets/*`。
+- **只會上傳有變動的檔案**：同一份快照重新部署時，只上傳內容改變的檔案。
+- **建議使用 wrangler**：儀表板的拖放上傳有檔案數上限（needs verification），而公開版有上千個檔案。
 
 ### Netlify
 
