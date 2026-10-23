@@ -14,7 +14,9 @@
 - [x] 1.3 若 PR #7 已 merge，以合成快照執行 `node scripts/write-fixture-snapshot.mjs` 與 `npm run build:static`（含爬頁）。驗證：靜態頁面測試全部通過，並記錄建置時是否還出現 Next.js 的安全升級提示。
 
   結果（2026-10-24）：合成快照寫入成功並通過外洩檢查；`build:static -- --snapshot .static-fixture/00000000-0000-4000-8000-000000000001`（含爬頁）52/52 通過，另跑 `test:e2e:static` 也是 52/52。本次在 agent 環境共建置兩次（standalone 與公開版），都沒有出現 Next.js 的安全升級提示，也沒有中止。
-- [ ] 1.4 驗證：PR 的 CI 通過。
+- [x] 1.4 驗證：PR 的 CI 通過。
+
+  結果（2026-10-24）：PR #8 的 Offline verification 在 commit `243e1a5` 上，push（run 40029592436）與 pull_request（run 40029637906）兩次都通過。
 
 ## 2. 正式服務
 
