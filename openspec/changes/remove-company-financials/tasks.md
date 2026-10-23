@@ -18,9 +18,9 @@
 
 ## 4. 公司比較拆分
 
-- [ ] 4.1 新增 `backend/app/research_compare.py`：搬入 `company()` helper 與原 compare 的 `companies[]` 組裝，回應只含 `companies`；選 2 至 4 家不同公司的驗證照舊，傳入 `basis` 時忽略。在 `main.py` 改掛新 router。新增測試涵蓋：回應沒有 `metrics`／`basis`、超過 4 家被拒、缺風險時明示缺口、帶 `basis` 的舊網址仍可用。
-- [ ] 4.2 `research_cache.py` 讓 `compare` 在指定 `release_id` 時歸入不可變類別；`test_research_cache.py` 的 compare 案例改為驗證長期快取，`/financials` 案例刪除。
-- [ ] 4.3 前端 `ResearchCompare.tsx` 移除 basis 選單、「財務比較結果」、`ObservationReading` 與相關 import，說明文字改為比較業務、角色與產品；`frontend/lib/research-cache.ts` 把 `compare` 移出動態類別。`npm run typecheck` 通過。
+- [x] 4.1 （2026-10-23：`test_research_compare.py` 3 passed，在臨時 PostgreSQL 上執行）新增 `backend/app/research_compare.py`：搬入 `company()` helper 與原 compare 的 `companies[]` 組裝，回應只含 `companies`；選 2 至 4 家不同公司的驗證照舊，傳入 `basis` 時忽略。在 `main.py` 改掛新 router。新增測試涵蓋：回應沒有 `metrics`／`basis`、超過 4 家被拒、缺風險時明示缺口、帶 `basis` 的舊網址仍可用。
+- [x] 4.2 （2026-10-23：`test_research_cache.py` 5 passed；財務判斷條件 `'financials' in parts` 留到 5.1，避免財務 endpoint 在刪除前被誤判為可長期快取）`research_cache.py` 讓 `compare` 在指定 `release_id` 時歸入不可變類別；`test_research_cache.py` 的 compare 案例改為驗證長期快取，`/financials` 案例刪除。
+- [x] 4.3 前端 `ResearchCompare.tsx` 移除 basis 選單、「財務比較結果」、`ObservationReading` 與相關 import，說明文字改為比較業務、角色與產品；`frontend/lib/research-cache.ts` 把 `compare` 移出動態類別。`npm run typecheck` 通過。
 
 ## 5. 移除 backend 財務功能
 

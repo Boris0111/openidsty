@@ -1,5 +1,4 @@
 """Published reader cache contracts on a rollback-only, isolated PostgreSQL DB."""
-from datetime import date
 from sqlalchemy import text
 from app.main import app
 from app.research_compile import insert
@@ -29,30 +28,18 @@ def test_static_pins_conditionals_canonical_parameters_and_unpublished_denial(v2
         assert result.status_code!=304 and result.headers['cache-control']=='no-store'
 
 
-def test_financial_compare_and_history_validate_revisions_not_read_clock(dynamic):
-    client,keys,release,_,add,_,_=dynamic
-    original,_,_=add('100');add('200',index=1)
-    params={'release_id':str(release),'company_ids':','.join(keys[:2])}
+def test_compare_is_pinned_research_and_long_cached(v2):
+    client,data=v2
+    params={'release_id':data['release'],'company_ids':','.join(data['keys'][:2])}
     result=client.get('/api/v2/compare',params=params)
-    assert 'max-age=30' in result.headers['cache-control'] and 'immutable' not in result.headers['cache-control']
-    tag=result.headers['etag']
-    assert client.get('/api/v2/compare',params=params,headers={'If-None-Match':tag}).status_code==304
-    detail='/api/v2/companies/'+keys[0]+'/financials/observations/'+str(original.observation_id)
-    history=client.get(detail,params={'release_id':str(release)})
-    assert 'max-age=30' in history.headers['cache-control']  # Wrapper includes active ID/history.
-    revised,_,_=add('120',filed=date(2026,3,1))
-    fresh=client.get('/api/v2/compare',params=params,headers={'If-None-Match':tag})
-    assert fresh.status_code==200 and fresh.headers['etag']!=tag
-    revenue=next(row for row in fresh.json()['data']['metrics'] if row['metric_id']=='revenue')
-    assert revenue['values'][0]['value']=='120'
-    changed=client.get(detail,params={'release_id':str(release)},headers={'If-None-Match':history.headers['etag']})
-    assert changed.status_code==200 and changed.json()['data']['active_observation_id']==str(revised.observation_id)
-    assert changed.json()['data']['observation']['value']=='100'
+    assert result.status_code==200 and 'max-age=86400' in result.headers['cache-control']
+    assert client.get('/api/v2/compare',params=params,headers={'If-None-Match':result.headers['etag']}).status_code==304
+    # Without a pinned release the reader must re-read the current head.
+    assert client.get('/api/v2/compare',params={'company_ids':params['company_ids']}).headers['cache-control']=='no-store'
 
 
-def test_head_publish_restore_keeps_pinned_profiles_and_dynamic_values(dynamic):
-    client,keys,release,ready,add,_,connection=dynamic
-    add('100');add('200',index=1)
+def test_head_publish_restore_keeps_pinned_profiles(dynamic):
+    client,keys,release,ready,_,_,connection=dynamic
     path='/api/v2/companies/'+keys[0]
     original=client.get(path,params={'release_id':str(release)})
     connection.execute(text('RESET ROLE'))
@@ -66,14 +53,11 @@ def test_head_publish_restore_keeps_pinned_profiles_and_dynamic_values(dynamic):
     assert client.get(path,params={'release_id':str(release)},headers={'If-None-Match':original.headers['etag']}).status_code==304
     newer=client.get(path,params={'release_id':str(ready)})
     assert newer.json()['data']['name']=='新版公司' and newer.headers['etag']!=original.headers['etag']
-    add('150',filed=date(2026,3,1))
     connection.execute(text('RESET ROLE'))
     connection.execute(text('UPDATE research.release_head SET release_id=:id,generation=generation+1'),{'id':release})
     connection.execute(text('SET LOCAL ROLE research_reader'))
     assert client.get('/api/v2/manifest').json()['release_id']==str(release)
     assert client.get(path,params={'release_id':str(ready)},headers={'If-None-Match':newer.headers['etag']}).status_code==304
-    financial=client.get(path+'/financials',params={'release_id':str(release),'metric':'revenue'}).json()
-    assert financial['data']['items'][0]['value']=='150'
 
 
 def test_events_revalidate_and_failures_never_become_success_cache(dynamic):

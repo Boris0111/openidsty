@@ -6,7 +6,7 @@ from fastapi import APIRouter,Depends,Query
 from sqlalchemy import text
 from .research_db import get_research_session
 from .research_http import ResearchError
-from .research_v2 import require_release,entity,envelope,summary,claims_payload,reader_gaps
+from .research_v2 import require_release,entity,envelope
 from .research_compile import digest
 from .financial_core import METRICS,decimal_text
 
@@ -143,78 +143,3 @@ def observation(company_id:str,observation_id:uuid.UUID,release_id:uuid.UUID|Non
     return envelope(release,{'as_of':as_of(session),'observation':enrich(session,[row],release)[0],
         'active_observation_id':str(active),'revisions':enrich(session,history[:limit],release),
         'has_more':len(history)>limit,'next_before_revision':history[limit-1]['revision'] if len(history)>limit else None})
-
-
-def comparison_reasons(values,missing,unverified,ambiguous):
-    reasons=[]
-    if missing:reasons.append('部分公司未取得此指標。')
-    if unverified:reasons.append('部分公司尚未核對主要申報來源。')
-    if ambiguous:reasons.append('同一期間有多個來源或會計範圍，不能任選數值。')
-    if not values:return reasons
-    for fields,message in [(('period_start','period_end','basis'),'實際期間或單季／累計／全年／期末口徑不同。'),
-        (('unit',),'指標單位不同。'),(('scope',),'申報範圍不同。')]:
-        if len({tuple(row[key] for key in fields) for row in values})>1:reasons.append(message)
-    if any(row['scope']!='consolidated' for row in values):reasons.append('尚未全部核對為合併報表範圍。')
-    if values[0]['unit']!='percent' and len({row['currency'] for row in values})>1:reasons.append('原幣不同；不自動換匯或排名。')
-    if values[0]['unit']=='per-share' and (len({row['share_class'] for row in values})>1 or
-        any(row['share_class'] in ('','unspecified','unknown') for row in values)):
-        reasons.append('EPS 股別或 ADR／普通股口徑不同或尚未核對。')
-    if any(row['provenance_kind']=='legacy-import' for row in values):reasons.append('含尚未核對原始申報的舊版數值。')
-    return reasons
-
-
-@router.get('/compare')
-def compare(company_ids:str=Query(...,max_length=850),basis:Literal['monthly','quarterly','ytd','annual']='annual',
-    release_id:uuid.UUID|None=None,session=Depends(get_research_session)):
-    identifiers=company_ids.split(',')
-    if not 2<=len(identifiers)<=4 or len(set(identifiers))!=len(identifiers):raise ResearchError(422,'invalid-comparison','比較須選擇 2 至 4 家不同公司。')
-    release=require_release(session,release_id);profiles=[company(session,release,key) for key in identifiers]
-    offerings=session.execute(text('''SELECT ranked.* FROM (SELECT o.company_id,o.product_id,p.name,o.role_id,r.name AS role_name,
-        o.conditions,row_number() OVER(PARTITION BY o.company_id ORDER BY o.product_id,o.role_id) AS n
-        FROM research.company_offerings o JOIN research.entity_snapshots p ON p.release_id=o.release_id AND p.entity_id=o.product_id
-        JOIN research.entity_snapshots r ON r.release_id=o.release_id AND r.entity_id=o.role_id
-        WHERE o.release_id=:release AND o.company_id=ANY(CAST(:ids AS text[]))) ranked WHERE n<=101'''),
-        {'release':release['release_id'],'ids':identifiers}).mappings().all()
-    financial=session.execute(text('''SELECT ranked.* FROM (SELECT g.*,'''+OBS_COLUMNS+''',dense_rank() OVER(
-        PARTITION BY company_id,metric_id,source_family ORDER BY period_end DESC) AS period_rank,
-        row_number() OVER(PARTITION BY company_id,metric_id,source_family ORDER BY period_end DESC,period_start DESC,g.group_id) AS n
-        FROM research.financial_groups g '''+LATEST+''' WHERE g.company_id=ANY(CAST(:ids AS text[]))
-        AND basis=CASE WHEN g.metric_id IN ('cash-and-equivalents','total-liabilities') THEN 'instant' ELSE :basis END
-        AND (g.scope='consolidated' OR NOT EXISTS(SELECT 1 FROM research.financial_groups other
-            WHERE other.company_id=g.company_id AND other.metric_id=g.metric_id AND other.source_family=g.source_family
-            AND other.period_start=g.period_start AND other.period_end=g.period_end AND other.basis=g.basis
-            AND other.scope='consolidated' AND EXISTS(SELECT 1 FROM research.financial_observations valid WHERE valid.group_id=other.group_id)))) ranked
-        WHERE period_rank=1 AND n<=11 ORDER BY company_id,metric_id,source_family,group_id LIMIT 2001'''),{'ids':identifiers,'basis':basis}).mappings().all()
-    if len(financial)>2000:raise ResearchError(422,'comparison-too-broad','來源組合過多，請先核對各公司的主要申報來源。')
-    columns=[];selected={};unverified=[]
-    for row in profiles:
-        key=row['entity_id'];family=preferred(row)
-        if not family:unverified.append(key)
-        candidates=[value for value in financial if value['company_id']==key and (not family or value['source_family']==family)]
-        # Prefer consolidated when present; retain other original scopes as explicit gaps.
-        for metric in METRICS:
-            values=[value for value in candidates if value['metric_id']==metric]
-            consolidated=[value for value in values if value['scope']=='consolidated']
-            selected[key,metric]=consolidated or values
-        sections=re.split(r'^##\s+(.+?)\s*$',row['markdown'],flags=re.M)
-        prose={sections[i]:sections[i+1].strip() for i in range(1,len(sections)-1,2)}
-        claims,truncated=claims_payload(session,release,key)
-        products=[dict(item) for item in offerings if item['company_id']==key]
-        columns.append({**summary(row),'roles':[{'segment_id':role['segment-id'],'description':role['description']} for role in row['data'].get('roles',[])[:100]],
-            'products':products[:100],'risks':prose.get('風險','')[:12000] or None,'business_model':prose.get('商業模式','')[:12000] or None,
-            'claims':claims,'gaps':reader_gaps(row['data'].get('gaps')),'research_depth':row['data'].get('research-depth','basic'),
-            'truncated':truncated or len(products)>100 or any(len(prose.get(heading,''))>12000 for heading in ('風險','商業模式')),'preferred_source_family':family})
-    all_values={row['observation_id']:row for rows in selected.values() for row in rows[:2]}
-    enriched={row['observation_id']:row for row in enrich(session,list(all_values.values()),release)}
-    metrics=[]
-    for metric,(label,*_) in METRICS.items():
-        missing=[key for key in identifiers if not selected[key,metric]]
-        ambiguous=[key for key in identifiers if len(selected[key,metric])>1]
-        values=[item for key in identifiers for item in selected[key,metric]]
-        reasons=comparison_reasons(values,missing,unverified,ambiguous)
-        metrics.append({'metric_id':metric,'label':label,'comparable':not reasons,'reasons':reasons,
-            'values':[enriched[str(item['observation_id'])] for key in identifiers for item in selected[key,metric][:2]],
-            'missing_company_ids':missing,'ambiguous_company_ids':ambiguous,
-            'candidates_truncated_company_ids':[key for key in identifiers if len(selected[key,metric])>2]})
-    return envelope(release,{'as_of':as_of(session),'basis':basis,'companies':columns,'metrics':metrics,
-        'policy':'保留原幣與實際期間；不自動換匯、EPS 換算或跨來源拼報表。'})
