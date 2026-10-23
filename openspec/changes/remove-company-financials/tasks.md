@@ -33,18 +33,25 @@
 ## 6. migration 0017 與 PostgreSQL 驗證
 
 - [ ] 6.1 新增 `backend/migrations/versions/0017_drop_company_financials.py`，依 design D4 的順序刪除 view、表與 `research.guard_financial_import()`，保留 `research.guard_immutable_row()`，downgrade raise。`test_research_postgres.py` 移除財務 lineage／引用的測試，新增「0017 之後 `research.financial_*` 不存在、reader 仍可讀已發布研究與事件」的測試。
-- [ ] 6.2 演練環境：以 `research_drill.py restore <1.2 的備份>` 還原，接著 `research_drill.py migrate` 升級到 0017，`research_lab.py pg-check --suite all` 全數通過；再以 `research_drill.py offline-refresh --source twse-revenue` 確認代理指標更新，並與 1.1 的基準比對。結果記錄在本 tasks。
+- [x] 6.2 演練：以 1.2 的備份 `database.dump` 還原，用本 branch 的程式碼升級到 0017，再做一次 `twse-revenue` 更新，並與 1.1 的基準比對。
+  - **apply 時改變做法**：演練環境沿用正式服務的 `industryflow-research-api:dev` image tag，用 worktree 程式碼重 build 會覆蓋正式 image。所以改在臨時、獨立的 PostgreSQL 容器中還原同一份真實備份，以 worktree 程式碼升級並更新。這樣不動 `research_drill.py`，也不動正式 image；驗證目標與原做法相同。
+  - **2026-10-23 結果**（`.work/remove-company-financials/verify-0017.json`）：
+    - alembic 從 0016 升到 0017，`research` 下的 `financial*` 物件從 18 降到 0。
+    - 指標觀測 28（代理 25）、事件 3,190（營收事件 147）、舊 `financials` 326、正式研究版本，三個時點皆不變。
+    - 以 worker 的寫入端權限實際線上更新 `twse-revenue`（HTTP 200）：success，分類 36 筆事件，`new_count` 0（9 月已入庫、10 月尚未公布）。
+    - 7 家代理指標最新值與 1.1 基準完全相同。
+    - SEC 營收需真實聯絡資訊才能線上請求，此處未打線上，由 3.2 的測試與 9.2 的實機驗證涵蓋。
 
 ## 7. 前端移除
 
-- [ ] 7.1 刪除 `ResearchFinancials.tsx`、`FinancialImports.tsx`、`Financials.tsx`、`lib/research-financial.ts`，其中 `readTime` 先搬到 `lib/display.ts` 並更新 `ResearchEvents.tsx`；`lib/types.ts` 移除 `Financial` 與 `Company.financials`。`npm run typecheck` 通過。
-- [ ] 7.2 `ResearchExplorer.tsx`：
+- [x] 7.1 （2026-10-23：`readTime` 移到 `lib/display.ts`；離線 fixture 的 `financials: []` 一併移除；typecheck 通過）刪除 `ResearchFinancials.tsx`、`FinancialImports.tsx`、`Financials.tsx`、`lib/research-financial.ts`，其中 `readTime` 先搬到 `lib/display.ts` 並更新 `ResearchEvents.tsx`；`lib/types.ts` 移除 `Financial` 與 `Company.financials`。`npm run typecheck` 通過。
+- [x] 7.2 （2026-10-23：「比較這家公司」連結保留，因非財務比較仍存在；切換分頁時清除舊 `financial_cursor` 等 URL 參數的程式刻意保留，讓舊分享連結被清乾淨；舊版 proxy 移除 `compare`，`publicV2` 保留；後端 `research_cache` 一併移除 `financials` 判斷）`ResearchExplorer.tsx`：
   - 公司區塊改名「近期資訊」，只留「官方與報導」「傳聞觀察」，預設開啟官方與報導。
   - 移除財務相關的 URL 參數與連結，保留 `#company-data` 錨點。
   
   `AdminOperations.tsx` 移除「財務補錄」分頁並改寫還原說明；`SourceActions.tsx` 移除財務指標與財務修訂顯示；`lib/admin-proxy.ts`、`app/api/[...path]/route.ts` 移除財務路徑，`publicV2` 保留 compare。以 grep 確認元件中不再出現「基本財務」「財務補錄」。
-- [ ] 7.3 CSS：依盤點移除 `.rf-series`、`.rf-trend*`、`.rf-table-wrap*`、`.rf-observation*`、`.rf-history*`、`.rf-metric-values*`、`.rf-comparison-metrics*`、`.rf-comparability`、`.rf-date`、`.financial-value`、`.ra-financial-import*`，保留事件與比較欄位使用的 selector；`npm run build` 成功，在 1440px 與 390px 檢查公司頁、比較頁與後台的畫面，截圖存到 `.work/remove-company-financials/`。
-- [ ] 7.4 測試：
+- [x] 7.3 （2026-10-23：以「CSS 定義的 class 比對元件實際使用的 class」決定刪除範圍，共移除 13 個財務 class 的 47 個選擇器；比較頁的 `.rf-compare*`、`.rf-company-comparison*` 因非財務比較保留。三個 CSS 檔的大括號都成對。截圖 `company-recent-{1440,390}.png`、`compare-{1440,390}.png`、`admin-{1440,390}.png`，皆無水平溢出）CSS：依盤點移除 `.rf-series`、`.rf-trend*`、`.rf-table-wrap*`、`.rf-observation*`、`.rf-history*`、`.rf-metric-values*`、`.rf-comparison-metrics*`、`.rf-comparability`、`.rf-date`、`.financial-value`、`.ra-financial-import*`，保留事件與比較欄位使用的 selector；`npm run build` 成功，在 1440px 與 390px 檢查公司頁、比較頁與後台的畫面，截圖存到 `.work/remove-company-financials/`。
+- [x] 7.4 （2026-10-23：完整離線 E2E 64 passed；離線財務測試檔改名為 `research-company-info.spec.ts` 並改寫為 4 項；離線快取測試改以事件驗證 30 秒動態快取；3 個 fixture 因公司頁預設改為事件分頁，補上 `events`／`observations` 分支；`research-cache.node.cjs` 6 pass。live 測試需正式服務，於 9.2 執行）測試：
   - 刪除 `research-financial.spec.ts`、`financial-imports.spec.ts` 的財務案例，以及 offline `research-financial.spec.ts` 的財務案例；傳聞與事件案例移到保留的 spec。
   - 改寫 `research-cache.spec.ts`（offline 與 live）、`research-cache.node.cjs`、`research-dynamic.spec.ts`、`research-watchlist.spec.ts`（offline 與 live）與 `watchlist-fixture.ts`，改用事件或指標，公司數值改為不適用。
   - 各 fixture 移除 `/financials` 分支；`source-updates.spec.ts` 移除財務指標斷言。

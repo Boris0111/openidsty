@@ -11,7 +11,7 @@ const names:Record<string,string>={'company-sample':'合成公司','product-samp
 // A synthetic server: per-object tokens and an append-only event list, like the real contract.
 export async function server(page:Page){
   const state={release:shown,research:{'company-sample':'r1','product-sample':'p1','theme-liquid-cooling':'t1'} as Record<string,string>,
-    values:'v1',themeValues:'i1',events:[] as {id:number;entity:string;dated:boolean}[],fail:false,queries:[] as {release_id?:string;items:Target[]}[]};
+    themeValues:'i1',events:[] as {id:number;entity:string;dated:boolean}[],fail:false,queries:[] as {release_id?:string;items:Target[]}[]};
   await page.route('**/api/v2/**',async route=>{
     const request=route.request(),url=new URL(request.url()),path=url.pathname.replace('/api/v2/','');
     if(request.method()==='POST'&&path==='updates/query'){
@@ -21,7 +21,8 @@ export async function server(page:Page){
         if(!(item.id in state.research))return {kind:item.kind,id:item.id,available:false,reason:'這份研究不在目前已發布版本中，可能已改名、合併或封存。'};
         const events=state.events.filter(event=>event.entity===item.id),marker=Math.max(0,...events.map(event=>event.id));
         const after=events.filter(event=>item.seen?.events!=null&&event.id>item.seen.events);
-        const values=item.kind==='company'?state.values:item.kind==='theme'?state.themeValues:null;
+        // Company financial statements were removed; only themes still carry tracked values.
+        const values=item.kind==='theme'?state.themeValues:null;
         return {kind:item.kind,id:item.id,available:true,name:names[item.id],
           research:{token:state.research[item.id],changed:item.seen?.research==null?null:item.seen.research!==state.research[item.id]},
           values:{applicable:values!==null,token:values,changed:values===null?false:item.seen?.values==null?null:item.seen.values!==values},
@@ -32,7 +33,7 @@ export async function server(page:Page){
     let data:unknown;
     if(path==='manifest')data={published_at:'2026-10-18',generation:1};
     else if(path==='graphs')data={root:url.searchParams.get('root'),nodes:[],edges:[],truncated:false,continue_from:[]};
-    else if(path.includes('/financials'))data={as_of:'2026-10-18T00:00:00Z',items:[],has_more:false,next_cursor:null,gaps:[],source_selection_gap:null};
+    else if(path==='events'||path==='observations')data={as_of:'2026-10-18T00:00:00Z',items:[],has_more:false,next_cursor:null};
     else if(path.startsWith('companies/'))data={...summary('company-sample','合成公司'),markdown:'## 供應角色\n\n合成角色。\n\n## 研究界線\n\n合成界線。',content:{},claims:[],related:[],assets:[],truncated:false};
     else if(path.startsWith('products/'))data={...summary('product-sample','合成冷板'),markdown:'## 定義與用途\n\n合成產品。',content:{},claims:[],related:[],assets:[],truncated:false};
     else data={...summary('concept-sample','合成術語'),markdown:'## 中文解釋\n\n合成術語。',content:{},claims:[],related:[],assets:[],truncated:false};

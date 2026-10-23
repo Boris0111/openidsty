@@ -36,3 +36,5 @@ export function readingText(value:string,names:Record<string,string>={}){
     .replace(/\b(?:emerging|validating|scaling|mature|fading)\b/g,word=>lifecycleLabel[word])
     .replace(/\b[a-z][a-z0-9]*(?:-[a-z0-9]+)*\b/g,word=>names[word]||word);
 }
+
+export function readTime(value:string){return new Intl.DateTimeFormat('zh-TW',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Taipei'}).format(new Date(value))}

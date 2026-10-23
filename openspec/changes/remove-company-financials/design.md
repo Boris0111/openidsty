@@ -88,7 +88,9 @@
 - `compose.research.yaml` 的 initialize 拿掉 `python -m app.financial_store definitions`，`financial_indicators` 保留。
 - **上線前的雙重保護**：
   1. `research_lab.py backup`，產生 `database.dump`、`git.bundle`、`assets.tar`、`manifest.json`。
-  2. 用 `research_drill.py` 把這份備份還原到獨立的演練環境，在演練環境升級到 `0017`，跑 pg-check。
+  2. 把這份備份還原到獨立的 PostgreSQL，用本 branch 的程式碼升級到 `0017`，跑 PostgreSQL 測試。
+     - apply 時發現：`research_drill.py` 的演練環境和正式服務共用 `industryflow-research-api:dev` 這個 image tag。merge 前用 worktree 程式碼重 build，會讓正式服務在下次重建容器時跑到未 merge 的程式碼。
+     - 因此改用臨時、獨立的 PostgreSQL 容器（不同 port、不同 project、不使用任何正式 image）還原同一份真實備份。
   3. 演練通過後，才對正式服務執行。
 
 ### D5：公司收藏的數值改為不適用
@@ -124,7 +126,7 @@
 ## Migration Plan
 
 1. **備份**：`python scripts/research_lab.py backup`，確認 manifest 中 `research.financial_*` 的筆數。
-2. **演練環境**：以 `research_drill.py` 還原這份備份，在演練環境的 image 上升級到 `0017`，跑 `research_lab.py pg-check --suite all`。
+2. **演練**：把這份備份還原到臨時、獨立的 PostgreSQL，以本 branch 的程式碼升級到 `0017`，並跑完整的 PostgreSQL 測試。理由見 D4，不使用 `research_drill.py`，以免覆蓋正式 image tag。
 3. **正式服務**：依 AGENTS.md，在主 checkout 暫時切到 PR branch，經維護者同意後：
    1. 重建 api 與 web image。
    2. 執行 initialize，完成 alembic 升級到 `0017`。

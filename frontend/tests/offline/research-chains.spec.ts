@@ -17,7 +17,6 @@ async function fixtures(page:Page){
       {id:'application-sample',name:'合成供應鏈',summary:'合成供應鏈樣本',question:'熱怎麼送出去？',segments:[{id:'segment-thermal',name:'散熱'}],steps:['取熱','排熱'],assets:[]},
       {id:'application-two',name:'第二條合成供應鏈',summary:'合成樣本',question:null,segments:[{id:'segment-test',name:'測試'}],steps:[],assets:[]}]};
     else if(path==='graphs')data={root:url.searchParams.get('root'),nodes:[],edges:[],truncated:false,continue_from:[]};
-    else if(path.endsWith('/financials'))data={as_of:'2026-10-20T00:00:00Z',items:[],has_more:false,next_cursor:null,gaps:[],source_selection_gap:null};
     else if(path==='applications/application-sample')data=detail('application-sample','application','合成供應鏈',{trail:trail.slice(0,1),content:{question:'熱怎麼送出去？'},
       chain:{question:'熱怎麼送出去？',diagram:null,steps:[{label:'取熱',note:'晶片端',products:[{id:'product-sample',name:'合成產品',companies:[{id:'company-sample',name:'合成公司'}]}]},{label:'排熱',note:null,products:[]}],
         other_products:[{id:'product-other',name:'其他合成產品',companies:[]}]}});

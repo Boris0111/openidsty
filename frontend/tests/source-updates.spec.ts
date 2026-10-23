@@ -8,7 +8,7 @@ for(const mobile of [false,true])test(`來源能力、單次更新與限流後�
   const id='77777777-7777-4777-8777-777777777777';let polls=0,updates=0;
   const source={id:'twse-synthetic',name:'合成測試官方月營收',url:'https://official.example/',adapter:'tw',status:'not_run',last_success:null,error:null};
   const job={job_id:id,status:'queued',available_at:'2026-10-17T10:00:00Z',requests:0};
-  const detail={...source,declared:{can_refresh:true,frequency_hours:24,history_limit:'僅依官方提供期間；不保證任意歷史。',classification_limit:'分類不提升研究主張確定性。',metrics:[{metric_id:'revenue',label:'營收',provided:true},{metric_id:'cfo',label:'營業現金流',provided:false}]},last_job:null,last_result:null};
+  const detail={...source,declared:{can_refresh:true,frequency_hours:24,history_limit:'僅依官方提供期間；不保證任意歷史。',classification_limit:'分類不提升研究主張確定性。'},last_job:null,last_result:null};
   await page.route('**/api/admin/**',async route=>{
     const request=route.request(),url=new URL(request.url());
     if(url.pathname.endsWith('/session'))await route.fulfill({json:{authenticated:true,csrf_token:'synthetic-csrf'}});
@@ -24,7 +24,8 @@ for(const mobile of [false,true])test(`來源能力、單次更新與限流後�
   await page.getByRole('button',{name:'來源能力',exact:true}).click();
   await expect(page.getByRole('region',{name:source.name+'來源能力'})).toContainText('每 24 小時');
   if(mobile){const bounds=await page.getByRole('region',{name:source.name+'來源能力'}).boundingBox();expect(bounds!.x).toBeGreaterThanOrEqual(0);expect(bounds!.x+bounds!.width).toBeLessThanOrEqual(390)}
-  await expect(page.getByText('營業現金流：此入口未提供')).toBeVisible();
+  // Source capability no longer lists company financial metrics.
+  await expect(page.getByRole('region',{name:source.name+'來源能力'})).toContainText('僅依官方提供期間');await expect(page.getByText('營業現金流')).toHaveCount(0);
   const update=page.getByRole('button',{name:'更新一次',exact:true});await update.click();
   await expect(update).toBeDisabled();await expect(page.getByText('等待背景服務',{exact:true})).toBeVisible();
   await page.clock.fastForward(5100);

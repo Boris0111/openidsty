@@ -14,8 +14,8 @@ def lifetime(path, query):
     if len(query.getlist('release_id')) != 1 or not query.get('release_id'):
         return 0
     parts = path.removeprefix('/api/v2/').split('/')
-    if parts[0] in ('events','observations') or 'financials' in parts:
-        # Observation details also contain the current effective ID and revision list.
+    if parts[0] in ('events','observations'):
+        # Events and rumor observations grow with each ingestion even inside a pinned release.
         return 30
     return 86400 if parts[0] in STATIC else 0
 

@@ -14,7 +14,7 @@ export function researchKey(path:string){
   url.searchParams.sort();
   return url.pathname+url.search;
 }
-export function dynamicResearch(key:string){const root=key.split('?')[0].split('/')[3];return ['events','observations'].includes(root)||key.split('?')[0].includes('/financials')}
+export function dynamicResearch(key:string){const root=key.split('?')[0].split('/')[3];return ['events','observations'].includes(root)}
 function ceiling(key:string){const url=new URL(key,'http://reader.invalid');return url.searchParams.getAll('release_id').length===1&&url.searchParams.get('release_id')?(dynamicResearch(key)?30000:86400000):0}
 function ttl(key:string,response:Response,previous?:Stored){
   const control=response.headers.get('cache-control')||'';
