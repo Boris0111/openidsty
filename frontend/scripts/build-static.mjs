@@ -52,6 +52,7 @@ run(process.execPath,[path.join(frontend,'node_modules/next/dist/bin/next'),'bui
   NEXT_PUBLIC_SNAPSHOT_RELEASE:release,NEXT_PUBLIC_SNAPSHOT_PUBLISHED:manifest.published_at,STATIC_SNAPSHOT_DIR:snapshot}});
 cpSync(path.join(build,'out'),out,{recursive:true});
 cpSync(snapshot,path.join(out,'snapshot',release),{recursive:true});
+// Cloudflare Pages allows one splat per rule, so the release segment of the asset rule is a named placeholder.
 writeFileSync(path.join(out,'_headers'),`/*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
@@ -62,7 +63,7 @@ writeFileSync(path.join(out,'_headers'),`/*
   Cache-Control: public, max-age=31536000, immutable
 /snapshot/*
   Cache-Control: public, max-age=31536000, immutable
-/snapshot/*/assets/*
+/snapshot/:release/assets/*
   Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'; sandbox
 `);
 
