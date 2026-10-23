@@ -15,12 +15,9 @@ def company(session,release,identifier):
     return row
 
 
-@router.get('/compare')
-def compare(company_ids:str=Query(...,max_length=850),release_id:uuid.UUID|None=None,session=Depends(get_research_session)):
-    # Older shared links may still carry basis; it is ignored because no financial values are compared.
-    identifiers=company_ids.split(',')
-    if not 2<=len(identifiers)<=4 or len(set(identifiers))!=len(identifiers):raise ResearchError(422,'invalid-comparison','比較須選擇 2 至 4 家不同公司。')
-    release=require_release(session,release_id);profiles=[company(session,release,key) for key in identifiers]
+def company_columns(session,release,identifiers):
+    """One column per company; offerings rank within each company, so a column never depends on its neighbours."""
+    profiles=[company(session,release,key) for key in identifiers]
     offerings=session.execute(text('''SELECT ranked.* FROM (SELECT o.company_id,o.product_id,p.name,o.role_id,r.name AS role_name,
         o.conditions,row_number() OVER(PARTITION BY o.company_id ORDER BY o.product_id,o.role_id) AS n
         FROM research.company_offerings o JOIN research.entity_snapshots p ON p.release_id=o.release_id AND p.entity_id=o.product_id
@@ -38,4 +35,13 @@ def compare(company_ids:str=Query(...,max_length=850),release_id:uuid.UUID|None=
             'products':products[:100],'risks':prose.get('風險','')[:12000] or None,'business_model':prose.get('商業模式','')[:12000] or None,
             'claims':claims,'gaps':reader_gaps(row['data'].get('gaps')),'research_depth':row['data'].get('research-depth','basic'),
             'truncated':truncated or len(products)>100 or any(len(prose.get(heading,''))>12000 for heading in ('風險','商業模式'))})
-    return envelope(release,{'companies':columns})
+    return columns
+
+
+@router.get('/compare')
+def compare(company_ids:str=Query(...,max_length=850),release_id:uuid.UUID|None=None,session=Depends(get_research_session)):
+    # Older shared links may still carry basis; it is ignored because no financial values are compared.
+    identifiers=company_ids.split(',')
+    if not 2<=len(identifiers)<=4 or len(set(identifiers))!=len(identifiers):raise ResearchError(422,'invalid-comparison','比較須選擇 2 至 4 家不同公司。')
+    release=require_release(session,release_id)
+    return envelope(release,{'companies':company_columns(session,release,identifiers)})

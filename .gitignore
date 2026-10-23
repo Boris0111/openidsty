@@ -61,3 +61,8 @@ env/
 backups/
 test-results/
 playwright-report/
+
+# --- Public snapshot (exported research and static builds) ---
+/public-snapshot/
+/frontend/.static-build/
+/frontend/out/

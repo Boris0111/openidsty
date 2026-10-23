@@ -19,6 +19,18 @@ def test_compare_lists_research_only_and_keeps_gaps(v2):
     assert not any(key in column for column in body['companies'] for key in ('metrics','preferred_source_family'))
 
 
+def test_comparison_is_single_company_columns_in_request_order(v2):
+    # The public snapshot assembles any comparison from per-company columns, so this must hold exactly.
+    from fastapi.encoders import jsonable_encoder
+    from app.research_compare import company_columns
+    from app.research_v2 import require_release
+    client,data=v2
+    ids=[data['keys'][1],data['keys'][0]]
+    release=require_release(data['session'],None)
+    singles=[column for key in ids for column in company_columns(data['session'],release,[key])]
+    assert compare(client,data,ids).json()['data']['companies']==jsonable_encoder(singles)
+
+
 def test_compare_rejects_wrong_company_counts(v2):
     client,data=v2
     for ids in (data['keys'][:1],[data['keys'][0]]*2,[data['keys'][0],data['keys'][1],'company-a','company-b','company-c']):

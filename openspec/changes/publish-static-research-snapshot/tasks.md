@@ -2,13 +2,13 @@
 
 ## 1. 後端快照匯出
 
-- [ ] 1.1 `research_compare.py` 抽出 `company_columns(session, release, ids)`，`compare()` 改成呼叫它，回應不變。驗證：既有的 `test_research_compare.py` 在臨時 PostgreSQL 上通過。另補一個測試，確認 N 家比較等於 N 次單家欄位依序排列。
-- [ ] 1.2 新增 `backend/app/public_snapshot.py` 的純函式，並以離線單元測試涵蓋（`pytest backend/tests` 通過）：
+- [x] 1.1 （2026-10-23：在臨時 PostgreSQL 上 `test_research_compare.py` 4 passed，含新增的單家欄位測試）`research_compare.py` 抽出 `company_columns(session, release, ids)`，`compare()` 改成呼叫它，回應不變。驗證：既有的 `test_research_compare.py` 在臨時 PostgreSQL 上通過。另補一個測試，確認 N 家比較等於 N 次單家欄位依序排列。
+- [x] 1.2 （2026-10-23：`test_public_snapshot.py` 40 passed；路由案例放在 `frontend/tests/static/route-cases.json`，前端 2.1 讀同一份）新增 `backend/app/public_snapshot.py` 的純函式，並以離線單元測試涵蓋（`pytest backend/tests` 通過）：
   - 路由表：請求 key → 快照路徑。
   - 剝除規則：環節、題材的 `events`；判讀的事件候選與計數；`evidence_sources[].runtime`；執行期的 `source_warnings`。
   - 圖解 URL 改寫。
   - 外洩掃描：排除欄位名、`/api/` 字串、指定的祕密值。
-- [ ] 1.3 實作匯出主流程：以 `TestClient(app)` 逐一呼叫讀者端點，寫出 design 決策 2 的目錄版面。
+- [x] 1.3 （2026-10-23：在臨時 PostgreSQL 上 `test_public_snapshot_export.py` 2 passed。匯出時間另存 `export.json`，manifest 本身可重現；錯誤回應的 `request_id` 不存；關係圖的 `list_url` 指向私人 API、前端沒用到，一併剝除）實作匯出主流程：以 `TestClient(app)` 逐一呼叫讀者端點，寫出 design 決策 2 的目錄版面。
   - 用 `page()` 匯出每個單一條件的目錄成員名單。
   - 用 `company_columns` 匯出每家公司的比較欄。
   - 用研究唯讀角色匯出 alias 表。
@@ -16,7 +16,7 @@
   - 寫入 manifest，含版本、發布時間、匯出時間與各類筆數。
   - 指定的版本不是目前發布版本時拒絕匯出。
   - 驗證：在臨時 PostgreSQL 上以測試資料匯出，manifest 筆數與資料庫一致，外洩掃描通過，重跑的輸出位元組相同。
-- [ ] 1.4 `scripts/research_lab.py` 新增 `public-snapshot` 指令：以 `docker compose run --rm --no-deps` 起 API 容器，掛上輸出目錄，輸出到 `public-snapshot/<release_id>/`（列入 `.gitignore`），並把 `.env.research` 的祕密值傳給外洩掃描，指令輸出不印出祕密。驗證：`tests/` 的 research_lab 測試涵蓋指令組裝與祕密遮蔽。
+- [x] 1.4 （2026-10-23：`tests/` 38 項 OK，含新增 `test_research_lab_snapshot.py` 4 項；不自動重建 image，直接使用執行中服務的 API image）`scripts/research_lab.py` 新增 `public-snapshot` 指令：以 `docker compose run --rm --no-deps` 起 API 容器，掛上輸出目錄，輸出到 `public-snapshot/<release_id>/`（列入 `.gitignore`），並把 `.env.research` 的祕密值傳給外洩掃描，指令輸出不印出祕密。驗證：`tests/` 的 research_lab 測試涵蓋指令組裝與祕密遮蔽。
 
 ## 2. 前端快照轉接層
 
