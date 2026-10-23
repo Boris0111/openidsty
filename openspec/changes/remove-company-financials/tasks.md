@@ -65,7 +65,7 @@
 ## 9. 整合驗證與歸檔
 
 - [x] 9.1 （2026-10-23：validate_map full 通過；unittest 34 OK；離線 pytest 216 passed／89 skipped，唯一失敗為 Windows 既有的 `test_managed_git...`；typecheck、build 通過；離線 E2E 64 passed；strict validate 通過；CI run `39901747798`（`a9567aa`）success）完整離線檢查：`python scripts/validate_map.py`、`python -m unittest discover -s tests -p "test_*.py"`、`pytest backend/tests`、`npm run typecheck`、`npm run build`、`npm run test:e2e:offline`、`openspec validate remove-company-financials --strict`，全部通過；push 後 CI 通過，並記錄 run ID。
-- [ ] 9.2 正式服務實機驗證。依 AGENTS.md，在主 checkout 切到 PR branch，經維護者同意後進行：
+- [x] 9.2 （2026-10-23：維護者同意後完成，紀錄在 `docs/research-acceptance.md` 第九節。0016→0017、financial 物件 18→0、其他筆數不變；營收單次更新後代理值與基準一致；財務／補錄／舊 compare 皆 404；比較只有研究內容；營收事件仍在；公司收藏 `applicable:false`；6 個來源標為 retired；讀者 live E2E 25 passed）正式服務實機驗證。依 AGENTS.md，在主 checkout 切到 PR branch，經維護者同意後進行：
   1. 再備份一次。
   2. 重建 api 與 web。
   3. initialize 升級到 0017。

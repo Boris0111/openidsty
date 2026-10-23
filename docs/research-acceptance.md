@@ -349,3 +349,26 @@ change `harden-research-operations`（tasks 1.4、4.1）。PR #3 先於演練合
 - **整點延遲**：hourly 與每分鐘的 reconciliation 共用 `--limit 1` 的 worker；恢復後，停機前排好的舊 run 也會依序補跑。可評估分開 work queue、提高 worker 上限，或讓過期太久的 run 直接略過。
 - **停機空窗回補**：要靠 MOPS 依日期查詢的 adapter。
 - **10-22 重大訊息**：台北時間 10-23 白天之後查 `events` 確認有沒有入庫。
+
+## 九、2026-10-23 移除公司財報的正式服務驗證（remove-company-financials task 9.2）
+
+維護者同意後，在主 checkout 以 detached HEAD 切到 PR branch（`0442b8d`）執行。原始數據在主 checkout 的 `.work/remove-company-financials/live-9.2.json`（被 Git 忽略）。
+
+| 步驟 | 結果 |
+|---|---|
+| 1. 再備份一次 | `backups/research/20261023T110134Z`，第二份在 `D:\backups\industryflow-research\20261023T110134Z`；備份時 release `a5df290c…`，其他服務未受影響 |
+| 2–3. 重建 api／web，initialize 升級 | `research_lab.py up`：alembic `0016 → 0017`，`research` 下 `financial*` 物件 `18 → 0`；事件 3197、財務事件 147、legacy 營收 326、指標觀測 28、release 皆不變 |
+| 4. 重建 worker | scheduler profile `up -d --no-build`；api、web、prefect、worker 同一 image（`88e0440c…`），deploy exit 0 |
+
+**驗證項目：**
+
+- **營收單次更新**（與後台「更新一次」同一條路徑，在 worker 內執行）：`twse-revenue`、`tpex-revenue` 各 1 次 HTTP 200，`success`、新增 0、指標變動 0。7 家代理指標 25 筆與 task 1.1 基準逐筆一致（4 家台股月營收；3 家 SEC 未重抓，沿用原值）。信心：well-supported。
+- **移除的入口**：`/api/v2/companies/company-auras/financials`（經 Next proxy）、`/api/admin/financial-imports`、舊 `/api/compare` 都回 404。
+- **公司比較**：`/api/v2/compare` 只回 `companies`，欄位為摘要、角色、產品、商業模式、風險、主張與缺口，沒有 metric；`max-age=86400`。畫面上沒有財務表格；文字中的「營業現金流」來自 Vertiv 研究的缺口說明，屬研究內容。
+- **事件**：「財報／營收」篩選仍在，列出 `twse-revenue` 產生的月營收事件。
+- **收藏**：公司即使帶舊的 `values` 基準，回應仍為 `applicable:false`；題材照常 `applicable:true`。
+- **移除的來源**（design Open Question）：registry 同步後 6 列標為 `retired`，分別是 `twse/tpex-financials`、`twse/tpex-balance`，以及 per-company 展開前的 `sec-facts`、`sec-submissions` 基底列。公開來源頁顯示「已停用」。後台的停用按鈕與 409 由自動測試涵蓋，未以 owner 登入實機操作。
+- **讀者端 live E2E**（`RESEARCH_E2E=1`，3010）：explorer、research-cache、content、dynamic、navigation、service、watchlist 共 25 passed。另外桌機 1440／手機 390 截圖公司頁、比較、事件、來源頁，四頁皆無橫向溢出。
+- **10-22 重大訊息**（第八節的待確認項目）：已入庫，`twse-announcements` 13 筆、`tpex-announcements` 5 筆。
+
+**注意**：merge 前正式服務跑的是 PR branch 的程式，DB 已是 0017。這段期間不要從 `main` 重建 image：`main` 的 alembic 不認得 `0017`，initialize 會失敗，程式也仍會讀已刪除的財務表。若要退回，只能用步驟 1 的備份還原（0017 沒有 downgrade）。
