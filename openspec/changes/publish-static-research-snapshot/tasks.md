@@ -20,7 +20,7 @@
 
 ## 2. 前端快照轉接層
 
-- [ ] 2.1 新增兩個模組：
+- [x] 2.1 （2026-10-23：`tests/snapshot-routes.node.cjs` 8 passed，與既有 cache 測試同樣以 typescript 轉譯後在 vm 執行，副檔名用 `.cjs`；`npm run test:unit` 一起跑兩個 node 測試）新增兩個模組：
   - `lib/public-snapshot.ts`：提供 `PUBLIC_SNAPSHOT` 與版本資訊，來源是建置期常數 `NEXT_PUBLIC_SNAPSHOT_RELEASE`。
   - `lib/snapshot-routes.ts`：純函式，不 import 其他模組，負責路由表對應、目錄交集與排序分頁、比較組裝與輸入檢查、搜尋的正規化與排序。
 
@@ -30,8 +30,8 @@
   - 比較：比較 1 家或 5 家被拒、公司重複被拒。
   - 搜尋：中文前綴與子字串、英文字詞邊界、完全相同排第一、空字串被拒。
   - 版本：指定其他研究版本時回「不在公開版」。
-- [ ] 2.2 新增 `lib/reader-fetch.ts`，讓 `request-cache.ts`、`research-cache.ts` 改經它取資料：公開版回傳合成的 `Response`，錯誤訊息同時放在 `message` 與 `detail`；standalone 照舊打網路。驗證：既有的離線 E2E（`npm run test:e2e:offline`）與 `research-cache.node.cjs` 全數通過。
-- [ ] 2.3 公開版的 UI 調整：
+- [x] 2.2 （2026-10-23：standalone 離線 E2E 64 passed、`npm run test:unit` 14 passed；`research-cache.node.cjs` 的 vm 環境補上 `require` 替身）新增 `lib/reader-fetch.ts`，讓 `request-cache.ts`、`research-cache.ts` 改經它取資料：公開版回傳合成的 `Response`，錯誤訊息同時放在 `message` 與 `detail`；standalone 照舊打網路。驗證：既有的離線 E2E（`npm run test:e2e:offline`）與 `research-cache.node.cjs` 全數通過。
+- [x] 2.3 （2026-10-23：typecheck 通過，standalone 離線 E2E 64 passed；收藏按鈕在元件層隱藏，公司頁以「比較這家公司」取代「近期資訊」，題材第三個分頁在公開版改名為「里程碑與追蹤」）公開版的 UI 調整：
   - 導覽只留地圖、供應鏈、公司、題材、公司比較。
   - 環節頁隱藏事件區塊與覆蓋連結。
   - 題材頁隱藏指標、判讀歷史、事件與「待納入判讀」。
@@ -41,7 +41,7 @@
   - 版本提示改寫成「此公開版只收錄某日發布的版本」。
 
   驗證：`npm run typecheck` 通過；standalone 的離線 E2E 不受影響。
-- [ ] 2.4 調整路由：
+- [x] 2.4 （2026-10-23：standalone `npm run build` 通過，`/themes/[id]` 為 SSG、`/companies` 為新的靜態頁；離線 E2E 64 passed）調整路由：
   - `themes/[id]` 拆成 server page（提供 `generateStaticParams`）加上 client 元件。
   - 新增 `app/companies/page.tsx?ticker=`，公開版的 `companyUrl()` 改用 query 形式。
 

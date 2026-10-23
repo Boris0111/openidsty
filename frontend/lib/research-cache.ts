@@ -1,5 +1,6 @@
 /** Browser memory only. Public reader GETs; no admin/session/owner-preview data. */
 import type {ResearchEnvelope} from './research-api';
+import {readerFetch} from './reader-fetch';
 
 type Payload=ResearchEnvelope<unknown>;
 type Stored={payload:Payload;etag:string|null;expires:number;ttl:number};
@@ -39,7 +40,7 @@ export function acquireResearch(key:string,force=false){
     task={controller,users:0,promise:null as unknown as Promise<Stored>};
     const current=task;
     task.promise=(async()=>{
-      const response=await fetch(key,{cache:'no-store',credentials:'omit',signal:controller.signal,headers:cached?.etag?{'If-None-Match':cached.etag}:{}});
+      const response=await readerFetch(key,{cache:'no-store',credentials:'omit',signal:controller.signal,headers:cached?.etag?{'If-None-Match':cached.etag}:{}});
       let payload:Payload;
       if(response.status===304){
         if(!cached?.etag||response.headers.get('etag')!==cached.etag)throw new Error('目前無法確認資料，請重新讀取。');

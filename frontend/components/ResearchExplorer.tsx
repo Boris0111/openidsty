@@ -15,9 +15,11 @@ import {refreshResearch,resetDynamicResearch} from '@/lib/research-cache';
 import {ResearchReadStatus} from './ResearchReadStatus';
 import {ResearchWatchButton,ResearchWatchlist} from './ResearchWatch';
 import {ResearchChainIndex,ResearchChainStrip,ResearchChainView,ResearchCompanyChains} from './ResearchChain';
+import {PUBLIC_SNAPSHOT,snapshotDate} from '@/lib/public-snapshot';
 
 const collections:Record<string,string>={company:'companies',product:'products',segment:'segments',theme:'themes',role:'roles',concept:'concepts',application:'applications',research:'research'};
-const serviceNames:Record<string,string>={compare:'公司比較',observations:'傳聞觀察',watchlist:'此裝置收藏'};
+// The public snapshot has no observations feed and no watchlist update checks.
+const serviceNames:Record<string,string>=PUBLIC_SNAPSHOT?{compare:'公司比較'}:{compare:'公司比較',observations:'傳聞觀察',watchlist:'此裝置收藏'};
 
 export function ResearchExplorer() {
   const router=useRouter(),params=useSearchParams();
@@ -79,12 +81,13 @@ export function ResearchExplorer() {
   const crumbs=item?.kind==='company'?[{label:'公司',url:viewHref('companies')}]:[{label:'產業地圖',url:'/'},
     ...(item?.trail||[]).map(step=>({label:step.name,url:step.kind==='segment'?(from||step.url||'/'):href(step.id)}))];
   const updated=Boolean(queryRelease&&manifest.data&&manifest.data.release_id!==queryRelease);
-  const error=(!release?manifest.error:undefined)||detail.error||(params.has('view')&&!view&&!serviceView&&!chainsView?'找不到這個研究目錄，請從供應鏈或公司重新選擇。':!collection&&!view&&!serviceView&&!chainsView?'找不到這筆研究入口，請從搜尋或公司索引重新選擇。':undefined);
+  const error=(!release?manifest.error:undefined)||detail.error||(params.has('view')&&!view&&!serviceView&&!chainsView?(PUBLIC_SNAPSHOT?'公開版未收錄這個檢視，請從供應鏈或公司重新選擇。':'找不到這個研究目錄，請從供應鏈或公司重新選擇。'):!collection&&!view&&!serviceView&&!chainsView?'找不到這筆研究入口，請從搜尋或公司索引重新選擇。':undefined);
   const title=chainsView?'供應鏈':serviceView?serviceNames[serviceView]:view?directoryNames[view]:item?.kind==='application'?item.content.question||item.name:item?.name||'產業研究';
   const lead=chainsView?'從應用問題切入，依步驟找到產品，再看哪些公司有產品證據。':view?'從研究對象找到供應角色、條件與來源。':serviceView==='watchlist'?'查看你收藏的研究、數值與事件是否有實質更新。':item?.kind==='application'?item.summary:'閱讀角色、產品與可追溯的判斷依據。';
   return <div className="research-service">
-    <div className="rs-content">{!view&&!serviceView&&item&&<nav className="rs-breadcrumb" aria-label="研究位置"><ol>{crumbs.map(crumb=><li key={crumb.url}><Link href={crumb.url}>{crumb.label}</Link></li>)}<li aria-current="page">{item.name}</li></ol>{index&&<Link href={index}>回原目錄</Link>}</nav>}<div className="rs-intro"><div><h1>{title}</h1><p>{lead}</p></div><div className="rs-page-actions"><div>{serviceView!=='watchlist'&&<button onClick={()=>{navigator.clipboard?.writeText(window.location.href).then(()=>setCopied('連結已複製')).catch(()=>setCopied('可複製網址列分享'))}}>分享這份研究</button>}<button onClick={refreshResearch} aria-busy={manifest.loading||manifest.refreshing}>檢查更新</button>{item&&release&&!view&&!serviceView&&!chainsView&&!detail.loading&&<ResearchWatchButton key={item.id} kind={item.kind} id={item.id} name={item.name} release={release}/>}</div><span role="status">{copied}</span></div></div>
-    {(updated||manifest.refreshError||release&&manifest.error)&&<aside className="rs-update" aria-label="研究更新">{updated&&<><span>有新版研究可閱讀；目前仍保留你正在讀的版本。</span><button onClick={adopt}>載入新版研究</button></>}{(manifest.refreshError||release&&manifest.error)&&<span role="status">目前無法確認研究更新，已載入的內容保留。</span>}</aside>}
+    <div className="rs-content">{!view&&!serviceView&&item&&<nav className="rs-breadcrumb" aria-label="研究位置"><ol>{crumbs.map(crumb=><li key={crumb.url}><Link href={crumb.url}>{crumb.label}</Link></li>)}<li aria-current="page">{item.name}</li></ol>{index&&<Link href={index}>回原目錄</Link>}</nav>}<div className="rs-intro"><div><h1>{title}</h1><p>{lead}</p></div><div className="rs-page-actions"><div>{serviceView!=='watchlist'&&<button onClick={()=>{navigator.clipboard?.writeText(window.location.href).then(()=>setCopied('連結已複製')).catch(()=>setCopied('可複製網址列分享'))}}>分享這份研究</button>}{!PUBLIC_SNAPSHOT&&<button onClick={refreshResearch} aria-busy={manifest.loading||manifest.refreshing}>檢查更新</button>}{item&&release&&!view&&!serviceView&&!chainsView&&!detail.loading&&<ResearchWatchButton key={item.id} kind={item.kind} id={item.id} name={item.name} release={release}/>}</div><span role="status">{copied}</span></div></div>
+    {(updated||manifest.refreshError||release&&manifest.error)&&<aside className="rs-update" aria-label="研究更新">{updated&&(PUBLIC_SNAPSHOT?<><span>此公開版只收錄 {snapshotDate()} 發布的研究版本；這個連結指定的版本不在公開版內。</span><button onClick={adopt}>改看公開版本</button></>
+        :<><span>有新版研究可閱讀；目前仍保留你正在讀的版本。</span><button onClick={adopt}>載入新版研究</button></>)}{(manifest.refreshError||release&&manifest.error)&&<span role="status">目前無法確認研究更新，已載入的內容保留。</span>}</aside>}
     {[detail,graph].some(result=>result.refreshError)&&<ResearchReadStatus state={{refreshError:'unavailable',refresh:refreshResearch}}/>}
     {error&&<div className="rs-error" role="alert"><p>{error}</p><button onClick={()=>window.location.reload()}>重新讀取</button><Link href="/">回產業地圖</Link></div>}
     {!release&&!error&&<p role="status">正在讀取研究…</p>}
@@ -97,13 +100,13 @@ export function ResearchExplorer() {
     {!params.has('view')&&item&&item.kind!=='company'&&item.chains&&<ResearchChainStrip chains={item.chains} href={href}/>}
     {!params.has('view')&&release&&collection&&<div className="rs-workspace rs-single">
       <article className="rs-detail" ref={panel} tabIndex={-1} aria-label="選中研究內容" aria-busy={detail.loading}>
-        {item?.kind==='company'&&<p className="rf-jump"><a href="#company-data">查看近期資訊</a></p>}
+        {item?.kind==='company'&&(PUBLIC_SNAPSHOT?<p className="rf-jump"><Link href={serviceHref('compare',{company_ids:item.id})}>比較這家公司</Link></p>:<p className="rf-jump"><a href="#company-data">查看近期資訊</a></p>)}
         {item?.kind==='company'&&item.chains&&<ResearchCompanyChains chains={item.chains} href={href}/>}
         {detail.loading?<p role="status">正在讀取這份研究…</p>:item&&<ResearchDetailContent key={release+':'+item.id} item={item} href={href} companies={companies} products={products} release={release}/>}
       </article>
       <div className="rs-network-area">{graph.data?<ResearchNetwork graph={graph.data.data} onSelect={navigate} selectedEdge={params.get('edge')} onEdge={selectEdge}/>:graph.error?<p role="alert">{graph.error}</p>:<p role="status">正在讀取關係…</p>}</div>
     </div>}
-    {!params.has('view')&&item?.kind==='company'&&release&&<section className="rf-company-data" id="company-data"><div className="rs-section-top"><h2>{item.name}：近期資訊</h2><Link href={serviceHref('compare',{company_ids:item.id})}>比較這家公司</Link></div><nav className="rs-directory-tabs" aria-label="公司近期資訊">{Object.entries({events:'官方與報導',observations:'傳聞觀察'}).map(([key,name])=><button key={key} aria-pressed={panelName===key} onClick={()=>companyPanel(key)}>{name}</button>)}</nav><ResearchEvents key={item.id+':'+panelName} entity={item.id} release={release} rumors={panelName==='observations'} href={href}/></section>}
+    {!PUBLIC_SNAPSHOT&&!params.has('view')&&item?.kind==='company'&&release&&<section className="rf-company-data" id="company-data"><div className="rs-section-top"><h2>{item.name}：近期資訊</h2><Link href={serviceHref('compare',{company_ids:item.id})}>比較這家公司</Link></div><nav className="rs-directory-tabs" aria-label="公司近期資訊">{Object.entries({events:'官方與報導',observations:'傳聞觀察'}).map(([key,name])=><button key={key} aria-pressed={panelName===key} onClick={()=>companyPanel(key)}>{name}</button>)}</nav><ResearchEvents key={item.id+':'+panelName} entity={item.id} release={release} rumors={panelName==='observations'} href={href}/></section>}
     </div>
   </div>;
 }

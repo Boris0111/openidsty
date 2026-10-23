@@ -3,11 +3,14 @@ import {useEffect,useState,ReactNode,useRef,Suspense} from 'react';
 import Link from 'next/link';
 import {usePathname,useSearchParams} from 'next/navigation';
 import {useResearch,ResearchPage} from '@/lib/research-api';
+import {PUBLIC_SNAPSHOT,snapshotDate} from '@/lib/public-snapshot';
 
 const kindNames:Record<string,string>={segment:'環節',theme:'題材',application:'供應鏈',role:'供應角色',product:'產品',company:'公司',concept:'術語',research:'研究'};
 // One reading shell for the industry map, themes, events and /next research.
 export const readerSections=[['map','/','產業地圖'],['chains','/next?view=chains','供應鏈'],['companies','/next?view=companies','公司'],
   ['themes','/themes','題材'],['compare','/next?view=compare','公司比較'],['events','/events','事件'],['watchlist','/next?view=watchlist','收藏']] as const;
+// The public snapshot carries research structure only: no event feed and no watchlist update checks.
+const visibleSections=PUBLIC_SNAPSHOT?readerSections.filter(([key])=>key!=='events'&&key!=='watchlist'):readerSections;
 
 export function readerSection(pathname:string,params:URLSearchParams){
   if(pathname==='/')return 'map';
@@ -46,9 +49,10 @@ function Search() {
 function Navigation() {
   const pathname=usePathname(),params=useSearchParams();
   const current=readerSection(pathname,params);
-  return <nav aria-label="主要導覽">{readerSections.map(([key,url,label])=><Link key={key} href={url} aria-current={current===key?'page':undefined}>{label}</Link>)}</nav>
+  return <nav aria-label="主要導覽">{visibleSections.map(([key,url,label])=><Link key={key} href={url} aria-current={current===key?'page':undefined}>{label}</Link>)}</nav>
 }
 
 export function Shell({children}:{children:ReactNode}) {
-  return <><header className="site-header"><Link href="/" className="brand" aria-label="IndustryFlow 產業地圖首頁"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 8h12v16h8M6 8v16h12M18 8h8"/><circle cx="6" cy="8" r="3"/><circle cx="6" cy="24" r="3"/><circle cx="18" cy="16" r="3"/><circle cx="26" cy="8" r="3"/><circle cx="26" cy="24" r="3"/></svg><span>IndustryFlow<small>半導體與 AI 產業研究</small></span></Link><Suspense fallback={<nav aria-label="主要導覽"/>}><Navigation/><Search/></Suspense></header><main id="main">{children}</main><footer className="site-footer"><span>從產業結構，理解每一則資訊。</span><span>研究保留查核基準，事件持續自動更新。媒體摘錄與官方統計可回溯原始來源。</span><span>結構推導標為有條件推論；來源涵蓋與實際資料覆蓋分開呈現。</span></footer></>
+  return <><header className="site-header"><Link href="/" className="brand" aria-label="IndustryFlow 產業地圖首頁"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 8h12v16h8M6 8v16h12M18 8h8"/><circle cx="6" cy="8" r="3"/><circle cx="6" cy="24" r="3"/><circle cx="18" cy="16" r="3"/><circle cx="26" cy="8" r="3"/><circle cx="26" cy="24" r="3"/></svg><span>IndustryFlow<small>半導體與 AI 產業研究</small></span></Link><Suspense fallback={<nav aria-label="主要導覽"/>}><Navigation/><Search/></Suspense></header><main id="main">{children}</main>{PUBLIC_SNAPSHOT?<footer className="site-footer"><span>研究快照：{snapshotDate()} 發布的研究版本。</span><span>本站內容為產業結構研究，不構成投資建議。</span><span>結構推導標為有條件推論；證據程度分為有明確證據支持、有條件推論與仍待核實。</span></footer>
+    :<footer className="site-footer"><span>從產業結構，理解每一則資訊。</span><span>研究保留查核基準，事件持續自動更新。媒體摘錄與官方統計可回溯原始來源。</span><span>結構推導標為有條件推論；來源涵蓋與實際資料覆蓋分開呈現。</span></footer>}</>
 }

@@ -1,6 +1,7 @@
 'use client';
 import {useEffect,useState,useRef} from 'react';
 import {subscribeRequest,requestKey,empty,type Snapshot} from './request-cache';
+import {PUBLIC_SNAPSHOT} from './public-snapshot';
 export function useApi<T>(path:string|null){
   const subscriptionRef=useRef<ReturnType<typeof subscribeRequest>|null>(null);
   const key=path?requestKey(path):'';const [state,setState]=useState<{key:string;value:Snapshot}>({key:'',value:empty});
@@ -12,7 +13,8 @@ export function useApi<T>(path:string|null){
   const value=state.key===key?state.value:empty;
   return {data:value.data as T|null,error:value.error,loading:key?value.loading:false,retry:()=>subscriptionRef.current?.retry()};
 }
-export const companyUrl=(ticker:string)=>`/companies/${encodeURIComponent(ticker)}`;
+// Static files cannot be named after tickers such as PRIVATE:shinko, so the public snapshot uses the query form.
+export const companyUrl=(ticker:string)=>PUBLIC_SNAPSHOT?'/companies?'+new URLSearchParams({ticker}):`/companies/${encodeURIComponent(ticker)}`;
 export const segmentUrl=(id:string,layer:string)=>`/?layer=${layer}&segment=${id}`;
 export {lifecycleLabel as themeStatus} from './display';
 export function dateLabel(value:string|null,precision='minute') {
