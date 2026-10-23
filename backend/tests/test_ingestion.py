@@ -15,12 +15,13 @@ def test_tw_json_csv_basis_zero_and_shell():
     events,financials=parse_tw(fixture('tw-revenue.json'),'revenue','https://official.test/revenue',{'2330':'2330.TW'})
     assert financials[0]['revenue']==100_000_000
     assert financials[0]['basis']=='monthly'
-    assert financials[0]['gross_margin'] is None
-    events,financials=parse_tw(fixture('tpex-financial.csv'),'financials','https://official.test/fin',{'6488':'6488.TWO'})
-    assert financials[0]['basis']=='ytd' and financials[0]['period']=='2026-Q2'
-    assert financials[0]['eps']==0 and financials[0]['gross_margin']==40
+    assert financials[0]['gross_margin'] is None and financials[0]['eps'] is None
+    assert events[0]['kind']=='financials' and events[0]['title'].endswith('月營收')
+    # Quarterly statements were removed with company financials; only revenue remains.
+    with pytest.raises(ValueError,match='公司財報已移除'):
+        parse_tw(fixture('tpex-financial.csv'),'financials','https://official.test/fin',{'6488':'6488.TWO'})
     with pytest.raises(ValueError,match='外殼'):
-        parse_tw('<html><div id="root"></div></html>','financials','https://test',{})
+        parse_tw('<html><div id="root"></div></html>','revenue','https://test',{})
 
 def test_ir_content_preview_and_shell():
     ref=date(2026,10,8)
@@ -59,14 +60,14 @@ def test_idempotence_source_isolation_and_primary_issuer(db):
     assert ingest_one(db,bad,None,companies,fetch_good)['new_count']==2
 
 def test_failure_preserves_history_and_nulls(db):
-    defs=register_sources(db); d=next(d for d in defs if d['id']=='twse-financials'); companies=list(db.scalars(select(Company)))
-    csv=fixture('tpex-financial.csv').replace('6488','2330').replace('環球晶','台積電')
-    def fetch(*args):return parse_tw(csv,'financials','https://official.test',{'2330':'2330.TW'})
+    defs=register_sources(db); d=next(d for d in defs if d['id']=='twse-revenue'); companies=list(db.scalars(select(Company)))
+    revenue=fixture('tw-revenue.json').replace('"20.5"','""')
+    def fetch(*args):return parse_tw(revenue,'revenue','https://official.test',{'2330':'2330.TW'})
     ingest_one(db,d,None,companies,fetch)
     f=db.scalar(select(Financial)); assert f.revenue_yoy is None
-    def changed(*args):return parse_tw(csv.replace(',1000,',',2000,'),'financials','https://official.test',{'2330':'2330.TW'})
+    def changed(*args):return parse_tw(revenue.replace('100,000','200,000'),'revenue','https://official.test',{'2330':'2330.TW'})
     ingest_one(db,d,None,companies,changed)
-    assert f.raw['previous_versions'][0]['revenue']==1_000_000
+    assert f.raw['previous_versions'][0]['revenue']==100_000_000
     assert db.scalar(select(func.count()).select_from(Financial))==1
     def fail(*args):raise ValueError('格式改變')
     ingest_one(db,d,None,companies,fail)
@@ -83,10 +84,12 @@ def test_sec_exact_ranges_and_restated_values():
     }}}
     records=parse_sec_facts(facts,'NVDA','https://sec.test',date(2026,10,8))[1]
     quarter=next(f for f in records if f['period']=='2026-04-01/2026-06-30')
-    assert quarter['revenue_yoy']==100 and quarter['gross_margin']==75
+    assert quarter['revenue_yoy']==100
     assert any(f['basis']=='ytd' for f in records)
-    # EPS from another accession cannot silently contaminate a revenue record.
-    assert quarter['eps'] is None
+    # Gross profit and EPS are ignored: only revenue feeds theme proxy indicators.
+    assert all(f['gross_margin'] is None and f['eps'] is None for f in records)
+    # The EPS-only accession no longer produces its own record for the same quarter.
+    assert len([f for f in records if f['period']=='2026-04-01/2026-06-30'])==1
 
 def test_sec_submissions_date_and_issuer():
     payload={'cik':1045810,'name':'NVIDIA','filings':{'recent':{'form':['8-K','4'],'filingDate':['2026-10-07','2026-10-07'],'accessionNumber':['0001045810-26-000001','0002'],'primaryDocument':['announcement.htm','insider.xml']}}}

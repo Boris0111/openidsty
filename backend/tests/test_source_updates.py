@@ -8,8 +8,7 @@ from app.source_http import SourceHttp,SourceDeferred,RetryExhausted,RequestBudg
 from app.source_updates import queue,process,get_job,interval
 from app.source_ingestion import nature
 from app.models import Event
-from test_financial_imports import imports
-from test_research_auth import owner
+from test_research_auth import owner,login,ORIGIN
 
 UTC=timezone.utc
 BODY=Path(__file__).parent/'fixtures/official-tw-20261017/twse-revenue.selected.json'
@@ -79,8 +78,36 @@ def test_official_report_rumor_and_frequency_are_distinct():
 
 
 @pytest.fixture
-def source_context(imports,monkeypatch,request):
-    client,engine,company,headers=imports
+def published_company(owner):
+    client,engine=owner
+    identifier=uuid.uuid4();company='company-source-'+uuid.uuid4().hex
+    with engine.begin() as connection:
+        old=connection.execute(text('SELECT release_id FROM research.release_head')).scalar()
+        connection.execute(text('''INSERT INTO research.research_releases(release_id,git_commit,schema_version,content_hash,status,reason)
+            VALUES(:id,:commit,'research-v1',:hash,'preparing','Synthetic source baseline')'''),
+            {'id':identifier,'commit':uuid.uuid4().hex+'0'*8,'hash':uuid.uuid4().hex*2})
+        connection.execute(text("INSERT INTO research.entities VALUES(:id,'company')"),{'id':company})
+        connection.execute(text('''INSERT INTO research.entity_snapshots(release_id,entity_id,kind,name,summary,markdown,data,semantic_hash)
+            VALUES(:release,:id,'company','Synthetic company','Synthetic only','Synthetic only','{}',:hash)'''),
+            {'release':identifier,'id':company,'hash':'a'*64})
+        connection.execute(text("UPDATE research.research_releases SET status='published',published_at=now() WHERE release_id=:id"),{'id':identifier})
+        connection.execute(text('''INSERT INTO research.release_head(singleton,release_id,generation) VALUES(true,:id,1)
+            ON CONFLICT(singleton) DO UPDATE SET release_id=:id,generation=research.release_head.generation+1'''),{'id':identifier})
+    response=login(client);assert response.status_code==200
+    headers={'Origin':ORIGIN,'X-CSRF-Token':response.json()['csrf_token']}
+    yield client,engine,company,headers
+    with engine.begin() as connection:
+        if old:connection.execute(text('UPDATE research.release_head SET release_id=:id WHERE singleton'),{'id':old})
+        else:connection.execute(text('DELETE FROM research.release_head'))
+
+
+def revenue_rows(connection,source_id):
+    return connection.execute(text("SELECT count(*) FROM public.financials WHERE ticker='2330.TW' AND source_id=:id"),{'id':source_id}).scalar_one()
+
+
+@pytest.fixture
+def source_context(published_company,monkeypatch):
+    client,engine,company,headers=published_company
     from app import source_updates
     monkeypatch.setattr(source_updates,'writer_engine',lambda:engine)
     monkeypatch.delenv('PREFECT_API_URL',raising=False)
@@ -94,9 +121,6 @@ def source_context(imports,monkeypatch,request):
         new=uuid.uuid4()
         connection.execute(text("INSERT INTO research.research_releases(release_id,git_commit,schema_version,content_hash,status,reason) VALUES(:id,:git,'research-v1',:hash,'preparing','Synthetic source mappings')"),{'id':new,'git':uuid.uuid4().hex+'0'*8,'hash':uuid.uuid4().hex*2})
         connection.execute(text("INSERT INTO research.entity_snapshots SELECT :new,entity_id,kind,name,summary,markdown,data,semantic_hash,reviewed FROM research.entity_snapshots WHERE release_id=:old"),{'new':new,'old':release})
-        if hasattr(request,'param'):
-            connection.execute(text("UPDATE research.entity_snapshots SET data=CAST(:data AS jsonb) WHERE release_id=:id AND entity_id=:company"),
-                {'id':new,'company':company,'data':json.dumps({'financial-reporting':request.param})})
         connection.execute(text("INSERT INTO research.legacy_mappings VALUES(:release,'company','2330.TW',:company)"),{'release':new,'company':company})
         connection.execute(text("UPDATE research.research_releases SET status='published',published_at=now() WHERE release_id=:id"),{'id':new})
         connection.execute(text('UPDATE research.release_head SET release_id=:id WHERE singleton'),{'id':new})
@@ -128,7 +152,7 @@ def test_success_failure_due_and_official_records_do_not_publish_research(source
     with engine.connect() as connection:head=connection.execute(text('SELECT release_id FROM research.release_head')).scalar_one()
     result=process(key,engine,factory())
     assert result['status']=='success',result
-    assert result['result']['financial']['new_revisions']==3
+    assert 'financial' not in result['result'] and result['result']['new_count']>0
     assert result['result']['mapping_release_id']==str(head)
     details=client.get('/api/admin/sources/'+good['id'])
     assert details.status_code==200 and details.json()['declared']['frequency_hours']==24
@@ -136,14 +160,15 @@ def test_success_failure_due_and_official_records_do_not_publish_research(source
     with engine.begin() as connection:
         assert queue(connection,good) is None
         assert connection.execute(text('SELECT release_id FROM research.release_head')).scalar_one()==head
-        assert connection.execute(text('SELECT count(*) FROM research.financial_groups WHERE company_id=:id'),{'id':company}).scalar_one()==3
+        rows=revenue_rows(connection,good['id']);assert rows>0
     # A later manual run sees the same values; no fake observation revisions.
     response=client.post('/api/admin/sources/'+good['id']+'/refresh',headers=headers)
     assert response.status_code==202,response.text
     duplicate=client.post('/api/admin/sources/'+good['id']+'/refresh',headers=headers)
     assert duplicate.json()['job_id']==response.json()['job_id']
     repeated=process(response.json()['job_id'],engine,factory())
-    assert repeated['result']['financial']['new_revisions']==0
+    assert repeated['result']['new_count']==0
+    with engine.connect() as connection:assert revenue_rows(connection,good['id'])==rows
     client.cookies.clear();assert client.get('/api/admin/source-jobs/'+str(key)).status_code==401
     assert client.get('/api/admin/sources/'+good['id']).status_code==401
 
@@ -164,14 +189,14 @@ def test_429_provider_backoff_survives_new_client_and_other_source_completes(sou
 
 
 def test_shell_failure_does_not_replace_last_valid_values(source_context):
-    _,engine,company,_,make,factory=source_context
+    _,engine,_,_,make,factory=source_context
     definition,key=make();assert process(key,engine,factory())['status']=='success'
     with engine.begin() as connection:
         new=queue(connection,definition,True)
-        before=connection.execute(text('SELECT count(*) FROM research.financial_raw_facts WHERE company_id=:id'),{'id':company}).scalar_one()
+        before=revenue_rows(connection,definition['id'])
     assert process(new['job_id'],engine,factory(body=b'<html><script>shell</script></html>'))['status']=='failed'
     with engine.connect() as connection:
-        assert connection.execute(text('SELECT count(*) FROM research.financial_raw_facts WHERE company_id=:id'),{'id':company}).scalar_one()==before
+        assert revenue_rows(connection,definition['id'])==before
 
 
 def test_exhausted_budget_is_not_reset_by_a_new_worker(source_context):
@@ -182,22 +207,39 @@ def test_exhausted_budget_is_not_reset_by_a_new_worker(source_context):
     with pytest.raises(RetryExhausted):RequestBudget(engine,key).reserve(definition['url'])
 
 
-@pytest.mark.parametrize('source_context,expected',[
-    ({'fiscal-year-end':'12-31','confidence':'well-supported','calendar-valid-from':'2025-01-01','calendar-valid-to':None},True),
-    ({'fiscal-year-end':'12-31','confidence':'inference','calendar-valid-from':'2025-01-01','calendar-valid-to':None},False),
-    ({'fiscal-year-end':'12-31','confidence':'well-supported','calendar-valid-from':'2027-01-01','calendar-valid-to':None},False)
-],indirect=['source_context'])
-def test_published_calendar_is_required_for_actual_quarter_dates(source_context,expected):
-    _,engine,company,_,make,factory=source_context
-    _,key=make(kind='financials')
-    body=(BODY.parent/'twse-income.selected.json').read_bytes()
-    result=process(key,engine,factory(body=body))
-    assert result['status']==('success' if expected else 'partial'),result
-    with engine.connect() as connection:
-        rows=connection.execute(text('SELECT period_start,period_end,basis FROM research.financial_groups WHERE company_id=:id'),{'id':company}).all()
-        assert bool(rows)==expected
-        if expected:assert all(row.period_start.isoformat()=='2026-01-01' and row.period_end.isoformat()=='2026-06-30' and row.basis=='ytd' for row in rows)
-    if not expected:assert result['result']['financial']['unresolved'][0]['reason']=='calendar-unverified'
+def financial_store_counts(connection):
+    # Empty once migration 0017 drops the store; revenue must never depend on it.
+    tables=connection.execute(text("SELECT table_name FROM information_schema.tables WHERE table_schema='research' AND table_name LIKE 'financial%'")).scalars().all()
+    return {name:connection.execute(text(f'SELECT count(*) FROM research.{name}')).scalar_one() for name in tables}
+
+
+def test_revenue_source_projects_theme_proxy_without_financial_store(source_context):
+    _,engine,_,_,make,factory=source_context
+    definition,key=make()
+    theme,indicator='theme-proxy-'+uuid.uuid4().hex[:8],'proxy-revenue-'+uuid.uuid4().hex[:8]
+    # Same shape as data/theme-indicators.yaml proxy definitions.
+    data={'id':indicator,'name':'Synthetic proxy','kind':'proxy','entity':'2330.TW','scope':'公司整體單月營收','limitations':'合成測試',
+        'unit':'amount','currency':'TWD','frequency':'monthly','basis':'monthly','source_id':definition['id'],
+        'dataset':'synthetic-monthly-revenue','measure':'revenue'}
+    with engine.begin() as connection:
+        before=financial_store_counts(connection)
+        connection.execute(text("INSERT INTO public.themes(id,data,prose,active) VALUES(:id,'{}','',true)"),{'id':theme})
+        connection.execute(text("INSERT INTO public.indicators(id,name,kind,unit,frequency,basis,data) VALUES(:id,'Synthetic proxy','proxy','amount','monthly','monthly',CAST(:data AS json))"),
+            {'id':indicator,'data':json.dumps(data)})
+        connection.execute(text('INSERT INTO public.theme_indicators(theme_id,indicator_id) VALUES(:theme,:id)'),{'theme':theme,'id':indicator})
+    try:
+        result=process(key,engine,factory())
+        assert result['status']=='success' and result['result']['indicator_changes']>=1,result
+        with engine.connect() as connection:
+            rows=connection.execute(text('SELECT entity,basis,currency FROM public.indicator_observations WHERE indicator_id=:id'),{'id':indicator}).all()
+            assert rows and all(row==('2330.TW','monthly','TWD') for row in rows)
+            assert financial_store_counts(connection)==before
+    finally:
+        # Every revenue run projects all proxy indicators; never leave this one for other tests.
+        with engine.begin() as connection:
+            for table,column in [('indicator_observations','indicator_id'),('theme_indicators','indicator_id'),('indicators','id')]:
+                connection.execute(text(f'DELETE FROM public.{table} WHERE {column}=:id'),{'id':indicator})
+            connection.execute(text('DELETE FROM public.themes WHERE id=:id'),{'id':theme})
 
 
 def test_source_changed_to_manual_does_not_run_queued_definition(source_context):
@@ -277,7 +319,7 @@ print(result['status'],result['requests'],flush=True)
     assert resumed.returncode==0,resumed.stderr
     assert resumed.stdout.strip()=='success 2'
     with engine.connect() as connection:
-        assert connection.execute(text('''SELECT count(*) FROM research.financial_observations o JOIN research.financial_groups g USING(group_id) WHERE company_id=:id'''),{'id':company}).scalar_one()==3
+        assert revenue_rows(connection,definition['id'])>0
 
 
 def test_existing_event_reindex_is_bounded_repeatable_and_never_fetches(source_context):

@@ -12,9 +12,9 @@
 
 ## 3. 營收路徑改接（題材代理指標不中斷）
 
-- [ ] 3.1 `connectors.parse_tw` 只接受 `announcements` 與 `revenue`，傳入 `financials` 時明確報錯；`parse_sec_facts` 只解析 revenue tag，「是否保留」與「重編排序」只看 revenue。更新 `test_ingestion.py` 中 kind=financials 與 SEC 毛利／EPS 的斷言：改為測試報錯，並測試只輸出營收。
-- [ ] 3.2 `source_ingestion.ingest_definition` 移除 TW 與 SEC 的財務分支，`revenue` 與 `sec-facts` 改走 `connectors.fetch_source`；營收來源成功後執行 `project_financials`，不再依賴 canonical。新增測試：以 `fixtures/tw-revenue.json` 與 SEC fixture 跑單一來源更新，確認代理指標出現對應期別的觀測，而且過程完全不讀寫任何 `research.financial_*` 表。
-- [ ] 3.3 `test_financial_indicators.py`、`test_source_updates.py` 改用只有營收的 fixture，移除對 `result['financial']`、`financial_groups`、`financial_raw_facts`、`financial_observations` 的斷言，保留排程、重試與來源隔離的測試；`pytest backend/tests` 全數通過。
+- [x] 3.1 `connectors.parse_tw` 只接受 `announcements` 與 `revenue`，傳入 `financials` 時明確報錯；`parse_sec_facts` 只解析 revenue tag，「是否保留」與「重編排序」只看 revenue。更新 `test_ingestion.py` 中 kind=financials 與 SEC 毛利／EPS 的斷言：改為測試報錯，並測試只輸出營收。
+- [x] 3.2 （2026-10-23：在臨時、獨立的 PostgreSQL 容器上，以 worktree 的程式碼跑 `test_source_updates.py`，16 passed，重跑仍 16 passed；新增 `test_revenue_source_projects_theme_proxy_without_financial_store`。不使用 `research_lab.py pg-check`，因為它會以 worktree 的程式碼覆蓋正式服務的 `industryflow-research-api:dev` image）`source_ingestion.ingest_definition` 移除 TW 與 SEC 的財務分支，`revenue` 與 `sec-facts` 改走 `connectors.fetch_source`；營收來源成功後執行 `project_financials`，不再依賴 canonical。新增測試：以 `fixtures/tw-revenue.json` 與 SEC fixture 跑單一來源更新，確認代理指標出現對應期別的觀測，而且過程完全不讀寫任何 `research.financial_*` 表。
+- [x] 3.3 （2026-10-23：`test_financial_indicators.py` 原本就只走舊營收路徑，不需修改，2 passed；`test_source_updates.py` 移除 `test_financial_imports` 依賴，改用自有的 `published_company` fixture，刪除季度財年測試，營收列依來源 id 計數）`test_financial_indicators.py`、`test_source_updates.py` 改用只有營收的 fixture，移除對 `result['financial']`、`financial_groups`、`financial_raw_facts`、`financial_observations` 的斷言，保留排程、重試與來源隔離的測試；`pytest backend/tests` 全數通過。
 
 ## 4. 公司比較拆分
 
