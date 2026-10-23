@@ -80,7 +80,7 @@
   - 被移除的 4 個來源在後台的呈現不誤導（處理 design 的 Open Question）。
 
   結果記錄在 `docs/research-acceptance.md` 新的一節。
-- [ ] 9.3 依 AGENTS.md 在 branch 上執行 `/opsx:archive`，同步 10 份主 spec，CI 通過後才交給維護者 merge。
+- [x] 9.3 （2026-10-23：在 branch 上 archive，10 份主 spec 同步；PR 與 CI 結果見 PR 說明）依 AGENTS.md 在 branch 上執行 `/opsx:archive`，同步 10 份主 spec，CI 通過後才交給維護者 merge。
 
 ## Workflow follow-up
 
