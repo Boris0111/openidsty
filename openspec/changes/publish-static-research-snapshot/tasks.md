@@ -69,8 +69,8 @@
   - 390px 寬度不水平溢出。
 
   建置與爬頁任一失敗，`build:static` 就以非零結束。驗證：`npm run test:e2e:static` 通過。
-- [ ] 3.4 CI 加上 `build:static`（fixture 快照）與 `test:e2e:static` 兩個步驟。驗證：PR 的 CI 通過。
-- [ ] 3.5 新增 `frontend/scripts/snapshot-parity.mjs`：讀一份快照，逐一比對轉接層與正式 API（`http://127.0.0.1:8010`）的結果。
+- [x] 3.4 （2026-10-23：`221fca7` 與 `d0e6c08` 的 CI 都 success；同一步驟另外執行 `npm run test:unit`）CI 加上 `build:static`（fixture 快照）與 `test:e2e:static` 兩個步驟。驗證：PR 的 CI 通過。
+- [x] 3.5 （2026-10-23：正式資料 6,020 次比對 0 差異，詳見 `docs/research-acceptance.md` 第十節；研究詳情與關係圖也逐檔比對）新增 `frontend/scripts/snapshot-parity.mjs`：讀一份快照，逐一比對轉接層與正式 API（`http://127.0.0.1:8010`）的結果。
   - 搜尋：所有 alias、1 到 2 字前綴、英文 token。
   - 目錄：所有單一條件，加上抽樣的組合條件與分頁。
   - 比較：抽樣組合。
@@ -79,7 +79,7 @@
 
 ## 4. 文件與正式服務演練
 
-- [ ] 4.1 新增 `docs/public-snapshot.md`，並更新 README 與 AGENTS.md 中「只綁本機」的描述（指向公開快照）。文件內容包括：
+- [x] 4.1 （2026-10-23：4.2 依文件執行 `up`、`public-snapshot`、`build:static`、`snapshot-parity.mjs` 全部成功；部署指令在 4.3 驗證）新增 `docs/public-snapshot.md`，並更新 README 與 AGENTS.md 中「只綁本機」的描述（指向公開快照）。文件內容包括：
   - 公開內容邊界。
   - 匯出 → 建置 → parity → 部署的步驟。
   - Cloudflare Pages 與 Netlify 的直接上傳方式。
@@ -87,7 +87,7 @@
   - 外洩掃描與第一次部署前的確認事項。
 
   驗證：文件中的指令在 4.2 照著執行成功。
-- [ ] 4.2 live drill：在主 checkout 切到 PR branch（先徵得維護者同意），對正式研究版本執行以下步驟，並記錄到 `docs/research-acceptance.md` 新的一節：
+- [x] 4.2 （2026-10-23：在主 checkout 的 `d0e6c08` 執行。匯出 870 檔，重跑逐位元組相同；建置 953 檔，爬頁 398 passed；parity 0 差異；外洩掃描沒有發現；停機 3 分鐘時公開版照常閱讀；結果記錄在 `docs/research-acceptance.md` 第十節）live drill：在主 checkout 切到 PR branch（先徵得維護者同意），對正式研究版本執行以下步驟，並記錄到 `docs/research-acceptance.md` 新的一節：
   - `research_lab.py public-snapshot`。
   - `build:static`。
   - 對所有實體頁爬頁，確認沒有缺檔、沒有 `/api` 請求。

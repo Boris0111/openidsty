@@ -372,3 +372,23 @@ change `harden-research-operations`（tasks 1.4、4.1）。PR #3 先於演練合
 - **10-22 重大訊息**（第八節的待確認項目）：已入庫，`twse-announcements` 13 筆、`tpex-announcements` 5 筆。
 
 **注意**：merge 前正式服務跑的是 PR branch 的程式，DB 已是 0017。這段期間不要從 `main` 重建 image：`main` 的 alembic 不認得 `0017`，initialize 會失敗，程式也仍會讀已刪除的財務表。若要退回，只能用步驟 1 的備份還原（0017 沒有 downgrade）。
+
+## 十、2026-10-23 公開研究快照的正式資料演練（publish-static-research-snapshot task 4.2）
+
+維護者同意後，在主 checkout 以 detached HEAD 切到 PR branch（`d0e6c08`）執行。依 `docs/public-snapshot.md` 的指令操作，沒有改動資料庫。
+
+| 步驟 | 結果 |
+|---|---|
+| 1. 重建 api／web | `research_lab.py up`，用 PR branch 的程式重建 image；其他服務不受影響 |
+| 2. 匯出 | `research_lab.py public-snapshot`：版本 `a5df290c…`（generation 4），870 個檔案、5.4 MB。各類筆數與資料庫相同：公司 95、產品 59、角色 56、環節 17、應用 12、題材 7、術語 7、研究 1、alias 713、圖解 14。另有引用文件 182 份、技術文件 4 份、代號 95 個。容器內外兩次外洩掃描都沒有發現 |
+| 3. 重跑匯出 | 除了 `export.json`，兩次輸出逐位元組相同 |
+| 4. 建置與爬頁 | `npm run build:static`：快照內的引用與圖解都存在；輸出 953 個檔案；外洩掃描沒有發現。爬頁 398 passed，8 項只適用合成快照而略過。所有實體頁、95 個代號頁、地圖、題材、目錄與比較都沒有缺檔，也沒有 `/api` 請求；每類頁面在 390px 寬度下都沒有水平溢出 |
+| 5. parity | `snapshot-parity.mjs` 和正式 API 比對 6,020 次，0 差異：搜尋 1,328 次（所有 alias、1～2 字前綴、英文 token，跨頁合併比對）、公司搜尋 100 次、目錄 3,590 次（每個單一條件、兩兩組合與 200 個三條件抽樣，含分頁）、比較 303 次（含不合法輸入）、resolve 191 次、研究詳情 254 次、關係圖 254 次。抽查確認比對的是有內容的結果，例如「台積」命中台積電的 3 個 alias、台股公司 49 家 |
+| 6. 停機閱讀 | 16:01:43–16:04:45 UTC 停止 worker、prefect、web、api 與 db，API 與網站都無法連線。期間公開版搜尋「台積」得到台積電，比較台積電與廣達、題材「液冷散熱」都正常，`/api` 請求 0 次；地圖、題材、目錄、比較、供應鏈共 53 頁爬頁通過 |
+| 7. 恢復 | 依序啟動 db、api、web、prefect、worker；研究版本仍為 `a5df290c…`（generation 4），網站 200。停機約 3 分鐘，沒有碰到每小時 :07 的排程 |
+
+**注意**：
+
+- **正式服務跑的是 PR branch**：merge 前 api、web 跑的是 PR branch 的程式；worker、prefect 是重啟原容器，仍是舊 image（`88e0440c…`）。
+- **可以隨時從 `main` 重建**：這個 change 沒有 migration，從 `main` 重建 image 不會失敗，只是少了匯出模組。
+- **Next.js 的安全升級提示**：在 agent 環境中，`build:static` 每隔一次會因 Next.js 16.4.0 的安全升級提示中止，重跑即可。這次步驟 4 是第二次才通過。
