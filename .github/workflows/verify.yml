@@ -44,10 +44,11 @@ jobs:
       - name: Install locked frontend dependencies
         working-directory: frontend
         run: npm ci
-      - name: Typecheck and production build
+      - name: Typecheck, unit tests and production build
         working-directory: frontend
         run: |
           npm run typecheck
+          npm run test:unit
           npm run build
       - name: Install test browser
         working-directory: frontend
@@ -55,6 +56,14 @@ jobs:
       - name: Offline public navigation
         working-directory: frontend
         run: npm run test:e2e:offline
+      - name: Public static build from the synthetic snapshot
+        working-directory: frontend
+        run: |
+          node scripts/write-fixture-snapshot.mjs
+          npm run build:static -- --snapshot .static-fixture/00000000-0000-4000-8000-000000000001 --no-crawl
+      - name: Public static pages
+        working-directory: frontend
+        run: npm run test:e2e:static
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
@@ -62,4 +71,5 @@ jobs:
           path: |
             frontend/test-results
             frontend/playwright-report/offline
+            frontend/playwright-report/static
           if-no-files-found: ignore

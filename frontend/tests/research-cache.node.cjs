@@ -6,7 +6,9 @@ const release='11111111-1111-4111-8111-111111111111';
 const data=value=>({release_id:release,schema_version:'research-v1',data:{value}});
 function environment(fetch){
   let now=1000;class Clock extends Date{static now(){return now}}
-  const exports={};vm.runInNewContext(source,{exports,URL,AbortController,DOMException,queueMicrotask,Date:Clock,fetch,window:{dispatchEvent(){}},Event});
+  // The app build's reader fetch is the network fetch; the public snapshot path is covered by snapshot-routes.node.cjs.
+  const require=name=>{if(name==='./reader-fetch')return {readerFetch:(...args)=>fetch(...args)};throw new Error('unexpected import '+name)};
+  const exports={};vm.runInNewContext(source,{exports,require,URL,AbortController,DOMException,queueMicrotask,Date:Clock,fetch,window:{dispatchEvent(){}},Event});
   return {...exports,advance:amount=>{now+=amount}};
 }
 function response(value,tag='"one"',control='public,max-age=86400'){return new Response(JSON.stringify(data(value)),{headers:{ETag:tag,'Cache-Control':control}})}

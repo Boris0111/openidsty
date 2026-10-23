@@ -1,3 +1,4 @@
+import {readerFetch} from './reader-fetch';
 export type Snapshot={data:unknown;error:string;loading:boolean};
 type Entry={state:Snapshot;listeners:Set<()=>void>;controller?:AbortController;expires:number;used:number;generation:number};
 const registry=new Map<string,Entry>();
@@ -12,7 +13,7 @@ function trim(){const unused=[...registry.entries()].filter(([,e])=>!e.listeners
 function begin(key:string,e:Entry){
   e.controller?.abort();const controller=new AbortController();e.controller=controller;const generation=++e.generation;
   e.state={...empty};e.listeners.forEach(fn=>fn());
-  fetch(key,{cache:'no-store',signal:controller.signal}).then(async response=>{const body=await response.json();if(!response.ok)throw new Error(typeof body.detail==='string'?body.detail:'資料暫時無法取得');return body;}).then(data=>{
+  readerFetch(key,{cache:'no-store',signal:controller.signal}).then(async response=>{const body=await response.json();if(!response.ok)throw new Error(typeof body.detail==='string'?body.detail:'資料暫時無法取得');return body;}).then(data=>{
     if(e.generation!==generation||controller.signal.aborted)return;e.state={data,error:'',loading:false};e.expires=Date.now()+ttl(key);
   }).catch(error=>{if(e.generation===generation&&!controller.signal.aborted){e.state={data:null,error:error.message,loading:false};e.expires=0;}}).finally(()=>{
     if(e.generation!==generation)return;e.controller=undefined;e.used=Date.now();e.listeners.forEach(fn=>fn());trim();

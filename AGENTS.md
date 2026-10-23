@@ -6,7 +6,7 @@
 
 建立半導體與 AI 伺服器產業的**結構化、可遍歷地圖**，讓「一則新聞 → 受影響的環節與公司」這個推導能自動完成。
 
-產業結構仍以 **Markdown ＋ agent skill** 維護，研究另可經網站草稿發布成版本。正式研究服務（`compose.research.yaml`）以 Next.js／Cytoscape.js、FastAPI、PostgreSQL 與 Prefect 呈現公司關係、官方事件與題材指標（公司財報已於 2026-10-23 移除），只綁本機 127.0.0.1、尚未對外公開；排程在 scheduler profile，重啟後自動恢復。啟動及資料維護見 `README.md` 與 `docs/research-lab.md`。行情、帳號與 AI 摘要不在範圍內。
+產業結構仍以 **Markdown ＋ agent skill** 維護，研究另可經網站草稿發布成版本。正式研究服務（`compose.research.yaml`）以 Next.js／Cytoscape.js、FastAPI、PostgreSQL 與 Prefect 呈現公司關係、官方事件與題材指標（公司財報已於 2026-10-23 移除），只綁本機 127.0.0.1；對外只公開不含伺服器的研究結構靜態快照（`docs/public-snapshot.md`）。排程在 scheduler profile，重啟後自動恢復。啟動及資料維護見 `README.md` 與 `docs/research-lab.md`。行情、帳號與 AI 摘要不在範圍內。
 
 ## 產物在哪
 

@@ -9,6 +9,7 @@ import re
 import secrets
 import socket
 import subprocess
+import sys
 import time
 from urllib.parse import urlsplit
 
@@ -342,9 +343,34 @@ def backup(secondary=None, keep_days=30):
             log.write(json.dumps({'stamp': stamp, 'status': status, 'seconds': round(time.time() - started, 1)}) + '\n')
 
 
+def snapshot_command(folder, release_id=None):
+    """Export from the running API image; the container sees only the output folder, never the host checkout."""
+    if release_id and not re.fullmatch('[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}', release_id):
+        raise ValueError('Use a full research release ID')
+    command = ['run', '--rm', '--no-deps', '-T', '-v', Path(folder).resolve().as_posix() + ':/export',
+               'api', 'python', '-m', 'app.public_snapshot', '--out', '/export']
+    return command + (['--release-id', release_id] if release_id else [])
+
+
+def public_snapshot(release_id=None):
+    folder = ROOT / 'public-snapshot'
+    folder.mkdir(exist_ok=True)
+    output = compose(*snapshot_command(folder, release_id)).decode('utf-8', errors='replace')
+    result = json.loads(output.strip().splitlines()[-1])
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'backend'))
+    from app.public_snapshot import leak_findings
+    # The container already scanned its own environment; this pass uses the host's secret file as well.
+    pairs = dict(line.split('=', 1) for line in ENV_FILE.read_text(encoding='utf-8').splitlines() if '=' in line and not line.startswith('#'))
+    findings = leak_findings(folder / result['folder'], [pairs[key] for key in SECRET_KEYS if pairs.get(key)])
+    if findings:
+        raise RuntimeError('Snapshot contains private content:\n' + '\n'.join(findings[:50]))
+    return {'folder': str(folder / result['folder']), 'published_at': result['published_at'], 'counts': result['counts']}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['setup', 'check', 'up', 'stop', 'start', 'restore', 'pg-check', 'rebuild-check', 'bootstrap', 'seed-git', 'reader-start', 'reader-stop', 'backup'])
+    parser.add_argument('action', choices=['setup', 'check', 'up', 'stop', 'start', 'restore', 'pg-check', 'rebuild-check', 'bootstrap', 'seed-git', 'reader-start', 'reader-stop', 'backup', 'public-snapshot'])
+    parser.add_argument('--release-id', help='public-snapshot: the published release to export (default: the current one)')
     parser.add_argument('--secondary', help='second storage device for the verified backup copy')
     parser.add_argument('--keep-days', type=int, default=30)
     parser.add_argument('--commit', default='HEAD')
@@ -405,6 +431,8 @@ def main():
         report['protected_services_unchanged'] = True
     elif args.action == 'backup':
         report['result'] = backup(args.secondary, args.keep_days)
+    elif args.action == 'public-snapshot':
+        report['result'] = public_snapshot(args.release_id)
     elif args.action == 'restore':
         result = restore(args.source_container, args.source_database)
         report['restored_tables'] = {k: int(v.split(':')[0]) for k, v in result['tables'].items()}

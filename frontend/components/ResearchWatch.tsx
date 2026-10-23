@@ -1,11 +1,15 @@
 'use client';
 import {useEffect,useState} from 'react';
 import Link from 'next/link';
+import {PUBLIC_SNAPSHOT} from '@/lib/public-snapshot';
 import {useResearchWatchlist,queryUpdates,isWatchKind,WATCH_LIMIT,IMPORT_LIMIT_BYTES,UpdateItem,UpdatesResult,WatchTarget,exportWatchlist,parseImport,ImportPreview,targetKey} from '@/lib/research-watchlist';
 
 const kindNames:Record<string,string>={company:'公司',product:'產品',theme:'題材',research:'研究頁'};
 
-export function ResearchWatchButton({kind,id,name,release}:{kind:string;id:string;name:string;release:string}){
+/** The public snapshot has no update checks, so it offers no watchlist. */
+export function ResearchWatchButton(props:{kind:string;id:string;name:string;release:string}){return PUBLIC_SNAPSHOT?null:<WatchButton {...props}/>}
+
+function WatchButton({kind,id,name,release}:{kind:string;id:string;name:string;release:string}){
   const watch=useResearchWatchlist();const [busy,setBusy]=useState(false);const [message,setMessage]=useState('');
   if(!isWatchKind(kind))return null;
   const followed=watch.has(kind,id);
