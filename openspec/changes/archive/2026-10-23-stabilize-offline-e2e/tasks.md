@@ -30,7 +30,7 @@
 ## 4. 整合驗證
 
 - [x] 4.1 （2026-10-23：`--repeat-each 3` 共 201 個測試全數通過；strict 驗證通過）執行完整的 `npm run test:e2e:offline` 3 次，全部通過；`openspec validate stabilize-offline-e2e --strict` 通過
-- [ ] 4.2 push 後確認 CI 通過，並在本 tasks 記錄 run ID
+- [x] 4.2 push 後確認 CI 通過，並在本 tasks 記錄 run ID（2026-10-23：commit `1d789dc` 的 run 39875962973 通過。修正前，本 branch 的規劃 commit 在 run 39843581599 又失敗於 `research-cache.spec.ts:38`，是 CI 第 3 次在這一行失敗；單一次通過不代表已歸零，見 Workflow follow-up）
 
 ## Workflow follow-up
 
