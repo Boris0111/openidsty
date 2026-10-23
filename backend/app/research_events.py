@@ -6,9 +6,8 @@ from fastapi import APIRouter,Depends,Query
 from sqlalchemy import text
 from .research_db import get_research_session
 from .research_http import ResearchError
-from .research_v2 import require_release,entity,envelope
+from .research_v2 import require_release,entity,envelope,as_of
 from .research_compile import digest
-from .research_financials import as_of
 
 router=APIRouter(prefix='/api/v2',tags=['research-events'])
 ORDER_DATE="COALESCE(e.published_at,e.reported_at,'0001-01-01 00:00:00+00'::timestamptz)"

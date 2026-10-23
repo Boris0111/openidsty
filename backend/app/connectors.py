@@ -52,11 +52,11 @@ def rows_from_text(text):
     return [{aliases.get(str(k).strip(),str(k).strip()):v for k,v in row.items()} for row in rows]
 
 def parse_tw(text, kind, url, tracked):
-    if kind not in ('announcements','revenue','financials'):
-        raise ValueError('此欄位需使用新版研究財務流程，legacy 財報不支援。')
+    if kind not in ('announcements','revenue'):
+        raise ValueError('公司財報已移除；只支援公告與月營收。')
     events,financials=[],[]
     rows=rows_from_text(text)
-    required={'announcements':'主旨','revenue':'資料年月','financials':'營業收入'}[kind]
+    required={'announcements':'主旨','revenue':'資料年月'}[kind]
     if '公司代號' not in rows[0] or required not in rows[0]:
         raise ValueError(f'官方表格缺少公司代號或 {required}')
     for r in rows:
@@ -75,47 +75,22 @@ def parse_tw(text, kind, url, tracked):
             digest=hashlib.sha256((title+body).encode()).hexdigest()[:16]
             events.append(dict(base,external_id=f'{ticker}:{published.isoformat()}:{digest}',title=f'{name}：{title}',body=body[:4000],kind='announcement'))
         else:
-            if kind=='revenue':
-                digits=re.sub(r'\D','',str(r.get('資料年月')))
-                if len(digits)!=5:
-                    raise ValueError('月營收資料年月格式變動')
-                year,month=int(digits[:3])+1911,int(digits[3:])
-                period=f'{year}-{month:02d}'
-                end=f'{period}-{calendar.monthrange(year,month)[1]:02d}'
-                revenue=number(r.get('營業收入-當月營收'))
-                yoy=number(r.get('營業收入-去年同月增減(%)'))
-                margin,eps,basis=None,None,'monthly'
-                label=f'{period} 月營收'
-            else:
-                year=int(r['年度']); year=year+1911 if year<1911 else year
-                quarter=int(r['季別'])
-                if quarter not in (1,2,3,4):
-                    raise ValueError('季別須為 1–4')
-                month=quarter*3
-                period=f'{year}-Q{quarter}'
-                end=f'{year}-{month:02d}-{calendar.monthrange(year,month)[1]:02d}'
-                revenue=number(r.get('營業收入'))
-                gross=number(r.get('營業毛利（毛損）淨額'))
-                if gross is None:
-                    gross=number(r.get('營業毛利（毛損）'))
-                margin=gross/revenue*100 if gross is not None and revenue not in (None,0) else None
-                eps=number(r.get('基本每股盈餘（元）'))
-                yoy=None
-                basis='annual' if quarter==4 else 'ytd'
-                label=f'{period} '+('全年財報' if quarter==4 else f'累計至第 {quarter} 季財報')
+            digits=re.sub(r'\D','',str(r.get('資料年月')))
+            if len(digits)!=5:
+                raise ValueError('月營收資料年月格式變動')
+            year,month=int(digits[:3])+1911,int(digits[3:])
+            period=f'{year}-{month:02d}'
+            end=f'{period}-{calendar.monthrange(year,month)[1]:02d}'
+            revenue=number(r.get('營業收入-當月營收'))
+            yoy=number(r.get('營業收入-去年同月增減(%)'))
             # Zero is valid; missing fields stay missing, not fabricated.
-            financials.append({k:v for k,v in dict(base,period=period,period_end=end,basis=basis,currency='TWD',revenue=revenue*1000 if revenue is not None else None,revenue_yoy=yoy,gross_margin=margin,eps=eps).items() if k!='lifecycle'})
+            financials.append({k:v for k,v in dict(base,period=period,period_end=end,basis='monthly',currency='TWD',revenue=revenue*1000 if revenue is not None else None,revenue_yoy=yoy,gross_margin=None,eps=None).items() if k!='lifecycle'})
             values=[]
             if revenue is not None:
                 values.append(f'營收 {revenue*1000:,.0f} TWD')
             if yoy is not None:
                 values.append(f'營收年增率 {yoy:.2f}%')
-            if margin is not None:
-                values.append(f'毛利率 {margin:.2f}%')
-            if eps is not None:
-                values.append(f'EPS {eps:.2f} TWD/股')
-            basis_zh={'monthly':'單月','ytd':'年度累計','annual':'全年'}[basis]
-            events.append(dict(base,external_id=f'{ticker}:{period}:{basis}',title=f'{name}：{label}',body=f'官方欄位整理；期間 {period}，口徑 {basis_zh}。'+'；'.join(values)+'。發布／出表日見來源，未提供的數值保留缺口。',kind='financials'))
+            events.append(dict(base,external_id=f'{ticker}:{period}:monthly',title=f'{name}：{period} 月營收',body=f'官方欄位整理；期間 {period}，口徑 單月。'+'；'.join(values)+'。發布／出表日見來源，未提供的數值保留缺口。',kind='financials'))
     return events,financials
 
 def parse_sec_submissions(payload,ticker,url,reference=None):
@@ -142,11 +117,12 @@ def parse_sec_facts(payload,ticker,url,reference=None):
         raise ValueError('SEC companyfacts 缺少 US GAAP 資料')
     # Group by exact date range AND accession; never mix a restatement with an older filing.
     groups={}
-    tags={'revenue':['RevenueFromContractWithCustomerExcludingAssessedTax','Revenues','SalesRevenueNet'],'gross_profit':['GrossProfit'],'cost':['CostOfRevenue','CostOfGoodsAndServicesSold'],'eps':['EarningsPerShareDiluted']}
+    # Only revenue feeds theme proxy indicators; company financial statements were removed.
+    tags={'revenue':['RevenueFromContractWithCustomerExcludingAssessedTax','Revenues','SalesRevenueNet']}
     for metric,choices in tags.items():
         for tag in choices:
             for unit,values in gaap.get(tag,{}).get('units',{}).items():
-                if unit not in ('USD','USD/shares'):
+                if unit!='USD':
                     continue
                 for r in values:
                     if not all(r.get(k) for k in ('start','end','accn','filed')) or r.get('form') not in ('10-Q','10-K','10-Q/A','10-K/A'):
@@ -162,16 +138,13 @@ def parse_sec_facts(payload,ticker,url,reference=None):
         if days<70 or days>380:
             continue
         basis='quarterly' if days<=110 else 'annual' if days>=340 else 'ytd'
-        values=g['values']; revenue=values.get('revenue'); gross=values.get('gross_profit')
-        if gross is None and revenue is not None and values.get('cost') is not None:
-            gross=revenue-values['cost']
-        margin=gross/revenue*100 if gross is not None and revenue not in (None,0) else None
-        if not any(v is not None for v in (revenue,margin,values.get('eps'))):
+        revenue=g['values'].get('revenue')
+        if revenue is None:
             continue
-        records.append({'ticker':ticker,'period':f'{start}/{end}','period_end':end,'basis':basis,'currency':'USD','revenue':revenue,'revenue_yoy':None,'gross_margin':margin,'eps':values.get('eps'),'published_at':datetime.fromisoformat(g['filed']).replace(tzinfo=UTC),'url':f'https://www.sec.gov/Archives/edgar/data/{int(payload["cik"])}/{acc.replace("-", "")}/{acc}-index.htm','raw':{'accession':acc,'metrics':g['raw'],'period_start':start,'period_end':end}})
+        records.append({'ticker':ticker,'period':f'{start}/{end}','period_end':end,'basis':basis,'currency':'USD','revenue':revenue,'revenue_yoy':None,'gross_margin':None,'eps':None,'published_at':datetime.fromisoformat(g['filed']).replace(tzinfo=UTC),'url':f'https://www.sec.gov/Archives/edgar/data/{int(payload["cik"])}/{acc.replace("-", "")}/{acc}-index.htm','raw':{'accession':acc,'metrics':g['raw'],'period_start':start,'period_end':end}})
     # Keep the newest restatement per exact range; compare only similarly sized periods a year apart.
     latest={}
-    for r in sorted(records,key=lambda r:(r['published_at'],r['revenue'] is not None,sum(r[k] is not None for k in ('revenue','gross_margin','eps')))):
+    for r in sorted(records,key=lambda r:r['published_at']):
         latest[(r['period'],r['basis'])]=r
     records=list(latest.values())
     for current in records:

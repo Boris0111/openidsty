@@ -25,3 +25,9 @@ def source_definitions(companies, path: Path = MAP_DIR / 'sources.yaml'):
                 else:
                     definitions.append(base)
     return definitions
+
+def retire_missing(session, definitions):
+    # Events and revenue rows still reference sources dropped from the registry, so keep the row and mark it retired.
+    from sqlalchemy import update
+    from .models import Source
+    session.execute(update(Source).where(Source.id.not_in([d['id'] for d in definitions])).values(status='retired'))

@@ -5,13 +5,13 @@ from urllib.parse import urlsplit
 from fastapi import APIRouter,Depends,BackgroundTasks
 from sqlalchemy import text,select
 from sqlalchemy.orm import Session
-from .financial_store import encoded,raw_payload
+from .payloads import encoded,raw_payload
 from .research_auth import require_owner,require_owner_write
 from .research_db import writer_engine,get_admin_connection
 from .research_http import ResearchError
 from .research_drafts import respond
 from .models import Source,Company,Event,now
-from .registry import source_definitions
+from .registry import source_definitions,retire_missing
 from .source_http import SourceHttp,RequestBudget,SourceDeferred
 
 UTC=timezone.utc
@@ -20,7 +20,7 @@ INFLIGHT=('queued','running','deferred')
 
 
 def interval(definition):
-    return 24 if definition.get('kind') in ('revenue','financials','balance') or definition['adapter'] in (
+    return 24 if definition.get('kind')=='revenue' or definition['adapter'] in (
         'sec-facts','aaon-metrics','tsmc-metrics','technical-documents') else 1
 
 
@@ -33,7 +33,8 @@ def refresh_registry(engine):
             row.name=definition['name'];row.url=definition['url']
             row.data={**(row.data or {}),**definition}
             if definition['adapter']=='manual':row.status='manual'
-            elif row.status=='manual':row.status='not_run'
+            elif row.status in ('manual','retired'):row.status='not_run'
+        retire_missing(session,definitions)
         session.commit()
     return definitions
 
@@ -76,8 +77,9 @@ def job_payload(row):
 
 @router.post('/sources/{source_id}/refresh',status_code=202)
 def request_refresh(source_id:str,background:BackgroundTasks,owner=Depends(require_owner_write),connection=Depends(get_admin_connection)):
-    source=connection.execute(text('SELECT id,name,url,data FROM public.sources WHERE id=:id'),{'id':source_id}).mappings().first()
+    source=connection.execute(text('SELECT id,name,url,status,data FROM public.sources WHERE id=:id'),{'id':source_id}).mappings().first()
     if not source:raise ResearchError(404,'source-not-found','找不到這個來源。')
+    if source['status']=='retired':raise ResearchError(409,'source-retired','此來源已停用，不再更新；既有事件保留。')
     definition={**source['data'],'id':source_id,'name':source['name'],'url':source['url'],'adapter':source['data'].get('adapter','manual')}
     result=queue(connection,definition,True)
     connection.commit()
@@ -139,18 +141,10 @@ def allowed_hosts(definition):
 
 
 def describe_capabilities(definition):
-    adapter=definition.get('adapter','manual');metrics={}
-    if adapter=='tw' and definition.get('kind') in ('revenue','financials','balance'):
-        from .financial_tw import capabilities
-        metrics=capabilities(definition['kind'])
-    elif adapter=='sec-facts':
-        from .financial_sec import capabilities
-        metrics=capabilities()
-    from .financial_core import METRICS
+    adapter=definition.get('adapter','manual')
     return {'can_refresh':adapter!='manual','frequency_hours':interval({**definition,'adapter':adapter}),
         'source_nature':'report' if definition.get('type')=='industry_media' else 'official',
-        'metrics':[{'metric_id':key,'label':METRICS[key][0],**value} for key,value in metrics.items()],
-        'history_limit':'財務依官方實際提供的期間；事件首次嘗試 90 日，受 feed／分頁與可讀範圍限制。',
+        'history_limit':'營收依官方實際提供的期間；事件首次嘗試 90 日，受 feed／分頁與可讀範圍限制。',
         'classification_limit':'媒體文字涉及匿名／傳聞時另列觀察；自動分類不提升研究主張確定性。'}
 
 

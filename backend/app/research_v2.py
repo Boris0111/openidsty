@@ -36,6 +36,10 @@ def envelope(release, data):
     return {'release_id': str(release['release_id']), 'schema_version': release['schema_version'], 'data': data}
 
 
+def as_of(session):
+    return session.execute(text('SELECT transaction_timestamp()')).scalar_one()
+
+
 def entity(session, release, entity_id):
     row = session.execute(text('SELECT * FROM research.entity_snapshots WHERE release_id=:r AND entity_id=:id'),
                           {'r': release['release_id'], 'id': entity_id}).mappings().first()

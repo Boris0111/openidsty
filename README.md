@@ -2,7 +2,7 @@
 
 以產業探索為入口：選產業 → 理解環節 → 查看題材與近期事件 → 追溯來源。完整研究、監測訊號與風險直接呈現，公司提供定位與相關資訊。目前只在本機 loopback（127.0.0.1）提供唯讀閱讀，尚未對外公開，不需帳號；股價、行情估值與 AI 摘要不在範圍內。
 
-產業結構以 `industry-map/` Markdown 為唯一來源；FastAPI 將環節與題材全文匯入 PostgreSQL，另外保存媒體事件、官方背景統計與既有財報。Next.js／Cytoscape.js 提供介面；啟用 scheduler profile 後，Prefect 每小時更新免費公開來源，並在 Docker 重啟後自動恢復（見 [research-lab](docs/research-lab.md)）；版本化規則產生內容分類證據。Redis 與 Neo4j 尚未引入。
+產業結構以 `industry-map/` Markdown 為唯一來源；FastAPI 將環節與題材全文匯入 PostgreSQL，另外保存媒體事件、官方背景統計與題材代理指標所需的公司營收（公司財報已移除）。Next.js／Cytoscape.js 提供介面；啟用 scheduler profile 後，Prefect 每小時更新免費公開來源，並在 Docker 重啟後自動恢復（見 [research-lab](docs/research-lab.md)）；版本化規則產生內容分類證據。Redis 與 Neo4j 尚未引入。
 
 ## 正式研究服務（2026-10-21 起）
 
@@ -60,9 +60,9 @@ docker compose up -d
 
 桌機採完整產業圖與展開的研究側欄；手機預設環節清單與選中環節關係圖，可開啟全螢幕完整圖。選取寫入 URL，支援返回與分享；搜尋環節／題材／公司支援鍵盤。跨產業節點可展開，圖保留方向與真實回路。
 
-題材頁提供研究全文、證據、查核日期與預期里程碑；已發布事件另列。公司頁保留名稱、代號、跨環節角色與相關事件，舊 `/compare` 導回產業探索並說明入口調整。既有財報、企業關係與比較 API／DB 資料保留；本次 additive migration 不刪除歷史。
+題材頁提供研究全文、證據、查核日期與預期里程碑；已發布事件另列。公司頁保留名稱、代號、跨環節角色與相關事件，舊 `/compare` 導回產業探索並說明入口調整。企業關係資料保留；公司財報（含財務比較）已由 change `remove-company-financials` 以 migration `0017` 移除，公司比較改為只並列研究內容（`/next?view=compare`）。
 
-「近期事件」優先呈現產業變化，可依產業／環節／題材／發布日期篩選，另行開啟例行財報。事件詳情附分類命中詞、摘錄、規則版本與來源；影響推導以直接分類起算並標 inference。發布日未知保留缺口，出表日、活動日與取得時間分開。
+「近期事件」優先呈現產業變化，可依產業／環節／題材／發布日期篩選，另行開啟例行財報／營收公告。事件詳情附分類命中詞、摘錄、規則版本與來源；影響推導以直接分類起算並標 inference。發布日未知保留缺口，出表日、活動日與取得時間分開。
 
 「資料覆蓋」逐環節與題材列研究、設定來源、近 30／90 日直接事件及真實樣本，可下載矩陣。來源頁將註冊資訊、網頁可讀性與實際擷取狀態分開；成功擷取不表示已完整回補 90 日。最近驗收快照見 [近 90 日矩陣](docs/coverage-90d.md)，操作與限制見 [來源文件](docs/sources.md)。
 
@@ -170,7 +170,7 @@ npm.cmd run test:e2e:offline
 
 ```powershell
 # 單次或單一來源更新
-docker compose run --rm ingestion python -m app.ingest --source twse-financials
+docker compose run --rm ingestion python -m app.ingest --source twse-revenue
 # 強制嘗試公開歷史回補（逐來源記錄可取範圍與缺口）
 docker compose run --rm ingestion python -m app.ingest --backfill-days 90
 # 更新分類規則後重分類，不呼叫外部來源；initialize 也會執行
@@ -222,7 +222,7 @@ openspec.cmd validate <name> --type change --strict
 
 新工作一律在此 repo；舊 `financeinfost` 只供參考。Codex 可用 `$openspec-propose`／`$openspec-apply-change`／`$openspec-archive-change`；歸檔須另行啟動。
 
-題材判讀與指標：研究維護見 [theme-assessments](docs/theme-assessments.md)，指標／來源更新見 [theme-indicators](docs/theme-indicators.md) 與 [metric-source-operations](docs/metric-source-operations.md)。版本修改／還原見 [theme-version-operations](docs/theme-version-operations.md)，此裝置關注見 [theme-watchlist](docs/theme-watchlist.md)。七題材實測與缺口見 [交付矩陣](docs/theme-delivery-matrix.md)，驗收結果見 [驗證紀錄](docs/theme-assessments-verification.md)。initialize 在 migration、研究及來源註冊後匯入指標設定與既有財報投影；新安裝不用等待下一個 hourly 才看見指標設定。
+題材判讀與指標：研究維護見 [theme-assessments](docs/theme-assessments.md)，指標／來源更新見 [theme-indicators](docs/theme-indicators.md) 與 [metric-source-operations](docs/metric-source-operations.md)。版本修改／還原見 [theme-version-operations](docs/theme-version-operations.md)，此裝置關注見 [theme-watchlist](docs/theme-watchlist.md)。七題材實測與缺口見 [交付矩陣](docs/theme-delivery-matrix.md)，驗收結果見 [驗證紀錄](docs/theme-assessments-verification.md)。initialize 在 migration、研究及來源註冊後匯入指標設定與既有營收投影；新安裝不用等待下一個 hourly 才看見指標設定。
 
 技術研究與文件：Markdown／YAML 是編輯來源，驗證後原子匯入 PostgreSQL 供網站唯讀查詢；外部文件觀測與待核對候選不會自動改寫研究。維護與核對流程見 [technical-document-operations](docs/technical-document-operations.md)，實際已讀範圍見 [來源查核](docs/technical-source-audit.md)，全圖缺口見 [17 環節／7 題材矩陣](docs/technical-research-matrix.md)。連線閱讀與快取契約見 [frontend](docs/frontend.md)，量測結果及限制見 [reading-performance](docs/reading-performance.md)。
 

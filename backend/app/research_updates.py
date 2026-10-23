@@ -8,9 +8,8 @@ from pydantic import BaseModel, Field, field_validator
 from sqlalchemy import text
 from .research_db import get_research_session
 from .research_http import ResearchError
-from .research_v2 import require_release
+from .research_v2 import require_release, as_of
 from .research_compile import digest
-from .research_financials import LATEST, as_of
 from .theme_updates import indicator_tokens
 
 router = APIRouter(prefix='/api/v2', tags=['research-updates'])
@@ -50,10 +49,6 @@ RESEARCH_SQL = '''SELECT s.entity_id,s.kind,s.name,s.semantic_hash,
    FROM research.company_offerings o WHERE o.release_id=s.release_id AND s.entity_id IN (o.company_id,o.product_id,o.role_id)) AS offerings
 FROM research.entity_snapshots s WHERE s.release_id=:release AND s.entity_id=ANY(CAST(:ids AS text[]))'''
 
-# The effective value of each series; a re-filed identical value adds no revision, so no new token.
-VALUES_SQL = '''SELECT g.company_id,md5(COALESCE(string_agg(g.group_id||':'||o.observation_id::text,',' ORDER BY g.group_id),'')) AS token
-FROM research.financial_groups g ''' + LATEST + ''' WHERE g.company_id=ANY(CAST(:ids AS text[])) GROUP BY g.company_id'''
-
 # Event ids only grow when a new event is recorded; retries deduplicate into the same row.
 EVENTS_SQL = '''SELECT w.entity_id,max(e.id) AS marker,
   count(DISTINCT e.id) FILTER (WHERE e.id>COALESCE(w.seen,2147483647) AND COALESCE(e.published_at,e.reported_at) IS NOT NULL) AS new_dated,
@@ -75,9 +70,7 @@ def updates(query: Query, session=Depends(get_research_session)):
     research = {row['entity_id']: row for row in session.execute(text(RESEARCH_SQL),
                 {'release': release['release_id'], 'ids': ids}).mappings()} if ids else {}
     found = [item for item in query.items if item.id in research and research[item.id]['kind'] == item.kind]
-    companies = [item.id for item in found if item.kind == 'company']
-    values = {row['company_id']: row['token'] for row in session.execute(text(VALUES_SQL), {'ids': companies}).mappings()} if companies else {}
-    themes = {item.id: item.id.removeprefix('theme-') for item in found if item.kind == 'theme'}
+    themes ={item.id: item.id.removeprefix('theme-') for item in found if item.kind == 'theme'}
     indicators = indicator_tokens(session, list(themes.values())) if themes else {}
     events = {row['entity_id']: row for row in session.execute(text(EVENTS_SQL), {'ids': [item.id for item in found],
               'seen': [item.seen.events if item.seen else None for item in found]}).mappings()} if found else {}
@@ -90,12 +83,10 @@ def updates(query: Query, session=Depends(get_research_session)):
                           'reason': '這份研究不在目前已發布版本中，可能已改名、合併或封存。'})
             continue
         research_token = digest([row['semantic_hash'], row['relations'], row['offerings']])
-        if item.kind == 'company':
-            values_token = values.get(item.id) or digest([])
-        elif item.kind == 'theme':
+        if item.kind == 'theme':
             values_token = indicators.get(themes[item.id])
         else:
-            values_token = None  # Products and research pages carry no observed values.
+            values_token = None  # Companies, products and research pages carry no observed values.
         event = events.get(item.id) or {'marker': 0, 'new_dated': 0, 'new_undated': 0}
         pending_events = seen.events is None
         items.append({'kind': item.kind, 'id': item.id, 'available': True, 'name': row['name'],

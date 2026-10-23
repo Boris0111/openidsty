@@ -7,7 +7,6 @@ import {ResearchNetwork} from './ResearchNetwork';
 import {ResearchDetailContent} from './ResearchDetailContent';
 import {ResearchDirectory,directoryView,directoryNames,DirectoryView} from './ResearchDirectory';
 import {mapReturn,directoryReturn} from '@/lib/research-navigation';
-import {ResearchFinancials} from './ResearchFinancials';
 import {ResearchCompare} from './ResearchCompare';
 import {ResearchEvents} from './ResearchEvents';
 import {EventTabs} from './EventTabs';
@@ -49,7 +48,7 @@ export function ResearchExplorer() {
   function selectEdge(edge:string|null){const query=new URLSearchParams(params);if(edge)query.set('edge',edge);else query.delete('edge');router.push('/next?'+query,{scroll:false})}
   function serviceHref(value:string,extra:Record<string,string>={}){return '/next?'+new URLSearchParams({view:value,...(release?{release_id:release}:{}),...(from?{from}:{}),...extra})}
   function companyPanel(value:string){const query=new URLSearchParams(params);for(const key of ['metric','basis','financial_cursor','event_cursor','observation_id','before_revision','source_nature','relevance','period_from','period_to'])query.delete(key);query.set('panel',value);router.push('/next?'+query,{scroll:false})}
-  const panelName=['financials','events','observations'].includes(params.get('panel')||'')?params.get('panel')!:'financials';
+  const panelName=params.get('panel')==='observations'?'observations':'events';
   function navigate(id:string){router.push(href(id),{scroll:false});if(window.matchMedia('(max-width:800px)').matches)panel.current?.scrollIntoView({block:'start',behavior:'auto'})}
   const item=detail.data?.data;
   const companies=graph.data?.data.nodes.filter(node=>node.kind==='company'&&node.id!==focus&&graph.data?.data.edges.some(edge=>edge.kind==='capability'&&edge.source===node.id&&edge.target===focus))||[];
@@ -98,13 +97,13 @@ export function ResearchExplorer() {
     {!params.has('view')&&item&&item.kind!=='company'&&item.chains&&<ResearchChainStrip chains={item.chains} href={href}/>}
     {!params.has('view')&&release&&collection&&<div className="rs-workspace rs-single">
       <article className="rs-detail" ref={panel} tabIndex={-1} aria-label="選中研究內容" aria-busy={detail.loading}>
-        {item?.kind==='company'&&<p className="rf-jump"><a href="#company-data">查看財務與近期資訊</a></p>}
+        {item?.kind==='company'&&<p className="rf-jump"><a href="#company-data">查看近期資訊</a></p>}
         {item?.kind==='company'&&item.chains&&<ResearchCompanyChains chains={item.chains} href={href}/>}
         {detail.loading?<p role="status">正在讀取這份研究…</p>:item&&<ResearchDetailContent key={release+':'+item.id} item={item} href={href} companies={companies} products={products} release={release}/>}
       </article>
       <div className="rs-network-area">{graph.data?<ResearchNetwork graph={graph.data.data} onSelect={navigate} selectedEdge={params.get('edge')} onEdge={selectEdge}/>:graph.error?<p role="alert">{graph.error}</p>:<p role="status">正在讀取關係…</p>}</div>
     </div>}
-    {!params.has('view')&&item?.kind==='company'&&release&&<section className="rf-company-data" id="company-data"><div className="rs-section-top"><h2>{item.name}：財務與近期資訊</h2><Link href={serviceHref('compare',{company_ids:item.id})}>比較這家公司</Link></div><nav className="rs-directory-tabs" aria-label="公司數據與資訊">{Object.entries({financials:'基本財務',events:'官方與報導',observations:'傳聞觀察'}).map(([key,name])=><button key={key} aria-pressed={panelName===key} onClick={()=>companyPanel(key)}>{name}</button>)}</nav>{panelName==='financials'?<ResearchFinancials key={item.id+':'+release} company={item.id} release={release} taiwan={item.content.listings?.some(row=>row.market==='TW')}/>:<ResearchEvents key={item.id+':'+panelName} entity={item.id} release={release} rumors={panelName==='observations'} href={href}/>}</section>}
+    {!params.has('view')&&item?.kind==='company'&&release&&<section className="rf-company-data" id="company-data"><div className="rs-section-top"><h2>{item.name}：近期資訊</h2><Link href={serviceHref('compare',{company_ids:item.id})}>比較這家公司</Link></div><nav className="rs-directory-tabs" aria-label="公司近期資訊">{Object.entries({events:'官方與報導',observations:'傳聞觀察'}).map(([key,name])=><button key={key} aria-pressed={panelName===key} onClick={()=>companyPanel(key)}>{name}</button>)}</nav><ResearchEvents key={item.id+':'+panelName} entity={item.id} release={release} rumors={panelName==='observations'} href={href}/></section>}
     </div>
   </div>;
 }

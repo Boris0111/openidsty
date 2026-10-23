@@ -15,8 +15,8 @@ async function fixtures(page:Page,failed=false){
     if(pathname.startsWith('documents/')&&failed)return route.fulfill({status:404,json:{message:'固定引用不可用'}});
     let data:unknown;
     if(pathname==='manifest')data={published_at:'2026-10-17'};
-    else if(pathname.includes('/financials'))data={as_of:'2026-10-17T12:00:00Z',items:[],has_more:false,next_cursor:null,gaps:[],source_selection_gap:null};
     else if(pathname==='graphs')data={root:url.searchParams.get('root'),nodes:[],edges:[],truncated:false,continue_from:[]};
+    else if(pathname==='events'||pathname==='observations')data={as_of:'2026-10-17T12:00:00Z',items:[],has_more:false,next_cursor:null};
     else if(pathname.startsWith('documents/'))data={...source,document_kind:'draft',published:'2025-01-01',read_scope:'只讀第一章，未核對量產',locators:[{id:'chapter-one',page:4,section:'合成章節',excerpt:'合成合法摘錄，僅供測試固定版本。'},{id:'chapter-two',excerpt:'不應顯示的另一章'}],parser_error:'不得顯示的維護資料'};
     else if(pathname.startsWith('companies/'))data={...company,markdown:['供應角色','研究界線','產品與用途','商業模式','客戶與供應商','競爭與替代','業務曝險','風險','財務可取性'].map(heading=>'## '+heading+'\n\n合成'+heading+'說明，僅用於流程測試。').join('\n\n'),content:{roles:roles.map(row=>({segment_id:row.id,description:'合成跨環節角色'}))},claims:[claim],related:roles,assets:[],truncated:false};
     else if(pathname.startsWith('products/'))data={...product,markdown:'## 定義與用途\n\n完整產品研究：材質與壓降需一起驗證。\n\n## 供應角色與公司\n\n[合成公司](/next?focus=company-sample)',content:{},claims:[claim],related:[company],assets:[],truncated:false};

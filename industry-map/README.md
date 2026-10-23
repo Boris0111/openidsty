@@ -69,7 +69,7 @@ gap status 只描述「為什麼這裡沒有結論」，reason 必須寫出具�
 | listings | 陣列，可空；每筆 ticker、market（TW／US／KR／JP／HK／DE／NL）、exchange（MIC 或 UNKNOWN）、share-class（非空文字）、valid-from／valid-to（有效日日期或 null）。未知交易所或股別不猜測；期間不得倒置；同市場／交易所／ticker 的有效區間不得重疊 |
 | source-identifiers | 陣列，可空；每筆 provider、value 為非空文字，`sec-cik` 為 1–10 位數字文字；同 provider/value 不可對應不同法律主體 |
 | research-depth | basic／deep。basic 是保留既有角色的索引，並非已查核新產品或客戶；deep 仍需逐項來源與閱讀驗收 |
-| financial-reporting | optional 公司財務設定；primary-source-family 為來源族 kebab-case，confidence 為三種證據程度之一，reviewed 為查核日，evidence 至少一筆沿用本 Schema 的頁面／固定文件證據格式。若宣告 fiscal-year-end（MM-DD），須同時提供 calendar-valid-from（日期）及 calendar-valid-to（日期或 null），範圍不得倒置；僅 well-supported 日曆可用於自動推導日期。財年設定不代表已取得數值或可比較口徑 |
+| financial-reporting | optional 公司財務設定；primary-source-family 為來源族 kebab-case，confidence 為三種證據程度之一，reviewed 為查核日，evidence 至少一筆沿用本 Schema 的頁面／固定文件證據格式。若宣告 fiscal-year-end（MM-DD），須同時提供 calendar-valid-from（日期）及 calendar-valid-to（日期或 null），範圍不得倒置；僅 well-supported 日曆可用於自動推導日期。財年設定不代表已取得數值或可比較口徑。公司財報已於 2026-10-23 移除，此欄位仍受驗證但目前不驅動任何程式 |
 | roles | 舊角色的相容基準陣列：segment-id、description、tier（1–3）、baseline-path（該 segment 相對地圖路徑）。保留遷移前角色數與描述，不把它當新交易證據；新增產品能力放 offerings |
 
 `PRIVATE:boyd` 是 legacy key，Boyd 的 listings 為空。跨市場同一法律主體可有多個 listing；ADR／普通股的 share-class 分開，不換算 EPS。母公司與子公司即使名稱相似也各有 ID，關係另外表達。初次遷移的 `company-2330-tw` 等含代號 ID 亦只是不可變字串，日後代號改變不可重新計算 ID；既有 registry 檔案才是真實來源。

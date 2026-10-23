@@ -4,7 +4,7 @@ python scripts/research_load.py --label real --background twse-revenue
 python scripts/research_load.py --label scaled --background twse-revenue
 
 10 closed-loop readers through the web proxy (http://127.0.0.1:3016), fixed mix profile 35% / graph 25% /
-search 15% / financial 15% / coverage 10%, 60 s warm-up then 300 s measured. A real source refresh runs during
+search 15% / dynamic (events, comparison) 15% / coverage 10%, 60 s warm-up then 300 s measured. A real source refresh runs during
 the measured window. Writes .work/research-load/<label>.json. Targets: p95 < 500 ms, coverage p95 < 1000 ms.
 """
 import argparse
@@ -28,8 +28,8 @@ sys.path.insert(0, str(SCRIPTS))
 from research_drill import env_values  # noqa: E402
 
 WEB = 'http://127.0.0.1:3016'
-MIX = [('profile', 35), ('graph', 25), ('search', 15), ('financial', 15), ('coverage', 10)]
-TARGET = {'profile': 500, 'graph': 500, 'search': 500, 'financial': 500, 'coverage': 1000}
+MIX = [('profile', 35), ('graph', 25), ('search', 15), ('dynamic', 15), ('coverage', 10)]
+TARGET = {'profile': 500, 'graph': 500, 'search': 500, 'dynamic': 500, 'coverage': 1000}
 DB = 'industryflow-research-drill-db-1'
 
 
@@ -68,21 +68,16 @@ def discover(owner):
     others = []
     for kind in ('products', 'roles', 'applications'):
         others += [f'{kind}/{item["id"]}' for item in get_json(plain, f'/api/v2/{kind}?limit=100')['data']['items']]
-    financial = []
-    for company in ids:
-        payload = get_json(plain, f'/api/v2/companies/{company}/financials')['data']
-        if payload.get('items'):
-            financial.append(company)
     terms = sorted({c['name'][:2] for c in companies if c.get('name')} | {'TSMC', 'NVIDIA', 'cooling', '液冷', 'HBM', 'CoWoS'})
     paths = {
         'profile': [f'/api/v2/companies/{c}' for c in ids] + [f'/api/v2/{o}' for o in others],
         'graph': [f'/api/v2/graphs?root={c}&scope=company' for c in ids],
         'search': [f'/api/v2/search?q={urllib.parse.quote(t)}' for t in terms],
-        'financial': [f'/api/v2/companies/{c}/financials' for c in financial] +
-                     [f'/api/v2/compare?company_ids={a},{b}&basis=annual' for a, b in zip(financial[::2], financial[1::2])],
+        'dynamic': [f'/api/v2/events?entity_id={c}' for c in ids] +
+                   [f'/api/v2/compare?company_ids={a},{b}' for a, b in zip(ids[::2], ids[1::2])],
         'coverage': ['/api/admin/coverage', '/api/admin/coverage/entities', '/api/admin/coverage/entities?status=not-researched'],
     }
-    return paths, {'companies': len(ids), 'other_pages': len(others), 'companies_with_financials': len(financial), 'search_terms': len(terms)}
+    return paths, {'companies': len(ids), 'other_pages': len(others), 'search_terms': len(terms)}
 
 
 def sample_resources(stop, samples):

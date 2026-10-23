@@ -8,7 +8,7 @@ Legacy `/api/*` 與新版 `/api/v2/*` 並存。新版使用獨立 reader pool、
 | `/api/v2/catalog` | 應用／環節／角色／題材／產品／術語／研究分類，可分頁；分類邊最多 400，超限明示 links_truncated |
 | `/api/v2/chains` | 每個應用視為一條供應鏈，回傳 id、名稱、摘要、`question`、步驟標籤、所屬環節與圖解資產（最多 200 筆）；可用 `segment=segment-…` 篩選，格式不符回 422。固定 release 時與目錄一樣長快取 |
 | `/api/v2/{companies,products,themes,concepts,research,applications,roles,segments}` | 目錄；limit 預設 50、最大 100，回 items／next_cursor／has_more；不依賴搜尋才找到物件 |
-| 上列清單加 `/{entity_id}` | 中文名、全文、研究條件、主張與來源、相關分類；沒有動態財務、來源維護設定、raw payload 或技術待核對佇列 |
+| 上列清單加 `/{entity_id}` | 中文名、全文、研究條件、主張與來源、相關分類；沒有來源維護設定、raw payload 或技術待核對佇列 |
 | `/api/v2/resolve?kind=company&key=3324.TW` | 穩定 ID／舊 ticker／PRIVATE／舊環節與題材 ID；未知 404，多候選 409，禁止按名稱相近自動合併 |
 | `/api/v2/documents/{id}/revisions/{revision_id}` | 只讀被已發布研究引用的固定版本；回原 URL、文件性質、定位與必要摘錄，來源失效也保留已發布內容 |
 
@@ -35,13 +35,13 @@ Legacy `/api/*` 與新版 `/api/v2/*` 並存。新版使用獨立 reader pool、
 
 固定文件的 revision_id 使用不可變 hash；舊 manifest 的 version key 在同一 published release 內只有一個對應時亦可解析，回應帶正式 revision_id。`latest` 不解析；不能用新版本替代失效的舊引用。未被引用的 manifest 版本與未發布文件不提供讀者存取。
 
-詳情的主張／證據與相關分類各有回應上限，超過時 `truncated=true` 明示；一般研究仍保留完整 Markdown。圖形與搜尋見下方契約；財務、事件、觀察及公司比較見 [動態讀取 API](research-dynamic-api.md)。收藏更新依後續 task 實作，沒有用空成功回應冒充功能。已完成 release pin、manifest 採用、ETag 及有界的請求合併，見 [版本與快取](research-reading-cache.md)。
+詳情的主張／證據與相關分類各有回應上限，超過時 `truncated=true` 明示；一般研究仍保留完整 Markdown。圖形與搜尋見下方契約；事件、觀察及公司比較見 [動態讀取 API](research-dynamic-api.md)。收藏更新依後續 task 實作，沒有用空成功回應冒充功能。已完成 release pin、manifest 採用、ETag 及有界的請求合併，見 [版本與快取](research-reading-cache.md)。
 
 詳情的 `related` 同時包含 taxonomy 相鄰項目、作者 `related-ids` 與 `comparisons` 左右對象的中文摘要，最多 100 筆，全部取自同一 release。`content.related_ids`／`content.comparisons` 只保留已解析於該次範圍的引用；沒有對應不能向其他 release 補查或洩漏未發布主體。固定引用的讀者操作見 [內容閱讀](research-content-reading.md)。
 
 錯誤固定 `{code,message,request_id,retryable}`，中文 message 不揭露 SQL、連線或內部例外。歧義另回 candidates。`X-Request-ID` 與錯誤中的 request_id 一致；DB 不可用回 503／retryable=true／Retry-After，與正常無研究資料的情形分開。新錯誤契約不改舊成功 payload。
 
-實際 PostgreSQL 契約命令：`python scripts/research_lab.py pg-check`。測試包含新舊 API 並存、分頁與篩選、錯誤格式、歧義、未發布拒絕及固定引用。此文件描述讀者介面；已實作 owner 管理介面另見 [登入](research-owner.md)、[草稿](research-drafts.md)、[發布](research-publication.md)、[財務補錄](research-financial-imports.md)、[來源更新](research-source-updates.md)。
+實際 PostgreSQL 契約命令：`python scripts/research_lab.py pg-check`。測試包含新舊 API 並存、分頁與篩選、錯誤格式、歧義、未發布拒絕及固定引用。此文件描述讀者介面；已實作 owner 管理介面另見 [登入](research-owner.md)、[草稿](research-drafts.md)、[發布](research-publication.md)、[來源更新](research-source-updates.md)。
 
 ## 圖形與影響推導
 

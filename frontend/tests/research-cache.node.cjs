@@ -30,10 +30,10 @@ test('completed cache is bounded to 100 and evicts the least recently used reque
   await cache.acquireResearch(path+'&item=1').promise;assert.equal(calls,102);
 });
 
-test('dynamic comparison caps freshness at 30 seconds, revalidates 304, and adopts revisions',async()=>{
+test('dynamic events cap freshness at 30 seconds, revalidate 304, and adopt revisions',async()=>{
   let count=0,revision=1;const seen=[];
   const cache=environment(async(url,options)=>{count++;seen.push(options.headers);return revision===1&&count>1?new Response(null,{status:304,headers:{ETag:'"one"','Cache-Control':'public,max-age=86400'}}):response(revision,revision===1?'"one"':'"two"')});
-  const key='/api/v2/compare?release_id='+release+'&company_ids=company-a,company-b';
+  const key='/api/v2/events?release_id='+release+'&entity_id=company-a';
   await cache.acquireResearch(key).promise;cache.advance(29999);await cache.acquireResearch(key).promise;assert.equal(count,1);
   cache.advance(2);const same=await cache.acquireResearch(key).promise;assert.equal(same.payload.data.value,1);assert.equal(seen[1]['If-None-Match'],'"one"');
   revision=2;cache.advance(30001);assert.equal((await cache.acquireResearch(key).promise).payload.data.value,2);

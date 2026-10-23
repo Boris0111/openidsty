@@ -61,7 +61,7 @@ export const coverage: Coverage = {
   ],
 };
 const company: Company = {
-  ticker: '2330.TW', name: '台積電', aliases: ['臺積電'], financials: [], events: [], mentioned_events: [],
+  ticker: '2330.TW', name: '台積電', aliases: ['臺積電'], events: [], mentioned_events: [],
   roles: [{segment: 'foundry', segment_name: '晶圓代工', layer: 'semiconductor', role: '離線定位樣本'}],
 };
 

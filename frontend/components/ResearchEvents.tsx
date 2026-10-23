@@ -3,7 +3,7 @@ import {ResearchReadStatus} from './ResearchReadStatus';
 import Link from 'next/link';
 import {useSearchParams,useRouter} from 'next/navigation';
 import {useResearch} from '@/lib/research-api';
-import {readTime} from '@/lib/research-financial';
+import {readTime} from '@/lib/display';
 
 type EventPage={as_of:string;items:{id:number;title:string;excerpt:string;url:string;source_name:string;source_nature:string;published_at:string|null;reported_at:string|null;published_precision:string;date_unknown:boolean;period:string|null;entities:{entity_id:string;name:string;kind:string;relevance:string}[];entities_truncated:boolean}[];has_more:boolean;next_cursor:string|null;classification_limit:string};
 export function ResearchEvents({release,entity,rumors=false,href}:{release:string;entity?:string;rumors?:boolean;href:(id:string)=>string}){

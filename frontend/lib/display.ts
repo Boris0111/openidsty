@@ -3,7 +3,7 @@ import type {Confidence} from './types';
 export const confidenceLabel:Record<Confidence,string>={
   'well-supported':'有明確證據支持',inference:'有條件推論','needs-verification':'仍待核實',
 };
-export const sourceStatus:Record<string,string>={manual:'人工研究入口',not_run:'尚未執行',success:'取得成功',partial:'部分取得',failed:'取得失敗',configuration_required:'待設定',unregistered:'尚未註冊',unverified:'可讀性待確認',available:'已有數值',stale:'資料過舊',unavailable:'尚未取得'};
+export const sourceStatus:Record<string,string>={manual:'人工研究入口',retired:'已停用',not_run:'尚未執行',success:'取得成功',partial:'部分取得',failed:'取得失敗',configuration_required:'待設定',unregistered:'尚未註冊',unverified:'可讀性待確認',available:'已有數值',stale:'資料過舊',unavailable:'尚未取得'};
 export const lifecycleLabel:Record<string,string>={emerging:'萌芽',validating:'驗證中',scaling:'擴張',mature:'成熟',fading:'降溫'};
 export const fieldLabel:Record<string,string>={assessment:'判讀',summary:'結論',confidence:'支持程度',reviewed:'查核日',status:'狀態',checked:'查核基準',claims:'論點',evidence:'證據',conditions:'條件',gaps:'缺口',milestone_reviews:'里程碑核對',next_checks:'下一確認點',paths:'傳導假設',statement:'論述',stance:'證據方向',supporting:'支持',counter:'反向',excerpt:'必要摘錄',period:'資料期間',published:'發布日',url:'原始來源',source_id:'來源',id:'識別',steps:'路徑',from:'起點',to:'終點',type:'關係',mechanism:'傳導機制',direction:'方向',evidence_ids:'引用證據',claim_ids:'引用論點',question:'問題',evidence_required:'所需證據',milestone_id:'里程碑',state:'核對結果',note:'核對說明',occurred:'發生日期',change_reason:'修改原因',name_zh:'名稱',segments:'相關環節',beneficiaries:'候選公司',milestones:'預期里程碑',event:'事件',date:'日期',positive:'可能正向',negative:'可能負向',mixed:'影響混合',unknown:'尚未確認',confirmed:'已確認',contradicted:'已被反證',unconfirmed:'尚未確認',upstream:'上游',downstream:'下游',sibling:'共同下游手足',theme:'題材擴散'};
 export const unitLabel:Record<string,string>={currency:'金額',percent:'%', 'percentage-point':'百分點',count:'個',units:'件',watt:'W',kilowatt:'kW'};
@@ -36,3 +36,5 @@ export function readingText(value:string,names:Record<string,string>={}){
     .replace(/\b(?:emerging|validating|scaling|mature|fading)\b/g,word=>lifecycleLabel[word])
     .replace(/\b[a-z][a-z0-9]*(?:-[a-z0-9]+)*\b/g,word=>names[word]||word);
 }
+
+export function readTime(value:string){return new Intl.DateTimeFormat('zh-TW',{dateStyle:'short',timeStyle:'short',timeZone:'Asia/Taipei'}).format(new Date(value))}

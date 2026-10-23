@@ -2,7 +2,7 @@
 
 研究以 `industry-map/` Markdown／YAML 編輯；正文保存解釋，frontmatter 保存可驗證結構，Git 留下原因與差異。PostgreSQL 是網站唯讀投影、動態資料與歷史的保存處。修改 DB 不會回寫研究，也不是另一個可獨立編輯的研究權威。
 
-匯入先複製一份 authoring snapshot，驗證整份地圖、來源與固定文件引用，再在單一 transaction 更新投影。驗證或寫入失敗會 rollback，保留原研究及歷史。結構通過只表示引用與型別合法，內容仍需核讀原文件。重建研究投影不能取代事件、財報、觀測及歷史的 DB 備份。
+匯入先複製一份 authoring snapshot，驗證整份地圖、來源與固定文件引用，再在單一 transaction 更新投影。驗證或寫入失敗會 rollback，保留原研究及歷史。結構通過只表示引用與型別合法，內容仍需核讀原文件。重建研究投影不能取代事件、營收、指標觀測及歷史的 DB 備份。
 
 1. 依 [唯一 schema](../industry-map/README.md) 編修研究、來源與 optional 文件 manifest；規範性質、公開摘要、版本及已讀章節分開記錄。
 2. 執行 `python scripts/validate_map.py`；交付不能只用 skip-prose。修改 validator 時另跑 `python tests/run_validator_tests.py`。

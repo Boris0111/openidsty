@@ -1,9 +1,19 @@
 from contextlib import contextmanager
+import os
 import httpx
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.engine import make_url
 from app.connectors import OfficialHttp
 from app.sec_http import request_gate
-from test_financial_store import storage
+
+
+@pytest.fixture
+def writer_url():
+    url=os.getenv('RESEARCH_PG_WRITER_URL')
+    if not url:pytest.skip('The shared SEC gate requires disposable PostgreSQL')
+    if make_url(url).database!='industry_research_test':raise RuntimeError('Disposable research test DB required')
+    return url
 
 
 def test_missing_contact_fails_before_network_or_database(monkeypatch):
@@ -62,8 +72,7 @@ def test_non_sec_page_redirecting_to_sec_also_requires_gate_and_contact(monkeypa
     http.close()
 
 
-def test_database_gate_is_shared_across_independent_processes(storage):
-    connection,_=storage
+def test_database_gate_is_shared_across_independent_processes(writer_url):
     # Separate real processes/connections, with no external HTTP requests.
     import subprocess,sys,json
     code='''import os,json
@@ -89,6 +98,10 @@ engine.dispose()
     stamps.sort()
     assert all(right-left>=0.49 for left,right in zip(stamps,stamps[1:]))
     # A failed HTTP operation releases the session lock, permitting later work.
-    with pytest.raises(RuntimeError):
-        with request_gate(connection.engine):raise RuntimeError('synthetic network interruption')
-    with request_gate(connection.engine):pass
+    engine=create_engine(writer_url,hide_parameters=True)
+    try:
+        with pytest.raises(RuntimeError):
+            with request_gate(engine):raise RuntimeError('synthetic network interruption')
+        with request_gate(engine):pass
+    finally:
+        engine.dispose()

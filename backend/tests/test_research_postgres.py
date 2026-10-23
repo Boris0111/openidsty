@@ -1,5 +1,4 @@
 """Actual PostgreSQL contracts; requires an explicit disposable database."""
-from decimal import Decimal
 import os
 import uuid
 import pytest
@@ -31,8 +30,7 @@ def pg():
     token = uuid.uuid4().hex
     data = {'a': str(uuid.uuid4()), 'b': str(uuid.uuid4()),
             'company': 'company-test-' + token, 'private': 'company-private-' + token,
-            'metric': 'test-revenue-' + token, 'group': token * 2,
-            'observation': str(uuid.uuid4()), 'revision': token * 2}
+            'revision': token * 2}
     with admin.begin() as c:
         for release in ('a', 'b'):
             execute(c, "INSERT INTO research.research_releases VALUES (CAST(:id AS uuid),:commit,'research-v1',:hash,'ready',now(),NULL,'isolated test')",
@@ -41,9 +39,6 @@ def pg():
             execute(c, "INSERT INTO research.entities VALUES (:id,'company')", id=data[entity])
             execute(c, "INSERT INTO research.entity_snapshots VALUES (CAST(:r AS uuid),:id,'company','test','test','test','{}',:hash,NULL)",
                     r=data[release], id=data[entity], hash=token * 2)
-        execute(c, "INSERT INTO research.financial_metric_definitions VALUES (:id,'test','amount','{}',NULL)", id=data['metric'])
-        execute(c, "INSERT INTO research.financial_groups VALUES (:g,:c,'official-test',:m,'2025-01-01','2025-03-31','quarterly','consolidated','amount','USD','')",
-                g=data['group'], c=data['company'], m=data['metric'])
         execute(c, "INSERT INTO research.documents VALUES (:id)", id='document-' + token)
         execute(c, "INSERT INTO research.document_revisions VALUES (:rev,:doc,'v1','test','https://example.org','informative','{}')", rev=data['revision'], doc='document-' + token)
         execute(c, "INSERT INTO research.release_documents VALUES (CAST(:r AS uuid),:rev)", r=data['b'], rev=data['revision'])
@@ -64,19 +59,6 @@ def test_composite_fk_rejects_cross_release_endpoints(pg):
         execute(c, "INSERT INTO research.research_claims VALUES (CAST(:r AS uuid),:id,'test','test','inference','[]','2026-10-16')", r=d['a'], id=d['company'])
         rejected(c, "INSERT INTO research.claim_evidence VALUES (CAST(:r AS uuid),:id,'test',0,:rev,'section','supporting','test','{}')", '23503',
                  r=d['a'], id=d['company'], rev=d['revision'])
-
-
-def test_decimal_precision_revision_uniqueness_and_value_return(pg):
-    admin, _, _, d = pg
-    value = Decimal('1234567890123456789012345678.1234567890')
-    with admin.begin() as c:
-        for revision, amount in [(1, value), (2, value - 1), (3, value)]:
-            execute(c, "INSERT INTO research.financial_observations (observation_id,group_id,revision,value,semantic_hash,filed_at,recorded_at,supersedes,provenance_kind,limitations) VALUES (CAST(:id AS uuid),:g,:rev,:value,:hash,'2026-01-01',now(),NULL,'official','test')",
-                    id=d['observation'] if revision == 1 else str(uuid.uuid4()), g=d['group'], rev=revision, value=amount, hash='a' * 64)
-        actual = execute(c, 'SELECT value FROM research.financial_observations WHERE observation_id=CAST(:id AS uuid)', id=d['observation']).scalar_one()
-        assert actual == value and isinstance(actual, Decimal)
-        rejected(c, "INSERT INTO research.financial_observations VALUES (CAST(:id AS uuid),:g,1,1,:hash,NULL,now(),NULL,'official','test')", '23505',
-                 id=str(uuid.uuid4()), g=d['group'], hash='b' * 64)
 
 
 def test_ready_release_cannot_become_head(pg):
@@ -100,7 +82,7 @@ def test_reader_hides_unpublished_data_and_has_no_admin_grants(pg):
         assert execute(c, 'SELECT count(*) FROM research.entities WHERE entity_id=:id', id=d['private']).scalar_one() == 0
         assert execute(c, 'SELECT count(*) FROM research.document_revisions WHERE revision_id=:id', id=d['revision']).scalar_one() == 0
         assert execute(c, 'SELECT rolsuper OR rolbypassrls OR rolcreatedb OR rolcreaterole FROM pg_roles WHERE rolname=current_user').scalar_one() is False
-    for table in ('editor_drafts','draft_revisions','publish_jobs','audit_log','admin_owner','admin_sessions','login_attempts','financial_import_batches','financial_raw_facts'):
+    for table in ('editor_drafts','draft_revisions','publish_jobs','audit_log','admin_owner','admin_sessions','login_attempts'):
         with reader.begin() as c:
             rejected(c, 'SELECT * FROM research.' + table, '42501')
     with reader.connect().execution_options(isolation_level='AUTOCOMMIT') as c:
@@ -109,36 +91,6 @@ def test_reader_hides_unpublished_data_and_has_no_admin_grants(pg):
             execute(c, "INSERT INTO research.entities VALUES ('company-forbidden','company')")
         assert caught.value.orig.sqlstate == '42501'
         execute(c, 'SET default_transaction_read_only=on')
-
-
-def test_reader_financial_lineage_stays_limited_to_published_companies(pg):
-    admin, reader, _, d = pg
-    private_group, rows = uuid.uuid4().hex * 2, {}
-    with admin.begin() as c:
-        execute(c, "UPDATE research.research_releases SET status='published',published_at=now() WHERE release_id=CAST(:id AS uuid) AND status<>'published'", id=d['a'])
-        execute(c, "INSERT INTO research.financial_groups VALUES (:g,:c,'official-test',:m,'2025-01-01','2025-03-31','quarterly','consolidated','amount','USD','')",
-                g=private_group, c=d['private'], m=d['metric'])
-        for owner, group in [('company', d['group']), ('private', private_group)]:
-            fact, base, derived = (str(uuid.uuid4()) for _ in range(3))
-            execute(c, "INSERT INTO research.financial_raw_facts VALUES (CAST(:id AS uuid),:company,'official','filing-lineage','tag',:context,1,'2025-05-01','https://example.org','{}')",
-                    id=fact, company=d[owner], context='lineage-' + owner)
-            for observation, revision, kind in [(base, 11, 'official'), (derived, 12, 'derived')]:
-                execute(c, "INSERT INTO research.financial_observations (observation_id,group_id,revision,value,semantic_hash,filed_at,provenance_kind,limitations) "
-                           "VALUES (CAST(:id AS uuid),:g,:r,1,:h,'2025-05-01',:k,'')", id=observation, g=group, r=revision, h=observation, k=kind)
-            execute(c, "INSERT INTO research.observation_provenance VALUES (CAST(:o AS uuid),CAST(:f AS uuid))", o=base, f=fact)
-            execute(c, "INSERT INTO research.financial_derivations VALUES (CAST(:o AS uuid),CAST(:i AS uuid),'test-v1',1)", o=derived, i=base)
-            rows[owner] = {'fact': fact, 'base': base, 'derived': derived}
-    with reader.connect() as c:
-        assert execute(c, 'SHOW jit').scalar_one() == 'off'
-        for owner, visible in [('company', 1), ('private', 0)]:
-            ids = rows[owner]
-            assert execute(c, 'SELECT count(*) FROM research.financial_observations WHERE observation_id=CAST(:id AS uuid)', id=ids['base']).scalar_one() == visible
-            assert execute(c, 'SELECT count(*) FROM research.observation_provenance WHERE observation_id=CAST(:id AS uuid)', id=ids['base']).scalar_one() == visible
-            assert execute(c, 'SELECT count(*) FROM research.financial_derivations WHERE observation_id=CAST(:id AS uuid)', id=ids['derived']).scalar_one() == visible
-            assert execute(c, 'SELECT count(*) FROM research.financial_fact_citations WHERE fact_id=CAST(:id AS uuid)', id=ids['fact']).scalar_one() == visible
-            assert execute(c, '''SELECT count(*) FROM research.observation_provenance p CROSS JOIN LATERAL (
-                SELECT * FROM research.financial_fact_citations f WHERE f.fact_id=p.fact_id OFFSET 0) f
-                WHERE p.observation_id=CAST(:id AS uuid)''', id=ids['base']).scalar_one() == visible
 
 
 def test_writer_cannot_change_published_snapshot_or_create_tables(pg):
@@ -151,13 +103,25 @@ def test_writer_cannot_change_published_snapshot_or_create_tables(pg):
         rejected(c, 'CREATE TABLE research.forbidden (id integer)', '42501')
 
 
-def test_raw_fact_and_job_idempotency_constraints(pg):
-    admin, _, _, d = pg
+def test_publish_job_idempotency_constraint(pg):
+    admin, _, _, _ = pg
     with admin.begin() as c:
-        statement = "INSERT INTO research.financial_raw_facts VALUES (CAST(:id AS uuid),:company,'official','filing-test','tag','context',1,'2026-01-01','https://example.org','{}')"
-        execute(c, statement, id=str(uuid.uuid4()), company=d['company'])
-        rejected(c, statement, '23505', id=str(uuid.uuid4()), company=d['company'])
         job = "INSERT INTO research.publish_jobs (job_id,operation,idempotency_key,payload_hash,status,stage,reason) VALUES (CAST(:id AS uuid),'restore',:key,'hash','queued','queued','isolated test')"
         key = 'check-' + str(uuid.uuid4())
         execute(c, job, id=str(uuid.uuid4()), key=key)
         rejected(c, job, '23505', id=str(uuid.uuid4()), key=key)
+
+
+def test_company_financial_store_is_gone_and_reader_still_reads_research(pg):
+    admin, reader, _, d = pg
+    with admin.begin() as c:
+        execute(c, "UPDATE research.research_releases SET status='published',published_at=now() WHERE release_id=CAST(:id AS uuid) AND status<>'published'", id=d['a'])
+        # Migration 0017 drops every company financial object; the shared immutability guard stays.
+        assert execute(c, "SELECT count(*) FROM pg_class WHERE relnamespace='research'::regnamespace AND relname LIKE 'financial%'").scalar_one() == 0
+        assert execute(c, "SELECT to_regclass('research.observation_provenance')").scalar_one() is None
+        assert execute(c, "SELECT to_regprocedure('research.guard_financial_import()')").scalar_one() is None
+        assert execute(c, "SELECT to_regprocedure('research.guard_immutable_row()')").scalar_one() is not None
+        assert execute(c, "SELECT to_regclass('public.financials')").scalar_one() is not None
+    with reader.connect() as c:
+        assert execute(c, 'SELECT count(*) FROM research.entity_snapshots WHERE entity_id=:id', id=d['company']).scalar_one() == 1
+        assert execute(c, 'SELECT count(*) FROM research.event_entity_links').scalar_one() >= 0

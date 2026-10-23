@@ -2,24 +2,25 @@ import {test,expect} from '@playwright/test';
 import {expectNoHorizontalOverflow} from './layout';
 import {server,stored,card,key,shown,newer} from './watchlist-fixture';
 
-test('收藏以畫面版本建立基準，研究／數值／事件分開，已讀只記錄顯示內容',async({page})=>{
+test('收藏以畫面版本建立基準，研究與事件分開、公司數值不適用，已讀只記錄顯示內容',async({page})=>{
   const state=await server(page);
   await page.goto('/next?focus=company-sample&release_id='+shown);
   await page.getByRole('button',{name:'加入收藏'}).click();await expect(page.getByText('已加入收藏',{exact:true})).toBeVisible();
   expect(state.queries.at(-1)).toEqual({release_id:shown,items:[{kind:'company',id:'company-sample'}]});
-  expect((await stored(page)).targets[0].seen).toEqual({research:'r1',values:'v1',events:0});
-  // A site-wide release where this company did not change is not an update; values and events are.
-  state.release=newer;state.values='v2';state.events.push({id:11,entity:'company-sample',dated:true},{id:12,entity:'company-sample',dated:false});
+  expect((await stored(page)).targets[0].seen).toEqual({research:'r1',values:null,events:0});
+  // A site-wide release where this company did not change is not an update; new events are.
+  state.release=newer;state.events.push({id:11,entity:'company-sample',dated:true},{id:12,entity:'company-sample',dated:false});
   await page.getByRole('navigation',{name:'主要導覽'}).getByRole('link',{name:'收藏',exact:true}).click();
   const company=card(page,'合成公司');
-  await expect(company).toContainText('研究無變更');await expect(company).toContainText('有效數值有新期或修訂');
+  // Companies carry no tracked values once company financials were removed.
+  await expect(company).toContainText('研究無變更');await expect(company).not.toContainText('數值');
   await expect(company).toContainText('1 則新事件（依發布日）；1 則新收錄，發布日未知，不代表剛發生');
   await expect(page.getByText('不含研究全文',{exact:false})).toBeVisible();
   // The server moves on after this response; marking read must not swallow event 13.
   state.events.push({id:13,entity:'company-sample',dated:true});
   await company.getByRole('button',{name:'將目前顯示標為已讀'}).click();
-  await expect(company).toContainText('沒有新事件');await expect(company).toContainText('數值無變更');
-  expect((await stored(page)).targets[0].seen).toEqual({research:'r1',values:'v2',events:12});
+  await expect(company).toContainText('沒有新事件');await expect(company).not.toContainText('數值');
+  expect((await stored(page)).targets[0].seen).toEqual({research:'r1',values:null,events:12});
   await page.getByRole('button',{name:'檢查收藏更新'}).click();await expect(company).toContainText('1 則新事件（依發布日）');
   await page.reload();await expect(company).toContainText('1 則新事件（依發布日）');
 });

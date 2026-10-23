@@ -1,5 +1,7 @@
 # 整合驗收記錄
 
+> 2026-10-23 註記：公司財報已由 OpenSpec change `remove-company-financials` 移除；題材代理指標仍使用月營收與 SEC 營收。本文提及的財務資料、頁面與測試為當時紀錄，不再代表現況。
+
 目前研究介面與資料覆蓋驗收見 [refocus-industry-explorer](refocus-verification.md) 與 [近 90 日矩陣](coverage-90d.md)。下列為前一個 change 的歷史記錄，不代表現行介面或資料筆數。
 
 驗收日期：2026-10-08（Asia/Taipei）。Change：`add-industry-info-platform`。以下為這次實際執行的結果，後續資料與來源狀態以網站／API 當下回應為準。

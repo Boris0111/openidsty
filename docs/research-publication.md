@@ -38,4 +38,4 @@ python -m app.research_cli status --job <回傳的 job UUID>
 
 基準已變時，原草稿保留；`GET /api/admin/drafts/{id}/diff?against=active` 可取得草稿與目前正式版本的可讀差異，回應同時標示原基準及比較版本。建立目前版本的新草稿，將實際要保留的修改整合進去，再驗證與發布。不透過修改匯出檔的基準或 revision 強行覆寫。
 
-還原是一次新的 head 啟用與稽核，會先核對原 Git、Schema、投影及資產。它不刪除發布歷史，也不修改動態財務、事件或來源抓取記錄。GitHub push 是另外的備份／整合動作，網站沒有 GitHub 寫入憑證，本機發布不需要 GitHub 在線。
+還原是一次新的 head 啟用與稽核，會先核對原 Git、Schema、投影及資產。它不刪除發布歷史，也不修改動態事件、指標或來源抓取記錄。GitHub push 是另外的備份／整合動作，網站沒有 GitHub 寫入憑證，本機發布不需要 GitHub 在線。

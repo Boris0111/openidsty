@@ -18,7 +18,8 @@ if __name__=='__main__':
         assert run_ingestion()=={'status':'skipped_overlap'}
     with Session() as session:
         counts={model.__tablename__:session.scalar(select(func.count()).select_from(model)) for model in (Segment,Theme,Company,Event,Financial,Source)}
-        assert counts['events']>0 and counts['financials']>0
+        # The financials table now only keeps revenue rows for theme proxy indicators.
+        assert counts['events']>0 and session.scalar(select(func.count()).select_from(Financial).where(Financial.revenue.is_not(None)))>0
         assert session.scalar(text('SELECT version_num FROM alembic_version'))=='0002'
         assert session.scalar(select(func.count()).select_from(Event).where(Event.source_id=='fixture'))==0
     health=get('http://api:8000/api/health')
