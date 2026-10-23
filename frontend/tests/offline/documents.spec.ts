@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {expectNoHorizontalOverflow} from './layout';
 import {installOfflineApi} from './fixture-data';
 
 const definition={title:'測試用管理介面文件',publisher:'離線測試', 'doc-kind':'formal-specification',versions:[{id:'reviewed-v1',label:'1.0',url:'https://example.org/official.pdf',published:null,'published-precision':'unknown',reviewed:'2026-10-16','read-scope':'僅核讀管理介面章節','access-limitations':'未讀完整規格與客戶測試',scope:'不證明商業採用',locators:[{id:'management',section:'1.1 管理範圍',excerpt:'必要短摘錄'}]}]};
@@ -10,7 +11,7 @@ test('手機引用頁保留固定章節及適用範圍，不展示監測佇列',
   await expect(page.getByText('未讀完整規格與客戶測試')).toBeVisible();
   await expect(page.getByText('不證明商業採用',{exact:false})).toBeVisible();
   for(const text of ['進階資訊','HTTP 403','內容觀測與人工核對'])await expect(page.getByText(text,{exact:true})).toHaveCount(0);
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2)).toBe(true);
+  await expectNoHorizontalOverflow(page,2);
 });
 test('失效固定版本明示缺口，未知文件可以重試而不捏造文件內容',async({page})=>{
   await installOfflineApi(page);

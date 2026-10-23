@@ -1,4 +1,5 @@
 import {test,expect,Page} from '@playwright/test';
+import {expectNoHorizontalOverflow} from './layout';
 
 // Explicitly synthetic supply-chain responses; never seed the application DB.
 const release='22222222-2222-4222-8222-222222222222';
@@ -50,7 +51,7 @@ test('產品頁位置列標出所在步驟並回到供應鏈；公司頁獨立�
   const strip=page.getByRole('complementary',{name:'所在供應鏈'});
   await expect(strip).toBeInViewport();await expect(strip.locator('[aria-current=step]')).toHaveText('取熱');
   await expect(strip.getByRole('link',{name:'看完整圖解與產品'})).toHaveAttribute('href',/focus=application-sample/);
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  await expectNoHorizontalOverflow(page);
   await page.goto('/next?focus=company-sample&release_id='+release);
   const chains=page.getByRole('region',{name:'所屬供應鏈與產品'});
   await expect(chains.getByRole('listitem')).toHaveCount(2);

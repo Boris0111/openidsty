@@ -14,7 +14,7 @@ CI 的前端離線 E2E 會偶發失敗。`playwright.offline.config.ts` 沒有�
 
 - **產品**：關係圖外框 `.rs-canvas` 裁切內容（`overflow:hidden`），讓舊尺寸的 canvas 不再撐寬頁面。只影響溢出，關係圖的縮放、平移與互動不變。
 - **測試**：
-  - 離線 E2E 的 12 處單次 `scrollWidth` 斷言，改用共用的會重試斷言，等版面穩定後才判定。
+  - 離線 E2E 的 13 處單次 `scrollWidth` 斷言，改用共用的會重試斷言，等版面穩定後才判定。
   - `research-cache.spec.ts:56` 先等請求數穩定，再記錄「隱藏時」的基準數，不把隱藏前已發出的請求算進去。
 - **規則**：寫明離線 E2E 的斷言慣例：畫面或網路的非同步結果要用 `expect(locator)` 或 `expect.poll` 等待，不用單次的 `expect(await …)`。
 - **測試：導覽後先等新內容**：`research-navigation.spec.ts`「七類目錄」測試按「下一頁」後，要等新一頁的內容渲染完成才點選項目，讓帶 cursor 的請求確實發出並完成，第 39 行的請求檢查才有意義。

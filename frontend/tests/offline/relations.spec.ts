@@ -1,4 +1,5 @@
 import {test,expect,Page} from '@playwright/test';
+import {expectNoHorizontalOverflow} from './layout';
 import {installOfflineApi} from './fixture-data';
 
 async function relations(page:Page){
@@ -47,7 +48,7 @@ test('手機鍵盤可直接分享、閱讀並返回清單焦點',async({page})=>
   await expect(reading).toContainText('流量壓降與介面');
   await reading.getByRole('button',{name:'關閉連線詳情'}).focus();await page.keyboard.press('Enter');
   await expect(item).toBeFocused();
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await expectNoHorizontalOverflow(page,0);
 });
 
 test('點擊連線與 resize 保留同一張圖與視角',async({page})=>{

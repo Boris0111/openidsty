@@ -15,7 +15,7 @@
 
 ### 現況盤點
 
-- 離線 spec 裡有 12 處 `expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)`，分布在 11 個檔案。其中只有 `research-cache.spec.ts:38` 與 `research-navigation.spec.ts:50` 是在測試中途改變視窗大小、而且頁面上有關係圖。
+- 離線 spec 裡有 13 處單次的 `expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth…)).toBe(true)`，分布在 11 個檔案；容許值有 `+0`（6 處）、`+1`（6 處）、`+2`（1 處）三種。apply 時才發現第 13 處：`navigation.spec.ts:58` 的寫法帶空格，最初的 grep 沒有抓到。其中只有 `research-cache.spec.ts:38` 與 `research-navigation.spec.ts:50` 是在測試中途改變視窗大小、而且頁面上有關係圖。
 - 已用 `expect.poll` 的只有 3 個檔案。
 - **`research-cache.spec.ts:56`**（10-21 失敗一次）：60 秒快轉觸發的 manifest 與 30 秒財務輪詢請求，可能在記下 `hidden` 之後才抵達 route handler。
   - 信心：inference。這是從程式碼推得的，沒有 trace 可以證實。
@@ -43,13 +43,14 @@
 - **風險**：外框內若有刻意超出邊界的元素會被裁掉。目前縮放按鈕與 footer 都是外框的兄弟元素，不在裡面；apply 時要逐一確認兩個圖的手機與桌機畫面。
 
 ### D2：溢出檢查集中到一個會重試的 helper
-- 新增 `frontend/tests/offline/layout.ts`，提供 `expectNoHorizontalOverflow(page)`。內部用 `expect.poll(() => page.evaluate(...)).toBe(true)`，沿用 Playwright 預設的 expect timeout。12 處檢查都改成呼叫它。
+- 新增 `frontend/tests/offline/layout.ts`，提供 `expectNoHorizontalOverflow(page, tolerance = 1)`。內部用 `expect.poll(() => page.evaluate(...)).toBe(true)`，沿用 Playwright 預設的 expect timeout。13 處檢查都改成呼叫它，**各自保留原本的容許值**：只改等待方式，不改判定標準，也不藉機放寬或收緊任何一處。
 - 有了 D1，縮窄當下本來就不會溢出，所以 poll 通常第一次就成功。poll 只是避免把「量測時機」當成判定條件。
 - 真正的回歸（持續溢出）在 timeout 後仍會失敗，符合 spec 的「真正的溢出回歸」情境。
-- **不選：只修那 2 處。** 剩下 10 處目前沒有中途 resize，但寫法相同，日後加入 resize 就會重現同樣的問題；集中成一個 helper 也比較容易維持慣例。
+- **不選：只修那 2 處。** 剩下 11 處目前沒有中途 resize，但寫法相同，日後加入 resize 就會重現同樣的問題；集中成一個 helper 也比較容易維持慣例。
 
 ### D3：請求數基準等到穩定才記錄
-- `research-cache.spec.ts:56` 在設定 `hidden` 之前，先等 60 秒快轉觸發的請求都抵達：以 `expect.poll` 等 manifest 與財務的請求數達到預期值，之後才記錄基準。
+- `research-cache.spec.ts:56` 在設定 `hidden` 之前，先等 60 秒快轉觸發的請求都抵達：以 `expect.poll` 等請求數**穩定**（間隔 300ms 連續兩次讀取相同），之後才記錄基準。
+  - apply 時從「等到預期數量」改成「等到穩定」：快轉 60 秒會同時觸發 manifest 與每 30 秒的財務輪詢，寫死預期數量會跟著輪詢頻率一起變脆弱。
 - **不選：用 `waitForLoadState('networkidle')`。** 這個測試裝了 fake clock，networkidle 的判定與 fake clock 的互動不直觀，結果不夠確定。
 
 ### D5：導覽後先等新內容，再進行下一步

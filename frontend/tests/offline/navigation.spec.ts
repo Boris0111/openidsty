@@ -1,5 +1,6 @@
 import {test, expect} from '@playwright/test';
 import {installOfflineApi} from './fixture-data';
+import {expectNoHorizontalOverflow} from './layout';
 
 test('tracked public routes work without a backend', async ({page, request}) => {
   const unexpected = await installOfflineApi(page), errors: string[] = [];
@@ -55,7 +56,7 @@ test('mobile selection and keyboard search remain readable', async ({page}) => {
   await search.press('ArrowDown'); await page.keyboard.press('Enter');
   await expect(page).toHaveURL(/\/themes\/liquid-cooling/);
   await expect(page.getByRole('heading', {name: '液冷', exact: true})).toBeVisible();
-  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await expectNoHorizontalOverflow(page, 0);
   expect(unexpected).toEqual([]);
 });
 

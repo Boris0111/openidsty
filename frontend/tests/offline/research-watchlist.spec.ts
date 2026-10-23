@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {expectNoHorizontalOverflow} from './layout';
 import {server,stored,card,key,shown,newer} from './watchlist-fixture';
 
 test('收藏以畫面版本建立基準，研究／數值／事件分開，已讀只記錄顯示內容',async({page})=>{
@@ -66,5 +67,5 @@ test('儲存被拒絕仍可在手機收藏並閱讀更新',async({page})=>{
   await page.getByRole('button',{name:'加入收藏'}).click();await expect(page.getByText('記憶體暫存',{exact:false})).toBeVisible();
   await page.getByRole('navigation',{name:'主要導覽'}).getByRole('link',{name:'收藏',exact:true}).click();
   await expect(card(page,'合成公司')).toContainText('研究無變更');
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await expectNoHorizontalOverflow(page,0);
 });

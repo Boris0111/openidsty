@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {expectNoHorizontalOverflow} from './layout';
 import {installOfflineApi,assessment,theme,source,event} from './fixture-data';
 import {readableNumber} from '../../lib/display';
 
@@ -82,7 +83,7 @@ test('手機局部錯誤有重試且不展示診斷；原研究仍可切換閱�
   await page.getByRole('tab',{name:'技術與供應鏈'}).click();await expect(page.getByRole('region',{name:'完整研究'})).toBeVisible();
   await page.getByRole('tab',{name:'研究判讀'}).click();await alert.getByRole('button',{name:'重新取得'}).focus();await page.keyboard.press('Enter');
   await expect(page.getByRole('heading',{name:'目前判讀'})).toBeVisible();
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await expectNoHorizontalOverflow(page,0);
 });
 
 test('來源失敗保留中文原因與更新時間，不展示設定與內部錯誤',async({page})=>{
@@ -106,5 +107,5 @@ test('手機指標金額、精確原值與不可比較原因各自可讀',async(
   await expect(cards.nth(3)).toContainText('-0.75 百分點');
   await expect(cards.nth(4)).toContainText('尚未取得有效數值；不以零值代替');
   await expect(cards.nth(0)).toContainText('口徑、範圍或期間不可比較');
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
+  await expectNoHorizontalOverflow(page,0);
 });

@@ -1,4 +1,5 @@
 import {test,expect,Page} from '@playwright/test';
+import {expectNoHorizontalOverflow} from './layout';
 
 // Explicitly synthetic reader responses; never seed the application DB.
 const release='11111111-1111-4111-8111-111111111111';
@@ -32,11 +33,13 @@ test('七類目錄、篩選、分頁與返回保留 URL 及固定版本',async({
   await page.getByLabel('上市市場').selectOption('TW');await page.getByLabel('供應角色或環節').selectOption(role.id);await page.getByLabel('應用範圍').selectOption(application.id);
   await expect(page.locator('.rs-directory li')).toHaveCount(1);await page.getByRole('link',{name:'下一頁',exact:true}).click();
   await expect(page).toHaveURL(/cursor=synthetic-next/);const directoryUrl=page.url();
+  // The next page reuses the same item, so wait for its own render (no further page) before opening it.
+  await expect(page.getByRole('link',{name:'下一頁',exact:true})).toHaveCount(0);
   await page.locator('.rs-directory li a').click();await expect(page.locator('.rs-detail > h2')).toHaveText('測試公司');
   await page.getByRole('link',{name:'回原目錄'}).click();await expect(page).toHaveURL(directoryUrl);
   await page.getByLabel('上市市場').selectOption('US');await expect(page).not.toHaveURL(/cursor=/);await expect(page.getByText('此範圍尚未列出研究',{exact:false})).toBeVisible();
   await nav.getByRole('link',{name:'術語',exact:true}).click();await expect(page.getByText('此分類尚未建立研究',{exact:false})).toBeVisible();await expect(page).not.toHaveURL(/market=|role=|category=|cursor=/);
-  expect(requests.filter(path=>path.startsWith('companies?')).some(path=>path.includes('market=TW')&&path.includes('role=role-sample')&&path.includes('category=application-sample')&&path.includes('cursor=synthetic-next'))).toBe(true);
+  await expect.poll(()=>requests.filter(path=>path.startsWith('companies?')).some(path=>path.includes('market=TW')&&path.includes('role=role-sample')&&path.includes('category=application-sample')&&path.includes('cursor=synthetic-next'))).toBe(true);
   expect(new URL(page.url()).searchParams.get('release_id')).toBe(release);
 });
 
@@ -47,7 +50,7 @@ test('連線可由鍵盤選取、分享及返回，手機無溢出且 resize 保
   const shared=await context.newPage();await fixtures(shared);await shared.goto(page.url());await expect(shared.getByLabel('閱讀連線')).toHaveValue('capability:test');await shared.close();
   await page.getByRole('button',{name:'放大關係圖'}).click();const zoom=await page.getByLabel('關係圖縮放比例').textContent();
   await page.setViewportSize({width:1100,height:900});await page.setViewportSize({width:390,height:844});await expect(page.getByLabel('關係圖縮放比例')).toHaveText(zoom!);
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  await expectNoHorizontalOverflow(page);
   await picker.selectOption('classification:test');await expect(page).toHaveURL(/edge=classification%3Atest/);await page.goBack();await expect(picker).toHaveValue('capability:test');
   await page.getByRole('button',{name:'閱讀測試公司',exact:true}).click();await expect(page.locator('.rs-detail > h2')).toHaveText('測試公司');await expect(page).not.toHaveURL(/edge=/);
 });

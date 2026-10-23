@@ -1,4 +1,5 @@
 import {test,expect,Page} from '@playwright/test';
+import {expectNoHorizontalOverflow} from './layout';
 
 const release='11111111-1111-4111-8111-111111111111';
 const summary=(id:string,name:string)=>({id,kind:id.split('-')[0],name,summary:'明示合成的內容閱讀樣本',reviewed:'2026-10-17'});
@@ -42,7 +43,7 @@ test('產品完整說明與術語比較可閱讀，圖解適應手機並能返�
   await comparison.getByRole('link',{name:'測試冷板',exact:true}).click();await expect(page.locator('.rs-prose')).toContainText('材質與壓降需一起驗證');
   await page.locator('.rs-prose').getByRole('link',{name:'合成公司',exact:true}).click();await expect(page.locator('.rs-detail > h2')).toHaveText('合成公司');
   await page.goBack();await page.goBack();await expect(page.locator('.rs-detail > h2')).toHaveText('合成技術圖解');
-  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
+  await expectNoHorizontalOverflow(page);
 });
 
 test('引用按需讀固定版本、章節與頁碼，失效保留研究而不查 latest',async({page})=>{
