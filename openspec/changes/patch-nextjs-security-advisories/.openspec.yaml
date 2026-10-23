@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-10-24
+# Dependency patch only; no spec-level behavior changes.
+skip_specs: true
