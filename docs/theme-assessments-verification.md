@@ -1,5 +1,7 @@
 # 題材判讀 change 驗收紀錄
 
+> 2026-10-23 註記：公司財報已由 OpenSpec change `remove-company-financials` 移除；題材代理指標仍使用月營收與 SEC 營收。本文提及的財務資料、頁面與測試為當時紀錄，不再代表現況。
+
 Change：`add-evidence-based-theme-assessments`；2026-10-14 完整四階段驗收。此文件記錄實測，任務狀態仍以 OpenSpec CLI／tasks checkbox 為準。
 
 ## 乾淨 tracked checkout

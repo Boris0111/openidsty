@@ -1,6 +1,6 @@
 # 官方資料來源與更新
 
-執行 `docker compose run --rm ingestion python -m app.ingest` 更新全部來源；`--source twse-financials` 可只抓一個來源。來源 ID 與狀態見網站「來源狀態」或 `/api/sources`。程式不需要行情服務或 Claude key。
+執行 `docker compose run --rm ingestion python -m app.ingest` 更新全部來源；`--source twse-revenue` 可只抓一個來源。來源 ID 與狀態見網站「來源狀態」或 `/api/sources`。程式不需要行情服務或 Claude key。
 
 | 類型 | 實際介接 |
 |---|---|
@@ -30,7 +30,7 @@ fetch_meta 記錄 requested_days、pages、cutoff_reached、oldest_observed、ne
 
 SEC 依 [官方存取規範](https://www.sec.gov/about/developer-resources) 要求可聯絡的 User-Agent。在 `.env` 設 `SEC_USER_AGENT=IndustryFlow 維護者實際email`；空值時標記 configuration_required，不冒用聯絡人。本程式所有 HTTP 以最多約 4 requests/s 執行，逾時 20 秒、最多兩次嘗試；不可用不影響其他來源。
 
-損益表「季別 2」表示半年**累計**，不是第二季單季；TW 金額從千元轉為完整 TWD 元。SEC 財報以期間、原幣及 accession 分組，避免把不同申報版本的 EPS、營收拼在一起。YoY 只在同口徑期間可比較時衍生。原始資料與修正版本可由 DB 或事件 API 回查；新來源加入不能以欄名相似直接假定單位。
+TW 財務摘要來源（`twse/tpex-financials`、`-balance`）已隨公司財報移除；月營收金額從千元轉為完整 TWD 元。SEC 只解析 revenue，以期間、原幣及 accession 分組，避免把不同申報版本的營收拼在一起。YoY 只在同口徑期間可比較時衍生。原始資料與修正版本可由 DB 或事件 API 回查；新來源加入不能以欄名相似直接假定單位。
 
 IR 收錄的是法說日期與官方文件連結／正文節錄，不宣稱 PDF 或影片已轉錄。TSMC datePublished 的 1970 占位值不得採用。只有活動預告或部分季度遭封鎖會明示 preview／partial。主要公司來自官方 issuer，提及公司與地圖 inference 分開。
 
@@ -59,7 +59,7 @@ $sources = Invoke-RestMethod http://localhost:8010/api/sources
 $sources.sources | Where-Object id -eq 'ir-tsmc' | Select-Object id,status,last_attempt,last_success,new_count,error,data
 ```
 
-確認 last_attempt 是本次、status／error 是真實結果，成功時再核對 last_success 及實際事件／財報內容；`new_count=0` 可以是重跑，但不能單獨證明成功。若回 skipped_overlap，原更新仍持有防重疊鎖，等該輪 finished_at 有值後再重試；不要清除 Prefect 歷史或停其他專案。網站保持唯讀，不開放公開觸發擷取。
+確認 last_attempt 是本次、status／error 是真實結果，成功時再核對 last_success 及實際事件／營收內容；`new_count=0` 可以是重跑，但不能單獨證明成功。若回 skipped_overlap，原更新仍持有防重疊鎖，等該輪 finished_at 有值後再重試；不要清除 Prefect 歷史或停其他專案。網站保持唯讀，不開放公開觸發擷取。
 
 2026-10-14 P0 重試：SEC 仍缺真實聯絡設定；TSMC／NVIDIA IR 仍回 403。新 image 已重新核對三來源，JSON 診斷分別為 configuration 與 http／403；台達／微軟原成功保留。詳見 [驗收結果](theme-assessments-verification.md)。ODM 規則依 [12 筆真實核對](odm-classification-audit.md) 更新，重分類保留事件 identity／取得時間與既有財報；完整正文與已取得短摘錄不同，未取得的供應角色不能靠公司名稱補判。
 

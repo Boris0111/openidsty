@@ -73,11 +73,11 @@ python research_drill.py down      # 只移除演練 project 的容器與 volume
 
 原則：不覆寫現有 volume，先保全最新狀態，再在獨立環境還原與比對。研究內容可由 Git 重建，動態數據可由官方來源重新取得，兩者分開處理。
 
-1. **先備份現況**：即使預覽已損壞，只要 DB 或 Git 還能讀，就先執行一次 `research_lab.py backup`。這份保存的是事故當下最新的資料，例如備份之後才發布的 release、草稿與財務補錄。
+1. **先備份現況**：即使預覽已損壞，只要 DB 或 Git 還能讀，就先執行一次 `research_lab.py backup`。這份保存的是事故當下最新的資料，例如備份之後才發布的 release 與草稿。
 2. **在演練環境還原**：用最近一份正常的備份執行 `research_drill.py restore`，確認核對全部通過，並記下它的 release 與時間。
 3. **比對差異**：拿第 1 步的備份與第 2 步的資料比對。
    - **研究 release**：比對 `manifest.json` 的 `active_release` 與 `git_refs`。較新的 release 若仍在第 1 步的 Git bundle 裡，就從那個 commit 建立新草稿並重新發布，不要直接改 DB。
-   - **財務與事件**：較新的部分由來源單次更新重新取得。owner 補錄的財務批次則重新匯入原檔。
+   - **營收指標與事件**：較新的部分由來源單次更新重新取得。
 4. **切換**：演練環境（3016）可以先暫時作為服務使用，研究服務的 volume 保留不刪，供事後比對。要把資料併回 3010 時，先停止研究服務的 web 與 API，再依 `research-lab.md` 的方式還原到新 DB，核對後才啟動。任何步驟都不使用 `git reset` 回復資料，也不刪除原 volume。
 5. **研究還原與資料庫還原分開**：只是內容發布錯誤時，用管理介面的 release 還原（`/api/admin/releases/{id}/restore`）回到前一版即可，不需要還原整個 DB。
 

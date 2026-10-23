@@ -1,5 +1,7 @@
 # 產業閱讀與技術證據驗收
 
+> 2026-10-23 註記：公司財報已由 OpenSpec change `remove-company-financials` 移除；題材代理指標仍使用月營收與 SEC 營收。本文提及的財務資料、頁面與測試為當時紀錄，不再代表現況。
+
 Change：`improve-industry-reading-and-technical-evidence`。實作基準為 `b613d53b7facc97be090348e864bf9fdd9611bc9`；2026-10-15 起執行。任務狀態以 OpenSpec CLI 及 tasks checkbox 為準，本文件只記錄當次實測。
 
 ## 起始核對

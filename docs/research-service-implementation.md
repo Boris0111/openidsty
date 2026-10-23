@@ -1,5 +1,7 @@
 # 新研究服務實作紀錄
 
+> 2026-10-23 註記：公司財報已由 OpenSpec change `remove-company-financials` 移除；本文提及的 `research-financial-*.md` 文件已刪除，可從 git 歷史查閱。以下內容保留為當時紀錄。
+
 ## 採用規劃與查核紀錄
 
 - 2026-10-16：Boris 在提案提交 `4592dff` 呈現後明確啟動 `$openspec-apply-change`，依 task 1.1 採用該版 proposal、design、9 份 specs 與來源限制，開始 `expand-industry-research-service`。
@@ -89,11 +91,11 @@ Production build、typecheck 通過，13 項 live browser 全通過：6 項既�
 
 新增 13 個明確口徑的 metric 定義（含毛利輔助值）、Decimal／Numeric(38,10)、raw fact／canonical group 雙身分、同值新申報只補 provenance、重編與晚到歷史、同日衝突核對、公式版本與 input lineage。基本／稀釋 EPS 及普通股／ADR 不互換，EPS／比率／期末值禁止相減；缺前期或相容申報時回缺口，不填零。Migration `0011` 保護 raw fact、group 與觀測值不被改寫，最新值依申報日而不是單看 revision。
 
-`pg-check --suite financial-core` 實際 35 passed（24 計算／身分、5 writer storage、6 原有 PG 模型／權限），包含千元倍率、有效零、同值新申報、重編後回到舊值、晚到歷史不蓋新值、非曆年 Q4、同日歧義及不可改寫。未抓取外部來源或填入合成 application 財務；指標與限制見 [research-financial-metrics](research-financial-metrics.md)。台美 adapter、官方補錄與查詢／比較仍按 tasks 5.2–5.6 接續。
+`pg-check --suite financial-core` 實際 35 passed（24 計算／身分、5 writer storage、6 原有 PG 模型／權限），包含千元倍率、有效零、同值新申報、重編後回到舊值、晚到歷史不蓋新值、非曆年 Q4、同日歧義及不可改寫。未抓取外部來源或填入合成 application 財務；指標與限制見 research-financial-metrics（已刪除的 `research-financial-metrics.md`，見 git 歷史）。台美 adapter、官方補錄與查詢／比較仍按 tasks 5.2–5.6 接續。
 
 ## 台灣官方摘要（task 5.2）
 
-2026-10-17 實讀 TWSE／TPEx 六個 JSON 入口及 MOPS 單位／累計表頭，保存台積電與雙鴻原始列及來源 hash。新版解析保留別名、千元倍率、EPS 元、母公司與總淨利差異、期末負債、缺值與有效零。未提供申報日／合併範圍時不杜撰，季度須先有已核對財年；非曆年或未知財年保留原列與缺口。出表日期使用 migration `0012` 的 source_as_of，不混成公司申報日。詳見 [台灣摘要能力及限制](research-financial-tw.md)。
+2026-10-17 實讀 TWSE／TPEx 六個 JSON 入口及 MOPS 單位／累計表頭，保存台積電與雙鴻原始列及來源 hash。新版解析保留別名、千元倍率、EPS 元、母公司與總淨利差異、期末負債、缺值與有效零。未提供申報日／合併範圍時不杜撰，季度須先有已核對財年；非曆年或未知財年保留原列與缺口。出表日期使用 migration `0012` 的 source_as_of，不混成公司申報日。詳見 台灣摘要能力及限制（已刪除的 `research-financial-tw.md`，見 git 歷史）。
 
 最新 `pg-check --suite financial-core` 56 passed（既有 35＋台灣 21），在獨立測試 DB 通過 migration、真實 writer 入庫、同值新出表日不假更新、晚到資料不蓋新值、原始高精度 JSON 數字保存及日期模式隔離。Full 地圖驗證通過（17 環節、7 題材、60 來源），兩筆新負債來源先 manual 註冊，避免誤交 legacy adapter；到期流程由 task 5.5 串接。未自動發布研究或把樣本寫進 application DB。
 
@@ -105,7 +107,7 @@ Production build、typecheck 通過，13 項 live browser 全通過：6 項既�
 
 2026-10-17 `pg-check --suite financial-sec` 最新 16 passed，含真實 DB 修訂／冪等及三個獨立程序限流；數字場景為明示合成，HTTP 使用 MockTransport。另既有擷取／來源診斷與財務原生回歸 102 passed、4 skipped，這四項須獨立 PostgreSQL，已分別由 financial-core／financial-sec 執行；最後新增 IR→SEC 跳轉契約另包含在最新 16 項。
 
-**待使用者設定：** 新版 `.env.research` 尚無有效 SEC_USER_AGENT。未自行填假 email，實際 SEC companyfacts 樣本仍未取得，task 5.3 checkbox 保留未完成。設定步驟與官方限制見 [SEC adapter](research-financial-sec.md)；接手先確認設定存在（不印值），再用共用 gate 擷取官方樣本、保存 hash／selected fixtures、逐項核對並重跑測試，才能完成 5.3，再續 5.4 官方補錄。這是資料來源設定前提，並非 Docker 或測試失敗。
+**待使用者設定：** 新版 `.env.research` 尚無有效 SEC_USER_AGENT。未自行填假 email，實際 SEC companyfacts 樣本仍未取得，task 5.3 checkbox 保留未完成。設定步驟與官方限制見 SEC adapter（已刪除的 `research-financial-sec.md`，見 git 歷史）；接手先確認設定存在（不印值），再用共用 gate 擷取官方樣本、保存 hash／selected fixtures、逐項核對並重跑測試，才能完成 5.3，再續 5.4 官方補錄。這是資料來源設定前提，並非 Docker 或測試失敗。
 
 隔離 application 已升級 `0012`，health、manifest、`/next` 均 HTTP 200；head 仍為原 `03799774-3553-5ff6-9910-13a68468af15`，owner／publish jobs／新 financial observations 均 0，legacy events 2915、financials 147。Initializer 只加入指標定義及來源 metadata，不把測試數值寫入 application DB。
 
@@ -113,11 +115,11 @@ Production build、typecheck 通過，13 項 live browser 全通過：6 項既�
 
 Boris 設定後已核對 SEC_USER_AGENT 存在、唯一及格式有效，未輸出內容。以隔離 initialize 的當次環境、既有 HTTP 與 PostgreSQL gate 實際取得 Vertiv／NVIDIA companyfacts，各 HTTP 200；來源 hash、UTC 時間及精確 Decimal selected fixtures 已保存，不含請求 header。補驗揭露非 US GAAP namespace 不一定為 issuer extension，已修正為 unmapped-taxonomy 缺口，避免誤標 ECD 等標準分類。
 
-最新 `pg-check --suite financial-sec` 19 passed，包含官方年度值、NVIDIA 非曆年期間、實際 comparative EPS 重列、同值新申報只補 provenance，整批重新入庫沒有假修訂；原有合成邊界及三程序共用限流亦通過。只在可回滾的獨立 test DB 驗證，沒有向 application 寫入這批數字或啟動定時抓取。詳見 [SEC adapter](research-financial-sec.md)。
+最新 `pg-check --suite financial-sec` 19 passed，包含官方年度值、NVIDIA 非曆年期間、實際 comparative EPS 重列、同值新申報只補 provenance，整批重新入庫沒有假修訂；原有合成邊界及三程序共用限流亦通過。只在可回滾的獨立 test DB 驗證，沒有向 application 寫入這批數字或啟動定時抓取。詳見 SEC adapter（已刪除的 `research-financial-sec.md`，見 git 歷史）。
 
 ## 官方財務補錄（task 5.4）
 
-新增 JSON／CSV 同格式驗證、1 MiB／100 列界線、原始數值／倍率／期間／原幣／範圍／定位預覽，以及 owner 明確核對後確認入庫。Payload hash 綁定輸入與當時數值基準，確認重試使用同一 key／原結果；過期預覽、同日衝突缺修訂依據、未知官方主機、缺欄與錯誤數值拒絕。確認將 raw facts、觀測修訂、批次結果及 audit 原子寫入，整批任一錯誤回滾。Migration `0013` 保護已確認批次／結果及原預覽不可改寫，詳見 [補錄操作與 API](research-financial-imports.md)。
+新增 JSON／CSV 同格式驗證、1 MiB／100 列界線、原始數值／倍率／期間／原幣／範圍／定位預覽，以及 owner 明確核對後確認入庫。Payload hash 綁定輸入與當時數值基準，確認重試使用同一 key／原結果；過期預覽、同日衝突缺修訂依據、未知官方主機、缺欄與錯誤數值拒絕。確認將 raw facts、觀測修訂、批次結果及 audit 原子寫入，整批任一錯誤回滾。Migration `0013` 保護已確認批次／結果及原預覽不可改寫，詳見 補錄操作與 API（已刪除的 `research-financial-imports.md`，見 git 歷史）。
 
 `pg-check --suite financial-imports` 最新 **90 passed**：21 補錄解析／真實 API、24 財務 core、5 storage、21 台灣、19 SEC／限流；原先測試固定 key 被前一案例使用後遭正確拒絕，已改成每批獨立 key，未把該失敗輪視為通過。共同群組鎖採排序，人工與自動 adapters 沿用同一順序。
 
@@ -169,7 +171,7 @@ Application 仍為 `0015`／原 research head，2915 事件、1970 linked events
 
 桌機 1440×1000、手機 390×844 真實內容及來源展開已走查，四張截圖實際檢視並保存於忽略的 `.work/research-content-review/`，不當作 Boris 閱讀驗收。官方原文另實讀 Vertiv／NVIDIA；雙鴻新聞本環境僅取得頁面外殼，已在閱讀文件記錄限制，未改寫舊研究／查核日，也沒有以 HTTP 200 當作重新證實。全鏈分類與 26 家深研仍留 task 8。
 
-財務頁面驗收尚未完成：6.3 未實作，application canonical observations／source jobs 均 0；雙鴻與 Vertiv 財務 API 實際 HTTP 200、空 items 及明確缺口。官方樣本只在獨立 test DB 驗證，沒有把 fixtures 或舊 Float 補入預覽。已提供 [財務驗收狀態與步驟](research-financial-acceptance.md)，區分後端證據、目前空資料與頁面交付。本輪依指定範圍完成 6.2 後儲存；若續 6.3，再加入財務趨勢／修訂／比較及真實官方資料查核。
+財務頁面驗收尚未完成：6.3 未實作，application canonical observations／source jobs 均 0；雙鴻與 Vertiv 財務 API 實際 HTTP 200、空 items 及明確缺口。官方樣本只在獨立 test DB 驗證，沒有把 fixtures 或舊 Float 補入預覽。已提供 財務驗收狀態與步驟（已刪除的 `research-financial-acceptance.md`，見 git 歷史），區分後端證據、目前空資料與頁面交付。本輪依指定範圍完成 6.2 後儲存；若續 6.3，再加入財務趨勢／修訂／比較及真實官方資料查核。
 
 Application 仍為 `0015`、原 head `03799774-3553-5ff6-9910-13a68468af15`，2915 事件／1970 linked events／34 關係不變；owner、publish jobs、financial observations、financial import batches、source jobs 均 0。僅研究版 web／API／DB 運作，原服務 fingerprints 未變，未開啟來源排程或 Prefect worker。
 
@@ -177,9 +179,9 @@ Application 仍為 `0015`、原 head `03799774-3553-5ff6-9910-13a68468af15`，29
 
 公司研究下方接上基本財務／官方與報導／傳聞觀察，研究上方有直接跳到資料區的入口。財務支援 13 個指標及全年／單季／累計／月／期末選擇；同來源、範圍、原幣、股別及單位才組成同一圖。缺期、累計、期末及未核對股別的 EPS 不連線，沒有值即列缺口。精確字串保留在原值提示及可存取名稱，圖形座標只作視覺定位。歷史按需讀取，來源保留原值／倍率、申報日／提供者日期、固定觀測修訂及公式輸入。
 
-公司比較支援搜尋選 2–4 家，列出已有的業務／角色／產品／風險；尚未深研不加空模板。財務可比性依 API，不自行換匯、拼期間或排名。比較散文連結保留同一 release。傳聞使用獨立 observations 查詢及入口，正式資訊只讀 official／report，未知發布日不以收錄時間補上。篩選／分頁／修訂／比較公司可分享、返回；一般閱讀移除 Companyfacts XML context 擷取方法，保留真正影響數值判讀的精度與範圍限制。閱讀設計見 [財務閱讀](research-financial-reading.md)。
+公司比較支援搜尋選 2–4 家，列出已有的業務／角色／產品／風險；尚未深研不加空模板。財務可比性依 API，不自行換匯、拼期間或排名。比較散文連結保留同一 release。傳聞使用獨立 observations 查詢及入口，正式資訊只讀 official／report，未知發布日不以收錄時間補上。篩選／分頁／修訂／比較公司可分享、返回；一般閱讀移除 Companyfacts XML context 擷取方法，保留真正影響數值判讀的精度與範圍限制。閱讀設計見 財務閱讀（已刪除的 `research-financial-reading.md`，見 git 歷史）。
 
-為回應頁面無值的驗收需求，這次用既有共用更新機制單次讀 TWSE／TPEx 月營收及 NVIDIA／Vertiv companyfacts，各一次 HTTP、四個 jobs 全成功，application 實查 **1793** canonical observations。未匯入 fixtures／舊 Float；沒有開啟常駐來源排程或 Prefect worker。雙鴻月營收、Vertiv 年度／季度與 NVIDIA 非曆年期間已對照原值／官方來源。台灣季度財年、primary family／合併範圍／EPS 股別未核對則仍保留限制；不是全面完成所有公司財務或 task 8 深研。來源 hashes、原值及驗收入口見 [財務驗收](research-financial-acceptance.md)。
+為回應頁面無值的驗收需求，這次用既有共用更新機制單次讀 TWSE／TPEx 月營收及 NVIDIA／Vertiv companyfacts，各一次 HTTP、四個 jobs 全成功，application 實查 **1793** canonical observations。未匯入 fixtures／舊 Float；沒有開啟常駐來源排程或 Prefect worker。雙鴻月營收、Vertiv 年度／季度與 NVIDIA 非曆年期間已對照原值／官方來源。台灣季度財年、primary family／合併範圍／EPS 股別未核對則仍保留限制；不是全面完成所有公司財務或 task 8 深研。來源 hashes、原值及驗收入口見 財務驗收（已刪除的 `research-financial-acceptance.md`，見 git 歷史）。
 
 Application 保持 migration `0015`、head `03799774-3553-5ff6-9910-13a68468af15`、34 正式關係、2915 事件／1970 linked events，owner／publish jobs／financial import batches 均 0；source jobs 4、financial observations 1793。只有研究版 web／API／DB 運作，原服務 fingerprints 未變。本輪依指定完成 6.3 後儲存，不接續 6.4 的快取／manifest 採用。
 

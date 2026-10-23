@@ -19,7 +19,7 @@ docker compose build api
 docker compose run --rm --no-deps ingestion python -m app.import_map
 ```
 
-full 驗證會核對原查核基準。只寫骨架可用 `--skip-prose`，但交付／匯入仍須 full；錯誤地圖在 DB 寫入前被拒絕。既有 import_map 的 Theme JSON 可直接攜帶新增欄位，保留全文、status、checked，無 assessment 的舊題材仍可讀。事件／財報的新數值不覆寫判讀。
+full 驗證會核對原查核基準。只寫骨架可用 `--skip-prose`，但交付／匯入仍須 full；錯誤地圖在 DB 寫入前被拒絕。既有 import_map 的 Theme JSON 可直接攜帶新增欄位，保留全文、status、checked，無 assessment 的舊題材仍可讀。事件／營收的新數值不覆寫判讀。
 
 版本功能建立後，實質修改要填非空 change_reason；相同內容重跑、排版、來源 HTTP 嘗試、候選資訊與動態指標不是研究版本變更。恢復歷史內容也需記錄原因，不能抹掉中間版本。首次結構化不是虛構過去版本。相關版本 API 與操作在 P3 驗收後記入 API／前端文件。
 

@@ -1,6 +1,6 @@
 # 題材指標與修訂
 
-定義在 `data/theme-indicators.yaml`，來源與自動擷取入口只在 `industry-map/sources.yaml` 宣告。定義檔只保存衡量對象／口徑，不放觀測數字。完整欄位見 [唯一 Schema](../industry-map/README.md)；既有財報 API 保留，指標以 PostgreSQL 新表另外保存。
+定義在 `data/theme-indicators.yaml`，來源與自動擷取入口只在 `industry-map/sources.yaml` 宣告。定義檔只保存衡量對象／口徑，不放觀測數字。完整欄位見 [唯一 Schema](../industry-map/README.md)；公司財報已於 2026-10-23 移除；題材所需的公司營收仍由 TW 月營收與 SEC revenue 取得，指標以 PostgreSQL 指標表保存。
 
 首輪九項固定定義：AAON 液冷產品收入、台積電 2nm 晶圓營收占比為 direct；奇鋐、Micron、聯亞、台積電、Broadcom、台達與 Vertiv 的整體營收為 proxy。direct 仍僅代表具名公司的特定產品，不能升格成全市場滲透率；proxy 不能當題材專屬收入。amount 保留 USD／TWD，percent 的變化用百分點，不混為成長率。
 

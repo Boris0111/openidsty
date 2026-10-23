@@ -1,5 +1,7 @@
 # 最終回歸、走查與交付條件（task 9.4 首輪；task 10.5 最終驗收）
 
+> 2026-10-23 註記：公司財報已由 OpenSpec change `remove-company-financials` 移除；本文提及的 `research-financial-*.md` 文件已刪除，可從 git 歷史查閱。以下內容保留為當時紀錄。
+
 本文件記錄兩輪驗收：
 
 - **2026-10-20 首輪（task 9.4）**：Boris 的閱讀驗收沒有通過（見第三節），因此新增第 10 段調整導覽。tasks.md 中 9.4 的勾選只代表驗收已移交。
@@ -97,7 +99,7 @@ Boris 以 owner 身分建立草稿並提交發布（`publish_head.py`），發�
 **分享的財務連結沒有停在財務區**：
 
 - **現象**：直接打開 `/next?focus=company-auras#company-data` 時，網址補上 `release_id` 的同時把 `#company-data` 拿掉了，畫面停在頁首。
-- **影響**：[財務驗收](research-financial-acceptance.md)列的入口連結都帶這個錨點。
+- **影響**：財務驗收（已刪除的 `research-financial-acceptance.md`，見 git 歷史）列的入口連結都帶這個錨點。
 - **修正**：補 `release_id` 時保留 hash；上方研究、關係與圖解載入後，捲到財務區一次。
 - **驗證**：新增離線測試，在 390×400 的小視窗確認錨點保留、財務區在畫面內。先拿掉修正確認這項測試會失敗，加回修正後才通過。重建預覽後，桌機與手機打開分享連結都停在「雙鴻：財務與近期資訊」。
 
@@ -187,12 +189,12 @@ Boris 認為整體結構與功能拆分可行，但必須調整以下三點：
 - **台灣財務**：
   - TWSE／TPEx OpenAPI 的月營收是最新一期快照，附去年同月與今年累計，不是連續 36 個月的歷史。
   - 季度財年、合併範圍與主要申報來源未核對時保留限制。
-  - 提供者只給彙整日期，不提供正式申報日（[台灣 adapter](research-financial-tw.md)）。
+  - 提供者只給彙整日期，不提供正式申報日（台灣 adapter（已刪除的 `research-financial-tw.md`，見 git 歷史））。
 - **美國財務**：
   - SEC companyfacts 只映射標準 taxonomy；自訂 tag 保留缺口。
-  - 股別與合併範圍不猜（[SEC adapter](research-financial-sec.md)）。
+  - 股別與合併範圍不猜（SEC adapter（已刪除的 `research-financial-sec.md`，見 git 歷史））。
   - 全站共用每秒 2 個請求的限流。
-- **未提供的指標**：例如部分台灣公司的營業現金流、資本支出，只能依官方財報人工核對補錄（[財務匯入](research-financial-imports.md)）。不提供通用 PDF 自動解析。
+- **未提供的指標**：例如部分台灣公司的營業現金流、資本支出，只能依官方財報人工核對補錄（財務匯入（已刪除的 `research-financial-imports.md`，見 git 歷史））。不提供通用 PDF 自動解析。
 - **產品別收入與具名客戶**：多數公司只揭露合併總營收；產品能力不等於具名客戶採用。26 家深研逐項記錄「未公開／未取得／不適用」，見 [深研交付矩陣](research-deep-delivery-matrix.md)。
 - **待核實主張**：163 條主張中有 8 條待核實（公司自述或轉述第三方統計，未取得原始資料），清單見 [總核對](research-final-review.md)。
 - **事件來源**：

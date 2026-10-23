@@ -59,8 +59,8 @@
 
 ## 8. 文件
 
-- [ ] 8.1 刪除 `docs/research-financial-{acceptance,imports,metrics,sec,tw,reading}.md`；改寫 `docs/research-dynamic-api.md`，只保留事件與觀察；`docs/api.md` 移除財務 endpoint 與舊 compare；`docs/research-lab.md` 移除財務 pg-check 套件。以 `grep -rln "research-financial-" docs README.md AGENTS.md` 確認沒有指向已刪文件的連結。
-- [ ] 8.2 更新 README.md、AGENTS.md（「基本財報」字樣），以及盤點列出的其餘文件（watchlist、reading-cache、navigation、source-updates、data-model、integration、backup、coverage、sources、verification、theme-indicators、frontend.md 等），寫成「題材代理指標使用月營收與 SEC 營收；公司財報已移除」。屬於歷史紀錄的文件，例如 `research-acceptance.md`、`research-performance.md`，只加註，不改寫。
+- [x] 8.1 （2026-10-23：6 份已刪除；`research-acceptance.md`、`research-service-implementation.md` 中指向它們的連結改為純文字並加註 git 歷史；連結 grep 無結果）刪除 `docs/research-financial-{acceptance,imports,metrics,sec,tw,reading}.md`；改寫 `docs/research-dynamic-api.md`，只保留事件與觀察；`docs/api.md` 移除財務 endpoint 與舊 compare；`docs/research-lab.md` 移除財務 pg-check 套件。以 `grep -rln "research-financial-" docs README.md AGENTS.md` 確認沒有指向已刪文件的連結。
+- [x] 8.2 （2026-10-23：改寫 README、AGENTS、`industry-map/README.md` 的 `financial-reporting` 說明，以及 frontend、api、research-api-v2、content-reading、backup、data-model、editor-design、publication、navigation、reading-cache、source-updates、sources、watchlist、theme-assessments、technical-document-operations、theme-indicators；12 份驗收／審查紀錄只在開頭加註；`coverage-90d.md` 與 JSON 輸出不動）更新 README.md、AGENTS.md（「基本財報」字樣），以及盤點列出的其餘文件（watchlist、reading-cache、navigation、source-updates、data-model、integration、backup、coverage、sources、verification、theme-indicators、frontend.md 等），寫成「題材代理指標使用月營收與 SEC 營收；公司財報已移除」。屬於歷史紀錄的文件，例如 `research-acceptance.md`、`research-performance.md`，只加註，不改寫。
 
 ## 9. 整合驗證與歸檔
 

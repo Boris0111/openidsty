@@ -30,8 +30,6 @@ python scripts/research_lab.py bootstrap --commit <完整commit>
 
 `pg-check` 在整輪遷移／測試期間持有獨立 advisory lock，避免不同測試程序共用 head／owner 而互相干擾。預設執行全部；診斷時可使用 `--suite admin-read`、`--suite publication-restart` 或 `--suite publication-interfaces` 執行特定流程，結果不能冒充完整回歸。這些 lock 與測試資料均不更改 application head。
 
-財務測試另有 `--suite financial-core`（含台灣實際樣本）、`--suite financial-sec`（SEC 官方／合成與跨程序限流）、`--suite financial-imports`（財務計算／storage／台美來源與 owner 補錄）。來源設定及官方核對見 [SEC adapter](research-financial-sec.md)，補錄操作見 [financial imports](research-financial-imports.md)。
-
 ## 排程與重開機
 
 排程（Prefect、deployments、worker）在 `scheduler` profile，要明確啟用：
@@ -55,7 +53,7 @@ docker compose --project-name industryflow-research --env-file .env.research -f 
 
 來源排程／單次更新可用 `--suite source-updates` 驗證持久重試、來源隔離與重啟，操作及限制見 [source updates](research-source-updates.md)。僅啟動 web／API 不會開始自動擷取。
 
-讀者財務／事件／觀察／比較可用 `--suite research-dynamic`；契約與可比較界線見 [dynamic API](research-dynamic-api.md)。
+讀者事件／觀察／公司比較可用 `--suite research-dynamic`；契約見 [dynamic API](research-dynamic-api.md)。
 
 每日備份、第二份副本與獨立還原演練見 [備份與還原](research-backup.md)；`backup` 動作與 `scripts/research_drill.py` 只操作研究預覽與演練 project。
 

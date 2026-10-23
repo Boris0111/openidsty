@@ -1,5 +1,7 @@
 # 小群讀取效能基準（task 9.2）
 
+> 2026-10-23 註記：公司財報已由 OpenSpec change `remove-company-financials` 移除；題材代理指標仍使用月營收與 SEC 營收。本文提及的財務資料、頁面與測試為當時紀錄，不再代表現況。
+
 執行日：2026-10-18 至 10-20（台灣時間）。對象是還原演練環境 `industryflow-research-drill`（web `127.0.0.1:3016`），細節見 [備份與還原](research-backup.md)。測試資料只寫入演練 DB，不寫入預覽或正式 DB。
 
 ```powershell

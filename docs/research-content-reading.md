@@ -29,4 +29,4 @@
 
 原始公開頁面另作唯讀走查：2026-10-17，Vertiv 的[液冷說明](https://www.vertiv.com/en-us/solutions/learn-about/liquid-cooling-options-for-data-centers/)可讀直接晶片取熱及 Distribution 段落，NVIDIA 的[DSX overview](https://docs.nvidia.com/dsx/facilities-infra/reference-design-overview)可讀 CDU／secondary loop 段落。雙鴻[2025 新聞](https://www.auras.com.tw/News/NewsContent/14-10/en)於本環境 HTTP 200，但 web 文字擷取與 headless Chromium 僅得到頁首／頁尾外殼，未重新確認新聞內文；不把這輪視為新內容查核，仍保存既有研究與 2026-10-16 基準。公開來源失效或工具無法讀取，不自動刪除研究或改查其他版本。
 
-這一階段完成內容呈現能力；全鏈新分類與 26 家深研仍由 task 8 逐項交付。財務圖表／修訂及比較屬 task 6.3，不能用此頁 renderer 或後端測試結果代替其頁面驗收。
+這一階段完成內容呈現能力；全鏈新分類與 26 家深研仍由 task 8 逐項交付。公司比較屬 task 6.3（財務部分已於 2026-10-23 移除），不能用此頁 renderer 或後端測試結果代替其頁面驗收。
