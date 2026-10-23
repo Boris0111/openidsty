@@ -20,12 +20,14 @@
 
 ## 2. 正式服務
 
-- [ ] 2.1 在主 checkout 切到這個 PR 的 commit（先徵得維護者同意），執行 `python scripts/research_lab.py up` 重建 api 與 web。驗證：
+- [x] 2.1 在主 checkout 切到這個 PR 的 commit（先徵得維護者同意），執行 `python scripts/research_lab.py up` 重建 api 與 web。驗證：
   - `docker exec industryflow-research-web-1` 中的 Next.js 版本是 16.4.3。
   - 讀者端 live E2E（`RESEARCH_E2E=1`）通過。
   - 地圖、題材、公司、搜尋頁抽查正常。
 
   結果記錄在 `docs/research-acceptance.md` 新的一節。
+
+  結果（2026-10-24）：維護者同意後在主 checkout 切到 `36c7564` 重建。容器內 Next.js `16.4.3`；live E2E 37 passed、2 skipped（讀者入口 3015，要明確開啟）；地圖、供應鏈、題材、公司頁與搜尋在桌機與手機抽查都正常。詳見 `docs/research-acceptance.md` 第十二節。
 
 ## Workflow follow-up
 

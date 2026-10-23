@@ -419,3 +419,22 @@ change `harden-research-operations`（tasks 1.4、4.1）。PR #3 先於演練合
   - 公開網址上等不到 `networkidle`，所以這次抽查改用「讀取中文字消失後等 1.5 秒」判斷頁面已載入。
 
 **回復**：重新部署 `public-snapshot/a5df290c…-site`，或在 Cloudflare 後台把部署回復到先前版本。
+
+## 十二、2026-10-24 Next.js 安全修補的正式服務驗證（patch-nextjs-security-advisories task 2.1）
+
+前端 `next` 從 `16.4.0` 升到 `16.4.3`，修補 GHSA-2464-fhr4-w9xw、GHSA-673q-mjm6-r5xr、GHSA-p3m5-59mp-jv5r。維護者同意後，主 checkout 從 `6b9d693` 切到 PR #8 的 `36c7564`（detached），執行 `python scripts/research_lab.py up`。
+
+| 檢查 | 結果 |
+|---|---|
+| 重建 | 成功，`protected_services_unchanged: true`。只重建 api 與 web；worker、prefect、db 沿用原容器 |
+| 容器內版本 | `docker exec industryflow-research-web-1` 讀 `next/package.json`，版本是 `16.4.3` |
+| 讀者端 live E2E（`RESEARCH_E2E=1`，3010） | 37 passed、2 skipped，連跑兩次都是 0 unexpected、0 flaky。skip 的兩項是 `research-reader-entry.spec.ts` 的讀者入口（3015）測試，要明確開啟才會跑 |
+| 頁面抽查（桌機 1440、手機 390） | 產業地圖 `/`、供應鏈 `/next`、題材 `/themes` 與「液冷散熱」、公司頁 `/companies/2330.TW`（台積電）都是 200，沒有 console 錯誤，也沒有橫向溢出 |
+| 搜尋 | 在共用搜尋框輸入「台積」，得到台積電，點選後開啟 `/next?focus=company-tsmc&release_id=…` |
+
+**附註**：
+
+- 不帶 `?ticker=` 的 `/companies` 顯示「無法開啟這家公司的研究」，並附上公司索引連結。原因是空 ticker 送到 `/api/v2/resolve` 會回 422。這是既有設計，與這次升級無關：`CompanyRedirect` 從 `1abf1e5` 以後沒有改過，站內也沒有連結指向不帶參數的 `/companies`。
+- **公開網站不重新部署**。三個漏洞都在 Next.js 伺服器端，`industryflow.pages.dev` 是純靜態檔。下次發布研究、重建公開版時，就會用到新版。
+- **建置不再中止**：升級後在 agent 環境中跑 standalone 與 `build:static`，都沒有出現安全升級提示。`docs/public-snapshot.md` 已刪除對應的注意事項。
+- **merge 前**：正式服務的 api 與 web 跑的是 PR branch。merge 後，主 checkout 切回 `main` 並 pull，再執行一次 `research_lab.py up`。
