@@ -1,6 +1,6 @@
 # openidsty｜IndustryFlow 半導體與 AI 產業情報地圖
 
-以產業探索為入口：選產業 → 理解環節 → 查看題材與近期事件 → 追溯來源。完整研究、監測訊號與風險直接呈現，公司提供定位與相關資訊。目前只在本機 loopback（127.0.0.1）提供唯讀閱讀，尚未對外公開，不需帳號；股價、行情估值與 AI 摘要不在範圍內。
+以產業探索為入口：選產業 → 理解環節 → 查看題材與近期事件 → 追溯來源。完整研究、監測訊號與風險直接呈現，公司提供定位與相關資訊。研究服務只在本機 loopback（127.0.0.1）提供；對外只公開不含伺服器的研究結構靜態快照（見 [公開研究快照](docs/public-snapshot.md)），不含事件與指標，不需帳號；股價、行情估值與 AI 摘要不在範圍內。
 
 產業結構以 `industry-map/` Markdown 為唯一來源；FastAPI 將環節與題材全文匯入 PostgreSQL，另外保存媒體事件、官方背景統計與題材代理指標所需的公司營收（公司財報已移除）。Next.js／Cytoscape.js 提供介面；啟用 scheduler profile 後，Prefect 每小時更新免費公開來源，並在 Docker 重啟後自動恢復（見 [research-lab](docs/research-lab.md)）；版本化規則產生內容分類證據。Redis 與 Neo4j 尚未引入。
 
@@ -144,7 +144,7 @@ docker compose exec -T api python -m app.verify_runtime
 
 ## 乾淨 checkout 與離線交付
 
-`.github/workflows/verify.yml` 在 push／PR 使用 Python 3.12、Node.js 24 與鎖定依賴，檢查地圖、驗證器、後端離線測試、前端型別／production build 與公開導覽。資料覆蓋頁必須存在於 Git；測試 `coverage` 產物只忽略根目錄及 frontend／backend／tests 的產物目錄，不能忽略 `frontend/app/coverage/`。
+`.github/workflows/verify.yml` 在 push／PR 使用 Python 3.12、Node.js 24 與鎖定依賴，檢查地圖、驗證器、後端離線測試、前端型別、node 單元測試、production build 與公開導覽，並以合成快照建置公開靜態版、逐頁瀏覽（`npm run build:static`、`npm run test:e2e:static`）。資料覆蓋頁必須存在於 Git；測試 `coverage` 產物只忽略根目錄及 frontend／backend／tests 的產物目錄，不能忽略 `frontend/app/coverage/`。
 
 在新的 checkout（不複製 `.env`、`.next` 或未追蹤檔）執行下列流程；不需要啟動 Docker 或外部資料來源。套件與 Chromium 首次安裝需要網路，測試本身使用離線回應。
 
@@ -189,7 +189,7 @@ Invoke-RestMethod http://localhost:8010/api/sources
 
 ## 自架公開部署
 
-目前沒有任何對外部署。本節是原服務（`compose.yaml`）的公開部署參考；正式研究服務（`compose.research.yaml`）沒有公開 profile，只綁 127.0.0.1。
+對外公開的只有研究結構的靜態快照：匯出、建置、比對與部署步驟見 [公開研究快照](docs/public-snapshot.md)。正式研究服務（`compose.research.yaml`）沒有公開 profile，只綁 127.0.0.1。本節以下是原服務（`compose.yaml`）的自架部署參考，目前未使用。
 
 在有 Docker 的主機複製 repo 與安全保存的 `.env`，設定 PUBLIC_DOMAIN（自己的網域）及 ACME_EMAIL，讓 DNS 指向主機，開放 80／443；不要公開 5432、8010 或 4201。
 
