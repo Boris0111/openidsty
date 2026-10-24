@@ -40,7 +40,7 @@
 
 ## 3. 增量儲存與讀取單一 Git 檔
 
-- [ ] 3.1 `research_documents.py` 新增 `normalize_changes(previous, payload)`（design D3）：
+- [x] 3.1 （2026-10-24：3 項新測試通過。實作為 `normalize_payload(payload, previous=None)`，`normalize_changes` 是具名入口；文字路徑只允許小寫，合法路徑之間不會有大小寫衝突，故測試改為「增量儲存仍拒絕不合法的新路徑」，casefold 檢查保留為第二道防線）`research_documents.py` 新增 `normalize_changes(previous, payload)`（design D3）：
   - 整份層級的檢查每次全做。
   - `check_document` 只對新增或內容改變的檔案執行。
   - 輸出與 `normalize_payload` 相同。
@@ -50,12 +50,12 @@
   - 未變動的檔案即使內容不合格，也不會在儲存時被檢查。
   - 新增、刪除、改名大小寫衝突、超過 5 MiB 仍被拒。
   - 輸出與 `normalize_payload` 的結果相同。
-- [ ] 3.2 `research_git.py` 新增 `ManagedGit.file(commit, path)`：先 `verify` 再以 `git cat-file blob` 讀取，path 必須通過 `safe_path`。`protect_baseline` 改用它。驗證：測試涵蓋以下情境並通過：
+- [x] 3.2 （2026-10-24：2 項新測試通過，以只含必要檔案的小型 repo seed，不需 PG；檔案不存在時拋 `MissingResearchFile`（`ValueError` 子類別），讓 `protect_baseline` 保留「基準無 README 視為空字串」的原語意；測試另確認儲存時不呼叫 `files()`）`research_git.py` 新增 `ManagedGit.file(commit, path)`：先 `verify` 再以 `git cat-file blob` 讀取，path 必須通過 `safe_path`。`protect_baseline` 改用它。驗證：測試涵蓋以下情境並通過：
   - 讀到的內容與 `files()` 中的同一檔相同。
   - 檔案不存在時回 `ValueError`。
   - 不合法的 commit 或路徑被拒。
   - README 被修改時仍回 `draft-rejected`。
-- [ ] 3.3 `save_revision`（PATCH 與 import）改用 `normalize_changes` 與 `protect_baseline` 的新版本，寫入後直接組出回應，不再重查修訂。驗證：在臨時 PostgreSQL 上跑 `test_research_drafts.py` 全數通過（不含 Windows 既有的 `test_managed_git` 問題），並新增以下案例：
+- [x] 3.3 （2026-10-24：臨時 PostgreSQL 容器上 `test_research_drafts.py` 4 passed，含新增 `test_saves_and_imports_recheck_only_edited_files`；PATCH 另把整份 payload 的 JSON 深拷貝改為只複製 `files` dict）`save_revision`（PATCH 與 import）改用 `normalize_changes` 與 `protect_baseline` 的新版本，寫入後直接組出回應，不再重查修訂。驗證：在臨時 PostgreSQL 上跑 `test_research_drafts.py` 全數通過（不含 Windows 既有的 `test_managed_git` 問題），並新增以下案例：
   - 只改一份文件的儲存只檢查該份。
   - 變動的文件含 raw HTML 時被拒，原修訂不變。
   - 相同內容不產生新修訂。

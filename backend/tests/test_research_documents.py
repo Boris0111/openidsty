@@ -113,6 +113,105 @@ def test_rejected_file_is_named(authored):
         normalize_payload({**payload, 'files': {**payload['files'], path: '<script>alert(1)</script>'}})
 
 
+@pytest.fixture
+def checked(monkeypatch):
+    import app.research_documents as documents
+    calls, original = [], documents.check_document
+    def counting(path, content):
+        calls.append(path)
+        return original(path, content)
+    monkeypatch.setattr(documents, 'check_document', counting)
+    return calls
+
+
+COMPANY = 'industry-map/companies/company-auras.md'
+
+
+def test_save_checks_only_edited_files(authored, checked):
+    from app.research_documents import normalize_changes
+    payload, _ = authored
+    edited = {**payload, 'files': {**payload['files'], COMPANY: payload['files'][COMPANY] + '\n補充一段。\n'}}
+    result = normalize_changes(payload, edited)
+    assert checked == [COMPANY]
+    checked.clear()
+    assert result == normalize_payload(edited) and len(checked) == len(payload['files']) - 1  # README is exempt
+
+
+def test_unchanged_file_is_trusted_from_the_previous_revision(authored, checked):
+    from app.research_documents import normalize_changes
+    payload, _ = authored
+    # A file that only a newer rule would reject: the save leaves it alone, full validation does not.
+    stale = 'industry-map/research/research-legacy.md'
+    previous = {**payload, 'files': {**payload['files'], stale: '<b>舊規則允許的內容</b>'}}
+    edited = {**previous, 'files': {**previous['files'], COMPANY: payload['files'][COMPANY] + '\n補充。\n'}}
+    assert stale in normalize_changes(previous, edited)['files'] and checked == [COMPANY]
+    with pytest.raises(ValueError, match=stale):
+        normalize_payload(edited)
+
+
+def test_incremental_save_still_rejects_new_collisions_and_size(authored):
+    from app.research_documents import normalize_changes
+    payload, _ = authored
+    added = 'industry-map/research/research-new.md'
+    with pytest.raises(ValueError, match=added):
+        normalize_changes(payload, {**payload, 'files': {**payload['files'], added: '<script>x</script>'}})
+    # Text paths are lowercase-only, so a case-colliding rename is already an unsafe path.
+    with pytest.raises(ValueError, match='研究範圍'):
+        normalize_changes(payload, {**payload, 'files': {**payload['files'], 'industry-map/companies/Company-Auras.md': 'x'}})
+    with pytest.raises(ValueError, match='5 MiB'):
+        normalize_changes(payload, {**payload, 'files': {**payload['files'], added: 'x' * MAX_DRAFT}})
+    removed = {**payload, 'files': {path: text for path, text in payload['files'].items() if path != COMPANY}}
+    assert COMPANY not in normalize_changes(payload, removed)['files']
+
+
+@pytest.fixture
+def tiny_git(tmp_path):
+    """A seeded managed repository with only the files a research archive needs."""
+    source = tmp_path / 'tiny'
+    files = {'industry-map/README.md': '# Schema\n', COMPANY: '---\nentity-id: company-auras\n---\n\n本文\n',
+             'data/company-research.yaml': 'companies: []\n', 'data/theme-indicators.yaml': 'themes: []\n'}
+    for name, text in files.items():
+        (source / name).parent.mkdir(parents=True, exist_ok=True)
+        (source / name).write_text(text, encoding='utf-8', newline='\n')
+    git = lambda *args: subprocess.check_output(['git', '-C', str(source), '-c', 'core.autocrlf=false', '-c', 'user.name=Test',
+                                                 '-c', 'user.email=test@localhost', *args])
+    git('init', '-q'); git('add', '.'); git('commit', '-q', '-m', 'tiny baseline')
+    head = git('rev-parse', 'HEAD').decode().strip()
+    git('bundle', 'create', str(tmp_path / 'tiny.bundle'), 'HEAD')
+    managed = ManagedGit(tmp_path / 'managed')
+    managed.seed((tmp_path / 'tiny.bundle').read_bytes(), head)
+    return managed, head, files
+
+
+def test_managed_git_reads_one_file(tiny_git):
+    from app.research_git import MissingResearchFile
+    managed, head, files = tiny_git
+    assert managed.file(head, COMPANY) == managed.files(head)[COMPANY] == files[COMPANY].encode()
+    with pytest.raises(MissingResearchFile):
+        managed.file(head, 'industry-map/companies/company-missing.md')
+    assert issubclass(MissingResearchFile, ValueError)
+    for commit in ('0' * 40, 'HEAD', head[:12]):
+        with pytest.raises(ValueError):
+            managed.file(commit, COMPANY)
+    for path in ('../.env', 'industry-map/.git/config', 'industry-map/companies/x.py', 'backend/app/main.py'):
+        with pytest.raises(ValueError):
+            managed.file(head, path)
+
+
+def test_save_baseline_check_reads_only_the_schema_file(tiny_git, monkeypatch):
+    import app.research_drafts as drafts
+    from app.research_http import ResearchError
+    managed, head, files = tiny_git
+    monkeypatch.setenv('RESEARCH_GIT_ROOT', str(managed.root))
+    monkeypatch.setattr(drafts, 'base_release', lambda connection, release_id=None: {'git_commit': head})
+    monkeypatch.setattr(ManagedGit, 'files', lambda *_: pytest.fail('a save must not archive the whole base'))
+    drafts.protect_baseline(None, {'base_release_id': None}, {'files': files})
+    with pytest.raises(ResearchError) as rejected:
+        drafts.protect_baseline(None, {'base_release_id': None},
+                                {'files': {**files, 'industry-map/README.md': '# Schema\n改寫\n'}})
+    assert rejected.value.status == 422 and rejected.value.code == 'draft-rejected'
+
+
 @pytest.mark.slow
 def test_scaled_relation_manifest_is_accepted(scaled_tree):
     manifest = (scaled_tree / 'industry-map/research-relations.yaml').read_text(encoding='utf-8')

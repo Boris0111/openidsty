@@ -99,7 +99,11 @@ def check_file(path, content):
         raise ValueError(f'{path}：{error}') from None
 
 
-def normalize_payload(payload):
+def normalize_payload(payload, previous=None):
+    """Check a whole draft. With `previous` (a stored revision, accepted when it was saved), files whose
+    text is unchanged skip check_document; the draft-wide limits always run. Validation and publishing
+    never pass `previous`, so they still check every file."""
+    trusted = previous['files'] if previous is not None else {}
     if not isinstance(payload, dict) or set(payload) != {'schema_version', 'files', 'assets'} or payload['schema_version'] != SCHEMA:
         raise ValueError('草稿格式版本或欄位不正確。')
     files, assets = payload['files'], payload['assets']
@@ -114,7 +118,7 @@ def normalize_payload(payload):
             raise ValueError('草稿檔案重複或不是文字。')
         names.add(path.casefold())
         # The schema reference itself is immutable in editor payloads.
-        if path != 'industry-map/README.md':
+        if path != 'industry-map/README.md' and trusted.get(path) != content:
             check_file(path, content)
     for path, sha in assets.items():
         safe_path(path, asset=True)
@@ -122,6 +126,11 @@ def normalize_payload(payload):
             raise ValueError('資產路徑重複或 hash 不正確。')
         names.add(path.casefold())
     return {'schema_version': SCHEMA, 'files': dict(sorted(files.items())), 'assets': dict(sorted(assets.items()))}
+
+
+def normalize_changes(previous, payload):
+    """normalize_payload for a save: only added or edited files are re-checked."""
+    return normalize_payload(payload, previous=previous)
 
 
 def export_files(files, asset_root):

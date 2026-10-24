@@ -14,9 +14,9 @@ from sqlalchemy import text
 from starlette.concurrency import run_in_threadpool
 from .research_auth import require_owner, require_owner_write
 from .research_db import get_admin_connection
-from .research_documents import (MAX_DRAFT, SCHEMA, export_files, normalize_payload, safe_yaml,
+from .research_documents import (MAX_DRAFT, SCHEMA, export_files, normalize_changes, safe_yaml,
                                  form_document, validate_payload, check_document, upload_asset, MAX_ASSET)
-from .research_git import ManagedGit, safe_path
+from .research_git import ManagedGit, MissingResearchFile, safe_path
 from .research_compile import canonical, digest, project
 from .research_http import ResearchError
 from .research_v2 import detail_payload, entity
@@ -93,8 +93,10 @@ def document_parts(path, content):
 def protect_baseline(connection, draft, payload):
     base = base_release(connection, draft['base_release_id'])
     try:
-        baseline = ManagedGit().files(base['git_commit'])
-        before = baseline.get('industry-map/README.md', b'').decode('utf-8')
+        try:
+            before = ManagedGit().file(base['git_commit'], 'industry-map/README.md').decode('utf-8')
+        except MissingResearchFile:
+            before = ''
         if payload['files'].get('industry-map/README.md') != before:
             raise ValueError('網站草稿不可修改 Schema 說明文件。')
     except ValueError as error:
@@ -108,7 +110,8 @@ def save_revision(connection, draft, payload, expected, origin):
     if draft['status'] != 'editing':
         raise ResearchError(409, 'draft-closed', '這份草稿已結束編輯，請另建草稿。')
     try:
-        payload = normalize_payload(payload)
+        # The current revision passed these checks when it was saved; only edited files are re-checked.
+        payload = normalize_changes(draft['payload'], payload)
     except (ValueError, yaml.YAMLError, RecursionError, UnicodeError) as error:
         raise ResearchError(422, 'draft-rejected', str(error)[:12000]) from None
     protect_baseline(connection, draft, payload)
@@ -124,7 +127,9 @@ def save_revision(connection, draft, payload, expected, origin):
     connection.execute(text('''INSERT INTO research.audit_log(actor,operation,detail)
         VALUES ('owner','draft-save',CAST(:detail AS jsonb))'''),
         {'detail': json.dumps({'draft_id': str(draft['draft_id']), 'revision': revision, 'origin': origin})})
-    return get_draft(connection, draft['draft_id'])
+    # Same shape as get_draft, built from what was just written instead of re-reading the payload.
+    return {**draft, 'current_revision': revision, 'revision': revision, 'payload': payload,
+            'payload_hash': current_hash, 'origin': origin}
 
 
 @router.get('')
@@ -215,7 +220,8 @@ async def patch_draft(draft_id: uuid.UUID, request: Request, owner=Depends(requi
     if set(data) != {'changes'} or not isinstance(data['changes'], list) or len(data['changes']) > 100:
         raise ResearchError(422, 'invalid-draft', '請提供至多 100 筆檔案變更。')
     current = get_draft(connection, draft_id, lock=True)
-    payload = json.loads(json.dumps(current['payload']))
+    # Changes only add, replace or remove file entries, so copying the file map is enough.
+    payload = {**current['payload'], 'files': dict(current['payload']['files'])}
     try:
         seen = set()
         for change in data['changes']:
