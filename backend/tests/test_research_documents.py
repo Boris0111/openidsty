@@ -63,10 +63,60 @@ def test_unsafe_markdown_is_rejected(authored, content):
         normalize_payload(changed)
 
 
+def test_service_yaml_uses_libyaml():
+    # CI and the API image ship PyYAML wheels with libyaml; a pure-Python fallback would be a silent slowdown.
+    import app.research_documents as documents
+    assert yaml.__with_libyaml__
+    assert issubclass(documents.UniqueLoader, yaml.CSafeLoader)
+
+
 @pytest.mark.parametrize('content', ['a: 1\na: 2', 'a: &x [*x]', 'a: !!python/object:evil {}'])
 def test_ambiguous_or_executable_yaml_is_rejected(content):
     with pytest.raises((ValueError, yaml.YAMLError)):
         safe_yaml(content)
+
+
+def flat_sequence(events):
+    # Stream, document and sequence start/end are six events; every scalar adds one.
+    # Quoted scalars skip implicit-tag resolution, which keeps this 400,000-event case quick.
+    return '[' + ','.join(['"x"'] * (events - 6)) + ']'
+
+
+def test_yaml_event_limit_is_exact():
+    from app.research_documents import MAX_YAML_EVENTS
+    assert len(safe_yaml(flat_sequence(MAX_YAML_EVENTS))) == MAX_YAML_EVENTS - 6
+    with pytest.raises(ValueError, match='深度或數量'):
+        safe_yaml(flat_sequence(MAX_YAML_EVENTS + 1))
+
+
+def test_yaml_depth_limit():
+    assert safe_yaml('[' * 32 + ']' * 32) is not None
+    with pytest.raises(ValueError, match='深度或數量'):
+        safe_yaml('[' * 33 + ']' * 33)
+    block = ''.join('  ' * level + f'k{level}:\n' for level in range(33)) + '  ' * 33 + 'leaf: 1\n'
+    with pytest.raises(ValueError, match='深度或數量'):
+        safe_yaml(block)
+
+
+def test_alias_expansion_beyond_node_limit_is_rejected():
+    # Ten aliases per level: few parser events, about a million nodes once expanded.
+    levels = ['l0: &l0 [1,1,1,1,1,1,1,1,1,1]']
+    levels += [f'l{n}: &l{n} [' + ','.join([f'*l{n - 1}'] * 10) + ']' for n in range(1, 6)]
+    with pytest.raises(ValueError, match='展開後'):
+        safe_yaml('\n'.join(levels))
+
+
+def test_rejected_file_is_named(authored):
+    payload, _ = authored
+    path = 'industry-map/research/research-test.md'
+    with pytest.raises(ValueError, match=path):
+        normalize_payload({**payload, 'files': {**payload['files'], path: '<script>alert(1)</script>'}})
+
+
+@pytest.mark.slow
+def test_scaled_relation_manifest_is_accepted(scaled_tree):
+    manifest = (scaled_tree / 'industry-map/research-relations.yaml').read_text(encoding='utf-8')
+    assert len(safe_yaml(manifest)['relations']) == 3000
 
 
 @pytest.mark.parametrize('path', ['../.env', 'industry-map/../backend/app/main.py',

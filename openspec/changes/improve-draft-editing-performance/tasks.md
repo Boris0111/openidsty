@@ -4,7 +4,7 @@
 
 ## 1. 修正前的基準量測
 
-- [ ] 1.1 新增 `scripts/research_draft_bench.py`（design D7）：
+- [x] 1.1 （2026-10-24：`tests/` 44 項 OK，含新增 `test_research_draft_bench.py` 6 項；擴大資料不改 head，而是建立草稿後經 import 匯入 `build_tree()` 的樹，修正前後走同一路徑；預覽對象自動選含圖解的文件，真實資料為 `concept-hbm-stack`）新增 `scripts/research_draft_bench.py`（design D7）：
   - 以 `research_integration.Session` 和 drill owner 登入，經 web 同網域 proxy 量測：
     - 儲存一份公司文件 ×30。
     - 儲存關係檔 ×30（只限擴大資料）。
@@ -20,17 +20,17 @@
 
 ## 2. YAML 解析改用 libyaml
 
-- [ ] 2.1 `backend/app/research_documents.py` 的 `UniqueLoader` 與 `scripts/validate_map.py` 的 `UniqueKeyLoader` 改以 `getattr(yaml, 'CSafeLoader', yaml.SafeLoader)` 為父類別，重複鍵與非文字鍵的檢查照舊（design D1）；API 啟動時若沒有 libyaml 就記一筆 warning。驗證：
+- [x] 2.1 （2026-10-24：`run_validator_tests.py` 66 類失敗案例全過、`validate_map.py` 通過；`test_service_yaml_uses_libyaml` 通過。另加只供等價測試的 `RESEARCH_YAML_PURE=1` 強制純 Python 版，服務不設定。`test_managed_git...` 在 Windows 失敗為既有問題，原因是 `git worktree`，與本 task 無關）`backend/app/research_documents.py` 的 `UniqueLoader` 與 `scripts/validate_map.py` 的 `UniqueKeyLoader` 改以 `getattr(yaml, 'CSafeLoader', yaml.SafeLoader)` 為父類別，重複鍵與非文字鍵的檢查照舊（design D1）；API 啟動時若沒有 libyaml 就記一筆 warning。驗證：
   - `python tests/run_validator_tests.py` 全數通過。
   - `python scripts/validate_map.py` 通過。
   - 後端新增測試：`yaml.__with_libyaml__` 為真，在 CI 執行。
-- [ ] 2.2 `safe_yaml` 的結構上限改用 parser 事件計算，深度上限 32 不變，事件數上限 400,000，展開節點上限 400,000（design D2）。驗證：`backend/tests/test_research_documents.py` 新增以下案例並通過：
+- [x] 2.2 （2026-10-24：`test_research_documents.py` 38 passed；依 spec 另讓 normalize 的單檔錯誤以 `<path>：` 開頭；擴大資料關係檔的 `safe_yaml` 本機約 1.6 秒；`slow` marker 與 `scaled_tree` fixture 放在 `conftest.py`）`safe_yaml` 的結構上限改用 parser 事件計算，深度上限 32 不變，事件數上限 400,000，展開節點上限 400,000（design D2）。驗證：`backend/tests/test_research_documents.py` 新增以下案例並通過：
   - 剛好不超過與剛好超過事件數上限。
   - 深度 33 被拒。
   - alias 展開超過節點上限被拒。
   - 自我參照 alias 被拒。
   - 擴大資料關係檔（由 `research_scale.build_tree()` 產生）可被接受。
-- [ ] 2.3 新增 loader 等價測試：純 Python 與 C 版各解析一次，比對解析結果與 `validate_payload` 的 `content_hash`。範圍包括：
+- [x] 2.3 （2026-10-24：`test_yaml_equivalence.py` 2 passed，以 `tests/yaml_probe.py` 在子程序設 `RESEARCH_YAML_PURE=1` 對照；本機耗時：已發布研究＋fixture＋11 個邊界案例 26 秒，擴大資料 99 秒（另建樹 10 秒，標 `slow`）。實測發現：草稿 loader 在兩種 parser 下都拒絕 merge key，地圖驗證器則接受，皆為既有行為，測試照實斷言）新增 loader 等價測試：純 Python 與 C 版各解析一次，比對解析結果與 `validate_payload` 的 `content_hash`。範圍包括：
   - 目前已發布的研究（`industry-map/` 與 `data/` 研究檔）。
   - `tests/fixtures/valid`。
   - 擴大資料。

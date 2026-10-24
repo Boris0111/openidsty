@@ -24,3 +24,17 @@ def client(db):
     with TestClient(app) as client:
         yield client
     app.dependency_overrides.clear()
+
+def pytest_configure(config):
+    config.addinivalue_line('markers', 'slow: builds the 3,000-relation scaled dataset; CI still runs it')
+
+@pytest.fixture(scope='session')
+def scaled_tree(tmp_path_factory):
+    """research_scale's 300-company / 3,000-relation tree, written to a temporary folder."""
+    import sys
+    from app.config import ROOT
+    sys.path.insert(0, str(ROOT / 'scripts'))
+    import research_scale
+    research_scale.TREE = tmp_path_factory.mktemp('scaled') / 'tree'
+    research_scale.build_tree()
+    return research_scale.TREE
