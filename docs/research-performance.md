@@ -247,3 +247,16 @@ python research_drill.py restore --backup ..\backups\research\<時間>; python r
    | 擴大資料 `research-relations.yaml`（原始文字） | 972,942 | 23 | 277 ms | **108,132 ms** | 108,132 ms |
 
    約 97 萬字的關係檔在網站表單中有一次按鍵卡住 108 秒，實際上無法在網站編輯；CLI 匯出／匯入不受影響。design 已把前端渲染列為本 change 的非目標，這裡只記錄。真實資料的關係檔目前約 5 萬字，影響較小，但會隨廣度擴充成長。
+
+### 正式服務演練（task 7.2，2026-10-24）
+
+演練前，主 checkout 切到 PR branch，以 `research_lab.py up` 重建並啟動正式服務（API image `sha256:084e96b0…`，commit `d734673`），排程以 scheduler profile 恢復，`deploy` 結束碼 0。Boris 以 owner 身分在 `http://127.0.0.1:3010/admin` 操作，沒有發布。
+
+| 檢查 | 結果 |
+|---|---|
+| 表單儲存 | 草稿 `261d4ccc…` 存到修訂 3、`e701a6ea…` 存到修訂 4，全部 200；選擇草稿只呼叫 `/summary`，儲存後沒有再讀文件或清單 |
+| 驗證、比較、預覽 | `261d4ccc…` 修訂 2：驗證 2 次、diff 1 次，在 13 個頁面之間預覽 18 次，`draft-validation computed` 只出現 1 次 |
+| 舊修訂匯入 | CLI 匯出 `e701a6ea…` 修訂 3 → 網站存成修訂 4 → 匯入舊資料夾，回 409「草稿已有較新修訂」；草稿仍為修訂 4，4 個修訂都來自網站，匯入沒有新增修訂 |
+| 讀者 | 演練前後的 release 都是 `a5df290c…`，`company-auras` 摘要 hash 相同（`6bcd2587…`），`/next` 回 200，當天沒有發布作業 |
+
+這次預覽的頁面都沒有圖解，所以沒有圖解請求；圖解共用驗證結果已在演練環境確認（上表「每次預覽的完整驗證次數」）。演練草稿留在 DB，沒有發布，不影響讀者。

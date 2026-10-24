@@ -120,7 +120,7 @@
 ## 7. CI 與正式服務走查
 
 - [x] 7.1 （2026-10-24：draft PR #9；commit `49f9f9a` 的 CI run 40054916057、40054954858 全綠：validator 66 類與 `tests/` 44 項、離線後端 280 passed／96 skipped（Linux 上 `test_managed_git` 也通過）、typecheck／unit／build、離線 E2E 64 passed、公開靜態頁 52 passed。後續只改文件的 commit 於 archive 前再確認一次 CI）推送 branch、開 PR，確認 GitHub Actions 全部通過，包括離線後端測試（含 libyaml 檢查與 loader 等價測試）、validator 測試、前端 typecheck 與離線 E2E。驗證：CI 全綠；PR 與 run 編號記錄在本 task。
-- [ ] 7.2 正式服務演練：徵得 Boris 同意後，在主 checkout 切到本 branch，執行 `python scripts/research_lab.py up` 重建 API／web。由 Boris 登入 `/admin`，做以下操作：
+- [x] 7.2 （2026-10-24：Boris 同意後，主 checkout 切到本 branch，`research_lab.py up` 重建並啟動正式服務，排程恢復。Boris 在 `/admin` 走完儲存、驗證、比較與 18 次預覽，完整驗證只執行 1 次；CLI 用舊修訂資料夾匯入回 409，草稿仍為修訂 4；讀者 release `a5df290c…` 與摘要 hash 前後相同，沒有發布作業。預覽的頁面都沒有圖解，圖解共用由演練環境驗證。記錄在 `docs/research-performance.md`「正式服務演練」；push 後主 checkout 切回 `main`）正式服務演練：徵得 Boris 同意後，在主 checkout 切到本 branch，執行 `python scripts/research_lab.py up` 重建 API／web。由 Boris 登入 `/admin`，做以下操作：
   - 建立草稿。
   - 以表單修改一份公司文件並儲存。
   - 驗證、與基準比較、閱讀預覽（含圖解）。
