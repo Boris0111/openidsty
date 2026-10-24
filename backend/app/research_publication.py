@@ -13,7 +13,7 @@ from .research_http import ResearchError
 from .research_compile import SCHEMA, canonical, digest, project, compile_archive
 from .research_documents import validate_payload, materialize
 from .research_git import ManagedGit, make_archive
-from .research_drafts import body, base_release, get_draft, respond, asset_root, protect_baseline
+from .research_drafts import body, base_release, get_draft, respond, asset_root, protect_baseline, validated
 
 router = APIRouter(prefix='/api/admin', tags=['publication'])
 HEAD_LOCK = 38109071
@@ -109,7 +109,8 @@ async def publish(draft_id: uuid.UUID, request: Request, background: BackgroundT
         if current['revision'] != current['current_revision'] or current['status'] != 'editing':
             raise ResearchError(409, 'draft-conflict', '請先核對最新草稿修訂再發布。')
         await run_in_threadpool(protect_baseline, connection, current, current['payload'])
-        result, _ = await run_in_threadpool(validate_payload, current['payload'], asset_root())
+        # The worker validates again from scratch; this pre-check may reuse the revision's result.
+        result, _ = await run_in_threadpool(validated, current)
         if not result['valid']:
             raise ResearchError(422, 'invalid-publication', '草稿尚未通過完整驗證。', errors=result['errors'])
     result = create_job(connection, request, 'publish', payload, current)

@@ -19,6 +19,10 @@ COMMIT = re.compile(r'^[0-9a-f]{40,64}$')
 SHA = re.compile(r'^[0-9a-f]{64}$')
 
 
+class MissingResearchFile(ValueError):
+    """The commit is valid but does not contain the requested research file."""
+
+
 def safe_path(value, *, asset=False, write=False):
     if not isinstance(value, str) or len(value) > 240 or '\\' in value or ':' in value:
         raise ValueError('研究路徑格式不正確。')
@@ -81,14 +85,14 @@ class ManagedGit:
             raise ValueError('Managed Git root 不得使用 symlink。')
         self.repo = self.root / 'repository.git'
 
-    def command(self, *args, directory=None):
+    def command(self, *args, directory=None, check=True):
         env = {key: value for key, value in os.environ.items() if not key.startswith('GIT_')}
         env.update(GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL=os.devnull, GIT_TERMINAL_PROMPT='0',
                    GIT_ALLOW_PROTOCOL='file', GIT_NO_REPLACE_OBJECTS='1')
         command = ['git', '-c', 'core.hooksPath=' + os.devnull, '-c', 'core.autocrlf=false',
                    '-c', 'core.quotePath=false', '-C', str(directory or self.repo), *args]
         result = subprocess.run(command, env=env, capture_output=True, timeout=90)
-        if result.returncode:
+        if result.returncode and check:
             raise ValueError('Managed Git 操作失敗：' + args[0])
         return result.stdout
 
@@ -106,6 +110,17 @@ class ManagedGit:
         self.verify(commit)
         data = self.command('archive', '--format=tar', commit, 'industry-map', *sorted(DATA_FILES))
         return read_archive(data)
+
+    def file(self, commit, path):
+        """One research file at an immutable commit, without archiving the whole tree."""
+        self.verify(commit)
+        research_path(path)
+        if self.command('cat-file', '-t', commit + ':' + path, check=False).strip() != b'blob':
+            raise MissingResearchFile('基準版本沒有這份研究檔案。')
+        content = self.command('cat-file', 'blob', commit + ':' + path)
+        if len(content) > 10 * 1024 * 1024:  # Same per-file bound as read_archive.
+            raise ValueError('研究內容超過大小或檔案數限制。')
+        return content
 
     def seed(self, bundle, commit):
         if not COMMIT.fullmatch(commit) or len(bundle) > 100 * 1024 * 1024:

@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
 from datetime import date as calendar_date
@@ -30,7 +31,12 @@ MARKETS = ("TW", "US", "KR", "JP", "HK", "DE", "NL")
 PRESENCE = ("present", "none")
 SOURCE_TYPES = ("filings", "earnings_call", "industry_media", "official_stats", "technical-documents")
 
-class UniqueKeyLoader(yaml.SafeLoader):
+# libyaml 只取代掃描與解析；重複鍵檢查仍由下方的 Python constructor 執行。
+# RESEARCH_YAML_PURE=1 只供等價測試強制使用純 Python 版。
+YAML_BASE = (yaml.SafeLoader if os.environ.get('RESEARCH_YAML_PURE') == '1'
+             else getattr(yaml, 'CSafeLoader', yaml.SafeLoader))
+
+class UniqueKeyLoader(YAML_BASE):
     def construct_mapping(self, node, deep=False):
         self.flatten_mapping(node)
         seen = set()

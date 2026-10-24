@@ -10,15 +10,18 @@ for(const mobile of [false,true])test(`草稿編輯、預覽與 stale revision �
   let revision=1,conflict=false,summary='合成既有摘要',active=base;
   const publicRequests:string[]=[];await page.route('**/api/v2/**',route=>{publicRequests.push(route.request().url());return route.abort()});
   const frontmatter=()=>({'entity-id':'company-auras',kind:'company','name-zh':'雙鴻',summary,claims:[{id:'keep'}]});
-  const draft=()=>({draft_id:id,base_release_id:base,revision,schema_version:'research-draft-v1',files:{[path]:'synthetic markdown'},assets:{}});
+  const draft=()=>({draft_id:id,base_release_id:base,revision,schema_version:'research-draft-v1',paths:[path],assets:{}});
+  const parts=()=>({path,content:'synthetic markdown',frontmatter:frontmatter(),markdown:'## 合成研究\n測試內文'});
+  const drafts:string[]=[];
   await page.route('**/api/admin/**',async route=>{
     const request=route.request(),url=new URL(request.url());let data:unknown;
+    if(url.pathname.startsWith('/api/admin/drafts'))drafts.push(`${request.method()} ${url.pathname}`);
     if(url.pathname.endsWith('/session'))data={authenticated:true,csrf_token:'synthetic-csrf'};
     else if(url.pathname==='/api/admin/releases')data={items:[{release_id:previous,published_at:'2026-10-16T00:00:00Z',reason:'合成舊版本'}],active_release_id:active,has_more:false,next_cursor:null};
     else if(url.pathname==='/api/admin/sources')data={items:[{id:'synthetic',name:'合成來源',url:'https://example.org',status:'ok',last_success:'2026-10-17T00:00:00Z',error:null}],has_more:false,next_cursor:null};
     else if(url.pathname==='/api/admin/audit')data={items:[{audit_id:1,operation:'publish',recorded_at:'2026-10-17T00:00:00Z',detail:{reason:'合成發布核對'}}],has_more:false,next_cursor:null};
     else if(url.pathname==='/api/admin/drafts')data={items:[{draft_id:id,current_revision:revision,status:'editing',created_at:'2026-10-17'}]};
-    else if(url.pathname.endsWith('/document'))data={path,content:'synthetic markdown',frontmatter:frontmatter(),markdown:'## 合成研究\n測試內文'};
+    else if(url.pathname.endsWith('/document'))data=parts();
     else if(url.pathname.endsWith('/validate'))data={valid:true,errors:[],revision};
     else if(url.pathname.endsWith('/preview'))data={data:{id:'company-auras',kind:'company',name:'雙鴻',summary,markdown:'## 合成研究\n測試內文',content:{gaps:['合成測試界線']},claims:[{id:'sample',statement:'合成草稿主張',confidence:'inference',conditions:['僅為草稿預覽'],reviewed:'2026-10-17',evidence:[{document_id:'document-private',revision_id:'private-revision',title:'合成草稿引用',url:'https://example.invalid',locator:'section-one',applicable_period:'合成期間',read_scope:'僅供草稿核對',locators:[{id:'section-one',excerpt:'合成候選引用摘錄'}]}]}],related:[],assets:[],truncated:false},graph:{root:'company-auras',nodes:[],edges:[],truncated:false,continue_from:[]}};
     else if(url.pathname.endsWith('/publish')){
@@ -35,16 +38,22 @@ for(const mobile of [false,true])test(`草稿編輯、預覽與 stale revision �
       const body=request.postDataJSON();expect(body.changes[0].frontmatter.claims).toEqual([{id:'keep'}]);
       expect(request.headers()['if-match']).toBe(`"${revision}"`);
       if(conflict){await route.fulfill({status:409,json:{message:'草稿已有較新修訂，請先比對差異；原內容未被覆寫。'}});return}
-      summary=body.changes[0].frontmatter.summary;revision++;data=draft();
-    }else data=draft();
+      summary=body.changes[0].frontmatter.summary;revision++;data={...draft(),documents:{[path]:parts()}};
+    }else if(url.pathname.endsWith('/summary'))data=draft();
+    else{await route.fulfill({status:500,json:{message:'編輯頁不應讀取完整草稿。'}});return}
     await route.fulfill({json:data});
   });
   await page.goto('/admin');
   await page.getByLabel('工作草稿').selectOption(id);
+  await expect(page.getByLabel('研究檔案')).toHaveValue(path);
+  expect(drafts).toContain(`GET /api/admin/drafts/${id}/summary`);expect(drafts).not.toContain(`GET /api/admin/drafts/${id}`);
   await page.getByLabel('摘要',{exact:true}).fill('合成新摘要');
   await expect(page.getByRole('button',{name:'閱讀預覽'})).toBeDisabled();
+  const beforeSave=drafts.length;
   await page.getByRole('button',{name:'儲存修訂',exact:true}).click();
   await expect(page.getByRole('status')).toContainText('已儲存修訂 2');
+  expect(drafts.slice(beforeSave)).toEqual([`PATCH /api/admin/drafts/${id}`]); // One round trip: no document or list re-read.
+  await expect(page.getByLabel('工作草稿').locator('option:checked')).toContainText('修訂 2');
   await page.getByRole('button',{name:'閱讀預覽'}).click();
   await expect(page.locator('.rs-detail')).toContainText('合成新摘要');
   await page.locator('.rs-citation summary').click();await expect(page.locator('.rs-citation-reading')).toContainText('合成候選引用摘錄');expect(publicRequests).toEqual([]);
