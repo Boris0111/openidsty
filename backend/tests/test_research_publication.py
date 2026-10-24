@@ -39,6 +39,43 @@ def publishing(draft_context, monkeypatch):
     return client, engine, release, headers, url, payload, response.json()['job_id']
 
 
+def test_publication_checks_every_file_even_after_incremental_saves(draft_context, monkeypatch):
+    from app.research_compile import canonical, digest
+    client, engine, release, headers = draft_context
+    monkeypatch.setattr(publication, 'writer_engine', lambda: engine)
+    async def offline(*args, **kwargs):
+        return False
+    monkeypatch.setattr(publication, 'dispatch_job', offline)
+    with engine.begin() as connection:
+        connection.execute(text('INSERT INTO research.release_head VALUES(true,:release,1,now()) ON CONFLICT(singleton) DO UPDATE SET release_id=excluded.release_id'), {'release': release})
+    draft = client.post('/api/admin/drafts', json={'base_release_id': release}, headers=headers).json()
+    url, draft_id = '/api/admin/drafts/' + draft['draft_id'], draft['draft_id']
+    exported = client.get(url + '/export').json()
+    # Revision 2 holds a file that today's rules reject, as if an older rule had accepted it.
+    stale = {key: exported[key] for key in ('schema_version', 'files', 'assets')}
+    stale['files'] = {**stale['files'], 'industry-map/research/research-legacy.md': '<b>舊規則允許的內容</b>\n'}
+    with engine.begin() as connection:
+        connection.execute(text("INSERT INTO research.draft_revisions(draft_id,revision,origin,payload,payload_hash) VALUES(:id,2,'web',CAST(:payload AS jsonb),:hash)"),
+                           {'id': draft_id, 'payload': canonical(stale), 'hash': digest(stale)})
+        connection.execute(text('UPDATE research.editor_drafts SET current_revision=2 WHERE draft_id=:id'), {'id': draft_id})
+    path = 'industry-map/companies/company-auras.md'
+    saved = client.patch(url, json={'changes': [{'path': path, 'content': exported['files'][path] + '\n增量儲存。\n'}]},
+                         headers={**headers, 'If-Match': '"2"'})
+    assert saved.status_code == 200 and saved.json()['revision'] == 3  # The save trusted the unchanged file.
+    request = {'base_release_id': release, 'revision': 3, 'reason': 'Synthetic full-check publication test'}
+    refused = client.post(url + '/publish', json=request, headers={**headers, 'Idempotency-Key': uuid.uuid4().hex})
+    assert refused.status_code == 422 and refused.json()['code'] == 'invalid-publication'
+    # Even if the API pre-check were wrong, the worker validates every file from scratch.
+    monkeypatch.setattr(publication, 'validated', lambda current: ({'valid': True, 'errors': [], 'content_hash': None}, None))
+    accepted = client.post(url + '/publish', json=request, headers={**headers, 'Idempotency-Key': uuid.uuid4().hex})
+    assert accepted.status_code == 202, accepted.text
+    with pytest.raises(publication.ResearchError) as error:
+        publication.run_job(accepted.json()['job_id'], engine)
+    assert error.value.code == 'invalid-publication'
+    with engine.connect() as connection:
+        assert connection.execute(text('SELECT release_id FROM research.release_head')).scalar_one() == uuid.UUID(release)
+
+
 @pytest.mark.parametrize('stage', ['git', 'assets', 'projection', 'before-activation', 'activation-transaction', 'after-activation'])
 def test_failure_keeps_old_head_and_resumes_without_duplicate_release(publishing, stage):
     client, engine, base, headers, url, payload, key = publishing

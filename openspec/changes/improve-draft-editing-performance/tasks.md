@@ -63,8 +63,8 @@
 
 ## 4. 基準匯出快取與驗證結果共用
 
-- [ ] 4.1 新增以 commit 為鍵的基準匯出快取（LRU，最多 2 筆，design D4），`draft_diff` 改用它。驗證：測試確認同一個 commit 連續 diff 兩次，`ManagedGit.files` 只被呼叫一次，diff 結果與修改前相同。
-- [ ] 4.2 新增 `ValidationCache`（design D5），以 `payload_hash` 為鍵：
+- [x] 4.1 （2026-10-24：`test_draft_caches.py::test_base_export_archives_each_commit_once` 通過；快取值與直接 `export_files(files(commit))` 相同，所以 diff 輸出不變，既有的 diff 整合測試照常通過）新增以 commit 為鍵的基準匯出快取（LRU，最多 2 筆，design D4），`draft_diff` 改用它。驗證：測試確認同一個 commit 連續 diff 兩次，`ManagedGit.files` 只被呼叫一次，diff 結果與修改前相同。
+- [x] 4.2 （2026-10-24：`test_draft_caches.py` 7 passed。實作為通用的 `SharedResults`（LRU＋single-flight），`VALIDATIONS` 與 `BASE_EXPORTS` 各一個實例；資產 store 錯誤以 `ASSET_STORE_ERRORS` 常數辨識；每次實際驗證在 `uvicorn.error` 記一行 INFO `draft-validation computed`（只有草稿 ID 與修訂號），供量測計數，所有環境都會記，不只演練環境）新增 `ValidationCache`（design D5），以 `payload_hash` 為鍵：
   - LRU 最多 2 筆，並有 single-flight。
   - 資產尚未取得或資產 hash 不符的錯誤不快取。
   - 等待者有 60 秒逾時，逾時回 503。
@@ -75,7 +75,7 @@
   - 計算拋出例外時，等待者都收到錯誤，下一次請求會重新計算。
   - 資產錯誤不被快取。
   - 超過 2 筆時淘汰最久未用的。
-- [ ] 4.3 `draft_validate`、`draft_preview`、`draft_asset` 與發布預檢（`research_publication.py` 的 API 端）改用 `ValidationCache`；發布 worker 不改。驗證：在臨時 PostgreSQL 上新增以下案例並通過（以計數 `validate_payload` 的呼叫次數確認）：
+- [x] 4.3 （2026-10-24：臨時 PostgreSQL 上新增 3 項通過；完整 PG 套件 164 passed、1 skipped，唯一失敗為既有 Windows `test_managed_git...`。真實資料單頁最多 2 張圖解，「三張圖解請求」以一頁的 2 張加另一頁的 1 張達成，合計仍只驗證 1 次；同修訂預覽兩次回應相同，確認共用 bundle 未被改寫；發布測試把 API 預檢強制設為通過，worker 仍以 `invalid-publication` 拒絕，head 不變）`draft_validate`、`draft_preview`、`draft_asset` 與發布預檢（`research_publication.py` 的 API 端）改用 `ValidationCache`；發布 worker 不改。驗證：在臨時 PostgreSQL 上新增以下案例並通過（以計數 `validate_payload` 的呼叫次數確認）：
   - 驗證後預覽一份引用三張圖解的文件，完整驗證合計只執行 1 次。
   - 儲存新修訂後再驗證，會重新計算。
   - 無效修訂的圖解請求被拒，且不重新計算。
@@ -83,16 +83,16 @@
 
 ## 5. 草稿摘要、PATCH 回應與管理頁
 
-- [ ] 5.1 新增 `GET /api/admin/drafts/{id}/summary`；`PATCH /api/admin/drafts/{id}` 改回傳摘要加上 `documents`（design D6）。驗證：在臨時 PostgreSQL 上新增 API 測試並通過，確認以下行為：
+- [x] 5.1 （2026-10-24：臨時 PostgreSQL 上 drafts／publication／publication-interfaces 共 24 passed，含新增 `test_summary_and_save_response_carry_no_unrelated_content`；PATCH 回應的 `documents` 不再重跑 `check_document`（內容剛在儲存時檢查過），避免擴大資料的關係檔每次儲存多花約 1.6 秒；離線 CI 方式 278 passed）新增 `GET /api/admin/drafts/{id}/summary`；`PATCH /api/admin/drafts/{id}` 改回傳摘要加上 `documents`（design D6）。驗證：在臨時 PostgreSQL 上新增 API 測試並通過，確認以下行為：
   - summary 不含檔案內容，ETag 等於修訂號。
   - PATCH 回應含新修訂與剛儲存文件的 `frontmatter`／`markdown`／`content`。
   - 未登入或缺 CSRF 時被拒。
   - `GET /drafts/{id}`、`/export`、`/import` 的格式不變（既有測試通過）。
-- [ ] 5.2 `frontend/lib/admin-proxy.ts` 的 GET allowlist 加入 `drafts/{uuid}/summary`。`ResearchEditor.tsx` 選擇草稿時改讀 summary，儲存後直接用 PATCH 回應更新草稿、文件與清單中的修訂號，不再重新讀取文件或清單。驗證：
+- [x] 5.2 （2026-10-24：`npm run typecheck` 通過；`npm run test:e2e:offline` 64 passed；`research-editor.spec.ts` 屬 live config 且需 `RESEARCH_E2E`，改以本 branch 的 `next start`（127.0.0.1:3017，不碰正式服務）執行，桌機／手機 2 passed。mock 對完整 `GET /drafts/{id}` 回 500，所以舊程式碼會失敗；新增斷言：儲存後 drafts 類請求只有一個 PATCH，清單中的修訂號同步為 2）`frontend/lib/admin-proxy.ts` 的 GET allowlist 加入 `drafts/{uuid}/summary`。`ResearchEditor.tsx` 選擇草稿時改讀 summary，儲存後直接用 PATCH 回應更新草稿、文件與清單中的修訂號，不再重新讀取文件或清單。驗證：
   - `npm run typecheck` 通過。
   - 更新 `frontend/tests/research-editor.spec.ts` 的 mock，新增斷言：儲存時只發出一個 PATCH，沒有後續的 document 或 drafts 請求；選擇草稿時不請求完整的 `/drafts/{id}`。
   - `npm run test:e2e:offline` 全數通過。
-- [ ] 5.3 更新 `docs/research-drafts.md`：
+- [x] 5.3 （2026-10-24：`research_drafts.py` 的 14 個路由與 API 表逐一對照一致；`GET /drafts/{id}` 拆成獨立一列以區分完整讀取與摘要）更新 `docs/research-drafts.md`：
   - API 表加入 summary，註明 PATCH 回應的格式。
   - 「儲存與匯入」段補上「只重驗有變動的檔案；驗證與發布仍檢查全部檔案」。
   - 結構上限改為事件數與節點數。

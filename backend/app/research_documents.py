@@ -204,18 +204,23 @@ def upload_asset(root, path, media, content):
     return {'path': path, 'sha256': sha, 'media_type': media, 'size': len(content)}
 
 
+STORE_SYMLINK, ASSET_MISSING, ASSET_MISMATCH = '資產目錄不得使用 symlink。', '草稿引用的研究資產尚未取得。', '研究資產 hash 不符。'
+# Failures caused by the asset store rather than by draft content; a fixed store must be re-validated.
+ASSET_STORE_ERRORS = {STORE_SYMLINK, ASSET_MISSING, ASSET_MISMATCH}
+
+
 def materialize(payload, asset_root):
     result = {path: value.encode('utf-8') for path, value in payload['files'].items()}
     root = Path(asset_root)
     if any(path.is_symlink() for path in (root, *root.parents)):
-        raise ValueError('資產目錄不得使用 symlink。')
+        raise ValueError(STORE_SYMLINK)
     for name, sha in payload['assets'].items():
         path = root / sha
         if path.is_symlink() or not path.is_file() or path.stat().st_size > MAX_ASSET:
-            raise ValueError('草稿引用的研究資產尚未取得。')
+            raise ValueError(ASSET_MISSING)
         content = path.read_bytes()
         if hashlib.sha256(content).hexdigest() != sha:
-            raise ValueError('研究資產 hash 不符。')
+            raise ValueError(ASSET_MISMATCH)
         result[name] = content
     return result
 

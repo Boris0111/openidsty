@@ -1,9 +1,12 @@
 """Versioned owner drafts; never changes the published research head."""
+from collections import OrderedDict
 import difflib
 import json
+import logging
 import os
 import re
 from pathlib import Path
+import threading
 import uuid
 from typing import Literal
 import yaml
@@ -14,7 +17,7 @@ from sqlalchemy import text
 from starlette.concurrency import run_in_threadpool
 from .research_auth import require_owner, require_owner_write
 from .research_db import get_admin_connection
-from .research_documents import (MAX_DRAFT, SCHEMA, export_files, normalize_changes, safe_yaml,
+from .research_documents import (MAX_DRAFT, SCHEMA, ASSET_STORE_ERRORS, export_files, normalize_changes, safe_yaml,
                                  form_document, validate_payload, check_document, upload_asset, MAX_ASSET)
 from .research_git import ManagedGit, MissingResearchFile, safe_path
 from .research_compile import canonical, digest, project
@@ -23,10 +26,78 @@ from .research_v2 import detail_payload, entity
 from .research_graph_v2 import graph_payload
 
 router = APIRouter(prefix='/api/admin/drafts', tags=['drafts'])
+# uvicorn's logger already prints INFO; the drill benchmark counts full validations from these lines.
+log = logging.getLogger('uvicorn.error')
 
 
 def asset_root():
     return Path(os.getenv('RESEARCH_ASSET_ROOT', '/home/app/research-assets'))
+
+
+class SharedResults:
+    """A small LRU for results of immutable inputs (a commit, a revision's content hash). Concurrent
+    misses on one key share a single computation; waiters give up with a retryable 503."""
+
+    def __init__(self, limit, wait=60):
+        self.limit, self.wait = limit, wait
+        self.lock = threading.Lock()
+        self.values = OrderedDict()
+        self.running = {}
+
+    def get(self, key, compute, keep=lambda value: True):
+        with self.lock:
+            if key in self.values:
+                self.values.move_to_end(key)
+                return self.values[key]
+            job = self.running.get(key)
+            owner = job is None
+            if owner:
+                job = self.running[key] = {'done': threading.Event()}
+        if not owner:
+            if not job['done'].wait(self.wait):
+                raise ResearchError(503, 'draft-busy', '同一份草稿仍在處理中，請稍後重試。', retryable=True)
+            if 'error' in job:
+                raise job['error']
+            return job['value']
+        try:
+            job['value'] = compute()
+            if keep(job['value']):
+                with self.lock:
+                    self.values[key] = job['value']
+                    while len(self.values) > self.limit:
+                        self.values.popitem(last=False)
+            return job['value']
+        except BaseException as error:
+            job['error'] = error
+            raise
+        finally:
+            with self.lock:
+                self.running.pop(key, None)
+            job['done'].set()
+
+    def clear(self):
+        with self.lock:
+            self.values.clear()
+
+
+# Commits are immutable and assets content-addressed, so a base export never goes stale.
+BASE_EXPORTS = SharedResults(2)
+# Keyed by draft_revisions.payload_hash; a deploy restarts the process and so drops old validator results.
+VALIDATIONS = SharedResults(2)
+
+
+def base_export(commit):
+    return BASE_EXPORTS.get(commit, lambda: export_files(ManagedGit().files(commit), asset_root()))
+
+
+def validated(current):
+    """(result, bundle) for this revision's content; the full compile runs once per content hash."""
+    def compute():
+        log.info('draft-validation computed draft=%s revision=%s', current['draft_id'], current['revision'])
+        return validate_payload(current['payload'], asset_root())
+    # Missing or mismatched store files are about the asset store, not the content: retry after a fix.
+    return VALIDATIONS.get(current['payload_hash'], compute,
+                           keep=lambda value: not set(value[0]['errors']) & ASSET_STORE_ERRORS)
 
 
 def respond(data, revision=None, status=200):
@@ -77,8 +148,20 @@ def export_draft(draft):
             'revision': draft['revision'], **draft['payload']}
 
 
+def draft_summary(draft):
+    """Revision, file list and asset map without any file contents (the editor's working view)."""
+    return {'draft_id': str(draft['draft_id']), 'base_release_id': str(draft['base_release_id']),
+            'revision': draft['revision'], 'schema_version': draft['payload']['schema_version'],
+            'paths': sorted(draft['payload']['files']), 'assets': draft['payload']['assets']}
+
+
 def document_parts(path, content):
     check_document(path, content)
+    return split_document(path, content)
+
+
+def split_document(path, content):
+    """Form representation of content that already passed check_document."""
     if path.endswith('.md') and content.startswith('---'):
         sections = re.split(r'^---\s*$', content, maxsplit=2, flags=re.M)
         if len(sections) != 3:
@@ -194,6 +277,12 @@ def draft(draft_id: uuid.UUID, owner=Depends(require_owner), connection=Depends(
     return respond(export_draft(result), result['revision'])
 
 
+@router.get('/{draft_id}/summary')
+def draft_summary_view(draft_id: uuid.UUID, owner=Depends(require_owner), connection=Depends(get_admin_connection)):
+    result = get_draft(connection, draft_id)
+    return respond(draft_summary(result), result['revision'])
+
+
 @router.get('/{draft_id}/export')
 def draft_export(draft_id: uuid.UUID, owner=Depends(require_owner), connection=Depends(get_admin_connection)):
     result = get_draft(connection, draft_id)
@@ -242,7 +331,11 @@ async def patch_draft(draft_id: uuid.UUID, request: Request, owner=Depends(requi
     except (ValueError, TypeError, yaml.YAMLError, RecursionError) as error:
         raise ResearchError(422, 'draft-rejected', str(error)[:12000]) from None
     result = await run_in_threadpool(save_revision, connection, current, payload, request.headers.get('if-match'), 'web')
-    return respond(export_draft(result), result['revision'])
+    # The editor continues from this response: no follow-up document or draft-list request is needed.
+    files = result['payload']['files']
+    documents = {change['path']: split_document(change['path'], files[change['path']])
+                 for change in data['changes'] if change['path'] in files}
+    return respond({**draft_summary(result), 'documents': documents}, result['revision'])
 
 
 @router.post('/{draft_id}/import')
@@ -263,7 +356,7 @@ async def draft_import(draft_id: uuid.UUID, request: Request, owner=Depends(requ
 @router.post('/{draft_id}/validate')
 def draft_validate(draft_id: uuid.UUID, owner=Depends(require_owner_write), connection=Depends(get_admin_connection), revision: int | None = Query(None, ge=1)):
     current = get_draft(connection, draft_id, revision)
-    result, _ = validate_payload(current['payload'], asset_root())
+    result, _ = validated(current)
     return respond({**result, 'draft_id': str(draft_id), 'revision': current['revision']}, current['revision'])
 
 
@@ -272,7 +365,7 @@ def draft_diff(draft_id: uuid.UUID, against: Literal['base', 'active'] = 'base',
                owner=Depends(require_owner), connection=Depends(get_admin_connection)):
     current = get_draft(connection, draft_id)
     base = base_release(connection, current['base_release_id'] if against == 'base' else None)
-    original = export_files(ManagedGit().files(base['git_commit']), asset_root())
+    original = base_export(base['git_commit'])
     changes, total, truncated = [], 0, False
     for path in sorted(set(original['files']) | set(current['payload']['files'])):
         before, after = original['files'].get(path, ''), current['payload']['files'].get(path, '')
@@ -293,7 +386,7 @@ def draft_diff(draft_id: uuid.UUID, against: Literal['base', 'active'] = 'base',
 def draft_preview(draft_id: uuid.UUID, entity_id: str = Query(..., max_length=200), revision: int | None = Query(None, ge=1),
                   owner=Depends(require_owner), connection=Depends(get_admin_connection)):
     current = get_draft(connection, draft_id, revision)
-    result, bundle = validate_payload(current['payload'], asset_root())
+    result, bundle = validated(current)
     if not result['valid']:
         return respond({**result, 'revision': current['revision']}, current['revision'], 422)
     base = base_release(connection, current['base_release_id'])
@@ -321,8 +414,9 @@ def draft_asset(draft_id: uuid.UUID, sha: str, revision: int | None = Query(None
     current = get_draft(connection, draft_id, revision)
     if sha not in current['payload']['assets'].values():
         raise ResearchError(404, 'asset-not-found', '草稿未引用此資產。')
-    # Full validation includes SVG/media verification, even for a guessed asset URL.
-    result, bundle = validate_payload(current['payload'], asset_root())
+    # Full validation includes SVG/media verification, even for a guessed asset URL; the revision's
+    # shared result means a page of diagrams costs one compile, not one per image.
+    result, bundle = validated(current)
     if not result['valid']:
         raise ResearchError(422, 'invalid-preview', '請先修正草稿內容，再預覽圖解。')
     asset = next(item for item in bundle['assets'].values() if item['sha256'] == sha)
