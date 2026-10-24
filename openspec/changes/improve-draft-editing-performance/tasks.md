@@ -13,7 +13,7 @@
   - 輸出 p50／p95／最大值、HTTP 狀態與 API 容器的記憶體高點，寫到 `.work/research-draft-bench/<label>.json`。
   - 草稿無法建立或匯入時，記錄狀態碼與錯誤代碼後繼續量測其他項目，不中止。
   - 驗證：`python scripts/research_draft_bench.py --help` 可執行。`tests/` 新增此腳本的單元測試，涵蓋百分位計算與報告欄位，`python -m unittest discover -s tests -p "test_*.py"` 通過。
-- [ ] 1.2 在演練環境以修正前的程式碼（`main` 的 `d8619f3`）量出兩組基準：
+- [x] 1.2 （2026-10-24：Boris 同意後，正式服務暫停，演練由備份 `20261023T193005Z` 還原；修正前 API image `e19d022f` 建置後後端沒有其他 commit。真實資料：儲存 p95 3,834 ms、重複驗證 8,377 ms、整頁預覽 27,974 ms。擴大資料：建立草稿成功，匯入回 422 `draft-rejected`。作法調整：擴大資料改為建立草稿後經 import 匯入，不改演練 head，與 6.1 走同一條路；基準與修正後數字合併寫在「草稿編輯修正前後」一節）在演練環境以修正前的程式碼（`main` 的 `d8619f3`）量出兩組基準：
   - 真實資料，label `before-real`。
   - 擴大資料，label `before-scaled`：先用 `research_scale.py` 的測試專用投影把擴大資料設為 head。預期建立草稿與匯入都會因 YAML 上限被拒，照實記錄。
   - 驗證：兩份報告都存在；`docs/research-performance.md` 新增「草稿編輯基準（修正前）」一節，記錄環境、版本、數字，以及每次預覽實際執行了幾次完整驗證。
@@ -101,7 +101,7 @@
 
 ## 6. 修正後的整合量測與記錄
 
-- [ ] 6.1 在演練環境以本 branch 重建 API／web 後，用 `research_draft_bench.py` 量出 `after-real` 與 `after-scaled`；擴大資料改走正式的 CLI 匯入路徑建立草稿。驗證：兩份報告中下列項目都符合 spec「草稿儲存只檢查有變動的內容」與「同一修訂的完整驗證結果重複使用」：
+- [x] 6.1 （2026-10-24：只建置 image、未啟動正式服務，演練 api／web 以 `b036a28e`／`ade412b2` 重建，image 內有 libyaml。全部達標：真實資料公司文件儲存 p95 357 ms；擴大資料匯入 200，公司文件 307 ms、關係檔 2,345 ms；重複驗證 56／81 ms；`draft-validation computed` 兩組各 1 次，預覽與圖解 0 次；API 記憶體高點 178 MiB）在演練環境以本 branch 重建 API／web 後，用 `research_draft_bench.py` 量出 `after-real` 與 `after-scaled`；擴大資料改走正式的 CLI 匯入路徑建立草稿。驗證：兩份報告中下列項目都符合 spec「草稿儲存只檢查有變動的內容」與「同一修訂的完整驗證結果重複使用」：
   - 真實資料：公司文件儲存 p95 ≤ 500 ms。
   - 擴大資料：公司文件儲存 p95 ≤ 1 s；關係檔儲存 p95 ≤ 3 s。
   - 重複驗證 ≤ 300 ms。
@@ -109,8 +109,8 @@
   - 擴大資料的匯入、驗證與預覽都成功。
 
   未達標時，記錄實際數字與拆解，交給 Boris 決定，不得調整目標來湊數。
-- [ ] 6.2 確認預覽的臨時投影耗時：如果已驗證修訂的預覽 p95 超過 2 秒，記錄投影的耗時拆解，列為後續問題（design D7）。同時以擴大資料在管理頁打開關係檔、輸入幾行文字，觀察是否有明顯延遲並記錄。驗證：結果寫入 `docs/research-performance.md`。
-- [ ] 6.3 更新 `docs/research-performance.md`：
+- [x] 6.2 （2026-10-24：兩組都超過 2 秒門檻，已列為後續問題。worker 容器內逐段計時：臨時投影真實資料 2.69 秒、擴大資料 9.45／9.49 秒，detail 與 graph 合計不到 0.35 秒。輸入延遲以 headless Chromium 量：公司文件 p50 96 ms、p95 247 ms；擴大資料關係檔（972,942 字）p50 277 ms，但一次按鍵卡住 108 秒）確認預覽的臨時投影耗時：如果已驗證修訂的預覽 p95 超過 2 秒，記錄投影的耗時拆解，列為後續問題（design D7）。同時以擴大資料在管理頁打開關係檔、輸入幾行文字，觀察是否有明顯延遲並記錄。驗證：結果寫入 `docs/research-performance.md`。
+- [x] 6.3 （2026-10-24：數字以程式逐一比對 4 份報告 JSON 一致，修正兩處四捨五入；`research-acceptance.md` 改為「草稿編輯的剩餘成本」一列）更新 `docs/research-performance.md`：
   - 新增「草稿編輯修正前後」一節：環境、版本、兩組資料、表格、API 記憶體高點、以 libyaml 取代後的驗證耗時。
   - 「草稿路徑的限制」一節逐項標註處理結果。
   - `docs/research-acceptance.md` 中「草稿關係數上限約 1,700 條；每次儲存約 3 秒」這一列改為修正後的狀態。
