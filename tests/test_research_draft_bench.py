@@ -55,5 +55,18 @@ class ParsingTests(unittest.TestCase):
         self.assertEqual(bench.preview_entity({'industry-map/concepts/c.md': empty}), 'company-auras')
 
 
+class EnvFileTests(unittest.TestCase):
+    def test_reads_only_the_drill_owner_password(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / '.env.research-drill'
+            path.write_text('RESEARCH_SESSION_SECRET=x\nDRILL_OWNER_PASSWORD=a=b\n', encoding='utf-8')
+            self.assertEqual(bench.drill_password(path), 'a=b')
+            path.write_text('RESEARCH_SESSION_SECRET=x\n', encoding='utf-8')
+            with self.assertRaises(SystemExit) as missing:
+                bench.drill_password(path)
+            self.assertNotIn('x', str(missing.exception).replace('DRILL', '').replace('research', '').replace('first', ''))
+
+
 if __name__ == '__main__':
     unittest.main()

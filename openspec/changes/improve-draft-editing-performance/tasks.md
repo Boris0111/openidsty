@@ -119,7 +119,7 @@
 
 ## 7. CI 與正式服務走查
 
-- [ ] 7.1 推送 branch、開 PR，確認 GitHub Actions 全部通過，包括離線後端測試（含 libyaml 檢查與 loader 等價測試）、validator 測試、前端 typecheck 與離線 E2E。驗證：CI 全綠；PR 與 run 編號記錄在本 task。
+- [x] 7.1 （2026-10-24：draft PR #9；commit `49f9f9a` 的 CI run 40054916057、40054954858 全綠：validator 66 類與 `tests/` 44 項、離線後端 280 passed／96 skipped（Linux 上 `test_managed_git` 也通過）、typecheck／unit／build、離線 E2E 64 passed、公開靜態頁 52 passed。後續只改文件的 commit 於 archive 前再確認一次 CI）推送 branch、開 PR，確認 GitHub Actions 全部通過，包括離線後端測試（含 libyaml 檢查與 loader 等價測試）、validator 測試、前端 typecheck 與離線 E2E。驗證：CI 全綠；PR 與 run 編號記錄在本 task。
 - [ ] 7.2 正式服務演練：徵得 Boris 同意後，在主 checkout 切到本 branch，執行 `python scripts/research_lab.py up` 重建 API／web。由 Boris 登入 `/admin`，做以下操作：
   - 建立草稿。
   - 以表單修改一份公司文件並儲存。

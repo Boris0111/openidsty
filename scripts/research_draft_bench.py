@@ -187,24 +187,35 @@ def measure(owner, dataset, saves):
     return report
 
 
+def drill_password(env_file):
+    """DRILL_OWNER_PASSWORD from the drill env file; the value is never printed or stored in a report."""
+    for line in Path(env_file).read_text(encoding='utf-8').splitlines():
+        if line.startswith('DRILL_OWNER_PASSWORD='):
+            return line.split('=', 1)[1]
+    raise SystemExit('drill env file has no DRILL_OWNER_PASSWORD; run research_drill.py setup and owner first')
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--label', required=True, help='report name, e.g. before-real')
     parser.add_argument('--dataset', choices=['real', 'scaled'], default='real')
     parser.add_argument('--saves', type=int, default=30)
+    parser.add_argument('--env-file', type=Path, default=ROOT / '.env.research-drill',
+                        help='drill secrets; the main checkout holds them when this script runs from a worktree')
     args = parser.parse_args(argv)
     sys.path.insert(0, str(SCRIPTS))
-    from research_drill import env_values
     from research_integration import Session
     commit = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+    # The measured code is the drill API's image, not this script's checkout.
+    image = subprocess.run(['docker', 'inspect', '--format', '{{.Image}}', API_CONTAINER], capture_output=True, text=True).stdout.strip()
     owner = Session()
-    owner.login(env_values()['DRILL_OWNER_PASSWORD'])
+    owner.login(drill_password(args.env_file))
     try:
         with MemoryPeak() as memory:
             report = measure(owner, args.dataset, args.saves)
     finally:
         owner.call('DELETE', '/api/admin/session')
-    report.update(label=args.label, commit=commit, measured_at=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
+    report.update(label=args.label, commit=commit, api_image=image, measured_at=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
                   api_memory_peak_mib=memory.peak)
     REPORTS.mkdir(parents=True, exist_ok=True)
     (REPORTS / f'{args.label}.json').write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
