@@ -4,10 +4,11 @@
 
 ## 設定及重設
 
-在主專案根目錄啟動研究服務，再於本機互動終端執行：
+研究服務運行時，在部署目錄以本機互動終端執行。compose 檔的 image tag 由變數 `RESEARCH_IMAGE_TAG` 決定，取自 `status` 回報的部署紀錄（[部署與回退](research-deployment.md)）：
 
 ```powershell
-python scripts/research_lab.py up
+cd C:\Users\User\industryflow-prod
+$env:RESEARCH_IMAGE_TAG = (.venv\Scripts\python.exe scripts\research_lab.py status | Out-String | ConvertFrom-Json).deployed.tag
 docker compose --project-name industryflow-research --env-file .env.research -f compose.research.yaml exec api python -m app.research_owner setup
 # 已有 owner 遺失密碼時：
 docker compose --project-name industryflow-research --env-file .env.research -f compose.research.yaml exec api python -m app.research_owner reset

@@ -1,18 +1,35 @@
-# 研究預覽的備份與還原（task 9.3）
+# 研究服務的備份與還原
 
 ## 每日備份
 
+在部署目錄執行（見 [部署目錄與防護](research-deployment.md#部署目錄與防護)）：
+
 ```powershell
-python scripts/research_lab.py backup --secondary "D:\backups\industryflow-research" --keep-days 30
+cd C:\Users\User\industryflow-prod
+.venv\Scripts\python.exe scripts\research_lab.py backup --secondary "D:\backups\industryflow-research" --keep-days 30
 ```
 
-Windows 工作排程器已註冊 `IndustryFlow Research Daily Backup`：每天 03:30 以 `C:\Users\User\openspec_pjt\.venv\Scripts\python.exe` 在主專案 `C:\Users\User\openspec_pjt` 執行上列命令（2026-10-21 由 worktree 改過來）。錯過的時段（關機、休眠）在下次可執行時補跑，單次上限 1 小時，同時只跑一份。它只在 Boris 登入時執行，因為 Docker Desktop 依附使用者工作階段；Docker 沒啟動時備份會失敗並記錄，不會產生半套備份。移除排程：
+`backup` 屬於會改變正式服務的動作：與部署、回退共用 `deployments/.lock`，並經過同樣的四項防護。部署或回退正在進行時，備份最多等 1 小時；防護不通過就拒絕，並在 `backup-log.jsonl` 記一筆 `refused: …`。`deploy` 與 `rollback` 開始前也會做一份同格式的備份（含第二份副本），資料夾名稱寫進部署紀錄。
+
+Windows 工作排程器的 `IndustryFlow Research Daily Backup`：每天 03:30 以部署目錄的 `.venv\Scripts\python.exe` 執行上列命令。腳本用絕對路徑，「開始位置」設為部署目錄且不加引號（加引號會讓「開始位置」失效）。錯過的時段（關機、休眠）在下次可執行時補跑，單次上限 1 小時，同時只跑一份。它只在 Boris 登入時執行，因為 Docker Desktop 依附使用者工作階段；Docker 沒啟動時備份會失敗並記錄，不會產生半套備份。
+
+2026-10-21 到正式環境切換前，排程在開發 checkout `C:\Users\User\openspec_pjt` 執行；切換時改寫成部署目錄（[部署與回退](research-deployment.md)）：
+
+```powershell
+$action = New-ScheduledTaskAction -Execute C:\Users\User\industryflow-prod\.venv\Scripts\python.exe `
+  -Argument 'C:\Users\User\industryflow-prod\scripts\research_lab.py backup --secondary D:\backups\industryflow-research --keep-days 30' `
+  -WorkingDirectory C:\Users\User\industryflow-prod
+Set-ScheduledTask -TaskName "IndustryFlow Research Daily Backup" -Action $action
+Start-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"   # 手動觸發一次，再核對 backup-log.jsonl 與 D: 的副本
+```
+
+移除排程：
 
 ```powershell
 Unregister-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"
 ```
 
-每份備份是一個以 UTC 時間命名的資料夾（例如 `20261018T214852Z`），主副本在主專案的 `backups/research/`（Git 忽略；2026-10-21 前的舊備份留在原 worktree 的同一路徑），第二份在 `D:\backups\industryflow-research`。C 槽與 D 槽是兩顆不同的實體 SSD（Intel 與 Kingston），第二份複製後逐檔核對 SHA-256。
+每份備份是一個以 UTC 時間命名的資料夾（例如 `20261018T214852Z`），主副本在部署目錄的 `backups/research/`（Git 忽略；切換時從開發 checkout 逐檔核對 SHA-256 複製過來），第二份在 `D:\backups\industryflow-research`。C 槽與 D 槽是兩顆不同的實體 SSD（Intel 與 Kingston），第二份複製後逐檔核對 SHA-256。
 
 | 檔案 | 內容 |
 |---|---|
@@ -20,11 +37,11 @@ Unregister-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"
 | `roles.sql` | `pg_dumpall --roles-only --no-role-passwords`：角色與成員關係，不含密碼 |
 | `git.bundle` | managed Git 的 `bundle --all`，含 release、job 與 `research/published` 等全部 refs |
 | `assets.tar` | 內容定址資產目錄；檔名即內容 SHA-256 |
-| `manifest.json` | 建立時間、耗時、各檔 SHA-256 與大小、啟用中的 release（ID、代數、內容 hash、commit）、59 張表的筆數與內容 md5、Git refs、API image |
+| `manifest.json` | 建立時間、耗時、各檔 SHA-256 與大小、啟用中的 release（ID、代數、內容 hash、commit）、`public` 與 `research` 每張表的筆數與內容 md5、Git refs；運行中 API 容器的 image ID（`api_image`）與提交（`api_revision`）、資料庫遷移版本（`alembic_version`）；是否為回退邊界（`rollback_boundary`、`contract_revisions`）。欄位只增不改，較舊的 manifest 沒有 `api_revision` 等欄位 |
 
 - **一致性**：DB 傾印前後各算一次全表筆數與內容 md5；兩次不同就重做，最多 3 次。這樣清單記錄的就是傾印當下的狀態，還原時可以逐表比對。
 - **結果紀錄**：成功與失敗都記在 `backups/research/backup-log.jsonl`。失敗時只刪除該次未完成的資料夾。
-- **保留**：兩處都保留 30 天。只會刪除名稱符合時間格式、且有 `manifest.json` 的完整備份資料夾，其他檔案不碰。
+- **保留**：兩處都保留 30 天。只會刪除名稱符合時間格式、有 `manifest.json`、且不是回退邊界的完整備份資料夾，其他檔案不碰。回退邊界是含收縮遷移那次部署的部署前備份（`rollback_boundary: true`），不自動刪除，由 Boris 手動清理；manifest 讀不出來的資料夾也保留。
 
 **不在備份內**：`.env.research` 的祕密（DB 密碼、session secret）要另外以受保護的方式保存，例如放在加密的隨身碟或密碼管理器。DB 傾印本身含 owner 的 Argon2id 密碼 hash，所以備份資料夾也要視為敏感資料。
 

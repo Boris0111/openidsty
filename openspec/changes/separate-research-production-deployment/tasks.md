@@ -22,11 +22,13 @@
   - `revoked_at` 欄位名不被誤判。
   - 鏈分岔、檔名不一致：失敗。
   - `EXPAND_REVIEWED` 標記後通過。
-- [ ] 1.2 在 `backend/migrations/versions/0009_*.py` 與 `0017_drop_company_financials.py` 加上 `CONTRACT = '<原因>'`，不改其他內容。驗證：
+- [x] 1.2 在 `backend/migrations/versions/0009_*.py` 與 `0017_drop_company_financials.py` 加上 `CONTRACT = '<原因>'`，不改其他內容。驗證：
   - `git diff` 只有標記行。
   - `migration_rules` 對實際目錄回報收縮遷移為 `0009`、`0017`。
   - 測試另以「移除 `0017` 標記」的副本確認會失敗。
   - CI 的離線後端測試照常通過。
+
+  結果：`git diff` 只有兩行 `CONTRACT`；`migration_rules` 回報 `0009`、`0017`。本機以鎖定依賴執行離線後端測試：278 passed、97 skipped；另 1 項 `test_managed_git_does_not_touch_development_index_or_allow_schema_edits` 在 Windows 的 git worktree 中失敗（managed Git 的 `worktree` 指令，與遷移無關），以 7.1 的 Linux CI 為準。
 - [x] 1.3 新增 `docs/research-deployment.md` 的「遷移：擴充與收縮」一節（design D9）：分兩步移除結構、回退邊界、撤回以新遷移進行、lint 的限制。同時處理過時的「additive」描述：
   - 修正 `docs/research-lab.md:27`。
   - 在 `docs/research-acceptance.md:229`、`:259` 加註「自 `0017` 起不成立」，不改寫歷史。
@@ -53,16 +55,18 @@
   驗證：
   - 更新 `tests/test_research_lab_restart.py` 與既有設定檢查測試。
   - 新增測試：tag 格式錯誤、服務 tag 不一致、出現 `build:`、host 環境的 `RESEARCH_IMAGE_TAG` 被忽略，四種情況都會被拒絕。
-- [ ] 2.3 本機建置檢查，只建 image，不啟動任何服務：以本 branch HEAD 建置 api 與 web。驗證：
+- [x] 2.3 本機建置檢查，只建 image，不啟動任何服務：以本 branch HEAD 建置 api 與 web。驗證：
   - `docker image inspect` 可見全部 labels。
   - 在 image 內讀取 `/workspace/industry-map/themes/800vdc.md`，沒有 CR。
   - 建置前後，正式容器的 ID 與 image ID 不變。
   - 結果記在本 task。
   - `docs/research-deployment.md` 新增「建置與 image 版本」一節。
 
+  結果（2026-10-28，提交 `2cbcaf4`）：api `f5a1965df35e`、web `879a42d05a9f`，共 202 秒；兩者 labels 齊全（revision `2cbcaf42a6ad…`、alembic-head `0017`、contract-revisions `0009,0017`、prefect-version `3.8.8`、build `git-archive`）。image 內 `800vdc.md` 0 個 CR、SHA-256 與 git blob 相同（舊 `:dev` 為 136 個 CR）。正式服務 8 個容器的 ID、image ID、狀態與啟動時間建置前後相同。
+
 ## 3. 部署目錄、防護與部署紀錄
 
-- [ ] 3.1 新增部署目錄與防護（design D1、D2、D5）：
+- [x] 3.1 新增部署目錄與防護（design D1、D2、D5）：
   - `deployments/home.json`、`ledger.jsonl`（只追加，含 `schema_version`）、`.lock`。
   - 會改變正式服務的動作，取得 lock 後檢查四項：標記、乾淨 working tree（含未追蹤檔案）、HEAD 等於紀錄、容器 revision 等於紀錄。
   - `status`、`check` 只回報，不拒絕。
@@ -75,16 +79,16 @@
   - HEAD 漂移。
   - 容器 revision 漂移。
   - 第二個寫入者拿不到 lock。
-- [ ] 3.2 `check()` 不再呼叫 `setup()`；`setup()` 在 volume `industryflow-research_pg-data` 已存在時拒絕產生祕密。驗證：
+- [x] 3.2 `check()` 不再呼叫 `setup()`；`setup()` 在 volume `industryflow-research_pg-data` 已存在時拒絕產生祕密。驗證：
   - 測試：volume 存在、沒有 `.env.research` 時，`setup` 拒絕且不寫檔。
   - 測試：`check` 不會建立或追加 `.env.research`。
-- [ ] 3.3 調整 `backup()`（design D5、D11）：
+- [x] 3.3 調整 `backup()`（design D5、D11）：
   - 與部署共用 lock。
   - manifest 加入運行中 api 容器的 image ID、revision 與 `alembic_version`，欄位只增不改。
   - 30 天清理跳過標記為回退邊界的備份。
 
   驗證：在 `tests/` 新增或擴充測試，涵蓋 manifest 欄位、清理時保留回退邊界、lock 被占用時等待或拒絕。
-- [ ] 3.4 更新文件：
+- [x] 3.4 更新文件：
   - `docs/research-deployment.md` 新增「部署目錄與防護」「部署紀錄欄位」兩節。
   - `docs/research-backup.md` 改寫：排程改用部署目錄的 venv 與絕對路徑、共用 lock、回退邊界不清理。
 
@@ -92,7 +96,7 @@
 
 ## 4. 部署與回退指令
 
-- [ ] 4.1 新增 `deploy --commit <sha>`，順序依 design D6：
+- [x] 4.1 新增 `deploy --commit <sha>`，順序依 design D6：
   1. 第一父鏈檢查。
   2. checkout 目標後由目標版本的腳本接手。
   3. 拒絕矩陣。
@@ -115,7 +119,7 @@
   - initialize 失敗時沒有任何 `up`，且留下失敗紀錄。
   - smoke 失敗時有失敗紀錄與回退指令，沒有自動回退。
   - db 永遠不在 `up` 的服務清單中。
-- [ ] 4.2 新增 `rollback --to <seq>`（design D7）：
+- [x] 4.2 新增 `rollback --to <seq>`（design D7）：
   - 目標必須是成功的紀錄。
   - 依部署紀錄中遷移鏈的聯集，判斷有沒有收縮遷移。
   - Prefect 版本不同時拒絕。
@@ -129,7 +133,7 @@
   - Prefect 版本不同。
   - 成功路徑：沒有 initialize，`up --no-deps`，排程啟用時重新註冊。
   - 重建後標記 `rebuilt`。
-- [ ] 4.3 其餘指令調整：
+- [x] 4.3 其餘指令調整：
   - 新增 `status`、`scheduler-start`。
   - `up` 改為提示使用 `deploy`。
   - 移除 `pg-check`、`rebuild-check`。
@@ -140,7 +144,7 @@
   - 測試：每個動作都不會呼叫 `docker build` 或 `compose build`。
   - 測試：在防護不通過時拒絕。
   - `python scripts/research_lab.py --help` 列出新的動作清單。
-- [ ] 4.4 更新文件：
+- [x] 4.4 更新文件：
   - `docs/research-deployment.md` 新增「部署」「回退」「smoke 失敗時」三節。
   - `docs/research-lab.md`：L3、L12、L23，以及 L38、L46 的手動 compose 指令，改為 `deploy`／`status`／`scheduler-start`。
   - `docs/research-owner.md`、`research-reader-entry.md` 的 compose 指令加上 tag 來源（由 `status` 取得）。
@@ -148,6 +152,8 @@
   - `README.md` 的啟動與維運段落。
 
   驗證：在描述**現行程序**的文件中，`grep -rn "research_lab.py up\|:dev" README.md docs/` 都找不到；歷史紀錄段落不改。
+
+  結果：剩下的命中都在歷史紀錄（`research-acceptance.md`、`research-integration.md`、`research-performance.md`、`research-runtime-incident-20261017.md`、`research-service-implementation.md`），以及 `research-deployment.md` 描述切換前 `:dev` 系統的段落（tombstone 為何能擋住舊 branch、2.3 的建置對照、「回到 pre-ledger image」的回復指令），這些段落本來就要指名舊的 `:dev` image。另修正 `research-source-updates.md` 一處現行說明（`start` 不啟動排程，改用 `scheduler-start`）。
 
 ## 5. 演練環境
 

@@ -6,7 +6,7 @@
 
 Owner 在 `/admin` →「來源健康」開啟「來源能力」，可看宣告頻率、可取／可衍生指標、歷史限制及最近實際結果。「更新一次」先保存 durable job，再嘗試派送 Prefect；同一來源已有等待、執行或退避作業時回原作業，不另開請求。人工維護來源不提供自動更新。更新後只重讀該列，不清除已載入的來源分頁。
 
-背景服務關閉時作業會等待，網站繼續讀既有資料。既有 scheduler profile 的 `official-information/hourly` 每小時檢查到期來源；公告預設 1 小時，月營收／SEC 營收／技術文件預設 24 小時。`source-updates/refresh` 執行單次作業，`source-reconciliation/minute` 每分鐘補派到期或失聯作業，每次最多 50 筆。部署／flow/task 不額外重試 HTTP。這些 deployment 需先完成登錄並有 worker 才會執行，預覽 `research_lab.py up` 不會自行啟動 scheduler。
+背景服務關閉時作業會等待，網站繼續讀既有資料。既有 scheduler profile 的 `official-information/hourly` 每小時檢查到期來源；公告預設 1 小時，月營收／SEC 營收／技術文件預設 24 小時。`source-updates/refresh` 執行單次作業，`source-reconciliation/minute` 每分鐘補派到期或失聯作業，每次最多 50 筆。部署／flow/task 不額外重試 HTTP。這些 deployment 需先完成登錄並有 worker 才會執行，`research_lab.py start` 不會自行啟動 scheduler，要以 `research_lab.py scheduler-start` 明確啟用（[research-lab](research-lab.md)）。
 
 必要時可在已驗證的隔離 Compose writer 服務執行：
 
