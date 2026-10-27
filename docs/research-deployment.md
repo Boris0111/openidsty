@@ -123,7 +123,7 @@ cd C:\Users\User\industryflow-prod
 3. 部署目錄 `git checkout --detach <提交>`，再以相同參數執行**目標版本**的 `research_lab.py`。之後的步驟、compose 設定與檢查規則都與 image 同一版本。上一版的腳本持有 lock 直到目標腳本結束；結束時若運行中的版本不是目標，就把部署目錄 checkout 回運行中的提交。
 4. 拒絕條件，任一成立就拒絕，什麼都不改：
    - 資料庫目前的遷移版本不在目標的遷移鏈上，代表撤回或改寫了已部署的遷移。
-   - Prefect 有 pending、running 或 cancelling 的 flow run。加 `--force` 才繼續，替換 worker 時會中斷它們。
+   - Prefect 有 running 或 cancelling 的 flow run（仍在執行）。加 `--force` 才繼續，替換 worker 時會中斷它們。pending 的 run 還沒開始執行，不算忙碌，免得一筆卡住的提交擋住所有部署。
    - 目標相對目前資料庫新增收縮遷移，沒有加 `--allow-contract`。
    - db 容器不是從這個目錄建立的，沒有加 `--recreate-db`。只會在第一次部署發生，見下方「第一次部署」。
 5. 部署前備份，含第二份副本（位置取自 `--secondary` 或 `home.json`）。有收縮遷移時，這份備份標記為回退邊界。

@@ -332,8 +332,9 @@ def http_json(url):
 
 
 def prefect_runs(api=PREFECT_API):
-    """Names of pending, running or cancelling flow runs. Raises when Prefect cannot be asked."""
-    body = json.dumps({'flow_runs': {'state': {'type': {'any_': ['PENDING', 'RUNNING', 'CANCELLING']}}},
+    """Names of flow runs still executing (running or cancelling). Raises when Prefect cannot be asked.
+    Pending runs have not started; a stale submission must not block every deploy."""
+    body = json.dumps({'flow_runs': {'state': {'type': {'any_': ['RUNNING', 'CANCELLING']}}},
                        'limit': 20}).encode()
     request = urllib.request.Request(api + '/flow_runs/filter', data=body, headers={'Content-Type': 'application/json'})
     with urllib.request.urlopen(request, timeout=15) as response:
@@ -510,7 +511,7 @@ def deploy_refusals(target, db_version, busy, force=False, allow_contract=False)
         refusals.append(f'Contract migration(s) {", ".join(added)} would be applied and the pre-deploy backup would become '
                         'the rollback boundary; re-run with --allow-contract after reading docs/research-deployment.md')
     if busy and not force:
-        refusals.append(f'Prefect has {len(busy)} pending or running flow run(s) ({", ".join(busy[:5])}); '
+        refusals.append(f'Prefect has {len(busy)} running flow run(s) ({", ".join(busy[:5])}); '
                         'wait for them, or pass --force to interrupt them')
     return refusals, added
 
@@ -720,7 +721,7 @@ def rollback(seq, secondary=None, force=False):
         refusals = rollback_refusals(target, current, db_version, ledger, latest_boundary(ledger))
         busy = prefect_runs() if 'prefect' in running else []
         if busy and not force:
-            refusals.append(f'Prefect has {len(busy)} pending or running flow run(s); wait, or pass --force')
+            refusals.append(f'Prefect has {len(busy)} running flow run(s); wait, or pass --force')
         refuse_if(refusals, 'roll back')
         secondary = backup_secondary(secondary)
         record = {'kind': 'rollback', 'commit': target['commit'], 'tag': target['tag'], 'rolled_back_to': seq,

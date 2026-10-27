@@ -199,19 +199,27 @@
 
 開始前記錄正式服務的容器 ID、image ID、資料庫清單與 volume 清單，每一步完成後都核對一次，必須全部不變。演練環境會被 `down` 清空。
 
-- [ ] 7.1 推送 branch、開 draft PR，確認 GitHub Actions 全部通過：新增的 unittest、遷移規則、離線後端、前端與 E2E。驗證：CI 全綠，run 編號記在本 task。
-- [ ] 7.2 準備演練目錄與 image：
+- [x] 7.1 推送 branch、開 draft PR，確認 GitHub Actions 全部通過：新增的 unittest、遷移規則、離線後端、前端與 E2E。驗證：CI 全綠，run 編號記在本 task。
+
+  結果：draft PR #10。提交 `fce6cbf` 的 Offline verification 全綠：push run `40571693319`（6 分 28 秒）、pull_request run `40571703884`（5 分 5 秒）。之後只追加文件與 task 紀錄的提交，最終 run 編號記在 7.9。
+- [x] 7.2 準備演練目錄與 image：
   - 建立 `INDUSTRYFLOW_DRILL_HOME` 與演練祕密。
   - 以 `--baseline-commit 7ebbc68`（目前正式的程式內容）建置基準 image，再建置本 PR HEAD 的 image。
   - 驗證：兩個 image 的 labels 正確、沒有 CR；正式服務不變。
-- [ ] 7.3 執行 `research_drill.py restore --backup <最新正式備份>`。驗證：
+
+  結果（2026-10-28）：演練祕密建在 `%USERPROFILE%\industryflow-drill`。基準 `7ebbc68e9a5b`、PR `fce6cbf10f14` 的 api／web 各約 10 秒（layer 快取）；labels 都是 head `0017`、收縮 `0009,0017`（`7ebbc68` 早於標記，未標記的破壞性遷移計為收縮）、Prefect `3.8.8`、`git-archive`。兩個 image 內 `industry-map` 全部 Markdown 共 0 個 CR。正式服務指紋（容器、DB 清單、`industry_research_test` 計數、volume、資產與 managed Git、`:dev` image）不變。
+- [x] 7.3 執行 `research_drill.py restore --backup <最新正式備份>`。驗證：
   - 表、md5、release、refs、資產都與 manifest 一致，`/next` 回 200。
   - 沒有讀取任何正式祕密。
   - 正式服務不變。
-- [ ] 7.4 `deploy-rehearsal --commit <PR HEAD>`，驗證：
+
+  結果：備份 `20261027T193003Z`（manifest 早於 `api_revision`）：不給 `--baseline-commit` 時在動任何容器前拒絕；給 `7ebbc68` 後重用基準 image 還原，RTO 52.7 秒。表、release（`a5df290c…`）、API 實際提供的 release、Git refs、資產 hash 與數量、遷移版本 `0017` 全部相符，`/next` 200。本 worktree 沒有 `.env.research`，演練只讀 `INDUSTRYFLOW_DRILL_HOME` 的祕密。正式服務指紋不變。
+- [x] 7.4 `deploy-rehearsal --commit <PR HEAD>`，驗證：
   - smoke 通過。
   - 資料變動只出現在預期的 legacy 地圖表：散文 CRLF 改為 LF、roles／relations 重新寫入。
   - `theme_assessment_versions` 沒有增加。若增加，先在本 change 修正比較方式，再重做本 task。
+
+  結果：`fce6cbf` smoke 六項全過；遷移 `0017 → 0017`；`theme_assessment_versions` 7 → 7。52 張表中只有 `public.sources` 變動（123 列，列數不變）：以備份還原的對照逐欄比對，只有 7 列 `url` 與 83 列 `data.registry_url`，是 initialize 的 `import_documents` 依 `sources.yaml` 寫回作者端形式、每小時的 `register_sources` 再寫回抓取用網址，切換前每次 `up` 都會發生，與本 change 無關。design 預期的「散文 CRLF 改為 LF」沒有發生：`import_map` 以 `read_text()` 讀檔時已把 CRLF 正規化，正式 DB 的 `segments`／`themes` 散文本來就沒有 CR（0 列），roles／relations 重新寫入但內容相同。正式服務指紋不變。
 - [ ] 7.5 `rollback-rehearsal` 回到基準 image。驗證：
   - 沒有執行 initialize，smoke 通過。
   - `theme_assessment_versions` 不變。

@@ -99,7 +99,7 @@ class RefusalTests(RollbackHarness):
     def test_busy_prefect(self):
         self.running = services(self.current, scheduler=True)
         self.busy = ['publish-run']
-        self.assert_refused(1, 'pending or running flow run')
+        self.assert_refused(1, 'running flow run')
 
     def test_disagreeing_chains(self):
         lab.LEDGER.unlink()

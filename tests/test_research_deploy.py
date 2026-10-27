@@ -175,7 +175,7 @@ class RefusalTests(TargetHarness):
     def test_busy_prefect_without_force(self):
         self.running = services(self.current, scheduler=True)
         self.busy = ['official-information/hourly-run']
-        self.assert_refused('Prefect has 1 pending or running flow run')
+        self.assert_refused('Prefect has 1 running flow run')
         self.deploy(force=True)
         self.assertEqual(self.ledger()[-1]['outcome'], 'succeeded')
 
