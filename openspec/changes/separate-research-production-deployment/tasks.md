@@ -220,11 +220,15 @@
   - `theme_assessment_versions` 沒有增加。若增加，先在本 change 修正比較方式，再重做本 task。
 
   結果：`fce6cbf` smoke 六項全過；遷移 `0017 → 0017`；`theme_assessment_versions` 7 → 7。52 張表中只有 `public.sources` 變動（123 列，列數不變）：以備份還原的對照逐欄比對，只有 7 列 `url` 與 83 列 `data.registry_url`，是 initialize 的 `import_documents` 依 `sources.yaml` 寫回作者端形式、每小時的 `register_sources` 再寫回抓取用網址，切換前每次 `up` 都會發生，與本 change 無關。design 預期的「散文 CRLF 改為 LF」沒有發生：`import_map` 以 `read_text()` 讀檔時已把 CRLF 正規化，正式 DB 的 `segments`／`themes` 散文本來就沒有 CR（0 列），roles／relations 重新寫入但內容相同。正式服務指紋不變。
-- [ ] 7.5 `rollback-rehearsal` 回到基準 image。驗證：
+- [x] 7.5 `rollback-rehearsal` 回到基準 image。驗證：
   - 沒有執行 initialize，smoke 通過。
   - `theme_assessment_versions` 不變。
   - 報告判定「只差擴充遷移」。
-- [ ] 7.6 收縮遷移的拒絕：以 `6c0afd1^`（`0017` 之前）建置 image，嘗試讓演練回退到它。驗證：回退被拒絕，訊息指出 `0017` 與回退邊界，演練服務不變。
+
+  結果：從 `fce6cbf` 回到 `7ebbc68`，沒有執行 initialize，以 `up --no-deps` 替換 api／web，smoke 六項全過；52 張表全部不變，`theme_assessment_versions` 7 → 7；判定 `expand-only`，中間沒有遷移（兩者都在 `0017`）。報告 `rollback-rehearsal-20261027T195309Z.json`。正式服務指紋不變。
+- [x] 7.6 收縮遷移的拒絕：以 `6c0afd1^`（`0017` 之前）建置 image，嘗試讓演練回退到它。驗證：回退被拒絕，訊息指出 `0017` 與回退邊界，演練服務不變。
+
+  結果：`6c0afd1^` 為 `5ceb9a6`，image `5ceb9a62c4f7` 的 labels 為 head `0016`、收縮 `0009`。`rollback-rehearsal --commit 6c0afd1^` 在動任何容器前拒絕：「Rolling back from 0017 to 0016 crosses contract migration(s) 0017; restore the rollback-boundary backup 20261027T193003Z (the backup this drill was restored from)」。演練容器的 ID、image 與啟動時間前後相同。報告 `rollback-rehearsal-20261027T195457Z.json`。
 - [ ] 7.7 執行演練環境的 `pg-check --suite all`。驗證：
   - 全部通過。
   - 正式 cluster 沒有新增資料庫（以 `psql -l` 唯讀比對）。
