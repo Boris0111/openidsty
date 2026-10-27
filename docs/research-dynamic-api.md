@@ -22,4 +22,4 @@
 
 ## 驗證及界線
 
-`python scripts/research_lab.py pg-check --suite research-dynamic` 使用真實 reader role 測公司比較（2–4 家、缺口、不含財務）、觀察分流、日期與分頁及未發布拒絕。既有事件索引另由 `source-updates` suite 驗證。
+`python scripts/research_drill.py pg-check --commit <sha> --suite research-dynamic` 使用真實 reader role 測公司比較（2–4 家、缺口、不含財務）、觀察分流、日期與分頁及未發布拒絕。既有事件索引另由 `source-updates` suite 驗證。

@@ -157,7 +157,7 @@
 
 ## 5. 演練環境
 
-- [ ] 5.1 調整 `scripts/research_drill.py` 的基礎設定（design D10）：
+- [x] 5.1 調整 `scripts/research_drill.py` 的基礎設定（design D10）：
   - compose 注入 tag。
   - 演練祕密改到 `INDUSTRYFLOW_DRILL_HOME`（預設 `%USERPROFILE%\industryflow-drill`）。
   - `setup` 不再讀 `ROOT/.env.research`，改用 `--sec-user-agent`。
@@ -168,8 +168,8 @@
   - 在沒有 `.env.research` 的目錄，路徑解析與 `setup` 都正常。
   - 錯誤訊息中的演練祕密被遮蔽。
   - 兩個腳本讀到的是同一個路徑。
-- [ ] 5.2 `restore --backup latest|<path>` 改用備份 manifest 記錄的基準 image：依 revision 建置或重用。舊 manifest 沒有 revision 時，要求 `--baseline-commit`。驗證：測試涵蓋新舊兩種 manifest、基準 image 不存在時會建置、`latest` 選到最新一份完整備份。
-- [ ] 5.3 新增 `deploy-rehearsal --commit <sha>` 與 `rollback-rehearsal`，與 `research_lab.py` 共用建置、initialize、替換、smoke 與回退判斷。
+- [x] 5.2 `restore --backup latest|<path>` 改用備份 manifest 記錄的基準 image：依 revision 建置或重用。舊 manifest 沒有 revision 時，要求 `--baseline-commit`。驗證：測試涵蓋新舊兩種 manifest、基準 image 不存在時會建置、`latest` 選到最新一份完整備份。
+- [x] 5.3 新增 `deploy-rehearsal --commit <sha>` 與 `rollback-rehearsal`，與 `research_lab.py` 共用建置、initialize、替換、smoke 與回退判斷。
   - 不檢查主線與部署目錄，只操作 drill project。
   - 報告寫到 `.work/research-drill/`，內容包括：各表列數與 md5 差異、遷移版本前後、`theme_assessment_versions` 增減、revision、`worktree_dirty`。
 
@@ -177,8 +177,8 @@
   - project 是 `industryflow-research-drill`。
   - 拒絕條件與正式環境相同。
   - 報告欄位齊全。
-- [ ] 5.4 把 `pg-check`、`rebuild-check` 搬到 `research_drill.py`，只連演練的資料庫 cluster 與 volume。驗證：測試確認 compose project、DB host 與 volume 都屬於演練環境；`research_lab.py` 已沒有這兩個動作。
-- [ ] 5.5 更新文件：
+- [x] 5.4 把 `pg-check`、`rebuild-check` 搬到 `research_drill.py`，只連演練的資料庫 cluster 與 volume。驗證：測試確認 compose project、DB host 與 volume 都屬於演練環境；`research_lab.py` 已沒有這兩個動作。
+- [x] 5.5 更新文件：
   - `docs/research-backup.md` 的演練段落（`INDUSTRYFLOW_DRILL_HOME`、`--backup latest`、基準 image）。
   - `docs/research-performance.md`、`research-integration.md` 中的演練祕密路徑。
   - `docs/research-deployment.md` 新增「合併前演練」一節。
@@ -187,7 +187,7 @@
 
 ## 6. 流程規則
 
-- [ ] 6.1 改寫 `AGENTS.md`「先驗證、再 merge」（design D12）：
+- [x] 6.1 改寫 `AGENTS.md`「先驗證、再 merge」（design D12）：
   - merge 前的實機驗證從 PR worktree 在演練環境進行，不切換主 checkout。
   - merge 後依 `docs/research-deployment.md` 部署，部署紀錄的 smoke 結果就是紀錄。
   - 只有正式環境才有的行為，在部署後核對，記在 `docs/research-acceptance.md`。

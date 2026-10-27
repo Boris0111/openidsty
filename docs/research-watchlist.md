@@ -65,8 +65,8 @@
 ## 驗證
 
 ```powershell
-python scripts/research_lab.py pg-check --suite research-dynamic   # test_research_updates：三面向分開、整站發布、重試／草稿、邊界
-python scripts/research_lab.py pg-check --suite reader-navigation  # gateway 只放行此 POST
+python scripts/research_drill.py pg-check --commit <sha> --suite research-dynamic   # test_research_updates：三面向分開、整站發布、重試／草稿、邊界
+python scripts/research_drill.py pg-check --commit <sha> --suite reader-navigation  # gateway 只放行此 POST
 cd frontend
 npx playwright test --config playwright.offline.config.ts research-watchlist.spec.ts research-watchlist-migration.spec.ts research-watchlist-backup.spec.ts
 # 隔離 preview up 後：

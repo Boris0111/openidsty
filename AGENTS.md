@@ -6,7 +6,7 @@
 
 建立半導體與 AI 伺服器產業的**結構化、可遍歷地圖**，讓「一則新聞 → 受影響的環節與公司」這個推導能自動完成。
 
-產業結構仍以 **Markdown ＋ agent skill** 維護，研究另可經網站草稿發布成版本。正式研究服務（`compose.research.yaml`）以 Next.js／Cytoscape.js、FastAPI、PostgreSQL 與 Prefect 呈現公司關係、官方事件與題材指標（公司財報已於 2026-10-23 移除），只綁本機 127.0.0.1；對外只公開不含伺服器的研究結構靜態快照（`docs/public-snapshot.md`）。排程在 scheduler profile，重啟後自動恢復。啟動及資料維護見 `README.md` 與 `docs/research-lab.md`。行情、帳號與 AI 摘要不在範圍內。
+產業結構仍以 **Markdown ＋ agent skill** 維護，研究另可經網站草稿發布成版本。正式研究服務（`compose.research.yaml`）以 Next.js／Cytoscape.js、FastAPI、PostgreSQL 與 Prefect 呈現公司關係、官方事件與題材指標（公司財報已於 2026-10-23 移除），只綁本機 127.0.0.1；對外只公開不含伺服器的研究結構靜態快照（`docs/public-snapshot.md`）。排程在 scheduler profile，重啟後自動恢復。正式服務只執行 `main` 上已合併提交的 image，從獨立部署目錄部署（`docs/research-deployment.md`）。啟動及資料維護見 `README.md` 與 `docs/research-lab.md`。行情、帳號與 AI 摘要不在範圍內。
 
 ## 產物在哪
 
@@ -21,6 +21,7 @@
 | `tests/run_validator_tests.py` | 驗證器自身的測試套件 |
 | `backend/`、`frontend/`、`compose.yaml` | 應用、離線測試與隔離 Docker 執行環境 |
 | `data/company-research.yaml` | aliases、CIK 與有來源的公司關係；維護見 `docs/company-research.md` |
+| `docs/research-deployment.md` | 正式服務的部署目錄與防護、部署與回退、遷移的擴充與收縮、合併前演練 |
 | `docs/` | API、來源、前端操作與整合驗收記錄 |
 | `openspec/` | 規格與變更記錄（見下方工作流） |
 
@@ -81,4 +82,8 @@ openspec list --specs                         # 已歸檔的主 specs
 
 規劃與實作分離：propose 只產生規劃文件、不碰程式碼；要實作必須另外啟動 apply。
 
-**先驗證、再 merge**：change 的 tasks 全部勾完（包括要在正式服務上做的演練）並在 branch 上 archive 之後，PR 才交給維護者 merge；還有未驗證的 task 時不要建議 merge。需要正式服務的驗證，在主 checkout 暫時切到該 PR 的 branch 進行，不要在 worktree 跑：worktree 沒有 `.env.research`，`scripts/research_lab.py` 會產生與既有 DB volume 不符的新祕密。切換主 checkout 的 branch 或重啟 Docker Desktop 前，先徵得維護者同意。
+**先驗證、再 merge**：change 的 tasks 全部勾完（包括演練環境的實機驗證）並在 branch 上 archive 之後，PR 才交給維護者 merge；還有未驗證的 task 時不要建議 merge。
+
+- **merge 前**：需要實機的驗證從該 PR 的 worktree 在演練環境進行（`scripts/research_drill.py`，見 `docs/research-deployment.md`「合併前演練」）。不切換主 checkout，也不讓正式服務執行未 merge 的程式碼。
+- **merge 後**：維護者依 `docs/research-deployment.md` 從部署目錄部署，部署紀錄的 smoke 結果就是紀錄。只有正式環境才有的行為（例如重開機後排程恢復）在部署後核對，記在 `docs/research-acceptance.md`。
+- 會改變正式服務的指令只在部署目錄執行；開發 checkout 與 worktree 沒有正式祕密，`research_lab.py` 會拒絕。重啟 Docker Desktop 前，先徵得維護者同意。

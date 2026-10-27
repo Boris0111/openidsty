@@ -257,3 +257,24 @@ python scripts/migration_rules.py --commit <sha>     # 某個提交的遷移鏈�
 ### 限制
 
 lint 只看語法。新增 trigger、constraint、policy 這類語意上的破壞抓不到，例如新的 constraint 拒絕前一版會寫入的值。這類變更由合併前的回退預演（`research_drill.py rollback-rehearsal`）補足：預演失敗時，把該遷移改標為 `CONTRACT`。
+
+## 合併前演練
+
+需要實機的合併前驗證，從 PR 的 worktree 在演練環境（project `industryflow-research-drill`，web 3016、API 8016）進行：不切換主 checkout，也不讓正式服務執行未合併的程式碼。演練與正式部署共用 `research_lab.py` 的建置、initialize、替換、smoke 與回退判斷，所以演練的結果代表正式部署的結果。演練祕密與還原細節見 [備份與還原](research-backup.md#還原演練)。
+
+```powershell
+cd <PR 的 worktree>
+python scripts/research_drill.py down                                     # 清掉上一次演練
+python scripts/research_drill.py restore --backup latest                   # 以備份的基準 image 還原正式資料
+python scripts/research_drill.py deploy-rehearsal --commit <PR HEAD>
+python scripts/research_drill.py rollback-rehearsal                        # 回到 restore 的基準 image
+python scripts/research_drill.py pg-check --commit <PR HEAD> --suite all
+python scripts/research_drill.py rebuild-check --commit <PR HEAD>          # PR 改了研究內容的編譯時
+```
+
+- **`deploy-rehearsal`**：與「部署」第 4–10 步相同的拒絕條件、建置、initialize、替換與 smoke（project 換成演練的，網址換成 8016／3016）。演練的目的就是部署尚未合併的提交，所以**不檢查**第一父鏈與部署目錄；收縮遷移要 `--allow-contract` 等拒絕條件照樣適用。報告 `.work/research-drill/deploy-rehearsal-<時間>.json` 列出每張變動表的列數與 md5 前後、遷移版本前後、`theme_assessment_versions` 的增減、提交與 `worktree_dirty`，以及 smoke 結果。
+- **`rollback-rehearsal`**：以「回退」的規則回到 restore 的基準 image（或 `--commit` 指定的提交），不執行 initialize。報告判定 `expand-only`（列出中間的擴充遷移），或 `refused` 並列出原因；跨越收縮遷移時，訊息指向演練還原時用的那份備份。
+- **`pg-check`、`rebuild-check`**：以該提交的 image 在演練的 `bootstrap` 服務執行。`industry_research_test` 建在演練的 DB cluster，`rebuild-check` 的資產只寫進演練的 volume，正式的 cluster 與 volume 都不碰。
+- **`build --commit`**：只建 image，例如預先建好要演練回退的舊版本。
+- **只有一個演練實例**：port 與 project 固定，一次只能演練一個 PR，`down` 會清掉上一個。報告存在各自 PR 的 worktree。
+- **只有正式環境才有的行為**，例如排程在主機重開機後恢復，無法在 merge 前驗證。這類行為在 merge 後部署時核對，記錄在 [research-acceptance](research-acceptance.md)。

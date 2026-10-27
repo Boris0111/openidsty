@@ -6,9 +6,12 @@
 
 ```powershell
 cd scripts
-python research_drill.py restore --backup ..\backups\research\<時間>; python research_drill.py migrate; python research_drill.py owner
+python research_drill.py down; python research_drill.py restore --backup latest; python research_drill.py owner
+python research_drill.py deploy-rehearsal --commit <要量測的提交>    # 量測某個提交時；不需要就跳過
 ..\..\openspec_pjt\.venv\Scripts\python.exe research_load.py --label real-fixed --background twse-revenue     # 報告：.work/research-load/<label>.json
 ```
+
+上面是 2026-10-28 起的指令：演練祕密在 `INDUSTRYFLOW_DRILL_HOME`（預設 `%USERPROFILE%\industryflow-drill`），不再放在 checkout 根目錄，所以可以從任何 worktree 執行；`restore` 以備份記錄的基準 image 還原，要量測的程式以 `deploy-rehearsal` 換上（[備份與還原](research-backup.md#還原演練)）。本文的量測當時沿用預覽的 `:dev` image，並以 `migrate` 升級 schema。
 
 **結論**：修正讀者財務查詢後，真實資料與擴大資料兩組都達標。修正前，擴大資料的 financial p95 是 5.9 秒，另有 8.5% 回 503。
 

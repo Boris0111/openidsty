@@ -47,27 +47,32 @@ Unregister-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"
 
 ## 還原演練
 
-演練使用獨立的 Compose project `industryflow-research-drill`（`compose.research-drill.yaml`）：
+演練使用獨立的 Compose project `industryflow-research-drill`（`compose.research-drill.yaml`），可以從任何 checkout 或 worktree 執行：
 
-- 環境：自己的 DB、Git 與資產 volume，自己的祕密（`.env.research-drill`，Git 忽略），web 綁 `127.0.0.1:3016`、API 綁 `127.0.0.1:8016`。
-- image：沿用預覽的 image，不重新 build。
-- 隔離：沒有排程，不會自動抓取來源。不動預覽與原服務，演練前後都會比對這兩者的容器指紋。
+- **環境**：自己的 DB、Git 與資產 volume，web 綁 `127.0.0.1:3016`、API 綁 `127.0.0.1:8016`。
+- **祕密**：放在 `INDUSTRYFLOW_DRILL_HOME`（預設 `%USERPROFILE%\industryflow-drill`）的 `.env.research-drill`，與 checkout 無關。`setup` 只產生新的演練祕密，不讀正式的 `.env.research`；線上來源更新需要的 SEC 聯絡字串以 `--sec-user-agent` 傳入。錯誤輸出同時遮蔽演練與正式祕密。
+- **image**：以備份 manifest 記錄的基準提交（`api_revision`）從 `git archive` 建置或重用（[建置與 image 版本](research-deployment.md#建置與-image-版本)）。manifest 較舊、沒有這個欄位時，以 `--baseline-commit` 指定當時正式 image 的提交。因為用的是基準 image，待合併提交的新遷移不會讓還原失敗。
+- **隔離**：沒有排程，不會自動抓取來源。不動正式服務與原服務，演練前後都會比對兩者的容器指紋。
 
 ```powershell
-cd scripts
-python research_drill.py restore --backup ..\backups\research\<時間>   # 從空 volume 開始，計時並核對
-python research_drill.py owner     # 演練用 owner：只在演練 DB 內換成演練密碼
-python research_drill.py down      # 只移除演練 project 的容器與 volume
+python scripts/research_drill.py setup                       # 第一次：在 INDUSTRYFLOW_DRILL_HOME 產生演練祕密
+python scripts/research_drill.py restore --backup latest      # 從空 volume 開始，計時並核對；也可給備份資料夾路徑
+python scripts/research_drill.py owner                        # 演練用 owner：只在演練 DB 內換成演練密碼
+python scripts/research_drill.py down                         # 只移除演練 project 的容器與 volume
 ```
 
-`restore` 依序執行下列步驟，報告存在 `.work/research-drill/restore-<時間>.json`：
+`--backup latest` 選部署目錄（`INDUSTRYFLOW_PROD_HOME`，預設 `%USERPROFILE%\industryflow-prod`）`backups/research/` 下最新一份有 `manifest.json` 的備份。它只讀備份檔案，不讀部署目錄的 `.env.research`。
 
-1. 核對備份各檔的 hash。
+`restore` 依序執行下列步驟，報告存在 `.work/research-drill/restore-<時間>.json`，並記下基準提交（之後的 `rollback-rehearsal` 預設回到它）：
+
+1. 核對備份各檔的 hash，依 manifest 決定基準提交，建置或重用它的 image。
 2. 啟動空 DB，先套用角色，再以 `pg_restore --exit-on-error` 還原，最後由 `research_roles` 設定演練用登入密碼。
 3. 以 `clone --mirror` 還原 managed Git，並移除指向 bundle 的 remote 設定。
 4. 解開資產。
 5. 啟動 API 與 web。
-6. 逐項核對：全表筆數與內容 md5、啟用中的 release、API 實際提供的 release、Git refs、資產內容 hash 與數量、`/next` 能否開啟。
+6. 逐項核對：全表筆數與內容 md5、啟用中的 release、API 實際提供的 release、Git refs、資產內容 hash 與數量、遷移版本（manifest 有記錄時）、`/next` 能否開啟。
+
+合併前的預演部署、預演回退與分支程式的 PostgreSQL 檢查也在這個環境進行，見 [合併前演練](research-deployment.md#合併前演練)。
 
 ## 2026-10-19 演練結果
 

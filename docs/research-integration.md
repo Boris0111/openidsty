@@ -10,9 +10,11 @@
 
 ```powershell
 cd scripts
-python research_drill.py down; python research_drill.py restore --backup ..\backups\research\<時間>; python research_drill.py owner
+python research_drill.py down; python research_drill.py restore --backup latest; python research_drill.py owner
 ..\..\openspec_pjt\.venv\Scripts\python.exe research_integration.py      # 報告：.work/research-drill/integration-<時間>.json
 ```
+
+2026-10-28 起，演練祕密在 `INDUSTRYFLOW_DRILL_HOME`（預設 `%USERPROFILE%\industryflow-drill`），`research_integration.py` 與 `research_drill.py` 讀同一份，從任何 worktree 都能執行；`restore` 以備份記錄的基準 image 還原（[備份與還原](research-backup.md#還原演練)）。本文的執行當時沿用預覽 image，祕密在 checkout 根目錄。
 
 ## 結果（報告 `integration-20261018T222158Z.json`）
 

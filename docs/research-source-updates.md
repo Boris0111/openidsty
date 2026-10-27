@@ -40,4 +40,4 @@ python -m app.source_updates --job <job-uuid>
 | POST `/api/admin/sources/{source_id}/refresh` | Owner＋CSRF／Origin；202 回持久作業，人工來源 422 |
 | GET `/api/admin/source-jobs/{job_id}` | Owner 查狀態、最早續跑時間、請求次數與結果 |
 
-全部 `no-store`，不提供給私人讀者入口。`python scripts/research_lab.py pg-check --suite source-updates` 使用獨立測試 DB、離線 HTTP 與真實程序中斷；`frontend/tests/source-updates.spec.ts` 的畫面使用明示合成 API，代理授權邊界使用實際應用。測試不等於已啟動正式排程或已核對全部公司財年。
+全部 `no-store`，不提供給私人讀者入口。`python scripts/research_drill.py pg-check --commit <sha> --suite source-updates` 使用獨立測試 DB、離線 HTTP 與真實程序中斷；`frontend/tests/source-updates.spec.ts` 的畫面使用明示合成 API，代理授權邊界使用實際應用。測試不等於已啟動正式排程或已核對全部公司財年。

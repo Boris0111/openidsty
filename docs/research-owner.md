@@ -43,7 +43,7 @@ Session 行為依據：[OWASP Session Management](https://cheatsheetseries.owasp
 
 ## 驗證
 
-`python scripts/research_lab.py pg-check` 在獨立測試 DB 執行 owner/session 契約，涵蓋設定／重設、hash 保存、匿名、跨站、CSRF、過期、登出撤銷、重播、登入輪替、持久限流與 HTTPS cookie。合成登入不寫入 application DB；實際 owner 密碼由 Boris 於本機自行設定。
+`python scripts/research_drill.py pg-check --commit <sha>` 在獨立測試 DB 執行 owner/session 契約，涵蓋設定／重設、hash 保存、匿名、跨站、CSRF、過期、登出撤銷、重播、登入輪替、持久限流與 HTTPS cookie。合成登入不寫入 application DB；實際 owner 密碼由 Boris 於本機自行設定。
 
 2026-10-17 實際驗證：34 項隔離 PostgreSQL／API 契約全部通過（含 12 項 owner 測試），另有 3 項真實 Next 管理代理測試與 6 項既有研究走讀通過。新 web production build 通過，容器更新後來源、版本、手機與鍵盤閱讀仍可用。原版及 Valuflow 依本輪使用者資源調整指示保持停止，檢查期間未重新啟動；後台編輯與發布 UI 仍依後續 tasks 交付。
 

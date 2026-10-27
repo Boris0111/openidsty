@@ -34,7 +34,7 @@ Schema 規範見 [industry-map/README.md](../industry-map/README.md) 的 gaps �
 
 ```powershell
 python tests/run_validator_tests.py                         # gap 格式正反例
-python scripts/research_lab.py pg-check --suite admin-read   # owner 邊界、分開計數、有界 SQL、技術候選、缺口分頁
+python scripts/research_drill.py pg-check --commit <sha> --suite admin-read   # owner 邊界、分開計數、有界 SQL、技術候選、缺口分頁
 cd frontend
 npx playwright test --config playwright.offline.config.ts   # 舊題材頁與關注頁不再顯示候選
 # 隔離 preview up 後：
