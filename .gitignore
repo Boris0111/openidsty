@@ -59,6 +59,8 @@ env/
 .cache/
 .work/
 backups/
+# Deployment directory marker, record and lock (docs/research-deployment.md)
+/deployments/
 test-results/
 playwright-report/
 

@@ -226,7 +226,7 @@ Boris 認為整體結構與功能拆分可行，但必須調整以下三點：
    - 執行 `research_lab.py backup --secondary D:\backups\industryflow-research`，並備份原服務 DB 與 volume。
    - 確認備份 hash，並在演練環境還原一次（`research_drill.py restore`、`migrate`）。
 3. **回復路徑**：
-   - schema 都是 additive；回復時切回原 image 與原服務，保留新版 volume，不執行 destructive downgrade。
+   - schema 都是 additive；回復時切回原 image 與原服務，保留新版 volume，不執行 destructive downgrade。（註：自 `0017` 起不成立，`0009` 與 `0017` 是收縮遷移，規則見 [部署與回退](research-deployment.md#遷移擴充與收縮)。）
    - 研究內容的還原與資料庫的還原分開操作。
 4. **祕密**：為正式環境產生新的 DB、session、owner 憑證，不沿用預覽的 `.env.research`。owner 密碼由 Boris 在互動終端設定。
 5. **私人網路**：
@@ -256,7 +256,7 @@ Boris 認為整體結構與功能拆分可行，但必須調整以下三點：
 |---|---|
 | 2. 切換前備份 | `research_lab.py backup --secondary D:\backups\industryflow-research`：`20261021T093452Z`，release `a5df290c…`（第 4 代），C／D 兩份 5 個檔案的 SHA-256 相符。原服務 volume（`industryflow_pg-data`、`industryflow_caddy-*`、`industryflow-reading-db` 的匿名 volume）打包到 `D:\backups\industryflow-original\20261021\`，附 `SHA256SUMS` |
 | 2. 演練還原 | 把同一份備份還原到 `industryflow-research-drill`：全表筆數與內容、release、Git refs、資產全部相符，`/next` 回 200，RTO 55.7 秒；`migrate` 前後都是 `0016`。演練完成後以 `research_drill.py down` 移除 |
-| 3. 回復路徑 | 見下方「回復步驟」。schema 都是 additive，沒有 destructive downgrade |
+| 3. 回復路徑 | 見下方「回復步驟」。schema 都是 additive，沒有 destructive downgrade（註：自 `0017` 起不成立，見 [部署與回退](research-deployment.md#遷移擴充與收縮)） |
 | 4. 祕密 | 在主專案產生新的 `.env.research`（DB、session、reader、writer 四組都是新的隨機值；只沿用 `SEC_USER_AGENT`），以 `ALTER ROLE` 與 initialize 換掉三個 DB 帳號的密碼。從 Compose 網路實測：新密碼可連線，預覽的舊密碼全部被拒絕。Boris 在自己的終端執行 `research_owner reset`，`credential_version` 1→2（17:49）；session secret 換新後，舊 session 全部失效 |
 | 5. 私人網路 | **延後**：Boris 決定這次不做。目前只綁 loopback，沒有跨裝置讀取 |
 | 6. 排程與限流 | 演練環境已移除，原服務停止，只剩研究服務一個環境；scheduler 的啟用與補抓另外記錄 |

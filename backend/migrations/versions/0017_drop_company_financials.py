@@ -4,6 +4,7 @@ revision='0017'
 down_revision='0016'
 branch_labels=None
 depends_on=None
+CONTRACT='Drops the company financial tables, view and import guard that versions before 0017 still query'
 
 # Children before parents. DROP TABLE also removes each table's policies, triggers and indexes;
 # the shared research.guard_immutable_row() stays because other research tables use it.

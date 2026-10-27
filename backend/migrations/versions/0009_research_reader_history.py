@@ -6,6 +6,7 @@ revision = '0009'
 down_revision = '0008'
 branch_labels = None
 depends_on = None
+CONTRACT = 'Drops and narrows the reader policy on research.legacy_history; history the previous version served readers is hidden'
 
 
 def upgrade():

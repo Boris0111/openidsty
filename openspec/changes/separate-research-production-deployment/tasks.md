@@ -10,7 +10,7 @@
 
 ## 1. 遷移分類規則
 
-- [ ] 1.1 新增 `scripts/migration_rules.py`（design D8），只用標準函式庫：
+- [x] 1.1 新增 `scripts/migration_rules.py`（design D8），只用標準函式庫：
   - 解析 revision 鏈與 `upgrade()` 內容，以及它引用的 `sql/*.sql`。
   - 標示破壞性語句；命中的遷移須有 `CONTRACT` 或 `EXPAND_REVIEWED`。
   - 檢查鏈線性、單一 head、revision 等於檔名前綴。
@@ -27,7 +27,7 @@
   - `migration_rules` 對實際目錄回報收縮遷移為 `0009`、`0017`。
   - 測試另以「移除 `0017` 標記」的副本確認會失敗。
   - CI 的離線後端測試照常通過。
-- [ ] 1.3 新增 `docs/research-deployment.md` 的「遷移：擴充與收縮」一節（design D9）：分兩步移除結構、回退邊界、撤回以新遷移進行、lint 的限制。同時處理過時的「additive」描述：
+- [x] 1.3 新增 `docs/research-deployment.md` 的「遷移：擴充與收縮」一節（design D9）：分兩步移除結構、回退邊界、撤回以新遷移進行、lint 的限制。同時處理過時的「additive」描述：
   - 修正 `docs/research-lab.md:27`。
   - 在 `docs/research-acceptance.md:229`、`:259` 加註「自 `0017` 起不成立」，不改寫歷史。
 
@@ -35,7 +35,7 @@
 
 ## 2. 以提交建置 image
 
-- [ ] 2.1 在 `scripts/research_lab.py` 新增建置函式（design D3）：
+- [x] 2.1 在 `scripts/research_lab.py` 新增建置函式（design D3）：
   - 以 `git -c core.autocrlf=false archive <sha>` 經 Python pipe 給 `docker build -f backend/Dockerfile -`；web 同樣處理。
   - tag `<sha12>`，加上 OCI 與 `io.industryflow.*` labels：alembic head 與收縮清單取自 1.1，Prefect 版本取自 `backend/runtime-constraints.txt`。
   - 同名 tag 已存在且 labels 相符時重用；不符時拒絕。
@@ -45,7 +45,7 @@
   - label 值。
   - 重用與拒絕。
   - 兩個 Dockerfile 的 `COPY` 來源都在版本控制中：從 archive 建置不能缺檔。
-- [ ] 2.2 調整 compose 與設定檢查（design D4）：
+- [x] 2.2 調整 compose 與設定檢查（design D4）：
   - `compose.research.yaml`、`compose.research-drill.yaml` 移除 `build:`，image 改用 `${RESEARCH_IMAGE_TAG:?…}`。
   - `compose(..., tag=)` 在濾除 host `RESEARCH_*` 後注入 tag。
   - `validate_config(config, tag)` 要求 12 位十六進位，所有服務一致，且沒有 `build:`。
