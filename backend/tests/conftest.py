@@ -33,6 +33,10 @@ def scaled_tree(tmp_path_factory):
     """research_scale's 300-company / 3,000-relation tree, written to a temporary folder."""
     import sys
     from app.config import ROOT
+    # The API image ships only the validator scripts, so the PostgreSQL run inside it (research_drill.py
+    # pg-check) skips this offline test; CI runs it from the checkout.
+    if not (ROOT / 'scripts' / 'research_scale.py').exists():
+        pytest.skip('scripts/research_scale.py is not in the API image; CI runs this test from the checkout')
     sys.path.insert(0, str(ROOT / 'scripts'))
     import research_scale
     research_scale.TREE = tmp_path_factory.mktemp('scaled') / 'tree'
