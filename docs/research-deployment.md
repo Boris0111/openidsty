@@ -278,3 +278,19 @@ python scripts/research_drill.py rebuild-check --commit <PR HEAD>          # PR 
 - **`build --commit`**：只建 image，例如預先建好要演練回退的舊版本。
 - **只有一個演練實例**：port 與 project 固定，一次只能演練一個 PR，`down` 會清掉上一個。報告存在各自 PR 的 worktree。
 - **只有正式環境才有的行為**，例如排程在主機重開機後恢復，無法在 merge 前驗證。這類行為在 merge 後部署時核對，記錄在 [research-acceptance](research-acceptance.md)。
+
+## 演練紀錄（2026-10-28，separate-research-production-deployment task 7）
+
+從 PR #10 的 worktree 執行，沒有部署目錄標記，也沒有正式祕密。正式服務的指紋（容器 ID、image、狀態與啟動時間、DB 清單、`industry_research_test` 計數、volume、資產與 managed Git、`:dev` image）在每一步前後都相同。報告在該 worktree 的 `.work/research-drill/`。
+
+| 步驟 | 結果 |
+|---|---|
+| 7.2 image | 基準 `7ebbc68e9a5b` 與 PR `fce6cbf10f14` 從 `git archive` 建置，labels 齊全，`industry-map` 的 Markdown 共 0 個 CR |
+| 7.3 還原 | 備份 `20261027T193003Z`（manifest 沒有 `api_revision`）：不給 `--baseline-commit` 時先拒絕；以 `7ebbc68` 還原後全部核對相符，`/next` 200，RTO 52.7 秒（`restore-20261027T194619Z.json`） |
+| 7.4 預演部署 | smoke 六項全過，遷移 `0017 → 0017`，`theme_assessment_versions` 7 → 7，61.0 秒。52 張表只有 `public.sources` 變動（7 列 `url`、83 列 `data.registry_url`），是 initialize 寫回 `sources.yaml` 形式的既有行為，下一次每小時更新會寫回。預期中的散文 CRLF → LF 沒有發生：`import_map` 以 `read_text()` 讀檔時已正規化換行，正式 DB 的散文本來就沒有 CR（`deploy-rehearsal-20261027T194912Z.json`） |
+| 7.5 預演回退 | 回到 `7ebbc68`，沒有 initialize，smoke 六項全過，52 張表全部不變，判定 `expand-only`（`rollback-rehearsal-20261027T195309Z.json`） |
+| 7.6 收縮遷移 | `6c0afd1^`（`5ceb9a62c4f7`，head `0016`）：回退被拒絕，訊息指出 `0017` 與回退邊界備份，演練容器不變（`rollback-rehearsal-20261027T195457Z.json`） |
+| 7.7 `pg-check --suite all` | **待重跑**。第一次 157 passed、1 error：`scaled_tree` fixture 需要 image 內沒有的 `scripts/research_scale.py`（2026-10-24 起就存在），已修正；第二次因主機記憶體不足被中止 |
+| 7.8 防護與遮蔽 | worktree 內 `deploy` 因沒有標記被拒絕、`setup` 因正式 volume 已存在被拒絕，狀態都沒變；故意失敗的演練步驟輸出中，連線字串的密碼為 `[REDACTED]`，演練祕密出現 0 次 |
+
+**順帶發現（正式 Prefect，非本 change 造成）**：`research-publication-reconciliation/minute` 有一筆 flow run 自 2026-10-21 停在 PENDING／Submitting，這個 deployment 最後一次完成是 2026-10-22。`deploy` 原本把 PENDING 也算忙碌，會因此擋住所有部署；已改為只計 RUNNING 與 CANCELLING。那筆卡住的 run 要由 Boris 決定如何處理。

@@ -364,15 +364,22 @@ def pg_check(commit, suite='all'):
     drill_db(tag)
     protected, preview = protected_snapshot(), preview_snapshot()
     started = time.time()
-    output = compose('--profile', 'tools', 'run', '--rm', '--no-deps', '-T', '-e', 'PYTHONUNBUFFERED=1', 'bootstrap',
-                     'python', '-m', 'app.research_pg_checks', '--suite', suite, tag=tag).decode('utf-8', errors='replace')
+    try:
+        output, failure = compose('--profile', 'tools', 'run', '--rm', '--no-deps', '-T', '-e', 'PYTHONUNBUFFERED=1',
+                                  'bootstrap', 'python', '-m', 'app.research_pg_checks', '--suite', suite,
+                                  tag=tag).decode('utf-8', errors='replace'), None
+    except RuntimeError as error:
+        # The message is pytest's (already redacted) output; a failing suite still leaves its report and log.
+        output, failure = str(error), error
     verify_protected(protected)
-    summary = next((line.strip('= ') for line in reversed(output.splitlines()) if re.search(r'\d+ passed', line)), None)
-    report = {'kind': 'pg-check', 'commit': commit, 'tag': tag, 'built': built, 'suite': suite, 'summary': summary,
-              'seconds': round(time.time() - started, 1), 'worktree_dirty': worktree_dirty(),
+    summary = next((line.strip('= ') for line in reversed(output.splitlines()) if re.search(r'\d+ (passed|failed)', line)), None)
+    report = {'kind': 'pg-check', 'commit': commit, 'tag': tag, 'built': built, 'suite': suite, 'passed': failure is None,
+              'summary': summary, 'seconds': round(time.time() - started, 1), 'worktree_dirty': worktree_dirty(),
               'protected_services_unchanged': True, 'preview_unchanged': preview_snapshot() == preview}
     path = write_report('pg-check', report)
-    path.with_suffix('.log').write_text(output, encoding='utf-8')
+    path.with_suffix('.log').write_text(redact(output), encoding='utf-8')
+    if failure:
+        raise RuntimeError(f'pg-check failed ({summary}); see {path.with_suffix(".log")}') from failure
     return {**report, 'report': str(path)}
 
 

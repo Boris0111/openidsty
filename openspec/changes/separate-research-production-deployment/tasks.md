@@ -229,7 +229,9 @@
   - 全部通過。
   - 正式 cluster 沒有新增資料庫（以 `psql -l` 唯讀比對）。
   - 正式 volume 的修改時間不變。
-- [ ] 7.8 防護與遮蔽的實機確認：在本 worktree（沒有部署目錄標記，也沒有正式祕密）執行以下操作：
+
+  進度（未完成）：第一次以 `fce6cbf` 執行 474 秒，157 passed、1 error。錯誤是 `test_scaled_relation_manifest_is_accepted` 的 `scaled_tree` fixture 匯入 `scripts/research_scale.py`，而 API image 只帶兩支驗證腳本；這是 2026-10-24 PR #9 起就存在的問題（`7ebbc68` 的 `all` 已包含這個檔案），與本 change 無關。已在 `8b6e2d9` 讓該 fixture 在沒有 `scripts/research_scale.py` 時 skip（CI 從 checkout 照常執行），並讓 `pg-check` 失敗時也留下報告與 log。第二次執行途中，Claude Code 因主機記憶體嚴重不足停止了背景程序（不是測試失敗），遺留的演練測試容器已停止。正式 cluster 的資料庫清單、`industry_research_test` 計數與 volume 在兩次執行前後都不變。待記憶體充足時重跑本項。
+- [x] 7.8 防護與遮蔽的實機確認：在本 worktree（沒有部署目錄標記，也沒有正式祕密）執行以下操作：
   - `research_lab.py deploy --commit <任一 main 提交>`
   - `research_lab.py setup`
   - 一個故意失敗的演練步驟
@@ -238,6 +240,8 @@
   - 前兩個指令在改變任何狀態前就拒絕，`setup` 沒有寫入祕密。
   - 失敗輸出中沒有演練祕密或正式祕密。
   - 正式服務不變。
+
+  結果（本 worktree，沒有 `deployments/home.json`，也沒有 `.env.research`）：`deploy --commit 7ebbc68` 以「No deployments/home.json here」拒絕，HEAD、git status、`FETCH_HEAD` 都沒變，也沒有建立 `deployments/`。`setup` 以「Volume industryflow-research_pg-data already exists」拒絕，沒有寫入 `.env.research`。故意失敗的演練步驟（在演練 worker 印出 `$DATABASE_URL` 後 exit 3）：錯誤訊息含 exit 3 與連線字串，但密碼處為 `[REDACTED]`，4 個演練祕密值出現 0 次；這個 checkout 沒有正式祕密檔，演練也從不載入它。正式服務指紋不變。
 - [ ] 7.9 把 7.2–7.8 的結果整理進 `docs/research-deployment.md` 的「演練紀錄」，並在本檔各 task 註記。驗證：文件中的數字與 `.work/research-drill/` 的報告一致。
 
 ## 8. merge 後：正式環境切換（需 Boris 同意並在場；不阻擋 merge）

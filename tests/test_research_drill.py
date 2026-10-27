@@ -297,7 +297,19 @@ class PostgresCheckTests(DrillDir):
         self.assertEqual(args.args[:8], ('--profile', 'tools', 'run', '--rm', '--no-deps', '-T', '-e', 'PYTHONUNBUFFERED=1'))
         self.assertEqual(args.args[8:], ('bootstrap', 'python', '-m', 'app.research_pg_checks', '--suite', 'reader-navigation'))
         self.assertEqual(report['summary'], '241 passed, 3 skipped in 80.00s')
+        self.assertIs(report['passed'], True)
         self.assertTrue(Path(report['report']).with_suffix('.log').exists())
+
+    def test_failing_suite_still_leaves_its_report_and_log(self):
+        self.compose.side_effect = lambda *args, tag, input=None: (
+            b'db1\n' if args[:2] == ('ps', '-q') else
+            (_ for _ in ()).throw(RuntimeError('docker compose failed (exit 1): ..E.\n== 157 passed, 1 error in 459.21s ==')))
+        with self.assertRaisesRegex(RuntimeError, r'pg-check failed \(157 passed, 1 error in 459.21s\)'):
+            drill.pg_check(NEW)
+        [path] = drill.REPORTS.glob('pg-check-*.json')
+        saved = json.loads(path.read_text(encoding='utf-8'))
+        self.assertEqual((saved['passed'], saved['summary']), (False, '157 passed, 1 error in 459.21s'))
+        self.assertIn('1 error', path.with_suffix('.log').read_text(encoding='utf-8'))
 
     def test_rebuild_check_writes_to_the_drill(self):
         archive = self.patch(drill, 'run', return_value=b'tar')
