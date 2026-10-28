@@ -312,4 +312,17 @@ python scripts/research_drill.py rebuild-check --commit <PR HEAD>          # PR 
 | 7.7 `pg-check --suite all` | `24d0a8c`：157 passed、1 skipped，478.5 秒（`pg-check-20261028T095148Z.json`）。`industry_research_test` 只建在演練 cluster，正式 cluster 的資料庫清單、測試資料庫計數與 volume 都不變。第一次執行有 1 error：`scaled_tree` fixture 需要 image 內沒有的 `scripts/research_scale.py`（2026-10-24 起就存在），改為在 image 內 skip，CI 照常從 checkout 執行；中間一次因主機記憶體不足被中止 |
 | 7.8 防護與遮蔽 | worktree 內 `deploy` 因沒有標記被拒絕、`setup` 因正式 volume 已存在被拒絕，狀態都沒變；故意失敗的演練步驟輸出中，連線字串的密碼為 `[REDACTED]`，演練祕密出現 0 次 |
 
+### group 8 修正後的重新驗證（2026-10-29，提交 `4ceb598`）
+
+code review 修正（tasks group 8）改動了部署、回退、備份與演練的程式，所以從 `down` 開始重做一次。正式服務的指紋在每一步前後都相同。
+
+| 步驟 | 結果 |
+|---|---|
+| 還原 | 同一份備份 `20261027T193003Z`，基準 `7ebbc68`：全部核對相符，`/next` 200，RTO 61.5 秒；基準 image 被重用，雖然以現行規則重算後它的收縮清單變成 `0009,0016,0017`、label 仍是 `0009,0017`（`restore-20261028T161431Z.json`） |
+| 預演部署 | `4ceb598`：smoke 六項全過，遷移 `0017 → 0017`，`theme_assessment_versions` 7 → 7，76.3 秒（含建置）；變動的表仍只有 `public.sources`（`deploy-rehearsal-20261028T161758Z.json`） |
+| 預演回退 | 不帶 `--commit`，基準取自 `INDUSTRYFLOW_DRILL_HOME/last-restore.json`：回到 `7ebbc68`，沒有 initialize，smoke 六項全過，52 張表全部不變，判定 `expand-only`（`rollback-rehearsal-20261028T161927Z.json`） |
+| 收縮遷移 | 回退到 `6c0afd1^` 被拒絕，訊息指出 `0017` 與回退邊界備份，演練容器不變（`rollback-rehearsal-20261028T161934Z.json`） |
+| `pg-check --suite all` | `4ceb598`：157 passed、1 skipped，492.1 秒（`pg-check-20261028T162822Z.json`） |
+| 防護與遮蔽 | 與 7.8 相同：worktree 內 `deploy`、`setup` 在改變任何狀態前拒絕，故意失敗的演練步驟中演練祕密出現 0 次 |
+
 **順帶發現（正式 Prefect，非本 change 造成）**：`research-publication-reconciliation/minute` 有一筆 flow run 自 2026-10-21 停在 PENDING／Submitting，這個 deployment 最後一次完成是 2026-10-22。`deploy` 原本把 PENDING 也算忙碌，會因此擋住所有部署；已改為只計 RUNNING 與 CANCELLING。那筆卡住的 run 要由 Boris 決定如何處理。
