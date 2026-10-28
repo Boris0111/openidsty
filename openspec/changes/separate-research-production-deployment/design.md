@@ -54,7 +54,7 @@
   1. `deployments/home.json` 存在，且路徑等於 `ROOT`。
   2. `git status --porcelain` 為空：不允許未提交修改，也不允許未追蹤檔案；被忽略的檔案不算。
   3. HEAD 等於部署紀錄中運行的提交（`deploy` 的過渡期例外，見 D6）。
-  4. 每個運行容器的 `org.opencontainers.image.revision` 都等於部署紀錄。
+  4. 每個運行容器的 `org.opencontainers.image.revision` 都等於部署紀錄。`rollback` 只回報這一項、不拒絕：它正是用來把容器換回已知版本，smoke 失敗後印出的回退指令必須能執行。
 - `status`、`check` 是唯讀動作，只回報不符之處，不拒絕。
 - `check()` 不再呼叫 `setup()`。`setup()` 在 volume `industryflow-research_pg-data` 已存在時拒絕產生祕密，並提示從部署目錄執行。
 - **不選環境變數開關**：任何開發 shell 都能設定它，等於沒有防護。
@@ -71,7 +71,8 @@
   - `io.industryflow.alembic-head`、`io.industryflow.contract-revisions`（由 D8 計算）
   - `io.industryflow.prefect-version`（取自 `backend/runtime-constraints.txt`）
   - `io.industryflow.build=git-archive`
-- 同名 tag 已存在且 labels 相符時直接重用；label 不符時拒絕，不覆蓋。所以演練建置不會移動正式在用的 tag。
+- 同名 tag 已存在時，只比對由提交本身決定的 labels（revision、alembic head、Prefect 版本、`build`）：相符就重用，不符就拒絕、不覆蓋。所以演練建置不會移動正式在用的 tag。
+- `contract-revisions` 會隨 D8 的規則演進而改變，只記錄、不作為同一性。否則規則一調整，所有舊 image 都會被拒絕重用，回退與演練還原跟著失效（code review #2）。
 - Dockerfile 不變，label 以 `--label` 注入。
 - **不選從 checkout 建置**：會帶入 CRLF 與未追蹤檔案。
 - **不選 BuildKit 的 git URL context**：私有 repo 需要在 build 時處理認證。
@@ -124,6 +125,16 @@
    - `alembic_version` 等於 image 的 head。
    - 容器的 `com.docker.compose.project.working_dir` 等於部署目錄。
 10. 寫入部署紀錄。
+- **Prefect 無法查詢時**：無法判斷是否有資料更新在執行，所以拒絕；加 `--force` 才略過檢查（code review #3）。
+- **替換排程服務前再檢查一次**：備份、建置與 initialize 要幾分鐘，期間可能開始新的 flow run（code review #4）。
+  - 替換 `prefect`、`worker` 前若有執行中的 run，最多等 10 分鐘。
+  - 仍未結束時，寫入失敗紀錄並保留舊服務。這時資料庫只套用了擴充遷移，舊服務仍可運作；之後重新部署即可（initialize 可重跑）。
+  - 收縮部署（`--allow-contract`）則在等待後照樣替換，紀錄註明被中斷的 run：舊服務無法在收縮後的 schema 上運作，中斷一次資料更新的代價較小。
+  - 加 `--force` 時不等待，直接替換。
+- **紀錄必定寫入**（code review #9、#15）：
+  - 部署中任何例外，包括 Ctrl-C，都寫入紀錄；寫紀錄時查詢 Docker 失敗，就以已知的欄位與錯誤寫入。
+  - 目標腳本執行期間，上一版腳本忽略 Ctrl-C，讓目標腳本自己記錄。
+  - 目標腳本結束後若沒有留下紀錄，上一版腳本依容器實際的 revision 補記一筆失敗紀錄，並據此決定部署目錄的 checkout。
 - **initialize 失敗時**：部署目錄 checkout 回原提交，寫入失敗紀錄；舊服務始終未被替換。
 - **smoke 失敗時**：寫入失敗紀錄，印出 D7 可執行的 `rollback` 指令，或說明為何只能還原備份。不自動回退（Boris 的決定）。
 - **不選沿用 `up` 加 `depends_on`**：Compose 可能在得知 initialize 失敗前就重建 api，`import_map` 一失敗網站就停擺。
@@ -137,10 +148,11 @@
   - (目標 head, 資料庫版本] 區間內有收縮遷移。舊版提交看不到較新的遷移檔，所以用**部署紀錄中各次遷移鏈的聯集**判斷。
   - 目標與目前的 Prefect 版本不同：Prefect server 會遷移自己的 `prefect` 資料庫。
 - 步驟：
-  1. 部署前備份。
-  2. checkout 目標提交。
-  3. 以目標 tag 執行 `up -d --no-deps` 替換運行中的服務；排程啟用時重跑一次 Prefect `deploy` 註冊。
-  4. smoke 檢查，寫入紀錄。
+  1. 現行腳本取得 lock，檢查標記、乾淨的 working tree 與 HEAD；判斷目標有效、上述相容性與 Prefect，再做回退前備份。現行腳本的規則最新，所以由它判斷。
+  2. checkout 目標提交，**交給目標版本的腳本接手**（與 D6 第 3 步相同）：以目標的建置、compose 與檢查規則重用或重建 image，`up -d --no-deps` 替換運行中的服務；排程啟用時重跑一次 Prefect `deploy` 註冊。
+  3. smoke 檢查，寫入紀錄。紀錄必定寫入的規則與 D6 相同；結束時若運行中的版本不是目標，現行腳本把部署目錄 checkout 回運行中的提交。
+- **交接的理由**：現行腳本的 compose 檢查與服務清單可能比目標新。以現行規則套用舊的 compose 檔，任何 compose 或檢查的調整都會讓回退失敗（code review #7）。
+- **收縮清單以現行規則重算**：除了部署紀錄中各次遷移鏈的聯集，也以現行腳本的規則重算目前提交的收縮清單併入。規則變嚴後，舊紀錄中的清單會偏少，不重算就可能越過收縮遷移。
 - **不執行 initialize**：避開「Can't locate revision」，也避免 `import_map` 以舊內容改寫 legacy 資料表、追加不實的判讀版本，或因缺 `change_reason` 而失敗。
 - **不選 alembic downgrade**：多數遷移的 downgrade 刻意 raise。
 - **不選讓 `env.py` 容忍未知 revision**：會在正向部署時掩蓋真正的不一致。
@@ -152,11 +164,13 @@
 - 標示為破壞性的語句：
   - SQL：`DROP {TABLE|VIEW|COLUMN|FUNCTION|TYPE|SCHEMA|POLICY|TRIGGER|CONSTRAINT|SEQUENCE}`、`RENAME`、`ALTER COLUMN … TYPE`、`SET NOT NULL`、`ADD COLUMN … NOT NULL` 且沒有 `DEFAULT`、`TRUNCATE`、`DELETE FROM`、`REVOKE`（以字詞邊界比對，`revoked_at` 不算）。
   - Alembic：`op.drop_*`、`op.rename_table`，以及 `alter_column` 帶 `type_=`、`nullable=False` 或 `new_column_name=`。
+  - 補充（code review #1、#5、#6）：`ALTER TABLE` 中不寫 COLUMN 的 `DROP <欄位>`，與沒有 `DEFAULT` 的 `ADD <欄位> … NOT NULL`；`DROP INDEX`、`ALTER … DROP DEFAULT`、`DROP ROLE`、`DROP EXTENSION`、`ALTER POLICY`；Alembic 的 `add_column` 欄位帶 `nullable=False` 或 primary key，卻沒有 `server_default`。
+- 分析範圍：`upgrade()` 本身、它引用的模組層常數，以及它呼叫的模組層 helper（遞迴）；不看 `downgrade()`。
 - 命中的遷移必須在模組層宣告其中一項：
   - `CONTRACT = '<原因>'`
   - `EXPAND_REVIEWED = '<前一版不受影響的理由>'`
 - 同時檢查：遷移鏈線性、只有一個 head、4 位數 revision 等於檔名前綴。
-- `0009`、`0017` 標為 `CONTRACT`，只加標記，不改 schema 行為。
+- `0009`、`0017` 標為 `CONTRACT`。`0016` 的 `ALTER POLICY` 只改查詢方式，可見範圍與 `0008` 相同，標為 `EXPAND_REVIEWED`。三者都只加標記，不改 schema 行為。
 - **限制**：新增 trigger、constraint、policy 這類語意上的破壞，lint 抓不到，要靠 D10 的預演回退。
 - **不選 squawk 等外部工具**：看不到 `.sql` 檔與 `op.execute` 字串裡的 SQL，也會新增依賴。
 
@@ -183,6 +197,9 @@
   - `rollback-rehearsal`：以 D7 的規則回到基準 image，報告相容性判斷與 smoke 結果。
   - `pg-check`、`rebuild-check`：從 `research_lab.py` 搬來，只連演練的 cluster 與 volume。
 - **報告**：記錄 revision label 與執行時的 `worktree_dirty`。
+- **跨 worktree**（code review #8）：db 容器屬於執行 `restore` 的 checkout，所以演練的 smoke 不比對 db 的 working_dir，只比對 app 服務。最近一次 `restore` 的基準記在 `INDUSTRYFLOW_DRILL_HOME`，並記下演練 db 容器 ID；`rollback-rehearsal` 只在容器相同時採用它，否則要求 `--commit`。
+- **SEC 聯絡字串**：`setup --sec-user-agent` 在演練 env 已存在時，補寫或更新 `SEC_USER_AGENT`（code review #11）。
+- **其他演練腳本**：`research_load.py` 記錄演練實際運行的 image 與 revision，不再查 `:dev`（code review #13）。
 - **`research_lab.py` 對應調整**：移除 `pg-check`、`rebuild-check`；`seed-git`、`bootstrap`、`restore` 不再建置，並受 D2 防護；`up` 改為提示使用 `deploy`。
 
 ### D11：備份排程與公開快照移到部署目錄
@@ -190,9 +207,10 @@
 - **備份排程**「IndustryFlow Research Daily Backup」：
   - Python 改用部署目錄的 `.venv`；`research_lab.py` 只用標準函式庫，venv 只為隔離。
   - 腳本用絕對路徑，「開始位置」設為部署目錄。
-  - 備份與部署共用 lock。
+  - 備份與部署共用 lock；等待上限 30 分鐘，留在工作排程單次 1 小時的上限內（code review #10）。
+  - 備份先寫入 `<時間>.partial`，完成才改名。被中止時留下的 `.partial` 由下一次備份在持有 lock 時清除；`--backup latest` 與 30 天清理都不把它當成備份。
 - **30 天清理**跳過標記為回退邊界的備份。
-- **公開快照**：匯出、`npm ci`、`build:static`、一致性檢查與 wrangler 部署都在部署目錄進行，`--commit-hash` 用部署紀錄中運行的提交。
+- **公開快照**：匯出、`npm ci`、`build:static`、一致性檢查與 wrangler 部署都在部署目錄進行，`--commit-hash` 用部署紀錄中運行的提交。回退期間（運行中的紀錄是 `rollback`）`public-snapshot` 拒絕執行，下一次部署後恢復。
 
 ### D12：流程規則與本 change 的例外
 
@@ -200,7 +218,7 @@
   - change 的 tasks（包含演練環境的實機驗證）全部勾完，並在 branch 上 archive 後，才交給 Boris merge。
   - 實機驗證從 PR 的 worktree 在演練環境進行，不切換主 checkout。
   - merge 後依 `docs/research-deployment.md` 部署，部署紀錄的 smoke 結果就是紀錄；只有正式環境才有的行為（例如重開機）在部署後核對，記錄在 `docs/research-acceptance.md`。
-- **本 change 是例外**：它的首次部署就是正式環境切換，必須在 merge 之後才能進行。所以 tasks 分為 merge 前（1–7）與 merge 後切換（8）。切換完成後，以後續的 docs PR 記錄並 archive。
+- **本 change 是例外**：它的首次部署就是正式環境切換，必須在 merge 之後才能進行。所以 tasks 分為 merge 前（1–8）與 merge 後切換（9）。切換完成後，以後續的 docs PR 記錄並 archive。 group 8 是 code review 的修正，必須在 merge 前完成，切換才會執行修正後的程式。
 
 ## Risks / Trade-offs
 
@@ -211,7 +229,7 @@
 - **[風險] CRLF 改為 LF**：第一個從 archive 建置的 image，會讓 `import_map` 把 legacy `segments`／`themes` 散文改寫成 LF。
   → 演練的 `deploy-rehearsal` 必須確認變動只在預期的表，且 `theme_assessment_versions` 不增加；若會增加，先在本 change 內處理比較方式，再進行切換。
 - **[風險] 回退後 legacy 地圖表保留較新內容**：只差擴充遷移時可以接受，但回退期間產出的公開快照會混用新地圖資料與舊程式。
-  → `docs/research-deployment.md` 註明回退期間不產出公開快照。
+  → 回退期間 `public-snapshot` 由程式拒絕，`docs/research-deployment.md` 同時註明。
 - **[風險] image 清理刪掉回退目標**：Docker Desktop「Clean up」或 `docker image prune -a` 會刪掉它們。
   → D7 從 archive 重建並標記 `rebuilt`；文件列出保留最近幾版的建議。
 - **[取捨] 演練環境只有一個實例**：port 與 project 固定，一次只能演練一個 PR，`down` 會清掉上一個。

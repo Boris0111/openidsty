@@ -92,13 +92,13 @@
   - `scripts/research_lab.py`：新增 deploy、rollback、status、scheduler-start、防護與部署紀錄；修改 compose 注入、設定檢查、setup 與備份 manifest。
   - `scripts/research_drill.py`：image tag、演練目錄、祕密遮蔽，以及還原、預演、PG 檢查。
   - 新增 `scripts/migration_rules.py`。
-  - `scripts/research_scale.py`、`research_draft_bench.py` 改用演練目錄的祕密路徑。
+  - `scripts/research_scale.py`、`research_draft_bench.py` 改用演練目錄的祕密路徑；`research_load.py` 改記演練實際運行的 image。
 - **設定**：
   - `compose.research.yaml`、`compose.research-drill.yaml`：移除 `build:`，改用 tag 變數。
   - `.gitignore` 加入 `/deployments/`。
   - Dockerfile 不變，label 在建置時注入。
-- **遷移**：`backend/migrations/versions/0009_*.py`、`0017_drop_company_financials.py` 只加收縮標記，不改 schema。
-- **測試**：root `tests/` 新增遷移規則、建置、防護、部署、回退與演練環境的 unittest，不需要 Docker，在 CI 執行。
+- **遷移**：`backend/migrations/versions/0009_*.py`、`0017_drop_company_financials.py` 只加收縮標記，`0016_reader_row_lookups.py` 只加 `EXPAND_REVIEWED` 標記，都不改 schema。
+- **測試**：root `tests/` 新增遷移規則、建置、防護、部署、回退與演練環境的 unittest，不需要 Docker，在 CI 執行。`backend/tests/conftest.py` 讓需要 `scripts/research_scale.py` 的測試在 API image 內 skip（CI 從 checkout 照常執行），`pg-check --suite all` 才能在演練環境完整通過。
 - **文件**：
   - 新增 `docs/research-deployment.md`。
   - 改寫 `AGENTS.md`、`README.md`、`docs/research-lab.md`、`research-backup.md`、`public-snapshot.md`、`research-owner.md`、`research-reader-entry.md`。
