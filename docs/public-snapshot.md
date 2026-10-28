@@ -24,13 +24,13 @@
 
 ## 每次發布研究後的步驟
 
-在主 checkout 執行。前提是正式研究服務在運行，而且它的 API image 已包含 `app.public_snapshot`。這個 change merge 之後，要先執行一次 `python scripts/research_lab.py up`，用 `main` 重建 image。
+在部署目錄 `C:\Users\User\industryflow-prod` 執行（[部署與回退](research-deployment.md)），前提是正式研究服務在運行。匯出、`npm ci`、`build:static`、一致性檢查與 wrangler 部署都在部署目錄進行；wrangler 的 `--commit-hash` 用部署紀錄中運行的提交，也就是 `research_lab.py status` 的 `deployed.commit`。這些步驟的輸出都被 Git 忽略；若 `git status` 出現未追蹤檔案，下一個正式操作會被防護拒絕。回退期間（運行中的部署紀錄是 `rollback`）`public-snapshot` 會被拒絕，下一次部署後才恢復，因為 legacy 地圖表保留的是較新版本匯入的內容。
 
 ```powershell
 # 1. 匯出目前發布的版本到 public-snapshot/<release_id>/
 #    在一次性的 API 容器裡執行，容器只看得到輸出目錄。
 #    容器內外各做一次外洩掃描，任一發現就失敗。
-python scripts/research_lab.py public-snapshot
+.venv\Scripts\python.exe scripts\research_lab.py public-snapshot
 
 # 2. 建置並驗證：檢查快照內的引用與圖解都存在 → Next.js 靜態輸出 → 寫入 _headers
 #    → 外洩掃描 → 逐頁瀏覽每個實體頁。任一失敗都不會留下 frontend/out。

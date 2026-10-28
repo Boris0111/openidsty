@@ -6,19 +6,27 @@
 
 ## 正式研究服務（2026-10-21 起）
 
-2026-10-21 起，`http://127.0.0.1:3010` 由新版研究服務（Compose project `industryflow-research`，`compose.research.yaml`）提供；API 為 8010，Prefect 為 4201，唯讀入口為 3015。啟停、祕密與檢查見 [research-lab](docs/research-lab.md)，切換紀錄見 [research-acceptance](docs/research-acceptance.md)。
+2026-10-21 起，`http://127.0.0.1:3010` 由新版研究服務（Compose project `industryflow-research`，`compose.research.yaml`）提供；API 為 8010，Prefect 為 4201，唯讀入口為 3015。
+
+正式服務只執行 `main` 第一父鏈上的提交：image 從 `git archive` 建置並以提交標記，所有會改變正式服務的操作都在獨立的部署目錄 `C:\Users\User\industryflow-prod` 執行，每次部署與回退都先備份並寫入部署紀錄。部署、回退與防護見 [research-deployment](docs/research-deployment.md)，啟停、排程與檢查見 [research-lab](docs/research-lab.md)，備份見 [research-backup](docs/research-backup.md)，切換紀錄見 [research-acceptance](docs/research-acceptance.md)。
 
 ```powershell
-cd C:\Users\User\openspec_pjt
-python scripts/research_lab.py up      # 原服務仍在運行或 port 被占用時會拒絕，不會自動停止任何服務
-python scripts/research_lab.py stop
+cd C:\Users\User\industryflow-prod
+.venv\Scripts\python.exe scripts\research_lab.py status                  # 運行版本、部署紀錄與不一致之處
+.venv\Scripts\python.exe scripts\research_lab.py deploy --commit <sha>   # 原服務仍在運行或 port 被占用時會拒絕
+.venv\Scripts\python.exe scripts\research_lab.py rollback --to <seq>
+.venv\Scripts\python.exe scripts\research_lab.py stop
 ```
+
+merge 前需要實機的驗證，從 PR 的 worktree 在演練環境進行（`scripts/research_drill.py`），不碰正式服務，見 [合併前演練](docs/research-deployment.md#合併前演練)。
 
 下方「快速啟動」以後各節說明的是**原服務**（project `industryflow`，`compose.yaml`），現在只用於回復，**不可與研究服務同時啟動**，因為兩者使用同一組 port。回復步驟：
 
 ```powershell
-python scripts/research_lab.py stop    # 只停止，研究服務的 volumes 保留
-docker compose up -d                   # 以原 image 與原資料回到 3010
+cd C:\Users\User\industryflow-prod
+.venv\Scripts\python.exe scripts\research_lab.py stop    # 只停止，研究服務的 volumes 保留
+cd C:\Users\User\openspec_pjt
+docker compose up -d                                     # 以原 image 與原資料回到 3010
 ```
 
 ## 快速啟動（Windows PowerShell，原服務）
@@ -208,7 +216,9 @@ Caddy 自動申請 TLS，僅代理網站及其唯讀 API。預設 localhost port
 | `frontend/` | Next.js 與瀏覽器流程測試 |
 | `data/` | 可審查的公司研究補充資料 |
 | `docs/api.md`／`sources.md`／`frontend.md` | API 契約、來源設定與前端操作 |
-| `compose.research.yaml` | 正式研究服務（web、API、Prefect、worker、唯讀入口）；操作見 [research-lab](docs/research-lab.md) |
+| `compose.research.yaml` | 正式研究服務（web、API、Prefect、worker、唯讀入口）；不建置，image tag 由 `scripts/research_lab.py` 注入。操作見 [research-lab](docs/research-lab.md) |
+| `compose.research-drill.yaml` | 演練環境：從正式備份還原、預演部署與回退、分支程式的 PostgreSQL 檢查 |
+| `docs/research-deployment.md` | 正式服務的部署目錄與防護、image 版本、部署紀錄、部署與回退、遷移的擴充與收縮、合併前演練 |
 | `compose.yaml`／`compose.dev.yaml` | 原服務的執行與 hot reload；原服務維持停止，不與研究服務同時運行 |
 
 本 repo 已初始化 OpenSpec，無須再次 init。全域 CLI 是共用工具，規格在本 repo 的 `openspec/`；implementation 進度在各 change 的 tasks checkbox，不等於 planning artifacts 的完成數。

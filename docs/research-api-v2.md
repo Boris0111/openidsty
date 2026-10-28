@@ -41,7 +41,7 @@ Legacy `/api/*` 與新版 `/api/v2/*` 並存。新版使用獨立 reader pool、
 
 錯誤固定 `{code,message,request_id,retryable}`，中文 message 不揭露 SQL、連線或內部例外。歧義另回 candidates。`X-Request-ID` 與錯誤中的 request_id 一致；DB 不可用回 503／retryable=true／Retry-After，與正常無研究資料的情形分開。新錯誤契約不改舊成功 payload。
 
-實際 PostgreSQL 契約命令：`python scripts/research_lab.py pg-check`。測試包含新舊 API 並存、分頁與篩選、錯誤格式、歧義、未發布拒絕及固定引用。此文件描述讀者介面；已實作 owner 管理介面另見 [登入](research-owner.md)、[草稿](research-drafts.md)、[發布](research-publication.md)、[來源更新](research-source-updates.md)。
+實際 PostgreSQL 契約命令：`python scripts/research_drill.py pg-check --commit <sha>`。測試包含新舊 API 並存、分頁與篩選、錯誤格式、歧義、未發布拒絕及固定引用。此文件描述讀者介面；已實作 owner 管理介面另見 [登入](research-owner.md)、[草稿](research-drafts.md)、[發布](research-publication.md)、[來源更新](research-source-updates.md)。
 
 ## 圖形與影響推導
 

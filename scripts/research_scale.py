@@ -24,7 +24,7 @@ import yaml
 SCRIPTS = Path(__file__).resolve().parent
 ROOT = SCRIPTS.parent
 sys.path.insert(0, str(SCRIPTS))
-from research_drill import env_values  # noqa: E402
+from research_drill import compose as drill_compose, env_values, running_revision  # noqa: E402
 from research_integration import Session  # noqa: E402
 
 TREE = ROOT / '.work/research-scale/tree'
@@ -147,11 +147,10 @@ def project():
         'with create_engine(DATABASE_URL).begin() as connection:',
         '    connection.execute(text("DELETE FROM research.release_head"))',
         f'    print(json.dumps(project(connection, bundle, {commit!r}, True)))'])
-    output = subprocess.run(['docker', 'compose', '--project-name', 'industryflow-research-drill', '--env-file', str(ROOT / '.env.research-drill'),
-                             '-f', str(ROOT / 'compose.research-drill.yaml'), '--profile', 'tools', 'run', '--rm', '--no-deps', '-T', 'bootstrap',
-                             'python', '-c', script], input=archive, capture_output=True, check=True, cwd=ROOT,
-                            env={k: v for k, v in os.environ.items() if not k.startswith('RESEARCH_')})
-    return {'commit': commit, **json.loads(output.stdout.decode().strip().splitlines()[-1])}
+    # The drill's own secrets and the image the drill API runs; the same path every drill script uses.
+    output = drill_compose('--profile', 'tools', 'run', '--rm', '--no-deps', '-T', 'bootstrap', 'python', '-c', script,
+                           input=archive, tag=running_revision()[:12])
+    return {'commit': commit, **json.loads(output.decode().strip().splitlines()[-1])}
 
 
 def sql(statement):

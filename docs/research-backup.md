@@ -1,18 +1,37 @@
-# 研究預覽的備份與還原（task 9.3）
+# 研究服務的備份與還原
 
 ## 每日備份
 
+在部署目錄執行（見 [部署目錄與防護](research-deployment.md#部署目錄與防護)）：
+
 ```powershell
-python scripts/research_lab.py backup --secondary "D:\backups\industryflow-research" --keep-days 30
+cd C:\Users\User\industryflow-prod
+.venv\Scripts\python.exe scripts\research_lab.py backup --secondary "D:\backups\industryflow-research" --keep-days 30
 ```
 
-Windows 工作排程器已註冊 `IndustryFlow Research Daily Backup`：每天 03:30 以 `C:\Users\User\openspec_pjt\.venv\Scripts\python.exe` 在主專案 `C:\Users\User\openspec_pjt` 執行上列命令（2026-10-21 由 worktree 改過來）。錯過的時段（關機、休眠）在下次可執行時補跑，單次上限 1 小時，同時只跑一份。它只在 Boris 登入時執行，因為 Docker Desktop 依附使用者工作階段；Docker 沒啟動時備份會失敗並記錄，不會產生半套備份。移除排程：
+`backup` 屬於會改變正式服務的動作：與部署、回退共用 `deployments/.lock`，並經過同樣的四項防護。部署或回退正在進行時，備份最多等 30 分鐘（工作排程單次上限是 1 小時）；防護不通過就拒絕，並在 `backup-log.jsonl` 記一筆 `refused: …`。`deploy` 與 `rollback` 開始前也會做一份同格式的備份（含第二份副本），資料夾名稱寫進部署紀錄。
+
+每份備份先寫入 `<時間>.partial`，全部完成並核對後才改名；第二份副本同樣處理。備份被中止（例如工作排程逾時）時留下的 `.partial`，由下一次備份在持有 lock 時清除；`--backup latest` 與 30 天清理都不把它當成備份。
+
+Windows 工作排程器的 `IndustryFlow Research Daily Backup`：每天 03:30 以部署目錄的 `.venv\Scripts\python.exe` 執行上列命令。腳本用絕對路徑，「開始位置」設為部署目錄且不加引號（加引號會讓「開始位置」失效）。錯過的時段（關機、休眠）在下次可執行時補跑，單次上限 1 小時，同時只跑一份。它只在 Boris 登入時執行，因為 Docker Desktop 依附使用者工作階段；Docker 沒啟動時備份會失敗並記錄，不會產生半套備份。
+
+2026-10-21 到正式環境切換前，排程在開發 checkout `C:\Users\User\openspec_pjt` 執行；切換時改寫成部署目錄（[部署與回退](research-deployment.md)）：
+
+```powershell
+$action = New-ScheduledTaskAction -Execute C:\Users\User\industryflow-prod\.venv\Scripts\python.exe `
+  -Argument 'C:\Users\User\industryflow-prod\scripts\research_lab.py backup --secondary D:\backups\industryflow-research --keep-days 30' `
+  -WorkingDirectory C:\Users\User\industryflow-prod
+Set-ScheduledTask -TaskName "IndustryFlow Research Daily Backup" -Action $action
+Start-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"   # 手動觸發一次，再核對 backup-log.jsonl 與 D: 的副本
+```
+
+移除排程：
 
 ```powershell
 Unregister-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"
 ```
 
-每份備份是一個以 UTC 時間命名的資料夾（例如 `20261018T214852Z`），主副本在主專案的 `backups/research/`（Git 忽略；2026-10-21 前的舊備份留在原 worktree 的同一路徑），第二份在 `D:\backups\industryflow-research`。C 槽與 D 槽是兩顆不同的實體 SSD（Intel 與 Kingston），第二份複製後逐檔核對 SHA-256。
+每份備份是一個以 UTC 時間命名的資料夾（例如 `20261018T214852Z`），主副本在部署目錄的 `backups/research/`（Git 忽略；切換時從開發 checkout 逐檔核對 SHA-256 複製過來），第二份在 `D:\backups\industryflow-research`。C 槽與 D 槽是兩顆不同的實體 SSD（Intel 與 Kingston），第二份複製後逐檔核對 SHA-256。
 
 | 檔案 | 內容 |
 |---|---|
@@ -20,37 +39,42 @@ Unregister-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"
 | `roles.sql` | `pg_dumpall --roles-only --no-role-passwords`：角色與成員關係，不含密碼 |
 | `git.bundle` | managed Git 的 `bundle --all`，含 release、job 與 `research/published` 等全部 refs |
 | `assets.tar` | 內容定址資產目錄；檔名即內容 SHA-256 |
-| `manifest.json` | 建立時間、耗時、各檔 SHA-256 與大小、啟用中的 release（ID、代數、內容 hash、commit）、59 張表的筆數與內容 md5、Git refs、API image |
+| `manifest.json` | 建立時間、耗時、各檔 SHA-256 與大小、啟用中的 release（ID、代數、內容 hash、commit）、`public` 與 `research` 每張表的筆數與內容 md5、Git refs；運行中 API 容器的 image ID（`api_image`）與提交（`api_revision`）、資料庫遷移版本（`alembic_version`）；是否為回退邊界（`rollback_boundary`、`contract_revisions`）。欄位只增不改，較舊的 manifest 沒有 `api_revision` 等欄位 |
 
 - **一致性**：DB 傾印前後各算一次全表筆數與內容 md5；兩次不同就重做，最多 3 次。這樣清單記錄的就是傾印當下的狀態，還原時可以逐表比對。
 - **結果紀錄**：成功與失敗都記在 `backups/research/backup-log.jsonl`。失敗時只刪除該次未完成的資料夾。
-- **保留**：兩處都保留 30 天。只會刪除名稱符合時間格式、且有 `manifest.json` 的完整備份資料夾，其他檔案不碰。
+- **保留**：兩處都保留 30 天。只會刪除名稱符合時間格式、有 `manifest.json`、且不是回退邊界的完整備份資料夾，其他檔案不碰。回退邊界是含收縮遷移那次部署的部署前備份（`rollback_boundary: true`），不自動刪除，由 Boris 手動清理；manifest 讀不出來的資料夾也保留。
 
 **不在備份內**：`.env.research` 的祕密（DB 密碼、session secret）要另外以受保護的方式保存，例如放在加密的隨身碟或密碼管理器。DB 傾印本身含 owner 的 Argon2id 密碼 hash，所以備份資料夾也要視為敏感資料。
 
 ## 還原演練
 
-演練使用獨立的 Compose project `industryflow-research-drill`（`compose.research-drill.yaml`）：
+演練使用獨立的 Compose project `industryflow-research-drill`（`compose.research-drill.yaml`），可以從任何 checkout 或 worktree 執行：
 
-- 環境：自己的 DB、Git 與資產 volume，自己的祕密（`.env.research-drill`，Git 忽略），web 綁 `127.0.0.1:3016`、API 綁 `127.0.0.1:8016`。
-- image：沿用預覽的 image，不重新 build。
-- 隔離：沒有排程，不會自動抓取來源。不動預覽與原服務，演練前後都會比對這兩者的容器指紋。
+- **環境**：自己的 DB、Git 與資產 volume，web 綁 `127.0.0.1:3016`、API 綁 `127.0.0.1:8016`。
+- **祕密**：放在 `INDUSTRYFLOW_DRILL_HOME`（預設 `%USERPROFILE%\industryflow-drill`）的 `.env.research-drill`，與 checkout 無關。`setup` 只產生新的演練祕密，不讀正式的 `.env.research`；線上來源更新需要的 SEC 聯絡字串以 `setup --sec-user-agent` 傳入；env 檔已由其他動作建立時，同一個指令會補寫或取代它。錯誤輸出同時遮蔽演練與正式祕密。
+- **image**：以備份 manifest 記錄的基準提交（`api_revision`）從 `git archive` 建置或重用（[建置與 image 版本](research-deployment.md#建置與-image-版本)）。manifest 較舊、沒有這個欄位時，以 `--baseline-commit` 指定當時正式 image 的提交。因為用的是基準 image，待合併提交的新遷移不會讓還原失敗。
+- **隔離**：沒有排程，不會自動抓取來源。不動正式服務與原服務，演練前後都會比對兩者的容器指紋。
 
 ```powershell
-cd scripts
-python research_drill.py restore --backup ..\backups\research\<時間>   # 從空 volume 開始，計時並核對
-python research_drill.py owner     # 演練用 owner：只在演練 DB 內換成演練密碼
-python research_drill.py down      # 只移除演練 project 的容器與 volume
+python scripts/research_drill.py setup                       # 第一次：在 INDUSTRYFLOW_DRILL_HOME 產生演練祕密
+python scripts/research_drill.py restore --backup latest      # 從空 volume 開始，計時並核對；也可給備份資料夾路徑
+python scripts/research_drill.py owner                        # 演練用 owner：只在演練 DB 內換成演練密碼
+python scripts/research_drill.py down                         # 只移除演練 project 的容器與 volume
 ```
 
-`restore` 依序執行下列步驟，報告存在 `.work/research-drill/restore-<時間>.json`：
+`--backup latest` 選部署目錄（`INDUSTRYFLOW_PROD_HOME`，預設 `%USERPROFILE%\industryflow-prod`）`backups/research/` 下最新一份有 `manifest.json` 的備份。它只讀備份檔案，不讀部署目錄的 `.env.research`。
 
-1. 核對備份各檔的 hash。
+`restore` 依序執行下列步驟，報告存在 `.work/research-drill/restore-<時間>.json`，並記下基準提交（之後的 `rollback-rehearsal` 預設回到它）：
+
+1. 核對備份各檔的 hash，依 manifest 決定基準提交，建置或重用它的 image。
 2. 啟動空 DB，先套用角色，再以 `pg_restore --exit-on-error` 還原，最後由 `research_roles` 設定演練用登入密碼。
 3. 以 `clone --mirror` 還原 managed Git，並移除指向 bundle 的 remote 設定。
 4. 解開資產。
 5. 啟動 API 與 web。
-6. 逐項核對：全表筆數與內容 md5、啟用中的 release、API 實際提供的 release、Git refs、資產內容 hash 與數量、`/next` 能否開啟。
+6. 逐項核對：全表筆數與內容 md5、啟用中的 release、API 實際提供的 release、Git refs、資產內容 hash 與數量、遷移版本（manifest 有記錄時）、`/next` 能否開啟。
+
+合併前的預演部署、預演回退與分支程式的 PostgreSQL 檢查也在這個環境進行，見 [合併前演練](research-deployment.md#合併前演練)。
 
 ## 2026-10-19 演練結果
 

@@ -1,9 +1,10 @@
 name: industryflow-research-drill
 
-# Restore drill only: separate volumes, network, secrets and loopback ports. Images are the preview's,
-# never rebuilt here; no scheduler, so nothing fetches unless a one-off tools command is run explicitly.
+# Drill only: separate volumes, network, secrets and loopback ports. Images are built from `git archive`
+# by scripts/research_drill.py, which also sets the tag; no scheduler, so nothing fetches unless a
+# one-off tools command is run explicitly.
 x-app: &app
-  image: industryflow-research-api:dev
+  image: industryflow-research-api:${RESEARCH_IMAGE_TAG:?use scripts/research_drill.py}
   environment: &app-env
     DATABASE_URL: postgresql+psycopg://industry:${RESEARCH_POSTGRES_PASSWORD:?Run research_drill.py setup}@db:5432/industry_research
     RESEARCH_READ_DATABASE_URL: postgresql+psycopg://research_reader_login:${RESEARCH_READER_PASSWORD:?Run research_drill.py setup}@db:5432/industry_research
@@ -47,7 +48,7 @@ services:
       timeout: 5s
       retries: 20
   web:
-    image: industryflow-research-web:dev
+    image: industryflow-research-web:${RESEARCH_IMAGE_TAG:?use scripts/research_drill.py}
     environment:
       API_ORIGIN: http://api:8000
       RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3016,http://localhost:3016
@@ -56,6 +57,14 @@ services:
       api: {condition: service_healthy}
     networks: [app]
     init: true
+  initialize:
+    # Same chain as compose.research.yaml's initialize, so a rehearsed deploy runs the production steps.
+    <<: *app
+    profiles: [tools]
+    volumes: ["research-assets:/home/app/research-assets", "research-git:/home/app/research-git"]
+    command: [sh, -c, "alembic upgrade head && python -m app.research_roles && python -m app.import_map && python -m app.financial_indicators && python -m app.source_links"]
+    depends_on:
+      db: {condition: service_healthy}
   bootstrap:
     <<: *app
     profiles: [tools]

@@ -34,9 +34,9 @@
 ## 驗證入口
 
 ```powershell
-python scripts/research_lab.py pg-check --suite research-dynamic
-python scripts/research_lab.py pg-check --suite publication-interfaces
-python scripts/research_lab.py pg-check --suite reader-navigation
+python scripts/research_drill.py pg-check --commit <sha> --suite research-dynamic
+python scripts/research_drill.py pg-check --commit <sha> --suite publication-interfaces
+python scripts/research_drill.py pg-check --commit <sha> --suite reader-navigation
 cd frontend
 node --test tests/research-cache.node.cjs
 npm run build

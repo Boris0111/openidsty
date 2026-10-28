@@ -1,10 +1,9 @@
 name: industryflow-research
 
+# Images are built from `git archive <commit>` by scripts/research_lab.py, which also sets the tag;
+# this file never builds.
 x-app: &app
-  image: industryflow-research-api:dev
-  build:
-    context: .
-    dockerfile: backend/Dockerfile
+  image: industryflow-research-api:${RESEARCH_IMAGE_TAG:?use scripts/research_lab.py}
   environment: &app-env
     DATABASE_URL: postgresql+psycopg://industry:${RESEARCH_POSTGRES_PASSWORD:?Run research_lab.py setup}@db:5432/industry_research
     RESEARCH_READ_DATABASE_URL: postgresql+psycopg://research_reader_login:${RESEARCH_READER_PASSWORD:?Run research_lab.py setup}@db:5432/industry_research
@@ -58,10 +57,7 @@ services:
       retries: 20
     restart: unless-stopped
   web:
-    image: industryflow-research-web:dev
-    build:
-      context: .
-      dockerfile: frontend/Dockerfile
+    image: industryflow-research-web:${RESEARCH_IMAGE_TAG:?use scripts/research_lab.py}
     environment:
       API_ORIGIN: http://api:8000
       RESEARCH_ADMIN_ORIGINS: http://127.0.0.1:3010,http://localhost:3010
@@ -120,7 +116,7 @@ services:
     depends_on:
       initialize: {condition: service_completed_successfully}
   reader:
-    image: industryflow-research-api:dev
+    image: industryflow-research-api:${RESEARCH_IMAGE_TAG:?use scripts/research_lab.py}
     profiles: [reader]
     init: true
     read_only: true

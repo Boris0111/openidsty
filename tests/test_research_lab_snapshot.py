@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'scripts'))
 import research_lab as lab
 
+TAG = '0123456789ab'
 RELEASE = 'a5df290c-0b6d-5011-b842-ae73cd8a1f99'
 
 
@@ -38,7 +39,7 @@ class SnapshotCommandTests(unittest.TestCase):
             printed = json.dumps({'folder': RELEASE, 'published_at': '2026-10-20', 'counts': {}}).encode()
             with mock.patch.object(lab, 'ROOT', root), mock.patch.object(lab, 'ENV_FILE', env), mock.patch.object(lab, 'compose', return_value=printed):
                 with self.assertRaises(RuntimeError) as caught:
-                    lab.public_snapshot()
+                    lab.public_snapshot(tag=TAG)
             self.assertIn('manifest.json: secret value', str(caught.exception))
             self.assertNotIn(secret, str(caught.exception))
 
@@ -50,7 +51,7 @@ class SnapshotCommandTests(unittest.TestCase):
             (root / 'public-snapshot' / RELEASE).mkdir(parents=True)
             printed = b'log line\n' + json.dumps({'folder': RELEASE, 'published_at': '2026-10-20', 'counts': {'companies': 95}}).encode()
             with mock.patch.object(lab, 'ROOT', root), mock.patch.object(lab, 'ENV_FILE', env), mock.patch.object(lab, 'compose', return_value=printed):
-                result = lab.public_snapshot()
+                result = lab.public_snapshot(tag=TAG)
         self.assertEqual(result['counts'], {'companies': 95})
         self.assertTrue(result['folder'].endswith(RELEASE))
 

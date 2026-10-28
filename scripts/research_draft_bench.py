@@ -195,13 +195,20 @@ def drill_password(env_file):
     raise SystemExit('drill env file has no DRILL_OWNER_PASSWORD; run research_drill.py setup and owner first')
 
 
+def default_env_file():
+    """The drill secrets every drill script reads (INDUSTRYFLOW_DRILL_HOME), whichever checkout runs this."""
+    sys.path.insert(0, str(SCRIPTS))
+    from research_drill import ENV_FILE
+    return ENV_FILE
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--label', required=True, help='report name, e.g. before-real')
     parser.add_argument('--dataset', choices=['real', 'scaled'], default='real')
     parser.add_argument('--saves', type=int, default=30)
-    parser.add_argument('--env-file', type=Path, default=ROOT / '.env.research-drill',
-                        help='drill secrets; the main checkout holds them when this script runs from a worktree')
+    parser.add_argument('--env-file', type=Path, default=default_env_file(),
+                        help='drill secrets; default from INDUSTRYFLOW_DRILL_HOME, shared by every checkout and worktree')
     args = parser.parse_args(argv)
     sys.path.insert(0, str(SCRIPTS))
     from research_integration import Session

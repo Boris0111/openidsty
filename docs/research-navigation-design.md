@@ -40,7 +40,7 @@ Header 保留品牌與搜尋，增加明確的目錄入口；詳細分類在目�
 重跑本階段檢查：
 
 ```powershell
-python scripts/research_lab.py pg-check --suite reader-navigation
+python scripts/research_drill.py pg-check --commit <sha> --suite reader-navigation
 cd frontend
 npm run typecheck
 npm run build

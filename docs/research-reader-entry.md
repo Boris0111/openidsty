@@ -3,11 +3,12 @@
 本機維護使用 `http://127.0.0.1:3010/admin`。可選的 reader gateway 使用 `http://127.0.0.1:3015/next`，只允許新版 `/next`、必要的靜態檔案、v2 GET，以及無寫入副作用的更新查詢 POST。管理頁、管理 API、legacy 診斷、API 文件與其他寫入一律拒絕；不以「沒顯示連結」代替授權邊界。
 
 ```powershell
-python scripts/research_lab.py reader-start
-python scripts/research_lab.py reader-stop
+cd C:\Users\User\industryflow-prod
+.venv\Scripts\python.exe scripts\research_lab.py reader-start
+.venv\Scripts\python.exe scripts\research_lab.py reader-stop
 ```
 
-先以 `python scripts/research_lab.py up` 更新 API／web image，再啟動 gateway；gateway 沿用同一 app image，不新增資料庫、cache 或微服務。預設不啟動，驗證完可停止以節省記憶體。這個容器沒有 DB／session 憑證、Git／資產 volume 或 Docker socket，root filesystem 唯讀。固定上游為 Compose 的 `web:3010`，不是任意 URL proxy。
+gateway 沿用部署紀錄中運行的 app image（tag 由 `research_lab.py status` 回報），不新增資料庫、cache 或微服務；reader 正在運行時，`deploy` 與 `rollback` 會一併替換它（[部署與回退](research-deployment.md)）。預設不啟動，驗證完可停止以節省記憶體。這個容器沒有 DB／session 憑證、Git／資產 volume 或 Docker socket，root filesystem 唯讀。固定上游為 Compose 的 `web:3010`，不是任意 URL proxy。
 
 Gateway 檢查 Host、路徑、方法與大小，拒絕 dot traversal、雙重編碼及不必要的入口。它不轉送 Cookie、Authorization、CSRF、X-Forwarded-* 或客戶端 Host，也不向讀者回傳上游 Set-Cookie。對內部故障回 `503`／no-store，不偽裝成功的空資料。來源引用仍由讀者直接開啟官方網站，不由 gateway 抓取任意網址。
 
