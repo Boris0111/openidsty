@@ -290,7 +290,7 @@ python scripts/research_drill.py rebuild-check --commit <PR HEAD>          # PR 
 | 7.4 預演部署 | smoke 六項全過，遷移 `0017 → 0017`，`theme_assessment_versions` 7 → 7，61.0 秒。52 張表只有 `public.sources` 變動（7 列 `url`、83 列 `data.registry_url`），是 initialize 寫回 `sources.yaml` 形式的既有行為，下一次每小時更新會寫回。預期中的散文 CRLF → LF 沒有發生：`import_map` 以 `read_text()` 讀檔時已正規化換行，正式 DB 的散文本來就沒有 CR（`deploy-rehearsal-20261027T194912Z.json`） |
 | 7.5 預演回退 | 回到 `7ebbc68`，沒有 initialize，smoke 六項全過，52 張表全部不變，判定 `expand-only`（`rollback-rehearsal-20261027T195309Z.json`） |
 | 7.6 收縮遷移 | `6c0afd1^`（`5ceb9a62c4f7`，head `0016`）：回退被拒絕，訊息指出 `0017` 與回退邊界備份，演練容器不變（`rollback-rehearsal-20261027T195457Z.json`） |
-| 7.7 `pg-check --suite all` | **待重跑**。第一次 157 passed、1 error：`scaled_tree` fixture 需要 image 內沒有的 `scripts/research_scale.py`（2026-10-24 起就存在），已修正；第二次因主機記憶體不足被中止 |
+| 7.7 `pg-check --suite all` | `24d0a8c`：157 passed、1 skipped，478.5 秒（`pg-check-20261028T095148Z.json`）。`industry_research_test` 只建在演練 cluster，正式 cluster 的資料庫清單、測試資料庫計數與 volume 都不變。第一次執行有 1 error：`scaled_tree` fixture 需要 image 內沒有的 `scripts/research_scale.py`（2026-10-24 起就存在），改為在 image 內 skip，CI 照常從 checkout 執行；中間一次因主機記憶體不足被中止 |
 | 7.8 防護與遮蔽 | worktree 內 `deploy` 因沒有標記被拒絕、`setup` 因正式 volume 已存在被拒絕，狀態都沒變；故意失敗的演練步驟輸出中，連線字串的密碼為 `[REDACTED]`，演練祕密出現 0 次 |
 
 **順帶發現（正式 Prefect，非本 change 造成）**：`research-publication-reconciliation/minute` 有一筆 flow run 自 2026-10-21 停在 PENDING／Submitting，這個 deployment 最後一次完成是 2026-10-22。`deploy` 原本把 PENDING 也算忙碌，會因此擋住所有部署；已改為只計 RUNNING 與 CANCELLING。那筆卡住的 run 要由 Boris 決定如何處理。
