@@ -45,7 +45,7 @@ Compose project 名稱固定為 `industryflow-research`，從任何目錄執行�
 
 `setup` 只在需要產生祕密時查詢 Docker：volume `industryflow-research_pg-data` 已存在就拒絕，因為新祕密會和既有資料庫不符。
 
-lock 由作業系統持有（Windows 用 `msvcrt`、Linux 用 `fcntl`），程序結束或當掉時自動釋放，不會留下要手動刪除的 lock 檔。`deploy`、`rollback` 與其他動作拿不到 lock 就立刻拒絕；每日備份最多等 1 小時。
+lock 由作業系統持有（Windows 用 `msvcrt`、Linux 用 `fcntl`），程序結束或當掉時自動釋放，不會留下要手動刪除的 lock 檔。`deploy`、`rollback` 與其他動作拿不到 lock 就立刻拒絕；每日備份最多等 30 分鐘，留在工作排程單次 1 小時的上限內。
 
 **開發 checkout 的 tombstone**：正式祕密搬到部署目錄後，開發 checkout 留一個值不合格式的 `.env.research`：
 
@@ -74,7 +74,7 @@ tag 為提交前 12 碼：`industryflow-research-api:<sha12>`、`industryflow-re
 | `io.industryflow.prefect-version` | 取自 `backend/runtime-constraints.txt` |
 | `io.industryflow.build` | 固定為 `git-archive` |
 
-同名 tag 已存在且 label 相符（不比對 `created`）時直接重用；不符時拒絕，不覆蓋。所以演練建置不會移動正式在用的 tag。查看某個 image：
+同名 tag 已存在時，只比對由提交本身決定的 label（`revision`、`alembic-head`、`prefect-version`、`build`）：相符就重用，不符就拒絕、不覆蓋。所以演練建置不會移動正式在用的 tag。`contract-revisions` 會隨遷移規則演進而改變，只記錄、不作為同一性；否則規則一調整，所有舊 image 都會被拒絕重用。查看某個 image：
 
 ```powershell
 docker image inspect industryflow-research-api:<sha12> --format '{{json .Config.Labels}}'
@@ -105,7 +105,9 @@ docker image inspect industryflow-research-api:<sha12> --format '{{json .Config.
 | `smoke` | 每項 smoke 檢查的結果（見「部署」） |
 | `fallback` | smoke 失敗時建議的回退指令，或只能還原備份的原因 |
 | `rolled_back_to`、`drift_before` | 回退：目標紀錄的 `seq`，以及回退前與紀錄不符的容器 |
-| `note` | `adopt`：說明它的 `commit` 是部署目錄的 checkout，不是 image 的來源 |
+| `note` | `adopt`：說明它的 `commit` 是部署目錄的 checkout，不是 image 的來源；上一版腳本補記的紀錄：說明它是依容器實況寫入 |
+| `interrupted_runs` | 收縮部署在等待後仍替換排程服務時，被中斷的 flow run |
+| `state_error` | 寫紀錄時查詢 Docker 失敗的原因；此時 `services`、`alembic_after` 可能為空 |
 | `started_at`、`finished_at` | UTC 時間 |
 
 ## 部署
@@ -120,10 +122,11 @@ cd C:\Users\User\industryflow-prod
 
 1. 取得 lock，檢查四項防護與原服務互斥：原服務在運行，或 port 被其他程式占用，就拒絕。
 2. `git fetch origin`，要求提交在 `git rev-list --first-parent origin/main` 裡。main 用 merge commit，只檢查「可達」會放行 PR 內部從未成為 main 的中間提交。
-3. 部署目錄 `git checkout --detach <提交>`，再以相同參數執行**目標版本**的 `research_lab.py`。之後的步驟、compose 設定與檢查規則都與 image 同一版本。上一版的腳本持有 lock 直到目標腳本結束；結束時若運行中的版本不是目標，就把部署目錄 checkout 回運行中的提交。
+3. 部署目錄 `git checkout --detach <提交>`，再以相同參數執行**目標版本**的 `research_lab.py`。之後的步驟、compose 設定與檢查規則都與 image 同一版本。上一版的腳本持有 lock 直到目標腳本結束，期間不理會 Ctrl-C（交給目標腳本記錄）。目標腳本沒有留下紀錄就結束時（例如被強制終止），上一版腳本依容器實際的 revision 補記一筆失敗紀錄；最後若運行中的版本不是目標，就把部署目錄 checkout 回運行中的提交。
 4. 拒絕條件，任一成立就拒絕，什麼都不改：
    - 資料庫目前的遷移版本不在目標的遷移鏈上，代表撤回或改寫了已部署的遷移。
    - Prefect 有 running 或 cancelling 的 flow run（仍在執行）。加 `--force` 才繼續，替換 worker 時會中斷它們。pending 的 run 還沒開始執行，不算忙碌，免得一筆卡住的提交擋住所有部署。
+   - Prefect 無法查詢（例如它停止或不斷重啟）：無法判斷是否有資料更新在執行，所以拒絕；加 `--force` 才略過檢查。
    - 目標相對目前資料庫新增收縮遷移，沒有加 `--allow-contract`。
    - db 容器不是從這個目錄建立的，沒有加 `--recreate-db`。只會在第一次部署發生，見下方「第一次部署」。
 5. 部署前備份，含第二份副本（位置取自 `--secondary` 或 `home.json`）。有收縮遷移時，這份備份標記為回退邊界。
@@ -137,7 +140,15 @@ cd C:\Users\User\industryflow-prod
 9. smoke 檢查（下表）。
 10. 寫入部署紀錄。
 
+**替換排程服務前再檢查一次**：備份、建置與 initialize 要幾分鐘，期間可能開始新的 flow run。替換前若有執行中的 run，最多等 10 分鐘：
+
+- 仍未結束時，寫入失敗紀錄並保留舊服務。這時資料庫只套用了擴充遷移，舊服務仍可運作；之後重新部署即可（initialize 可重跑）。
+- 收縮部署（`--allow-contract`）則在等待後照樣替換，紀錄的 `interrupted_runs` 列出被中斷的 run：舊服務無法在收縮後的 schema 上運作，中斷一次資料更新的代價較小。
+- 加 `--force` 時不等待。
+
 initialize 失敗時，舊服務始終沒被替換：部署紀錄寫入 `outcome: failed`、`replaced: false`，部署目錄 checkout 回原提交。
+
+**紀錄必定寫入**：部署與回退中的任何例外（含 Ctrl-C）都會寫入一筆紀錄再結束；寫紀錄時查詢 Docker 失敗，就以已知的欄位寫入，並在 `state_error` 說明。
 
 | smoke 項目 | 通過條件 |
 |---|---|
@@ -167,16 +178,17 @@ initialize 失敗時，舊服務始終沒被替換：部署紀錄寫入 `outcome
 
 目標必須是部署紀錄中 `outcome: succeeded` 的 `deploy` 或 `rollback`。`rollback` 依序執行：
 
-1. 取得 lock，檢查標記、乾淨的 working tree 與 HEAD。容器與紀錄不一致時不拒絕，只記在 `drift_before`。
-2. 拒絕條件：
+1. 由**現行腳本**取得 lock，檢查標記、乾淨的 working tree 與 HEAD。容器與紀錄不一致時不拒絕，只記在 `drift_before`。
+2. 現行腳本判斷拒絕條件。它的規則最新，所以由它判斷：
    - 目標的遷移 head 新於資料庫目前的版本。
-   - (目標 head, 資料庫版本] 之間有收縮遷移。舊提交看不到較新的遷移檔，所以用**部署紀錄中各次遷移鏈的聯集**判斷。訊息會指出最近一次的回退邊界備份。
+   - (目標 head, 資料庫版本] 之間有收縮遷移。舊提交看不到較新的遷移檔，所以用**部署紀錄中各次遷移鏈的聯集**判斷，並併入以現行規則重算的目前提交收縮清單（規則變嚴後，舊紀錄中的清單會偏少）。訊息會指出最近一次的回退邊界備份。
    - 目標與目前的 Prefect 版本不同：Prefect server 會遷移自己的 `prefect` 資料庫。
-   - Prefect 有執行中的 flow run，除非加 `--force`。
-3. 回退前備份。
-4. image 已被清除時從 archive 重建，紀錄標記 `rebuilt: true`。
-5. checkout 目標提交，以目標 tag `up -d --no-deps` 替換運行中的服務；排程啟用時重跑一次 Prefect `deploy` 註冊。
-6. smoke 檢查，寫入紀錄。
+   - Prefect 有執行中的 flow run，或無法查詢，除非加 `--force`。
+3. 現行腳本做回退前備份。
+4. checkout 目標提交，**交給目標版本的腳本接手**（與部署第 3 步相同）。現行腳本的 compose 檢查可能比目標新，所以替換一律用目標自己的規則：
+   1. image 已被清除時從 archive 重建，紀錄標記 `rebuilt: true`。
+   2. 以目標的 compose 與檢查規則 `validate`，再以目標 tag `up -d --no-deps` 替換運行中的服務；排程啟用時，先依上面的規則再檢查 Prefect，並重跑一次 `deploy` 註冊。
+   3. smoke 檢查（資料庫應維持回退前的版本），寫入紀錄。
 
 **不執行 initialize**：這樣可以避開舊版 alembic 的「Can't locate revision」，也避免 `import_map` 以舊內容改寫 legacy 地圖表、追加不實的判讀版本，或因缺 `change_reason` 而失敗。代價是回退後 legacy 地圖表保留較新版本匯入的內容，所以**回退期間不產出公開快照**，免得混用新地圖資料與舊程式。
 
@@ -223,6 +235,10 @@ docker compose --project-name industryflow-research --env-file .env.research -f 
 
 - SQL：`DROP {TABLE|VIEW|COLUMN|FUNCTION|TYPE|SCHEMA|POLICY|TRIGGER|CONSTRAINT|SEQUENCE}`、`RENAME`、`ALTER COLUMN … TYPE`、`SET NOT NULL`、沒有 `DEFAULT` 的 `ADD COLUMN … NOT NULL`、`TRUNCATE`、`DELETE FROM`、`REVOKE`。以字詞邊界比對，`revoked_at` 這類欄位名不算。
 - Alembic：`op.drop_*`、`op.rename_table`，以及帶 `type_=`、`nullable=False` 或 `new_column_name=` 的 `alter_column`。
+- `ALTER TABLE` 中不寫 COLUMN 的 `DROP <欄位>`（含 `IF EXISTS`），與沒有 `DEFAULT` 的 `ADD <欄位> … NOT NULL`；`DROP INDEX`、`ALTER … DROP DEFAULT`、`DROP ROLE`、`DROP EXTENSION`、`ALTER POLICY`。
+- Alembic 的 `add_column` 欄位帶 `nullable=False` 或 primary key，卻沒有 `server_default`。
+
+分析範圍是 `upgrade()` 本身、它讀取的模組層常數，以及它呼叫的模組層 helper（遞迴）；只給 `downgrade()` 用的常數與 helper 不算。
 
 命中的遷移必須在模組層宣告其中一項，理由不可為空：
 
@@ -246,6 +262,8 @@ python scripts/migration_rules.py --commit <sha>     # 某個提交的遷移鏈�
 |---|---|
 | `0009` | 先 `DROP POLICY` 再以較窄的條件重建 `research.legacy_history` 的讀者政策 |
 | `0017` | 刪除公司財報的 7 張表、`financial_fact_citations` view 與 `guard_financial_import()` |
+
+`0016` 以 `ALTER POLICY` 改寫讀者政策的查詢方式，可見範圍與 `0008` 相同，所以標 `EXPAND_REVIEWED`。比它更早的提交沒有這個標記，對它們而言 `0016` 也算收縮。
 
 ### 規則
 
@@ -273,9 +291,10 @@ python scripts/research_drill.py rebuild-check --commit <PR HEAD>          # PR 
 ```
 
 - **`deploy-rehearsal`**：與「部署」第 4–10 步相同的拒絕條件、建置、initialize、替換與 smoke（project 換成演練的，網址換成 8016／3016）。演練的目的就是部署尚未合併的提交，所以**不檢查**第一父鏈與部署目錄；收縮遷移要 `--allow-contract` 等拒絕條件照樣適用。報告 `.work/research-drill/deploy-rehearsal-<時間>.json` 列出每張變動表的列數與 md5 前後、遷移版本前後、`theme_assessment_versions` 的增減、提交與 `worktree_dirty`，以及 smoke 結果。
-- **`rollback-rehearsal`**：以「回退」的規則回到 restore 的基準 image（或 `--commit` 指定的提交），不執行 initialize。報告判定 `expand-only`（列出中間的擴充遷移），或 `refused` 並列出原因；跨越收縮遷移時，訊息指向演練還原時用的那份備份。
+- **`rollback-rehearsal`**：以「回退」的規則回到 restore 的基準 image（或 `--commit` 指定的提交），不執行 initialize。報告判定 `expand-only`（列出中間的擴充遷移），或 `refused` 並列出原因；跨越收縮遷移時，訊息指向演練還原時用的那份備份。 「restore 的基準」記在 `INDUSTRYFLOW_DRILL_HOME/last-restore.json`，連同演練 db 容器 ID；只有正在運行的就是那個 db 容器時才採用，否則要求 `--commit`，免得讀到別的 worktree 或更早一次還原的基準。
 - **`pg-check`、`rebuild-check`**：以該提交的 image 在演練的 `bootstrap` 服務執行。`industry_research_test` 建在演練的 DB cluster，`rebuild-check` 的資產只寫進演練的 volume，正式的 cluster 與 volume 都不碰。
 - **`build --commit`**：只建 image，例如預先建好要演練回退的舊版本。
+- **從不同 worktree 操作**：db 容器屬於執行 `restore` 的那個 checkout，所以演練的 smoke 不比對 db 的 working_dir，只比對 app 服務。
 - **只有一個演練實例**：port 與 project 固定，一次只能演練一個 PR，`down` 會清掉上一個。報告存在各自 PR 的 worktree。
 - **只有正式環境才有的行為**，例如排程在主機重開機後恢復，無法在 merge 前驗證。這類行為在 merge 後部署時核對，記錄在 [research-acceptance](research-acceptance.md)。
 

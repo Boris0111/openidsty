@@ -9,7 +9,9 @@ cd C:\Users\User\industryflow-prod
 .venv\Scripts\python.exe scripts\research_lab.py backup --secondary "D:\backups\industryflow-research" --keep-days 30
 ```
 
-`backup` 屬於會改變正式服務的動作：與部署、回退共用 `deployments/.lock`，並經過同樣的四項防護。部署或回退正在進行時，備份最多等 1 小時；防護不通過就拒絕，並在 `backup-log.jsonl` 記一筆 `refused: …`。`deploy` 與 `rollback` 開始前也會做一份同格式的備份（含第二份副本），資料夾名稱寫進部署紀錄。
+`backup` 屬於會改變正式服務的動作：與部署、回退共用 `deployments/.lock`，並經過同樣的四項防護。部署或回退正在進行時，備份最多等 30 分鐘（工作排程單次上限是 1 小時）；防護不通過就拒絕，並在 `backup-log.jsonl` 記一筆 `refused: …`。`deploy` 與 `rollback` 開始前也會做一份同格式的備份（含第二份副本），資料夾名稱寫進部署紀錄。
+
+每份備份先寫入 `<時間>.partial`，全部完成並核對後才改名；第二份副本同樣處理。備份被中止（例如工作排程逾時）時留下的 `.partial`，由下一次備份在持有 lock 時清除；`--backup latest` 與 30 天清理都不把它當成備份。
 
 Windows 工作排程器的 `IndustryFlow Research Daily Backup`：每天 03:30 以部署目錄的 `.venv\Scripts\python.exe` 執行上列命令。腳本用絕對路徑，「開始位置」設為部署目錄且不加引號（加引號會讓「開始位置」失效）。錯過的時段（關機、休眠）在下次可執行時補跑，單次上限 1 小時，同時只跑一份。它只在 Boris 登入時執行，因為 Docker Desktop 依附使用者工作階段；Docker 沒啟動時備份會失敗並記錄，不會產生半套備份。
 
@@ -50,7 +52,7 @@ Unregister-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"
 演練使用獨立的 Compose project `industryflow-research-drill`（`compose.research-drill.yaml`），可以從任何 checkout 或 worktree 執行：
 
 - **環境**：自己的 DB、Git 與資產 volume，web 綁 `127.0.0.1:3016`、API 綁 `127.0.0.1:8016`。
-- **祕密**：放在 `INDUSTRYFLOW_DRILL_HOME`（預設 `%USERPROFILE%\industryflow-drill`）的 `.env.research-drill`，與 checkout 無關。`setup` 只產生新的演練祕密，不讀正式的 `.env.research`；線上來源更新需要的 SEC 聯絡字串以 `--sec-user-agent` 傳入。錯誤輸出同時遮蔽演練與正式祕密。
+- **祕密**：放在 `INDUSTRYFLOW_DRILL_HOME`（預設 `%USERPROFILE%\industryflow-drill`）的 `.env.research-drill`，與 checkout 無關。`setup` 只產生新的演練祕密，不讀正式的 `.env.research`；線上來源更新需要的 SEC 聯絡字串以 `setup --sec-user-agent` 傳入；env 檔已由其他動作建立時，同一個指令會補寫或取代它。錯誤輸出同時遮蔽演練與正式祕密。
 - **image**：以備份 manifest 記錄的基準提交（`api_revision`）從 `git archive` 建置或重用（[建置與 image 版本](research-deployment.md#建置與-image-版本)）。manifest 較舊、沒有這個欄位時，以 `--baseline-commit` 指定當時正式 image 的提交。因為用的是基準 image，待合併提交的新遷移不會讓還原失敗。
 - **隔離**：沒有排程，不會自動抓取來源。不動正式服務與原服務，演練前後都會比對兩者的容器指紋。
 

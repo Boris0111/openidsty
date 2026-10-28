@@ -308,7 +308,9 @@
 - [x] 8.8 回退期間拒絕 `public-snapshot`（design D11、Risks）。驗證：測試確認運行中的紀錄是 `rollback` 時拒絕、下一次部署後恢復。
 
   結果：`main()` 在運行中的紀錄為 `rollback` 時拒絕 `public-snapshot`；`PublicSnapshotTests` 兩項通過。
-- [ ] 8.9 更新文件：`docs/research-deployment.md`（部署、回退、遷移規則、演練）、`research-backup.md`（等待上限、`.partial`）、`public-snapshot.md`（回退期間拒絕）。驗證：文件描述與 8.1–8.8 的測試一致，文件中的演練指令與 `research_drill.py --help` 一致。
+- [x] 8.9 更新文件：`docs/research-deployment.md`（部署、回退、遷移規則、演練）、`research-backup.md`（等待上限、`.partial`）、`public-snapshot.md`（回退期間拒絕）。驗證：文件描述與 8.1–8.8 的測試一致，文件中的演練指令與 `research_drill.py --help` 一致。
+
+  結果：`research-deployment.md` 更新部署（Prefect 無法查詢、替換前再檢查、紀錄必定寫入、交接期間的 Ctrl-C 與補記）、回退（交接給目標腳本、收縮清單重算）、建置（只比對 identity labels）、遷移規則與 `0016`、演練（db working_dir、`last-restore.json`）與紀錄欄位；`research-backup.md` 更新等待上限、`.partial` 與 `setup --sec-user-agent`；`public-snapshot.md` 改為回退期間由程式拒絕。`DocumentedCommandTests` 與 `test_record_fields_are_documented` 通過。
 - [ ] 8.10 重新驗證：
   - root unittest 全數通過，CI 全綠（run 編號記在本 task）。
   - 演練：`down` 後重做 `restore`、`deploy-rehearsal`、`rollback-rehearsal` 與收縮遷移的拒絕，再以 PR HEAD 重跑 `pg-check --suite all`（`0016` 的標記進了 backend），並重做 7.8 的防護檢查。

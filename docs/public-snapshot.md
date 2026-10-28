@@ -24,7 +24,7 @@
 
 ## 每次發布研究後的步驟
 
-在部署目錄 `C:\Users\User\industryflow-prod` 執行（[部署與回退](research-deployment.md)），前提是正式研究服務在運行。匯出、`npm ci`、`build:static`、一致性檢查與 wrangler 部署都在部署目錄進行；wrangler 的 `--commit-hash` 用部署紀錄中運行的提交，也就是 `research_lab.py status` 的 `deployed.commit`。這些步驟的輸出都被 Git 忽略；若 `git status` 出現未追蹤檔案，下一個正式操作會被防護拒絕。回退期間不產出公開快照，因為 legacy 地圖表保留的是較新版本匯入的內容。
+在部署目錄 `C:\Users\User\industryflow-prod` 執行（[部署與回退](research-deployment.md)），前提是正式研究服務在運行。匯出、`npm ci`、`build:static`、一致性檢查與 wrangler 部署都在部署目錄進行；wrangler 的 `--commit-hash` 用部署紀錄中運行的提交，也就是 `research_lab.py status` 的 `deployed.commit`。這些步驟的輸出都被 Git 忽略；若 `git status` 出現未追蹤檔案，下一個正式操作會被防護拒絕。回退期間（運行中的部署紀錄是 `rollback`）`public-snapshot` 會被拒絕，下一次部署後才恢復，因為 legacy 地圖表保留的是較新版本匯入的內容。
 
 ```powershell
 # 1. 匯出目前發布的版本到 public-snapshot/<release_id>/
