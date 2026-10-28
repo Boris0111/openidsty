@@ -75,11 +75,16 @@ def compose(*args, tag, input=None):
 
 
 def setup(sec_user_agent=None):
-    """Fresh drill secrets in DRILL_HOME. The public SEC contact string is passed in, never copied from production."""
-    if ENV_FILE.exists():
-        return
+    """Fresh drill secrets in DRILL_HOME. The public SEC contact string is passed in, never copied from production;
+    given again later, it is added to or replaces the one in the existing file (other drill actions create the
+    file without it)."""
     if sec_user_agent and not re.fullmatch(r'[^\r\n=]+', sec_user_agent):
         raise ValueError('--sec-user-agent must be one line without "="')
+    if ENV_FILE.exists():
+        if sec_user_agent:
+            lines = [line for line in ENV_FILE.read_text(encoding='utf-8').splitlines() if not line.startswith('SEC_USER_AGENT=')]
+            ENV_FILE.write_text('\n'.join([*lines, 'SEC_USER_AGENT=' + sec_user_agent]) + '\n', encoding='utf-8', newline='\n')
+        return
     DRILL_HOME.mkdir(parents=True, exist_ok=True)
     lines = [f'{key}={secrets.token_hex(32)}' for key in SECRET_KEYS]
     lines.append('DRILL_OWNER_PASSWORD=' + secrets.token_urlsafe(24))
@@ -158,9 +163,19 @@ def write_report(kind, report):
     return path
 
 
-def last_restore():
-    reports = sorted(REPORTS.glob('restore-*.json')) if REPORTS.exists() else []
-    return json.loads(reports[-1].read_text(encoding='utf-8')) if reports else None
+def last_restore(db):
+    """The restore behind the running drill DB, recorded in DRILL_HOME so any checkout sees it; None when the
+    record belongs to another DB container (a later restore, or another worktree's drill)."""
+    path = DRILL_HOME / 'last-restore.json'
+    restored = json.loads(path.read_text(encoding='utf-8')) if path.exists() else None
+    return restored if restored and restored.get('db_container') == db else None
+
+
+def running_images():
+    """Image IDs and revision of the drill's running API and web, for benchmark reports."""
+    services = lab.running_services(PROJECT)
+    return {'api_image': (services.get('api') or {}).get('image_id'), 'web_image': (services.get('web') or {}).get('image_id'),
+            'revision': (services.get('api') or {}).get('revision')}
 
 
 def table_changes(before, after):
@@ -277,8 +292,11 @@ def restore(backup, baseline=None):
               'checks': checks, 'worktree_dirty': worktree_dirty(), 'protected_services_unchanged': True,
               'preview_unchanged': preview_snapshot() == preview}
     REPORTS.mkdir(parents=True, exist_ok=True)
-    (REPORTS / ('restore-' + report['restored_at'] + '.json')).write_text(
-        json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+    path = REPORTS / ('restore-' + report['restored_at'] + '.json')
+    path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')
+    (DRILL_HOME / 'last-restore.json').write_text(json.dumps(
+        {'backup': folder.name, 'baseline_commit': commit, 'baseline_tag': tag, 'db_container': db,
+         'restored_at': report['restored_at'], 'report': str(path)}, indent=2), encoding='utf-8')
     return report
 
 
@@ -299,7 +317,7 @@ def deploy_rehearsal(commit, force=False, allow_contract=False):
     check(tag)
     lab.run_initialize(compose, tag, '--profile', 'tools')
     lab.replace_services(compose, tag, lab.running_services(PROJECT))
-    ok, smoke = lab.smoke_checks(compose, PROJECT, tag, commit, target['alembic_head'], API, WEB)
+    ok, smoke = lab.smoke_checks(compose, PROJECT, tag, commit, target['alembic_head'], API, WEB, working_dir_skip=('db',))
     after, _ = db_inventory(db)
     report = {'kind': 'deploy-rehearsal', 'commit': commit, 'tag': tag, 'built': built, 'baseline_commit': baseline,
               'worktree_dirty': worktree_dirty(), 'contract_revisions_added': added,
@@ -319,12 +337,13 @@ def rollback_rehearsal(commit=None):
     """Design D7 on the drill: back to the restored baseline (or --commit) without initialize, refused across
     contract migrations or a Prefect change, exactly as production would decide."""
     current_commit = running_revision()
-    restored = last_restore()
+    db = drill_db(current_commit[:12])
+    restored = last_restore(db)
     if commit is None and not restored:
-        raise RuntimeError('No restore report in .work/research-drill; pass --commit')
+        raise RuntimeError('No restore of the running drill DB is recorded in INDUSTRYFLOW_DRILL_HOME '
+                           '(another checkout may have restored a different one); pass --commit')
     target_commit = lab.resolve_commit(commit) if commit else restored['baseline_commit']
     current, target = lab.commit_info(current_commit), lab.commit_info(target_commit)
-    db = drill_db(current_commit[:12])
     version = lab.alembic_version(db)
     boundary = f'{restored["backup"]} (the backup this drill was restored from)' if restored else None
     refusals = lab.rollback_refusals(target, current, version, [target, current], boundary)
@@ -343,7 +362,7 @@ def rollback_rehearsal(commit=None):
     tag, built = lab.build_images(target_commit)
     check(tag)
     lab.replace_services(compose, tag, lab.running_services(PROJECT))
-    ok, smoke = lab.smoke_checks(compose, PROJECT, tag, target_commit, version, API, WEB)
+    ok, smoke = lab.smoke_checks(compose, PROJECT, tag, target_commit, version, API, WEB, working_dir_skip=('db',))
     after, _ = db_inventory(db)
     report.update(tag=tag, rebuilt=bool(built), smoke_ok=ok, smoke=smoke, tables=table_changes(before, after),
                   theme_assessment_versions=theme_versions(before, after), preview_unchanged=preview_snapshot() == preview)
@@ -510,7 +529,8 @@ def main():
     args = parser.parse_args()
     if args.action in REQUIRED and not getattr(args, REQUIRED[args.action]):
         parser.error(f'{args.action} needs --{REQUIRED[args.action]}')
-    actions = {'setup': lambda: (setup(args.sec_user_agent), {'setup': 'ok', 'env_file': str(ENV_FILE)})[1],
+    actions = {'setup': lambda: (setup(args.sec_user_agent), {'setup': 'ok', 'env_file': str(ENV_FILE),
+                                                              'sec_user_agent': 'SEC_USER_AGENT' in env_values()})[1],
                'check': lambda: check(current_tag()), 'build': lambda: build(args.commit),
                'restore': lambda: restore(args.backup, args.baseline_commit),
                'deploy-rehearsal': lambda: deploy_rehearsal(args.commit, args.force, args.allow_contract),

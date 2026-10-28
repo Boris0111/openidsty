@@ -4,6 +4,7 @@ revision='0016'
 down_revision='0015'
 branch_labels=None
 depends_on=None
+EXPAND_REVIEWED='ALTER POLICY keeps the visibility of 0008 and only changes how rows are looked up; the previous version reads the same rows'
 
 # Same visibility as 0008: a row is readable only when its parent row is readable under the parent's own policy.
 ROW_LOOKUPS={

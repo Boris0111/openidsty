@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import re
 import secrets
+import signal
 import socket
 import subprocess
 import sys
@@ -52,6 +53,9 @@ LEDGER = DEPLOYMENTS / 'ledger.jsonl'
 LOCK = DEPLOYMENTS / '.lock'
 HANDOVER = DEPLOYMENTS / '.handover'
 LEDGER_SCHEMA = 1
+BACKUP_LOCK_WAIT = 1800
+# Exit code of a target script that refused before changing anything (no record is expected).
+REFUSED_EXIT = 3
 API, WEB, PREFECT_API = 'http://127.0.0.1:8010', 'http://127.0.0.1:3010', 'http://127.0.0.1:4201/api'
 
 
@@ -235,6 +239,11 @@ def commit_info(commit):
             'contract_revisions': migrations['contracts'], 'prefect_version': prefect.group(1)}
 
 
+# Labels fixed by the commit itself. contract-revisions is recorded but follows the lint rules as they evolve,
+# so it never decides whether an existing image is the commit's image.
+IDENTITY_LABELS = (REVISION, LABELS + 'alembic-head', LABELS + 'prefect-version', LABELS + 'build')
+
+
 def image_labels(info):
     return {REVISION: info['commit'], LABELS + 'alembic-head': info['alembic_head'],
             LABELS + 'contract-revisions': ','.join(info['contract_revisions']),
@@ -249,15 +258,15 @@ def existing_labels(name):
 
 
 def build_images(commit):
-    """Build the api and web images of a commit, or reuse them when their labels match.
-    Returns (tag, kinds built). An existing tag with different labels is refused, never overwritten."""
+    """Build the api and web images of a commit, or reuse them when their identity labels match.
+    Returns (tag, kinds built). An existing tag with different identity labels is refused, never overwritten."""
     commit = resolve_commit(commit)
     labels, tag, built, archive = image_labels(commit_info(commit)), commit[:12], [], None
     for kind in ('api', 'web'):
         name = f'{IMAGES[kind]}:{tag}'
         existing = existing_labels(name)
         if existing is not None:
-            different = sorted(key for key, value in labels.items() if existing.get(key) != value)
+            different = sorted(key for key in IDENTITY_LABELS if existing.get(key) != labels[key])
             if different:
                 raise Refused(f'{name} exists with different labels ({", ".join(different)}); refusing to overwrite it')
             continue
@@ -339,6 +348,36 @@ def prefect_runs(api=PREFECT_API):
     request = urllib.request.Request(api + '/flow_runs/filter', data=body, headers={'Content-Type': 'application/json'})
     with urllib.request.urlopen(request, timeout=15) as response:
         return [flow_run['name'] for flow_run in json.load(response)]
+
+
+def scheduler_running(running):
+    return bool({'prefect', 'worker'} & set(running))
+
+
+def prefect_busy(running, force=False):
+    """(running flow runs, refusal) before a deploy or rollback. Prefect that cannot be asked is a refusal,
+    because nobody can tell whether a data update is executing; --force skips the question."""
+    if force or not scheduler_running(running):
+        return [], None
+    try:
+        return prefect_runs(), None
+    except (OSError, ValueError) as error:
+        return [], (f'Prefect at {PREFECT_API} cannot tell whether a data update is running ({error}); '
+                    'pass --force to proceed without the check')
+
+
+def wait_for_idle(timeout=600, interval=10):
+    """Before replacing the scheduler: wait for running flow runs to end. Returns what still runs at the deadline;
+    Prefect that cannot be asked counts as still running."""
+    deadline = time.time() + timeout
+    while True:
+        try:
+            busy = prefect_runs()
+        except (OSError, ValueError) as error:
+            busy = [f'Prefect unreachable: {error}']
+        if not busy or time.time() >= deadline:
+            return busy
+        time.sleep(interval)
 
 
 # --- Deployment directory, record and guard (design D1, D2, D5) ---
@@ -466,7 +505,8 @@ def lock_held():
 def production(action):
     """Lock, then the guard; yields the deployed tag and the validated configuration summary."""
     require_home()
-    with deployment_lock(wait_seconds=3600 if action == 'backup' else 0):
+    # The daily backup task may run for 1 hour at most, so it waits for the lock 30 minutes at most.
+    with deployment_lock(wait_seconds=BACKUP_LOCK_WAIT if action == 'backup' else 0):
         refuse_if(guard_problems(), action)
         tag = current_record(read_ledger())['tag']
         yield tag, validate(tag)
@@ -576,15 +616,16 @@ def replace_services(compose_fn, tag, running, recreate_db=False):
     if recreate_db:
         compose_fn('up', '-d', '--no-deps', '--force-recreate', '--wait', 'db', tag=tag)
     compose_fn('up', '-d', '--no-deps', '--wait', 'api', 'web', tag=tag)
-    if 'prefect' in running or 'worker' in running:
+    if scheduler_running(running):
         start_scheduler(compose_fn, tag)
     if 'reader' in running:
         compose_fn('--profile', 'reader', 'up', '-d', '--no-deps', '--wait', 'reader', tag=tag)
 
 
-def smoke_checks(compose_fn, project, tag, commit, expect_alembic, api=API, web=WEB):
+def smoke_checks(compose_fn, project, tag, commit, expect_alembic, api=API, web=WEB, working_dir_skip=()):
     """After a replacement: health, served release, /next, every container's image and revision, the schema
-    version and the directory Compose ran from. Returns (all passed, details)."""
+    version and the directory Compose ran from. Returns (all passed, details). The drill skips db's
+    working_dir: its db belongs to whichever checkout ran restore."""
     db = compose_fn('ps', '-q', 'db', tag=tag).decode().strip()
     images, services = image_ids(tag), running_services(project)
     release = psql(db, 'SELECT release_id FROM research.release_head') if db else None
@@ -593,7 +634,8 @@ def smoke_checks(compose_fn, project, tag, commit, expect_alembic, api=API, web=
     health, page = http_status(api + '/api/health'), http_status(web + '/next')
     wrong = sorted(name for name, info in services.items() if name != 'db' and
                    (info['revision'] != commit or info['image_id'] != images[image_kind(name)]))
-    elsewhere = sorted(name for name, info in services.items() if not same_path(info['working_dir'], ROOT))
+    elsewhere = sorted(name for name, info in services.items()
+                       if name not in working_dir_skip and not same_path(info['working_dir'], ROOT))
     checks = {'health': {'ok': health == 200, 'status': health},
               'release': {'ok': bool(release) and served == release, 'served': served, 'database': release},
               'next': {'ok': page == 200, 'status': page},
@@ -605,13 +647,21 @@ def smoke_checks(compose_fn, project, tag, commit, expect_alembic, api=API, web=
 
 
 def finish(record, outcome, error=None, fallback_from=None):
-    """Complete a deploy or rollback record with the state it left behind and append it."""
-    services = running_services(PROJECT)
-    record.update(outcome=outcome, error=str(error)[:4000] if error else None, services=services,
-                  alembic_after=alembic_version(services['db']['container']) if 'db' in services else None,
-                  finished_at=utc_now())
+    """Complete a deploy or rollback record with the state it left behind and append it. It always appends:
+    when Docker cannot be asked, the record keeps what is known and says why the rest is missing."""
+    try:
+        services = running_services(PROJECT)
+        alembic_after = alembic_version(services['db']['container']) if 'db' in services else None
+    except Exception as state_error:
+        services, alembic_after = None, None
+        record['state_error'] = str(state_error)[:1000]
+    record.update(outcome=outcome, error=(str(error) or type(error).__name__)[:4000] if error is not None else None,
+                  services=services, alembic_after=alembic_after, finished_at=utc_now())
     if outcome == 'failed' and record.get('replaced') and fallback_from is not None:
-        record['fallback'] = fallback(fallback_from, record)
+        try:
+            record['fallback'] = fallback(fallback_from, record)
+        except Exception as fallback_error:
+            record['fallback'] = f'No rollback advice could be worked out ({fallback_error}); see docs/research-deployment.md'
     return append_record(record)
 
 
@@ -629,6 +679,75 @@ def fallback(ledger, failed):
     return f'python scripts/research_lab.py rollback --to {previous["seq"]}'
 
 
+def scheduler_idle(record, running, force, contract=False):
+    """Right before the scheduler is replaced (design D6): (go on, flow runs still running). A deploy that only
+    applied expand migrations stops here, because the current services still work on that schema; a contract
+    deploy goes on and records the runs it interrupts, because the old services cannot."""
+    if force or not scheduler_running(running):
+        return True, []
+    still = wait_for_idle()
+    if still and contract:
+        record['interrupted_runs'] = still
+    return not still or contract, still
+
+
+def replace_and_smoke(record, commit, tag, running, expect_alembic, recreate_db=False):
+    """Replace the running services and run the smoke checks: (passed, error, interruption). An interruption
+    such as Ctrl-C comes back so that the caller writes the record before raising it again."""
+    record['replaced'] = True
+    try:
+        replace_services(compose, tag, running, recreate_db)
+        ok, record['smoke'] = smoke_checks(compose, PROJECT, tag, commit, expect_alembic)
+        failed = ', '.join(name for name, check in record['smoke'].items() if not check['ok'])
+        return ok, (None if ok else 'Smoke check failed: ' + failed), None
+    except Exception as error:
+        return False, error, None
+    except BaseException as interruption:
+        return False, interruption, interruption
+
+
+def check_handover(token, usage):
+    if not (HANDOVER.exists() and HANDOVER.read_text(encoding='utf-8') == token and lock_held()):
+        raise Refused(f'--handover is internal; run: python scripts/research_lab.py {usage}')
+
+
+def record_from_containers(kind, commit, code):
+    """The target script ended without a record (killed or crashed): write one from what actually runs, so the
+    record, the checkout and the containers agree again."""
+    record = {'kind': kind, 'commit': commit, 'tag': commit[:12], 'started_at': utc_now(), 'contract_boundary': False,
+              'note': 'Written by the previous script from the running containers after the target script ended'}
+    try:
+        record.update(commit_info(commit))
+        replaced = {name: info for name, info in running_services(PROJECT).items()
+                    if name != 'db' and info['revision'] == commit}
+        record.update(replaced=bool(replaced), images={image_kind(n): i['image_id'] for n, i in replaced.items()})
+    except Exception as error:
+        record.update(replaced=False, state_error=str(error)[:1000])
+    return finish(record, 'failed', f'The {kind} script ended with exit {code} and wrote no record')
+
+
+def hand_over(commit, args):
+    """Check out commit and run that version's research_lab.py with args while this process holds the lock.
+    Ctrl-C is left to the target script, which records it; a target that ends without a record is recorded
+    here from the running containers. The checkout always ends on the commit that is serving."""
+    before, token, code = len(read_ledger()), secrets.token_hex(16), None
+    HANDOVER.write_text(token, encoding='utf-8')
+    previous = signal.signal(signal.SIGINT, signal.SIG_IGN)
+    try:
+        run(['git', 'checkout', '--quiet', '--detach', commit], cwd=ROOT)
+        code = subprocess.run([sys.executable, str(ROOT / 'scripts' / 'research_lab.py'), *args, '--handover', token],
+                              cwd=ROOT).returncode
+    finally:
+        signal.signal(signal.SIGINT, previous)
+        HANDOVER.unlink(missing_ok=True)
+        if code not in (None, 0, REFUSED_EXIT) and len(read_ledger()) == before:
+            record_from_containers(args[0], commit, code)
+        current = current_record(read_ledger())
+        if current and git_head() != current['commit']:
+            run(['git', 'checkout', '--quiet', '--detach', current['commit']], cwd=ROOT)
+    return code
+
+
 # --- deploy, rollback, adopt, status ---
 
 def deploy(commit, secondary=None, force=False, allow_contract=False, recreate_db=False):
@@ -644,36 +763,25 @@ def deploy(commit, secondary=None, force=False, allow_contract=False, recreate_d
         if commit not in run(['git', 'rev-list', '--first-parent', 'origin/main'], cwd=ROOT, text=True).split():
             raise Refused(f'Refusing to deploy: {commit[:12]} is not on the first-parent chain of origin/main; '
                           'only merged commits are deployed (rehearse others with research_drill.py)')
-        token = secrets.token_hex(16)
-        HANDOVER.write_text(token, encoding='utf-8')
-        try:
-            run(['git', 'checkout', '--quiet', '--detach', commit], cwd=ROOT)
-            flags = [*(['--secondary', secondary] if secondary else []), *(['--force'] if force else []),
-                     *(['--allow-contract'] if allow_contract else []), *(['--recreate-db'] if recreate_db else [])]
-            code = subprocess.run([sys.executable, str(ROOT / 'scripts' / 'research_lab.py'), 'deploy',
-                                   '--commit', commit, '--handover', token, *flags], cwd=ROOT).returncode
-        finally:
-            HANDOVER.unlink(missing_ok=True)
-            # Whatever the target script did, the checkout ends on the commit that is serving.
-            current = current_record(read_ledger())
-            if current and git_head() != current['commit']:
-                run(['git', 'checkout', '--quiet', '--detach', current['commit']], cwd=ROOT)
+        flags = [*(['--secondary', secondary] if secondary else []), *(['--force'] if force else []),
+                 *(['--allow-contract'] if allow_contract else []), *(['--recreate-db'] if recreate_db else [])]
+        code = hand_over(commit, ['deploy', '--commit', commit, *flags])
     if code:
         raise SystemExit(code)
 
 
 def deploy_target(commit, token, secondary=None, force=False, allow_contract=False, recreate_db=False):
     """Steps 4-10 of design D6, run by the target version's script while the parent holds the lock."""
-    if not (HANDOVER.exists() and HANDOVER.read_text(encoding='utf-8') == token and lock_held()):
-        raise Refused('--handover is internal to deploy; run: python scripts/research_lab.py deploy --commit <sha>')
+    check_handover(token, 'deploy --commit <sha>')
     refuse_if(guard_problems(expect_head=commit), 'deploy')
     ledger = read_ledger()
     current, target, running = current_record(ledger), commit_info(commit), running_services(PROJECT)
     if 'db' not in running:
         raise Refused('Refusing to deploy: the research DB is not running')
     db_version = alembic_version(running['db']['container'])
-    refusals, added = deploy_refusals(target, db_version, prefect_runs() if 'prefect' in running else [],
-                                      force, allow_contract)
+    busy, unreachable = prefect_busy(running, force)
+    refusals, added = deploy_refusals(target, db_version, busy, force, allow_contract)
+    refusals += [unreachable] if unreachable else []
     if not same_path(running['db']['working_dir'], ROOT) and not recreate_db:
         refusals.append(f'The db container was created from {running["db"]["working_dir"]}; the first deploy from this '
                         'directory recreates it: re-run with --recreate-db (a brief full outage)')
@@ -687,25 +795,35 @@ def deploy_target(commit, token, secondary=None, force=False, allow_contract=Fal
         tag, built = build_images(commit)
         record.update(images=image_ids(tag), built=built)
         run_initialize(compose, tag)
-    except Exception as error:
+    except BaseException as error:
         finish(record, 'failed', error)
         raise
-    record['replaced'] = True
-    try:
-        replace_services(compose, tag, running, recreate_db)
-        ok, record['smoke'] = smoke_checks(compose, PROJECT, tag, commit, target['alembic_head'])
-        error = None if ok else 'Smoke check failed: ' + ', '.join(k for k, v in record['smoke'].items() if not v['ok'])
-    except Exception as caught:
-        ok, error = False, caught
+    go_on, still = scheduler_idle(record, running, force, contract=bool(added))
+    if not go_on:
+        reason = (f'Prefect flow run(s) {", ".join(still[:5])} still running after 10 minutes; the services were not '
+                  'replaced. Only expand migrations were applied, so the current services keep working; deploy again later.')
+        finish(record, 'failed', reason)
+        raise Refused('Refusing to replace the services: ' + reason)
+    ok, error, interruption = replace_and_smoke(record, commit, tag, running, target['alembic_head'], recreate_db)
     record = finish(record, 'succeeded' if ok else 'failed', error, fallback_from=ledger)
+    if interruption:
+        raise interruption
     if not ok:
         raise RuntimeError(f'{error}\nThe new services stay in place; nothing was rolled back automatically.\n'
                            f'Next step: {record["fallback"]}')
     return record
 
 
+def rollback_record(target, seq, db_version, current, running):
+    return {'kind': 'rollback', 'commit': target['commit'], 'tag': target['tag'], 'rolled_back_to': seq,
+            **{key: target[key] for key in ('alembic_head', 'migrations', 'contract_revisions', 'prefect_version')},
+            'alembic_before': db_version, 'contract_boundary': False, 'replaced': False,
+            'drift_before': service_drift(current, running), 'started_at': utc_now()}
+
+
 def rollback(seq, secondary=None, force=False):
-    """Design D7: back to a successful record without initialize; refused across contract migrations or Prefect."""
+    """Design D7 in the current script: the newest rules judge compatibility and the backup is taken; then the
+    target version's script takes over to rebuild, replace and check with its own compose rules."""
     require_home()
     with deployment_lock():
         # Container drift is reported, not refused: rollback exists to put known images back.
@@ -718,40 +836,60 @@ def rollback(seq, secondary=None, force=False):
         if 'db' not in running:
             raise Refused('Refusing to roll back: the research DB is not running')
         db_version = alembic_version(running['db']['container'])
-        refusals = rollback_refusals(target, current, db_version, ledger, latest_boundary(ledger))
-        busy = prefect_runs() if 'prefect' in running else []
-        if busy and not force:
-            refusals.append(f'Prefect has {len(busy)} running flow run(s); wait, or pass --force')
+        # Each record holds the contract list of its own time; the current rules may know more.
+        records = [*ledger, *([commit_info(current['commit'])] if current.get('kind') != 'adopt' else [])]
+        refusals = rollback_refusals(target, current, db_version, records, latest_boundary(ledger))
+        busy, unreachable = prefect_busy(running, force)
+        if busy:
+            refusals.append(f'Prefect has {len(busy)} running flow run(s) ({", ".join(busy[:5])}); wait, or pass --force')
+        refusals += [unreachable] if unreachable else []
         refuse_if(refusals, 'roll back')
         secondary = backup_secondary(secondary)
-        record = {'kind': 'rollback', 'commit': target['commit'], 'tag': target['tag'], 'rolled_back_to': seq,
-                  **{key: target[key] for key in ('alembic_head', 'migrations', 'contract_revisions', 'prefect_version')},
-                  'alembic_before': db_version, 'contract_boundary': False, 'replaced': False,
-                  'drift_before': service_drift(current, running), 'started_at': utc_now()}
         try:
-            record['backup'] = Path(backup(secondary, tag=current['tag'])['backup']).name
-            tag, built = build_images(target['commit'])
-            # pip and npm builds are not byte-reproducible, so a rebuilt image is marked as such.
-            record.update(images=image_ids(tag), built=built, rebuilt=bool(built))
-            run(['git', 'checkout', '--quiet', '--detach', target['commit']], cwd=ROOT)
-            validate(tag)
-        except Exception as error:
-            if git_head() != current['commit']:
-                run(['git', 'checkout', '--quiet', '--detach', current['commit']], cwd=ROOT)
-            finish(record, 'failed', error)
+            backup_name = Path(backup(secondary, tag=current['tag'])['backup']).name
+        except BaseException as error:
+            finish(rollback_record(target, seq, db_version, current, running), 'failed', error)
             raise
-        record['replaced'] = True
-        try:
-            replace_services(compose, tag, running)
-            ok, record['smoke'] = smoke_checks(compose, PROJECT, tag, target['commit'], db_version)
-            error = None if ok else 'Smoke check failed: ' + ', '.join(k for k, v in record['smoke'].items() if not v['ok'])
-        except Exception as caught:
-            ok, error = False, caught
-        record = finish(record, 'succeeded' if ok else 'failed', error)
-        if not ok:
-            raise RuntimeError(f'{error}\nRestore the pre-rollback backup {record["backup"]} in the drill and follow '
-                               'docs/research-backup.md')
-        return record
+        code = hand_over(target['commit'], ['rollback', '--to', str(seq), '--handover-backup', backup_name,
+                                            *(['--force'] if force else [])])
+    if code:
+        raise SystemExit(code)
+
+
+def rollback_target(seq, token, backup_name, force=False):
+    """Design D7 after the handover: this (target) version's script builds or reuses its own image and replaces
+    the services under its own compose rules, without initialize. Compatibility and the backup were settled
+    by the previous script before the checkout."""
+    check_handover(token, 'rollback --to <seq>')
+    ledger = read_ledger()
+    current, running = current_record(ledger), running_services(PROJECT)
+    target = next((r for r in ledger if r['seq'] == seq), None)
+    if target is None or 'db' not in running:
+        raise Refused(f'Refusing to roll back: record {seq} or the research DB is missing')
+    refuse_if(guard_problems(expect_head=target['commit'], containers=False), 'roll back')
+    db_version = alembic_version(running['db']['container'])
+    record = {**rollback_record(target, seq, db_version, current, running), 'backup': backup_name}
+    try:
+        tag, built = build_images(target['commit'])
+        # pip and npm builds are not byte-reproducible, so a rebuilt image is marked as such.
+        record.update(images=image_ids(tag), built=built, rebuilt=bool(built))
+        validate(tag)
+    except BaseException as error:
+        finish(record, 'failed', error)
+        raise
+    go_on, still = scheduler_idle(record, running, force)
+    if not go_on:
+        reason = f'Prefect flow run(s) {", ".join(still[:5])} still running after 10 minutes; the services were not replaced'
+        finish(record, 'failed', reason)
+        raise Refused('Refusing to replace the services: ' + reason)
+    ok, error, interruption = replace_and_smoke(record, target['commit'], tag, running, db_version)
+    record = finish(record, 'succeeded' if ok else 'failed', error)
+    if interruption:
+        raise interruption
+    if not ok:
+        raise RuntimeError(f'{error}\nRestore the pre-rollback backup {backup_name} in the drill and follow '
+                           'docs/research-backup.md')
+    return record
 
 
 def adopt():
@@ -948,12 +1086,29 @@ def db_inventory(container, database='industry_research'):
     return inventory, dict(zip(('release_id', 'generation', 'content_hash', 'git_commit'), head.split('|')))
 
 
+def remove_folder(folder):
+    for item in folder.iterdir():
+        item.unlink()
+    folder.rmdir()
+
+
+def remove_partial(root):
+    """Folders left by a backup that was killed mid-way. Called with the lock held, so none is being written."""
+    leftovers = sorted(f for f in root.glob('*.partial') if f.is_dir()) if root.exists() else []
+    for folder in leftovers:
+        remove_folder(folder)
+    return [folder.name for folder in leftovers]
+
+
 def copy_verified(folder, target, files):
-    target.mkdir(parents=True)
+    """Copy into <target>.partial, verify every file, then rename: an interrupted copy is never a backup."""
+    partial = target.with_name(target.name + '.partial')
+    partial.mkdir(parents=True)
     for name, digest in files.items():
-        (target / name).write_bytes((folder / name).read_bytes())
-        if sha256_file(target / name) != digest:
+        (partial / name).write_bytes((folder / name).read_bytes())
+        if sha256_file(partial / name) != digest:
             raise RuntimeError(f'Secondary copy of {name} does not match')
+    partial.rename(target)
 
 
 def is_boundary(folder):
@@ -991,7 +1146,9 @@ def backup(secondary=None, keep_days=30, *, tag, boundary=()):
     before = protected_snapshot()
     started = time.time()
     stamp = time.strftime('%Y%m%dT%H%M%SZ', time.gmtime(started))
-    folder = BACKUP_ROOT / stamp
+    removed_partial = {str(root): remove_partial(root) for root in [BACKUP_ROOT, *([Path(secondary)] if secondary else [])]}
+    # Written as <stamp>.partial and renamed when complete, so a killed run never looks like a backup.
+    folder = BACKUP_ROOT / (stamp + '.partial')
     folder.mkdir(parents=True)
     status = 'failed'
     try:
@@ -1023,7 +1180,9 @@ def backup(secondary=None, keep_days=30, *, tag, boundary=()):
                     'excluded': 'Environment secrets (.env.research) are backed up separately; the DB includes the owner password hash.'}
         (folder / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
         files['manifest.json'] = sha256_file(folder / 'manifest.json')
-        result = {'backup': str(folder), 'release_id': head['release_id'], 'files': files}
+        folder = folder.rename(BACKUP_ROOT / stamp)
+        result = {'backup': str(folder), 'release_id': head['release_id'], 'files': files,
+                  'removed_partial': {root: names for root, names in removed_partial.items() if names}}
         if secondary:
             copy_verified(folder, Path(secondary) / stamp, files)
             result['secondary'] = str(Path(secondary) / stamp)
@@ -1035,10 +1194,8 @@ def backup(secondary=None, keep_days=30, *, tag, boundary=()):
         return result
     except Exception as error:
         status = 'failed: ' + str(error)[:500]
-        # Remove only this run's incomplete folder so it is never mistaken for a backup.
-        for item in folder.iterdir():
-            item.unlink()
-        folder.rmdir()
+        # Remove only this run's folder so it is never mistaken for a backup.
+        remove_folder(folder)
         raise
     finally:
         log_backup(stamp, status, round(time.time() - started, 1))
@@ -1085,6 +1242,7 @@ def build_parser():
     parser.add_argument('--recreate-db', action='store_true',
                         help='deploy: recreate the db container from this directory (first deploy only; brief full outage)')
     parser.add_argument('--handover', help=argparse.SUPPRESS)
+    parser.add_argument('--handover-backup', help=argparse.SUPPRESS)
     parser.add_argument('--release-id', help='public-snapshot: the published release to export (default: the current one)')
     parser.add_argument('--secondary', help='second storage device for the verified backup copy '
                                             '(deploy, rollback: default from deployments/home.json)')
@@ -1113,14 +1271,19 @@ def main():
         report = init_home(args.secondary)
     elif args.action == 'adopt':
         report = adopt()
+    elif args.action in ('deploy', 'rollback') and args.handover:
+        # A target script that refuses before changing anything exits REFUSED_EXIT, so the parent writes no record.
+        try:
+            report = (deploy_target(args.commit, args.handover, args.secondary, args.force, args.allow_contract,
+                                    args.recreate_db) if args.action == 'deploy' else
+                      rollback_target(args.to, args.handover, args.handover_backup, args.force))
+        except Refused as refusal:
+            print(refusal, file=sys.stderr)
+            raise SystemExit(REFUSED_EXIT)
     elif args.action == 'deploy':
-        if args.handover:
-            report = deploy_target(args.commit, args.handover, args.secondary, args.force, args.allow_contract,
-                                   args.recreate_db)
-        else:
-            return deploy(args.commit, args.secondary, args.force, args.allow_contract, args.recreate_db)
+        return deploy(args.commit, args.secondary, args.force, args.allow_contract, args.recreate_db)
     elif args.action == 'rollback':
-        report = rollback(args.to, args.secondary, args.force)
+        return rollback(args.to, args.secondary, args.force)
     elif args.action == 'backup':
         try:
             with production('backup') as (tag, report):
@@ -1172,6 +1335,10 @@ def main():
                 (folder / 'bootstrap.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
                 report['result'] = {key: value for key, value in result.items() if key != 'search_plans'}
             elif args.action == 'public-snapshot':
+                if current_record(read_ledger()).get('kind') == 'rollback':
+                    # After a rollback the legacy map tables still hold the newer version's import.
+                    raise Refused('Refusing to export a public snapshot during a rollback: the map tables and the '
+                                  'running code differ in version; deploy again first (docs/research-deployment.md)')
                 report['result'] = public_snapshot(args.release_id, tag=tag)
             elif args.action == 'restore':
                 result = restore(args.source_container, args.source_database, tag)

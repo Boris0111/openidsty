@@ -25,7 +25,7 @@ import urllib.request
 SCRIPTS = Path(__file__).resolve().parent
 ROOT = SCRIPTS.parent
 sys.path.insert(0, str(SCRIPTS))
-from research_drill import env_values  # noqa: E402
+from research_drill import env_values, running_images  # noqa: E402
 
 WEB = 'http://127.0.0.1:3016'
 MIX = [('profile', 35), ('graph', 25), ('search', 15), ('dynamic', 15), ('coverage', 10)]
@@ -174,8 +174,6 @@ def main():
                              'error_statuses': sorted({r[2] for r in errors}), 'mean_bytes': round(sum(r[3] for r in rows) / len(rows)) if rows else None,
                              'cache_control': sorted({r[4] for r in rows}), 'target_ms': TARGET[category],
                              'meets_target': bool(ok) and percentile(ok, .95) < TARGET[category] and len(rows) >= 100 and not errors}
-    def image(name):
-        return subprocess.run(['docker', 'image', 'inspect', name, '--format', '{{.Id}}'], capture_output=True, text=True).stdout.strip()
     docker_info = json.loads(subprocess.run(['docker', 'info', '--format', '{{json .}}'], capture_output=True, text=True).stdout)
     report = {
         'label': args.label, 'started_at': time.strftime('%Y%m%dT%H%M%SZ', time.gmtime(start)),
@@ -184,7 +182,7 @@ def main():
         'inventory': inventory, 'summary': summary, 'throughput_rps': round(len(records) / args.duration, 1),
         'background_update': background, 'resources': samples, 'db_stats_delta': {k: (stats_after[k] or 0) - (stats_before[k] or 0) for k in stats_after},
         'versions': {'git_head': subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=ROOT, capture_output=True, text=True).stdout.strip(),
-                     'api_image': image('industryflow-research-api:dev'), 'web_image': image('industryflow-research-web:dev'),
+                     **running_images(),  # the images the drill actually ran, tagged by commit
                      'postgres': subprocess.run(['docker', 'exec', DB, 'postgres', '--version'], capture_output=True, text=True).stdout.strip()},
         'hardware': {'host': platform.platform(), 'host_logical_cpus': os.cpu_count(), 'docker_cpus': docker_info.get('NCPU'),
                      'docker_memory_bytes': docker_info.get('MemTotal'), 'docker_version': docker_info.get('ServerVersion')},

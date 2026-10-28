@@ -23,7 +23,9 @@ FILE_NAME = re.compile(r'(\d{4})_[a-z0-9_]+\.py')
 SQL_FILE = re.compile(r'sql/[A-Za-z0-9_.-]+\.sql')
 # Word boundaries keep identifiers such as revoked_at or dropped_count out.
 SQL_RULES = (
-    re.compile(r'\bDROP\s+(?:TABLE|(?:MATERIALIZED\s+)?VIEW|COLUMN|FUNCTION|TYPE|SCHEMA|POLICY|TRIGGER|CONSTRAINT|SEQUENCE)\b', re.I),
+    re.compile(r'\bDROP\s+(?:TABLE|(?:MATERIALIZED\s+)?VIEW|COLUMN|FUNCTION|TYPE|SCHEMA|POLICY|TRIGGER|CONSTRAINT|SEQUENCE'
+               r'|INDEX|ROLE|EXTENSION|DEFAULT)\b', re.I),
+    re.compile(r'\bALTER\s+POLICY\b', re.I),
     re.compile(r'\bRENAME\b', re.I),
     re.compile(r'\bALTER\s+(?:COLUMN\s+)?"?\w+"?\s+(?:SET\s+DATA\s+)?TYPE\b', re.I),
     re.compile(r'\bSET\s+NOT\s+NULL\b', re.I),
@@ -31,7 +33,9 @@ SQL_RULES = (
     re.compile(r'\bDELETE\s+FROM\b', re.I),
     re.compile(r'\bREVOKE\b', re.I),
 )
-ADD_COLUMN = re.compile(r'\bADD\s+COLUMN\b', re.I)
+ALTER_TABLE = re.compile(r'\bALTER\s+TABLE\s+(?:IF\s+EXISTS\s+)?(?:ONLY\s+)?[\w."]+\s+', re.I)
+# ADD and DROP actions of ALTER TABLE that are not about a column.
+NOT_A_COLUMN = {'CONSTRAINT', 'PRIMARY', 'UNIQUE', 'CHECK', 'FOREIGN', 'EXCLUDE'}
 MARKERS = ('CONTRACT', 'EXPAND_REVIEWED')
 
 
@@ -39,24 +43,42 @@ def strip_sql_comments(sql):
     return re.sub(r'--[^\n]*', ' ', re.sub(r'/\*.*?\*/', ' ', sql, flags=re.S))
 
 
-def add_column_clauses(sql):
-    """Each ADD COLUMN clause up to the next top-level comma or semicolon."""
-    for match in ADD_COLUMN.finditer(sql):
-        depth, end = 0, match.end()
-        while end < len(sql) and not (depth == 0 and sql[end] in ',;'):
+def alter_table_actions(sql):
+    """Each comma-separated action of every ALTER TABLE statement, up to the statement's end."""
+    for match in ALTER_TABLE.finditer(sql):
+        depth, start, end = 0, match.end(), match.end()
+        while end < len(sql) and not (depth == 0 and sql[end] == ';'):
+            if depth == 0 and sql[end] == ',':
+                yield ' '.join(sql[start:end].split())
+                start = end + 1
             depth += {'(': 1, ')': -1}.get(sql[end], 0)
             if depth < 0:
                 break
             end += 1
-        yield sql[match.start():end]
+        yield ' '.join(sql[start:end].split())
+
+
+def action_findings(action):
+    """ALTER TABLE actions that drop or add a column, whether or not they spell out COLUMN."""
+    words = action.upper().split()
+    if len(words) < 2 or words[1] in NOT_A_COLUMN:
+        return []
+    if words[0] == 'DROP' and words[1] != 'COLUMN':  # DROP COLUMN itself is an SQL_RULES match
+        column = words[3] if words[1:3] == ['IF', 'EXISTS'] and len(words) > 3 else words[1]
+        return [f'ALTER TABLE ... DROP {column} (a column)']
+    if words[0] == 'ADD' and re.search(r'\bNOT\s+NULL\b', action, re.I) and not re.search(r'\bDEFAULT\b', action, re.I):
+        return ['ADD COLUMN ... NOT NULL without DEFAULT']
+    return []
 
 
 def sql_findings(sql):
     sql = strip_sql_comments(sql)
     found = [' '.join(m.group(0).split()) for rule in SQL_RULES for m in rule.finditer(sql)]
-    found += ['ADD COLUMN ... NOT NULL without DEFAULT' for clause in add_column_clauses(sql)
-              if re.search(r'\bNOT\s+NULL\b', clause, re.I) and not re.search(r'\bDEFAULT\b', clause, re.I)]
-    return found
+    return found + [finding for action in alter_table_actions(sql) for finding in action_findings(action)]
+
+
+def is_true(node, value):
+    return isinstance(node, ast.Constant) and node.value is value
 
 
 def call_findings(node):
@@ -66,10 +88,38 @@ def call_findings(node):
     if name == 'alter_column':
         keywords = {k.arg: k.value for k in node.keywords}
         narrowing = [key for key in ('type_', 'new_column_name') if key in keywords]
-        if isinstance(keywords.get('nullable'), ast.Constant) and keywords['nullable'].value is False:
+        if is_true(keywords.get('nullable'), False):
             narrowing.append('nullable=False')
         return [f'alter_column({key})' for key in narrowing]
+    if name == 'add_column':
+        # The previous version's INSERTs do not set a new NOT NULL column unless the server supplies a default.
+        for column in [a for a in node.args if isinstance(a, ast.Call)]:
+            keywords = {k.arg: k.value for k in column.keywords}
+            if ((is_true(keywords.get('nullable'), False) or is_true(keywords.get('primary_key'), True))
+                    and 'server_default' not in keywords):
+                return ['add_column(NOT NULL without server_default)']
     return []
+
+
+def reachable(tree, upgrade):
+    """upgrade() plus the module-level constants it reads and the helpers it calls, recursively."""
+    definitions = {}
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef) and node.name not in ('upgrade', 'downgrade'):
+            definitions[node.name] = node
+        elif isinstance(node, (ast.Assign, ast.AnnAssign)):
+            for target in node.targets if isinstance(node, ast.Assign) else [node.target]:
+                if isinstance(target, ast.Name) and node.value is not None:
+                    definitions[target.id] = node.value
+    nodes, pending, seen = [], [upgrade], set()
+    while pending:
+        node = pending.pop()
+        nodes.append(node)
+        for name in {n.id for n in ast.walk(node) if isinstance(n, ast.Name)} - seen:
+            seen.add(name)
+            if name in definitions:
+                pending.append(definitions[name])
+    return nodes
 
 
 def module_constant(tree, name):
@@ -81,11 +131,11 @@ def module_constant(tree, name):
 
 
 def parse_migration(name, source, read_sql):
-    """revision, down_revision, markers and the destructive statements of upgrade() only."""
+    """revision, down_revision, markers and the destructive statements reachable from upgrade() (never downgrade())."""
     tree = ast.parse(source, filename=name)
     upgrade = next((n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == 'upgrade'), None)
     findings = []
-    for node in ast.walk(upgrade) if upgrade else ():
+    for node in (child for root in (reachable(tree, upgrade) if upgrade else []) for child in ast.walk(root)):
         if isinstance(node, ast.Call):
             findings += call_findings(node)
         elif isinstance(node, ast.Constant) and isinstance(node.value, str):

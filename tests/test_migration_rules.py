@@ -36,6 +36,14 @@ class RealMigrationsTests(unittest.TestCase):
     def test_contracts_are_0009_and_0017(self):
         self.assertEqual(rules.analyze(*rules.load_directory())['contracts'], ['0009', '0017'])
 
+    def test_removing_the_0016_review_fails(self):
+        files, read_sql = rules.load_directory()
+        name = next(n for n in files if n.startswith('0016_'))
+        files[name] = '\n'.join(line for line in files[name].splitlines() if not line.startswith('EXPAND_REVIEWED'))
+        [error] = rules.analyze(files, read_sql)['errors']
+        self.assertIn(name, error)
+        self.assertIn('ALTER POLICY', error)
+
     def test_removing_the_0017_marker_fails(self):
         files, read_sql = rules.load_directory()
         name = next(n for n in files if n.startswith('0017_'))
@@ -89,7 +97,16 @@ class DestructiveStatementTests(unittest.TestCase):
                                     ('ALTER TABLE a ALTER COLUMN b SET NOT NULL', 'SET NOT NULL'),
                                     ('TRUNCATE a', 'TRUNCATE'), ('DELETE FROM a', 'DELETE FROM'),
                                     ('REVOKE SELECT ON a FROM reader', 'REVOKE'),
-                                    ('DROP POLICY p ON a', 'DROP POLICY')]:
+                                    ('DROP POLICY p ON a', 'DROP POLICY'),
+                                    ('ALTER TABLE a DROP b', 'ALTER TABLE ... DROP B (a column)'),
+                                    ('ALTER TABLE ONLY a DROP IF EXISTS b CASCADE', 'ALTER TABLE ... DROP B (a column)'),
+                                    ('ALTER TABLE a ADD c int NOT NULL', 'ADD COLUMN ... NOT NULL without DEFAULT'),
+                                    ('ALTER TABLE a ADD COLUMN c int NOT NULL', 'ADD COLUMN ... NOT NULL without DEFAULT'),
+                                    ('ALTER TABLE a ALTER COLUMN b DROP DEFAULT', 'DROP DEFAULT'),
+                                    ('DROP INDEX research.one_inflight_source_refresh', 'DROP INDEX'),
+                                    ('DROP ROLE research_reader_login', 'DROP ROLE'),
+                                    ('DROP EXTENSION pgcrypto', 'DROP EXTENSION'),
+                                    ('ALTER POLICY reader_published ON a USING (false)', 'ALTER POLICY')]:
             with self.subTest(statement=statement):
                 self.assert_fails(f'op.execute({statement!r})', expected)
 
@@ -101,6 +118,41 @@ class DestructiveStatementTests(unittest.TestCase):
         result = analyze(files)
         self.assertEqual(result['errors'], [])
         self.assertEqual(result['contracts'], [])
+
+    def test_alter_table_constraint_actions_are_not_columns(self):
+        # One finding for DROP CONSTRAINT, none for adding a constraint or relaxing NOT NULL.
+        self.assert_fails('op.execute("ALTER TABLE a DROP CONSTRAINT c_ok, ADD CONSTRAINT c_new CHECK (b IS NOT NULL), '
+                          'ALTER COLUMN b DROP NOT NULL")', 'DROP CONSTRAINT')
+
+    def test_add_column_not_null_without_server_default(self):
+        self.assert_fails('op.add_column("a", sa.Column("c", sa.Text, nullable=False))', 'add_column(NOT NULL without server_default)')
+        self.assert_fails('op.add_column("a", sa.Column("id2", sa.Integer, primary_key=True))', 'add_column(NOT NULL without server_default)')
+
+    def test_add_column_with_server_default_passes(self):
+        files = base()
+        files['0003_change.py'] = migration('0003', '0002', 'op.add_column("a", sa.Column("c", sa.Text, nullable=False, server_default=""))')
+        self.assertEqual(analyze(files)['errors'], [])
+
+    def test_module_constant_read_by_upgrade(self):
+        files = base()
+        files['0003_change.py'] = migration('0003', '0002', 'for statement in STATEMENTS: op.execute(statement)',
+                                            header="STATEMENTS = ['DROP TABLE research.old_rows']")
+        result = analyze(files)
+        self.assertEqual(len(result['errors']), 1)
+        self.assertIn('DROP TABLE', result['errors'][0])
+
+    def test_helper_called_by_upgrade(self):
+        files = base()
+        files['0003_change.py'] = migration('0003', '0002', 'retire("a")',
+                                            header='def retire(table):\n    clean(table)\n\ndef clean(table):\n    op.drop_table(table)\n')
+        self.assertIn('drop_table()', analyze(files)['errors'][0])
+
+    def test_helper_used_only_by_downgrade_is_ignored(self):
+        files = base()
+        source = migration('0003', '0002', 'op.create_table("b", sa.Column("id", sa.Integer))',
+                           header='UNDO = "DROP TABLE b"\n\ndef undo():\n    op.execute(UNDO)\n')
+        files['0003_change.py'] = source.replace('op.drop_table("anything")', 'undo()')
+        self.assertEqual(analyze(files)['errors'], [])
 
     def test_revoked_at_is_not_revoke(self):
         files = base()
