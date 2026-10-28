@@ -438,3 +438,32 @@ change `harden-research-operations`（tasks 1.4、4.1）。PR #3 先於演練合
 - **公開網站不重新部署**。三個漏洞都在 Next.js 伺服器端，`industryflow.pages.dev` 是純靜態檔。下次發布研究、重建公開版時，就會用到新版。
 - **建置不再中止**：升級後在 agent 環境中跑 standalone 與 `build:static`，都沒有出現安全升級提示。`docs/public-snapshot.md` 已刪除對應的注意事項。
 - **merge 前**：正式服務的 api 與 web 跑的是 PR branch。merge 後，主 checkout 切回 `main` 並 pull，再執行一次 `research_lab.py up`。
+
+## 十三、正式環境切換（separate-research-production-deployment task 9）
+
+2026-10-28（本機 10-29 凌晨）由 Boris 授權並在場。PR #10 merge 為 `e21c4fd` 後，正式服務改由獨立的部署目錄 `C:\Users\User\industryflow-prod` 運作，程序見 [部署與回退](research-deployment.md)「第一次部署（正式環境切換）」。
+
+| 步驟（UTC） | 結果 |
+|---|---|
+| 9.1 建立部署目錄（18:15） | 從 origin clone，detached 在 `e21c4fd`；`.venv` 為 Python 3.12.10；`init-home` 寫入 `deployments/home.json`（第二份備份 `D:\backups\industryflow-research`）。`status` 回報 `No deployment record yet`，`git status` 乾淨 |
+| 9.2 複製祕密與備份 | `.env.research` 與 41 個備份檔，共 42 個檔案的 SHA-256 全部相同。19:30 的每日備份（仍由開發 checkout 的舊排程執行，`20261028T193006Z`）之後補同步，46 個檔案相符。**受保護的另存副本尚待 Boris 確認** |
+| 9.3 adopt（19:59） | 部署紀錄第 1 筆：api `d733d36322cf`、web `b2e3393f77f7` 另標為 `industryflow-research-{api,web}:pre-ledger`；遷移 `0017`、Prefect 3.8.8；`status` 沒有不一致 |
+| 9.4 首次部署（20:08:25–20:11:08） | `deploy --commit e21c4fd --recreate-db`，部署紀錄第 2 筆 `succeeded`；部署前備份 `20261028T200837Z`；smoke 六項全過（release `a5df290c…`、遷移 `0017`）。db、api、web、prefect、worker 都換成新容器，revision 為 `e21c4fd`，Compose working_dir 與 db 的 bind mount 都指向部署目錄；原服務維持停止 |
+| 停機 | 每秒探測：API 在 20:10:12–20:10:27 不可用（約 15 秒），`/next` 在 20:10:24–20:10:30 不可用（約 6 秒），受影響的時間窗合計約 18 秒 |
+| 9.4 排程 | 21:07 的 `official-information/hourly`（`berserk-swan`）準時執行，36 秒完成；之後沒有逾時的排程。另見下方「切換時發現的排程積壓」 |
+| 9.5 備份排程（20:31–20:47） | 「IndustryFlow Research Daily Backup」改為部署目錄的 `.venv\Scripts\python.exe`、絕對路徑的 `research_lab.py`，開始位置為部署目錄。第一次手動觸發時主控台視窗被關閉，備份中斷（`0xC000013A`），只留下 `.partial`、沒有 log；接著從 shell 執行的備份 `20261028T203246Z`（54.0 秒）清掉了它。重新觸發後 `LastTaskResult 0`，備份 `20261028T204630Z`（58.1 秒），manifest 的 `api_image` 等於運行中的 api、`api_revision` 為 `e21c4fd`、`alembic_version` 為 `0017`，D: 副本逐檔相符。下一次自動執行為 10-30 03:30（本機） |
+| 9.6 還原驗證 | 從空的演練環境 `restore --backup latest`：選到 `20261028T204630Z`，依 manifest 的 revision 以 `e21c4fd` 為基準 image（重用），全表、release、Git refs、資產與遷移版本全部相符，`/next` 200，RTO 58.8 秒 |
+| 9.7 封住開發 checkout | Boris 刪除開發 checkout 的 `.env.research` 與 `backups/research`，放入 tombstone，`main` 更新到 `e21c4fd`，並刪除兩個已 merge 的本機分支（遠端分支已在 merge 時刪除）。在開發 checkout 執行 `check`、`setup` 都以「Invalid research environment」拒絕，tombstone 不變；部署目錄的 `status` 沒有不一致 |
+
+**切換時發現的排程積壓**（切換前就存在，不是切換造成）：
+
+- `research-publication-reconciliation/minute` 有一筆 flow run 自 2026-10-21 停在 PENDING／Submitting，佔住這個 deployment 唯一的並行槽位。之後每分鐘新排的 run 都在等槽位，累積 8,693 個，`source-reconciliation/minute` 也積壓 1,562 個。
+- worker 每次輪詢拿到的都是這些較舊的 run，送出後又被打回，hourly 因此輪不到：積壓 26 輪，官方資料的每小時更新約停擺一天（期間只偶爾成功）。重啟 worker 不會解決，因為狀態存在 Prefect 資料庫。
+- Boris 同意後（20:23–20:30）：先完整備份 `prefect` 資料庫（`prefect-before-backlog-cleanup-20261028T202313Z.dump`，62 MiB，另存 `D:\backups`），以一般狀態轉移取消卡住的 run（槽位 1 → 0），再刪除三個 deployment 中預定時間已過、從未執行的 SCHEDULED run（hourly 25、source-reconciliation 1,562、publication-reconciliation 8,693）。已完成的歷史與未來的排程都不動。保留的 20:07 hourly 在 20:30 完成，21:07 那一輪也準時完成。
+- Prefect 的保留期限（`events` 約 605 MB）與這類卡住 run 的偵測，記在 change `close-research-backup-and-exclusion-gaps` 的 Open Questions。
+
+**附註**：
+
+- 回到切換前的程式時，依 [部署與回退](research-deployment.md)「回到 pre-ledger image」，`pre-ledger` image 都保留著。
+- 開發 checkout 建立、已停止的一次性容器（`deploy-1`、`initialize-1`、`reader-1`）仍在，沒有運行，部署不會動它們。讀者入口目前未啟動；之後 `reader-start` 會使用部署紀錄中的 image。
+- initialize 照例把 `public.sources` 的 `url` 與 `data.registry_url` 寫回 `sources.yaml` 的形式，下一次每小時更新再寫回抓取用網址（與演練相同，見「演練紀錄」）。

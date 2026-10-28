@@ -320,35 +320,49 @@
 
 ## 9. merge 後：正式環境切換（需 Boris 同意並在場；不阻擋 merge）
 
-- [ ] 9.1 建立部署目錄：
+- [x] 9.1 建立部署目錄：
   - `git clone` origin 到 `C:\Users\User\industryflow-prod`，`checkout --detach <merge 提交>`。
   - 建立 `.venv` 與 `deployments/home.json`。
 
   驗證：`research_lab.py status` 回報「尚無部署紀錄」，`git status` 乾淨。
+
+  結果：2026-10-28 18:15 UTC clone 並 detached 在 `e21c4fd`，`.venv` 為 Python 3.12.10，`init-home` 完成；`status` 回報 `No deployment record yet`，`git status` 乾淨。
 - [ ] 9.2 複製 `.env.research` 與 `backups/research` 到部署目錄。驗證：
   - 逐檔 SHA-256 相同。
   - Boris 確認祕密已另存受保護副本，例如密碼管理器。
-- [ ] 9.3 保留回復點：
+- [x] 9.3 保留回復點：
   - 以 `research_lab.py adopt` 把目前的 `:dev` image 另標為 `industryflow-research-api:pre-ledger`、`industryflow-research-web:pre-ledger`。
   - 寫入一筆 `adopt` 紀錄（容器、image ID、alembic 版本）。
 
   驗證：`status` 顯示 `adopt` 紀錄，舊 image 有新 tag。
-- [ ] 9.4 首次部署：避開整點 :07，從部署目錄執行 `deploy --commit <merge 提交> --recreate-db`。驗證：
+
+  結果：部署紀錄第 1 筆 adopt（19:59 UTC），api `d733d36322cf`、web `b2e3393f77f7` 另標為 `:pre-ledger`；`status` 沒有不一致。
+- [x] 9.4 首次部署：避開整點 :07，從部署目錄執行 `deploy --commit <merge 提交> --recreate-db`。驗證：
   - db 在內的容器都已重建。
   - bind mount 與 `working_dir` label 都指向部署目錄。
   - smoke 通過，紀錄為 `succeeded`。
   - 停機時間記下。
   - 下一個整點的 `official-information/hourly` flow run 成功。
-- [ ] 9.5 改寫備份排程（design D11）後手動觸發一次。驗證：
+
+  結果：部署紀錄第 2 筆 `succeeded`（20:08:25–20:11:08 UTC），smoke 六項全過；db 在內的 5 個運行容器都已重建，bind mount 與 working_dir 指向部署目錄；停機約 18 秒（API 約 15 秒、`/next` 約 6 秒）。清理切換前就存在的 Prefect 積壓後，21:07 的 hourly 準時完成（36 秒）。詳見 `docs/research-acceptance.md` 第十三節。
+- [x] 9.5 改寫備份排程（design D11）後手動觸發一次。驗證：
   - `backup-log.jsonl` 有新紀錄，D: 有對應副本。
   - manifest 含運行容器的 image ID、revision、`alembic_version`。
-- [ ] 9.6 把 9.5 的備份還原到演練環境。驗證：`restore` 以 manifest 的 revision 為基準 image，核對全部通過。
-- [ ] 9.7 封住開發 checkout：
+
+  結果：排程改寫後，第一次觸發因主控台視窗被關閉而中斷（留下 `.partial`，由下一次備份清除）；重新觸發 `LastTaskResult 0`，備份 `20261028T204630Z`，log 與 D: 副本相符，manifest 欄位正確。
+- [x] 9.6 把 9.5 的備份還原到演練環境。驗證：`restore` 以 manifest 的 revision 為基準 image，核對全部通過。
+
+  結果：`restore --backup latest` 選到 `20261028T204630Z`，以 manifest 的 `e21c4fd` 為基準 image，核對全部相符，RTO 58.8 秒。
+- [x] 9.7 封住開發 checkout：
   - 放入 tombstone `.env.research`。
   - Boris 移除開發 checkout 中原本的祕密與 `backups/research`，並刪除本機舊 branch。
 
   驗證：在開發 checkout 執行 `research_lab.py check` 會拒絕，且沒有產生祕密；部署目錄的 `status` 沒有不一致。
-- [ ] 9.8 在 `docs/research-acceptance.md` 新增「十三、正式環境切換（separate-research-production-deployment task 9）」一節，內容包括步驟（UTC）、結果、停機時間與限制。驗證：表格中的數字與部署紀錄、備份 log 一致。
+
+  結果：Boris 移除開發 checkout 的祕密與 `backups/research`、放入 tombstone、刪除已 merge 的本機分支；開發 checkout 的 `check`、`setup` 都拒絕且 tombstone 不變，部署目錄的 `status` 沒有不一致。
+- [x] 9.8 在 `docs/research-acceptance.md` 新增「十三、正式環境切換（separate-research-production-deployment task 9）」一節，內容包括步驟（UTC）、結果、停機時間與限制。驗證：表格中的數字與部署紀錄、備份 log 一致。
+
+  結果：第十三節已寫入；部署紀錄（seq 1、2）、`backup-log.jsonl`（`20261028T200837Z`、`20261028T203246Z`、`20261028T204630Z`）與停機探測的數字都和表格一致。
 
 ## Workflow follow-up
 
