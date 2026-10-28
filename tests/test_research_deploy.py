@@ -70,7 +70,7 @@ class ParentTests(unittest.TestCase):
         _, args, token, head = child
         self.assertEqual(head, NEW)
         self.assertEqual(args[:5], [sys.executable, str(self.root / 'scripts' / 'research_lab.py'), 'deploy', '--commit', NEW])
-        self.assertEqual(args[5:7], ['--handover', token])
+        self.assertEqual(args[-2:], ['--handover', token])
         self.assertIn('--force', args)
         self.assertFalse(lab.HANDOVER.exists(), 'the handover token is removed afterwards')
         self.assertEqual(self.head, NEW)
@@ -82,6 +82,46 @@ class ParentTests(unittest.TestCase):
         self.assertEqual(caught.exception.code, 3)
         self.assertEqual(self.head, OLD)
         self.assertEqual(self.calls[-1], ['git', 'checkout', '--quiet', '--detach', OLD])
+
+    def test_ctrl_c_is_left_to_the_target_script(self):
+        handlers = []
+        real_signal = lab.signal.signal
+
+        def record_handler(signum, handler):
+            handlers.append(handler)
+            return real_signal(signum, handler)
+        with mock.patch.object(lab.signal, 'signal', side_effect=record_handler):
+            lab.deploy(NEW)
+        self.assertEqual(handlers[0], lab.signal.SIG_IGN)
+        self.assertNotEqual(handlers[-1], lab.signal.SIG_IGN, 'the previous handler is restored')
+
+    def test_target_without_a_record_is_recorded_from_the_containers(self):
+        for replaced in (True, False):
+            with self.subTest(replaced=replaced):
+                lab.LEDGER.unlink()
+                lab.append_record(deploy_record())
+                self.head, self.child_result = OLD, 9
+                running = services(deploy_record(NEW if replaced else OLD))
+                with mock.patch.object(self, 'fake_child', side_effect=lambda args, cwd: subprocess.CompletedProcess(args, 9)), \
+                        mock.patch.object(lab.subprocess, 'run', side_effect=lambda args, cwd: subprocess.CompletedProcess(args, 9)), \
+                        mock.patch.object(lab, 'running_services', return_value=running), \
+                        mock.patch.object(lab, 'alembic_version', return_value='0017'), \
+                        mock.patch.object(lab, 'commit_info', return_value=target_info(NEW)):
+                    with self.assertRaises(SystemExit):
+                        lab.deploy(NEW)
+                record = lab.read_ledger()[-1]
+                self.assertEqual((record['kind'], record['outcome'], record['replaced']), ('deploy', 'failed', replaced))
+                self.assertIn('ended with exit 9 and wrote no record', record['error'])
+                self.assertEqual(self.head, NEW if replaced else OLD, 'the checkout follows what actually serves')
+
+    def test_refusing_target_needs_no_record(self):
+        self.child_result = lab.REFUSED_EXIT
+        with mock.patch.object(self, 'fake_child'), \
+                mock.patch.object(lab.subprocess, 'run', side_effect=lambda args, cwd: subprocess.CompletedProcess(args, lab.REFUSED_EXIT)):
+            with self.assertRaises(SystemExit):
+                lab.deploy(NEW)
+        self.assertEqual(len(lab.read_ledger()), 1)
+        self.assertEqual(self.head, OLD)
 
     def test_guard_and_exclusion_refuse_before_fetching(self):
         lab.guard_problems.return_value = ['HEAD bbbbbbbbbbbb is not the deployed commit aaaaaaaaaaaa']
@@ -106,12 +146,13 @@ class TargetHarness(unittest.TestCase):
         lab.HANDOVER.write_text(TOKEN, encoding='utf-8')
         self.calls, self.running = [], services(self.current)
         self.smoke = (True, SMOKE_OK)
-        self.initialize_error = None
+        self.initialize_error, self.still = None, []
         fakes = {'guard_problems': lambda **kw: self.log('guard', kw) or [],
                  'commit_info': lambda commit: self.target,
                  'running_services': lambda project: self.running,
                  'alembic_version': lambda container: self.db_version,
-                 'prefect_runs': lambda: self.busy,
+                 'prefect_runs': self.prefect,
+                 'wait_for_idle': lambda: self.log('wait') or self.still,
                  'validate': lambda tag: self.log('validate', tag) or {},
                  'backup': lambda secondary, **kw: self.log('backup', secondary, kw) or {'backup': '/b/20261028T010000Z'},
                  'build_images': lambda commit: self.log('build', commit) or (commit[:12], ['api', 'web']),
@@ -128,6 +169,11 @@ class TargetHarness(unittest.TestCase):
 
     def log(self, *entry):
         self.calls.append(entry)
+
+    def prefect(self):
+        if isinstance(self.busy, Exception):
+            raise self.busy
+        return self.busy
 
     def compose(self, *args, tag, input=None):
         self.calls.append(('compose', tag, *args))
@@ -157,7 +203,7 @@ class RefusalTests(TargetHarness):
         self.assertEqual(len(self.ledger()), 1, 'a refusal is not a deployment')
 
     def test_handover_is_internal(self):
-        with self.assertRaisesRegex(lab.Refused, 'internal to deploy'):
+        with self.assertRaisesRegex(lab.Refused, '--handover is internal'):
             lab.deploy_target(NEW, 'wrong-token')
 
     def test_handover_needs_the_parent_lock(self):
@@ -182,6 +228,12 @@ class RefusalTests(TargetHarness):
     def test_contract_migration_without_allow_contract(self):
         self.target = target_info(NEW, chain=[*CHAIN, '0018'], contracts=('0009', '0017', '0018'))
         self.assert_refused(r'Contract migration\(s\) 0018 would be applied')
+
+    def test_unreachable_prefect_is_refused_unless_forced(self):
+        self.running = services(self.current, scheduler=True)
+        self.busy = OSError('connection refused')
+        self.assert_refused('cannot tell whether a data update is running.*pass --force')
+        self.assertEqual(self.deploy(force=True)['outcome'], 'succeeded')
 
     def test_db_created_from_another_directory(self):
         self.running['db']['working_dir'] = r'C:\Users\User\openspec_pjt'
@@ -277,6 +329,69 @@ class SequenceTests(TargetHarness):
         documented = set(re.findall(r'^\| ([^|]+) \|', table, re.M)[1:])
         documented = {name for cell in documented for name in re.findall(r'`([a-z_]+)`', cell)}
         self.assertLessEqual(set(record), documented)
+
+
+class ReplacementTimingTests(TargetHarness):
+    """A flow run may start during backup, build and initialize: checked again right before the scheduler goes."""
+    def setUp(self):
+        super().setUp()
+        self.running = services(self.current, scheduler=True)
+
+    def test_waits_for_idle_before_replacing(self):
+        self.deploy()
+        self.assertLess(self.calls.index(('wait',)), next(i for i, c in enumerate(self.calls) if c[0] == 'compose' and 'up' in c))
+
+    def test_expand_deploy_stops_when_a_run_keeps_going(self):
+        self.still = ['official-information/hourly-run']
+        with self.assertRaisesRegex(lab.Refused, 'hourly-run.*not replaced'):
+            self.deploy()
+        self.assertEqual(self.ups(), [])
+        record = self.ledger()[-1]
+        self.assertEqual((record['outcome'], record['replaced']), ('failed', False))
+        self.assertEqual(lab.current_record(self.ledger())['seq'], 1, 'the old deployment still serves')
+
+    def test_contract_deploy_goes_on_and_records_the_interrupted_run(self):
+        self.target = target_info(NEW, chain=[*CHAIN, '0018'], contracts=('0009', '0017', '0018'))
+        self.still = ['official-information/hourly-run']
+        record = self.deploy(allow_contract=True)
+        self.assertEqual(record['interrupted_runs'], ['official-information/hourly-run'])
+        self.assertTrue(self.ups())
+
+    def test_force_does_not_wait(self):
+        self.deploy(force=True)
+        self.assertNotIn(('wait',), self.calls)
+
+
+class RecordAlwaysWrittenTests(TargetHarness):
+    def test_ctrl_c_during_replacement(self):
+        original = self.compose
+
+        def interrupted(*args, tag, input=None):
+            if 'up' in args:
+                raise KeyboardInterrupt
+            return original(*args, tag=tag, input=input)
+        lab.compose.side_effect = interrupted
+        with self.assertRaises(KeyboardInterrupt):
+            self.deploy()
+        record = self.ledger()[-1]
+        self.assertEqual((record['outcome'], record['replaced'], record['error']), ('failed', True, 'KeyboardInterrupt'))
+
+    def test_docker_failing_while_the_record_is_written(self):
+        self.smoke = (False, {**SMOKE_OK, 'health': {'ok': False, 'status': 502}})
+        calls = []
+
+        def flaky(project):
+            calls.append(project)
+            if len(calls) > 1:
+                raise RuntimeError('docker ps failed: the Docker Desktop backend is restarting')
+            return self.running
+        lab.running_services.side_effect = flaky
+        with self.assertRaises(RuntimeError):
+            self.deploy()
+        record = self.ledger()[-1]
+        self.assertEqual((record['outcome'], record['replaced']), ('failed', True))
+        self.assertIn('Docker Desktop backend is restarting', record['state_error'])
+        self.assertIsNone(record['services'])
 
 
 class RefusalRuleTests(unittest.TestCase):

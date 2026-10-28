@@ -66,9 +66,20 @@ class SetupTests(unittest.TestCase):
 
     def test_existing_secrets_are_kept(self):
         drill.setup()
-        before = drill.ENV_FILE.read_bytes()
-        drill.setup('another contact')
-        self.assertEqual(drill.ENV_FILE.read_bytes(), before)
+        before = drill.env_values()
+        drill.setup()
+        self.assertEqual(drill.env_values(), before)
+
+    def test_agent_is_added_to_and_replaced_in_an_existing_file(self):
+        # Other drill actions create the env file without the agent, so a later setup must still record it.
+        drill.setup()
+        secrets = {k: v for k, v in drill.env_values().items() if k in lab.SECRET_KEYS}
+        drill.setup('first contact')
+        drill.setup('second contact')
+        values = drill.env_values()
+        self.assertEqual(values['SEC_USER_AGENT'], 'second contact')
+        self.assertEqual({k: values[k] for k in lab.SECRET_KEYS}, secrets)
+        self.assertEqual(drill.ENV_FILE.read_text(encoding='utf-8').count('SEC_USER_AGENT='), 1)
 
     def test_multiline_agent_is_refused(self):
         with self.assertRaises(ValueError):
@@ -116,6 +127,15 @@ class SharedPathTests(unittest.TestCase):
         self.assertEqual(bench.default_env_file(), drill.ENV_FILE)
         self.assertIs(scale.drill_compose, drill.compose)
         self.assertIs(scale.env_values, drill.env_values)
+
+    def test_load_benchmark_records_the_running_drill_images(self):
+        source = (ROOT / 'scripts/research_load.py').read_text(encoding='utf-8')
+        self.assertNotIn(':dev', source)
+        self.assertIn('running_images()', source)
+        running = {'api': {'image_id': 'sha256:api', 'revision': 'a' * 40}, 'web': {'image_id': 'sha256:web'}}
+        with mock.patch.object(lab, 'running_services', return_value=running) as services:
+            self.assertEqual(drill.running_images(), {'api_image': 'sha256:api', 'web_image': 'sha256:web', 'revision': 'a' * 40})
+        services.assert_called_once_with(drill.PROJECT)
 
     def test_no_other_script_names_the_drill_env_file(self):
         for path in (ROOT / 'scripts').glob('*.py'):

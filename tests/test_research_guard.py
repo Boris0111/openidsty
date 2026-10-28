@@ -173,7 +173,9 @@ class LockTests(unittest.TestCase):
             for action in ('backup', 'start'):
                 with self.assertRaises(lab.Refused), lab.production(action):
                     pass
-        self.assertEqual(waits, [3600, 0])
+        self.assertEqual(waits, [lab.BACKUP_LOCK_WAIT, 0])
+        # The scheduled task is stopped after 1 hour, so the wait plus a backup must fit well inside it.
+        self.assertEqual(lab.BACKUP_LOCK_WAIT, 1800)
 
     def child(self, code):
         script = textwrap.dedent(f'''

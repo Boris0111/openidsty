@@ -63,6 +63,37 @@ class BackupManifestTests(unittest.TestCase):
         self.assertIs(manifest['rollback_boundary'], True)
         self.assertEqual(manifest['contract_revisions'], ['0018'])
 
+    def test_written_as_partial_and_renamed_when_complete(self):
+        result = lab.backup(str(self.root / 'secondary'), tag=TAG)
+        stamp = Path(result['backup']).name
+        self.assertRegex(stamp, r'^\d{8}T\d{6}Z$')
+        for root in (lab.BACKUP_ROOT, self.root / 'secondary'):
+            self.assertEqual([p.name for p in root.iterdir() if p.is_dir()], [stamp])
+
+    def test_leftover_partial_folders_are_removed(self):
+        for root in (lab.BACKUP_ROOT, self.root / 'secondary'):
+            leftover = root / '20261027T033000Z.partial'
+            leftover.mkdir(parents=True)
+            (leftover / 'database.dump').write_bytes(b'half a dump')
+        result = lab.backup(str(self.root / 'secondary'), tag=TAG)
+        self.assertEqual(sorted(result['removed_partial'].values()), [['20261027T033000Z.partial']] * 2)
+        for root in (lab.BACKUP_ROOT, self.root / 'secondary'):
+            self.assertFalse(list(root.glob('*.partial')))
+
+    def test_failed_backup_leaves_no_folder(self):
+        original = self.compose
+
+        def failing(*args, tag, input=None):
+            if 'show-ref' in args:
+                raise RuntimeError('git show-ref failed')
+            return original(*args, tag=tag, input=input)
+        lab.compose.side_effect = failing
+        with self.assertRaisesRegex(RuntimeError, 'show-ref'):
+            lab.backup(tag=TAG)
+        self.assertEqual([p.name for p in lab.BACKUP_ROOT.iterdir() if p.is_dir()], [])
+        log = (lab.BACKUP_ROOT / 'backup-log.jsonl').read_text(encoding='utf-8')
+        self.assertIn('failed: git show-ref failed', log)
+
     def test_secondary_copy_and_log(self):
         secondary = self.root / 'secondary'
         result = lab.backup(str(secondary), tag=TAG)
@@ -91,10 +122,11 @@ class PruneTests(unittest.TestCase):
         boundary = self.folder('20261003T033000Z', {'rollback_boundary': True, 'contract_revisions': ['0018']})
         unreadable = self.folder('20261004T033000Z', '{not json')
         incomplete = self.folder('20261005T033000Z', None)
+        partial = self.folder('20261006T033000Z.partial', {})  # left for the next backup's cleanup, not for prune
         recent = self.folder('20261127T033000Z', {'rollback_boundary': False})
         removed = lab.prune(lab.BACKUP_ROOT, 30, self.now)
         self.assertEqual(removed, ['20261001T033000Z', '20261002T033000Z'])
-        for kept in (boundary, unreadable, incomplete, recent):
+        for kept in (boundary, unreadable, incomplete, recent, partial):
             self.assertTrue(kept.exists(), kept.name)
 
 

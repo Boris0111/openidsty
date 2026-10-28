@@ -68,6 +68,7 @@ class LatestBackupTests(DrillDir):
         self.folder('20261026T193000Z')
         newest_complete = self.folder('20261027T193000Z')
         self.folder('20261028T193000Z', complete=False)  # a run still writing, or one that failed mid-way
+        self.folder('20261029T193000Z.partial')  # a killed backup, even with its manifest already written
         (drill.PROD_BACKUPS / 'notes').mkdir()
         self.assertEqual(drill.resolve_backup('latest'), newest_complete)
 
@@ -148,6 +149,10 @@ class RestoreTests(DrillDir):
         self.assertTrue(all(value for key, value in report['checks'].items() if key.endswith('_match')), report['checks'])
         self.assertEqual(report['checks']['reader_page_status'], 200)
         self.assertEqual(len(list(drill.REPORTS.glob('restore-*.json'))), 1)
+        # Recorded outside the checkout too, so a rehearsal from another worktree finds the same baseline.
+        restored = json.loads((drill.DRILL_HOME / 'last-restore.json').read_text(encoding='utf-8'))
+        self.assertEqual((restored['baseline_commit'], restored['db_container'], restored['backup']),
+                         (OLD, 'db1', '20261027T193000Z'))
 
     def test_old_manifest_without_baseline_is_refused_before_any_container(self):
         del self.manifest['api_revision']
@@ -180,7 +185,9 @@ class RehearsalHarness(DrillDir):
         self.patch(lab, 'alembic_version', side_effect=lambda container: self.db_version)
         self.patch(lab, 'build_images', side_effect=lambda commit: self.calls.append(('build', commit)) or (commit[:12], []))
         self.patch(lab, 'running_services', return_value={'db': {}, 'api': {}, 'web': {}})
-        self.patch(lab, 'smoke_checks', side_effect=lambda *a: self.calls.append(('smoke', *a[1:5])) or self.smoke)
+        self.smoke_kwargs = []
+        self.patch(lab, 'smoke_checks', side_effect=lambda *a, **kw: self.smoke_kwargs.append(kw) or
+                   self.calls.append(('smoke', *a[1:5])) or self.smoke)
         self.patch(drill, 'db_inventory', side_effect=[({THEMES: '7:abc', 'public.segments': '17:old'}, {}), (self.after, {})])
         for name, value in (('protected_snapshot', {}), ('verify_protected', None), ('preview_snapshot', {}),
                             ('worktree_dirty', True)):
@@ -197,6 +204,10 @@ class DeployRehearsalTests(RehearsalHarness):
                                            ('up', '-d', '--no-deps', '--wait', 'api', 'web')])
         self.assertIn(('smoke', 'industryflow-research-drill', NEW[:12], NEW, '0017'), self.calls)
         self.assertLess(self.calls.index(('build', NEW)), next(i for i, c in enumerate(self.calls) if 'initialize' in c))
+
+    def test_db_working_dir_is_not_compared_in_the_drill(self):
+        drill.deploy_rehearsal(NEW)
+        self.assertEqual(self.smoke_kwargs, [{'working_dir_skip': ('db',)}])
 
     def test_report_fields(self):
         report = drill.deploy_rehearsal(NEW)
@@ -238,9 +249,8 @@ class RollbackRehearsalTests(RehearsalHarness):
     def setUp(self):
         super().setUp()
         self.patch(drill, 'running_revision', return_value=NEW)
-        drill.REPORTS.mkdir(parents=True)
-        (drill.REPORTS / 'restore-20261028T000000Z.json').write_text(
-            json.dumps({'backup': '20261027T193000Z', 'baseline_commit': OLD}), encoding='utf-8')
+        (drill.DRILL_HOME / 'last-restore.json').write_text(
+            json.dumps({'backup': '20261027T193000Z', 'baseline_commit': OLD, 'db_container': 'db1'}), encoding='utf-8')
 
     def test_back_to_the_baseline_without_initialize(self):
         report = drill.rollback_rehearsal()
@@ -248,6 +258,20 @@ class RollbackRehearsalTests(RehearsalHarness):
         self.assertIn(('smoke', 'industryflow-research-drill', OLD[:12], OLD, '0017'), self.calls)
         self.assertEqual((report['judgement'], report['initialize_run'], report['migrations_between']), ('expand-only', False, []))
         self.assertEqual(report['theme_assessment_versions']['added'], 0)
+
+    def test_db_working_dir_is_not_compared_in_the_drill(self):
+        drill.rollback_rehearsal()
+        self.assertEqual(self.smoke_kwargs, [{'working_dir_skip': ('db',)}])
+
+    def test_restore_of_another_db_is_not_used_as_the_baseline(self):
+        # A later restore, or another worktree's drill: the recorded DB container is not the one running.
+        (drill.DRILL_HOME / 'last-restore.json').write_text(
+            json.dumps({'backup': 'older', 'baseline_commit': 'c' * 40, 'db_container': 'db-from-another-restore'}),
+            encoding='utf-8')
+        with self.assertRaisesRegex(RuntimeError, 'pass --commit'):
+            drill.rollback_rehearsal()
+        self.assertEqual(self.composed(), [])
+        self.assertEqual(drill.rollback_rehearsal(OLD)['to_commit'], OLD)
 
     def test_expand_migration_between(self):
         self.infos[NEW] = target_info(NEW, chain=[*CHAIN, '0018'])

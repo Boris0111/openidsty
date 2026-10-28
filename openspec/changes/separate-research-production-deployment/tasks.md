@@ -255,7 +255,7 @@
 
 `/code-review` 的類別 1、2 共 13 項，加上修正過程中發現、屬於本 change 範圍的疏漏（8.2 的收縮清單重算、8.8）。類別 3（`prefect` 資料庫不在備份內、`scheduler-start`／`rollback` 沒有原服務互斥檢查）另開 change 處理。
 
-- [ ] 8.1 遷移規則補強（design D8；code review #1、#5、#6）：
+- [x] 8.1 遷移規則補強（design D8；code review #1、#5、#6）：
   - `ALTER TABLE` 中不寫 COLUMN 的 `DROP <欄位>`，與沒有 `DEFAULT` 的 `ADD <欄位> … NOT NULL`。
   - `DROP INDEX`、`ALTER … DROP DEFAULT`、`DROP ROLE`、`DROP EXTENSION`、`ALTER POLICY`。
   - Alembic `add_column` 欄位帶 `nullable=False` 或 primary key，卻沒有 `server_default`。
@@ -263,35 +263,51 @@
   - `0016` 加 `EXPAND_REVIEWED`，只加標記行。
 
   驗證：`tests/test_migration_rules.py` 為每條新規則加入失敗與通過案例（含常數與 helper）；實際目錄的 lint 通過，收縮遷移仍為 `0009`、`0017`；`git diff` 中 `0016` 只有標記行。
-- [ ] 8.2 image 同一性與回退收縮清單（design D3、D7；code review #2）：
+
+  結果：新規則對既有遷移只多標出 `0016` 的 `ALTER POLICY`，加上 `EXPAND_REVIEWED` 後實際目錄通過，收縮仍為 `0009`、`0017`；`7ebbc68` 這類早於標記的提交則把 `0016` 也算作收縮（只會更嚴格）。`tests/test_migration_rules.py` 30 項通過。
+- [x] 8.2 image 同一性與回退收縮清單（design D3、D7；code review #2）：
   - 既有 image 只比對 revision、alembic head、Prefect 版本與 `build`，不比對 `contract-revisions`。
   - 回退判斷除了部署紀錄的聯集，再併入以現行規則重算的目前提交收縮清單。
 
   驗證：測試涵蓋「只有 `contract-revisions` 不同時重用」「其他 label 不同時仍拒絕」「紀錄中未列、但現行規則判為收縮的遷移會讓回退被拒絕」。
-- [ ] 8.3 Prefect 檢查（design D6、D7；code review #3、#4）：
+
+  結果：`IDENTITY_LABELS` 只含 revision、alembic head、Prefect 版本與 `build`；回退以 `commit_info(目前提交)` 併入收縮清單。三種情境各有測試並通過。
+- [x] 8.3 Prefect 檢查（design D6、D7；code review #3、#4）：
   - 無法查詢時拒絕，`--force` 略過。
   - 替換排程服務前再檢查；有執行中的 run 時最多等 10 分鐘，仍未結束就寫入失敗紀錄、保留舊服務；收縮部署則等待後照樣替換並記下被中斷的 run。
 
   驗證：測試涵蓋查詢失敗被拒絕、`--force` 略過、替換前出現的 run 會等待、逾時中止（沒有替換、有失敗紀錄）、收縮部署逾時後仍替換。
-- [ ] 8.4 紀錄必定寫入（design D6；code review #9、#15）：
+
+  結果：`prefect_busy()`、`wait_for_idle()`（10 分鐘）與 `scheduler_idle()` 在部署與回退兩邊都套用；測試在 `test_research_deploy.py`、`test_research_rollback.py` 通過。
+- [x] 8.4 紀錄必定寫入（design D6；code review #9、#15）：
   - 部署與回退在任何例外（含 KeyboardInterrupt）下都寫入紀錄；寫紀錄時查詢 Docker 失敗，仍以已知欄位寫入。
   - 上一版腳本在目標腳本執行期間忽略 Ctrl-C；目標腳本沒有留下紀錄時，依容器實際的 revision 補記失敗紀錄，並據此決定 checkout。
 
   驗證：測試涵蓋替換中的 KeyboardInterrupt、`finish()` 中 Docker 失敗、目標腳本未留紀錄時的補記（容器已換與未換兩種）。
-- [ ] 8.5 rollback 交接給目標版本的腳本（design D7；code review #7）：現行腳本完成 lock、防護、目標有效性、相容性、Prefect 與回退前備份，checkout 後以目標腳本建置、替換、smoke 並寫入紀錄。
+
+  結果：`replace_and_smoke()` 接住 BaseException 後先寫紀錄再重新拋出；`finish()` 在 Docker 失敗時寫入 `state_error`；`hand_over()` 交接期間忽略 SIGINT，目標腳本以非 0、非拒絕（`REFUSED_EXIT`）結束且沒有紀錄時，以 `record_from_containers()` 補記。測試通過。
+- [x] 8.5 rollback 交接給目標版本的腳本（design D7；code review #7）：現行腳本完成 lock、防護、目標有效性、相容性、Prefect 與回退前備份，checkout 後以目標腳本建置、替換、smoke 並寫入紀錄。
 
   驗證：`tests/test_research_rollback.py` 確認相容性判斷與備份都在 checkout 之前、目標腳本以 handover 接手、目標腳本失敗時部署目錄回到運行中的提交。
-- [ ] 8.6 備份（design D11；code review #10）：等 lock 上限 30 分鐘；先寫入 `<時間>.partial`，完成才改名；下一次備份清除殘留的 `.partial`。
+
+  結果：`rollback()` 只做判斷、備份與交接，`rollback_target()` 由目標版本的腳本執行建置、`validate`、替換、smoke 與紀錄。`tests/test_research_rollback.py` 依新結構重寫，23 項通過。
+- [x] 8.6 備份（design D11；code review #10）：等 lock 上限 30 分鐘；先寫入 `<時間>.partial`，完成才改名；下一次備份清除殘留的 `.partial`。
 
   驗證：測試涵蓋等待上限、成功後只剩正式資料夾、失敗與中止後殘留 `.partial` 被下一次備份清除、`--backup latest` 與清理都不選 `.partial`。
-- [ ] 8.7 演練修正（design D10；code review #8、#11、#13）：
+
+  結果：`BACKUP_LOCK_WAIT = 1800`；主副本與第二份副本都先寫 `.partial` 再改名，失敗時刪除這次的資料夾，下一次備份在持有 lock 時清掉殘留。測試通過。
+- [x] 8.7 演練修正（design D10；code review #8、#11、#13）：
   - smoke 在演練中不比對 db 的 working_dir。
   - 最近一次 `restore` 的基準記在 `INDUSTRYFLOW_DRILL_HOME`，並核對演練 db 容器 ID。
   - `setup --sec-user-agent` 可補寫或更新既有 env。
   - `research_load.py` 記錄演練實際運行的 image 與 revision。
 
   驗證：測試涵蓋從另一個 worktree 預演時 smoke 通過、db 容器不同時 `rollback-rehearsal` 要求 `--commit`、`setup` 補寫 SEC 聯絡字串、`research_load` 的 image 取自運行中的演練 API。
-- [ ] 8.8 回退期間拒絕 `public-snapshot`（design D11、Risks）。驗證：測試確認運行中的紀錄是 `rollback` 時拒絕、下一次部署後恢復。
+
+  結果：演練的 smoke 帶 `working_dir_skip=('db',)`；`restore` 另寫 `INDUSTRYFLOW_DRILL_HOME/last-restore.json`（含 db 容器 ID），`rollback-rehearsal` 只在容器相同時採用；`setup --sec-user-agent` 補寫或取代既有值；`research_load.py` 改用 `running_images()`。測試通過。
+- [x] 8.8 回退期間拒絕 `public-snapshot`（design D11、Risks）。驗證：測試確認運行中的紀錄是 `rollback` 時拒絕、下一次部署後恢復。
+
+  結果：`main()` 在運行中的紀錄為 `rollback` 時拒絕 `public-snapshot`；`PublicSnapshotTests` 兩項通過。
 - [ ] 8.9 更新文件：`docs/research-deployment.md`（部署、回退、遷移規則、演練）、`research-backup.md`（等待上限、`.partial`）、`public-snapshot.md`（回退期間拒絕）。驗證：文件描述與 8.1–8.8 的測試一致，文件中的演練指令與 `research_drill.py --help` 一致。
 - [ ] 8.10 重新驗證：
   - root unittest 全數通過，CI 全綠（run 編號記在本 task）。

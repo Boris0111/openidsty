@@ -78,6 +78,28 @@ class GuardedActionTests(unittest.TestCase):
             ('--profile', 'scheduler', 'up', '-d', '--no-deps', '--wait', 'worker')])
 
 
+class PublicSnapshotTests(unittest.TestCase):
+    """After a rollback the legacy map tables still hold the newer version's import (design Risks)."""
+    def setUp(self):
+        self.root = deployment_dir(self)
+        for name, value in (('guard_problems', []), ('validate', {}), ('protected_snapshot', {}), ('verify_protected', None)):
+            mock.patch.object(lab, name, return_value=value).start()
+        self.export = mock.patch.object(lab, 'public_snapshot', return_value={'folder': 'x'}).start()
+        self.addCleanup(mock.patch.stopall)
+
+    def test_refused_while_a_rollback_serves(self):
+        lab.append_record(deploy_record())
+        lab.append_record(deploy_record('b' * 40, kind='rollback', rolled_back_to=1))
+        with self.assertRaisesRegex(lab.Refused, 'during a rollback'):
+            main('public-snapshot')
+        self.export.assert_not_called()
+
+    def test_allowed_again_after_the_next_deploy(self):
+        lab.append_record(deploy_record('b' * 40, kind='rollback', rolled_back_to=1))
+        lab.append_record(deploy_record('c' * 40))
+        self.assertEqual(main('public-snapshot')['result'], {'folder': 'x'})
+
+
 class CommandLineTests(unittest.TestCase):
     def test_help_lists_the_new_actions(self):
         text = lab.build_parser().format_help()

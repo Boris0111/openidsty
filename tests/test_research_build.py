@@ -81,6 +81,14 @@ class BuildTests(unittest.TestCase):
         self.assertEqual(docker.builds(), [])
         self.assertFalse(any('archive' in args for args, _ in docker.calls))
 
+    def test_contract_label_from_older_rules_is_still_the_same_image(self):
+        # Stricter lint rules change contract-revisions for old commits; that never makes the image a different one.
+        images = {f'industryflow-research-{kind}:{COMMIT[:12]}': {**LABELS, 'io.industryflow.contract-revisions': '0009'}
+                  for kind in ('api', 'web')}
+        docker = FakeDocker(images)
+        self.assertEqual(build(docker), (COMMIT[:12], []))
+        self.assertEqual(docker.builds(), [])
+
     def test_missing_half_is_built(self):
         docker = FakeDocker({f'industryflow-research-api:{COMMIT[:12]}': LABELS})
         self.assertEqual(build(docker)[1], ['web'])
