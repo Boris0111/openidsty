@@ -38,6 +38,7 @@
   - 合計占資料庫的四分之三以上。
 - **不比對前後筆數**：`industry_research` 的重試規則（前後兩次 inventory 相同才接受）不適用，因為 Prefect 每分鐘都有 flow run 寫入。`pg_dump` 本身在單一 snapshot 內，一致性已足夠。
 - manifest 新增 `prefect`：`alembic_version`，以及 `deployment`、`work_pool`、`flow_run` 的筆數，都在傾印前查詢。欄位只增不改；較舊的 manifest 沒有它。
+- **apply 時補充：查詢與傾印共用 snapshot**。查詢與 `pg_dump` 若各自取 snapshot，中間 Prefect 新增一筆 flow run，D3 的筆數核對就會誤報不符。所以由一個 psql session 以 `REPEATABLE READ READ ONLY` 匯出 snapshot、在其中查詢，再以 `\!` 執行 `pg_dump --snapshot` 匯入同一個 snapshot；`pg_dump` 失敗時以 PostgreSQL 16 的 `SHELL_ERROR` 讓 psql 失敗。已在一次性容器實測：查詢與傾印之間持續寫入時，還原的筆數仍等於查詢值。manifest 另記 `excluded_table_data`。
 - **不選完整傾印**：60 MiB × 30 天 × 兩份副本約 3.6 GB，而且 `events` 會隨時間持續成長。
 - **不選只在部署前備份傾印**：每日備份也要能在事故後回復排程，例如 Prefect 資料庫毀損時。
 
@@ -47,6 +48,7 @@
 - `latest_boundary()` 同時考慮收縮邊界與 Prefect 邊界。
 - `rollback_refusals()` 在 Prefect 版本不同時改寫拒絕訊息：指出最近一次的 Prefect 邊界備份，並指向 `docs/research-backup.md` 的事故程序。
 - **不選允許跨 Prefect 版本回退後自動降級 `prefect`**：Prefect 的 downgrade 未經驗證，與 D7「不使用 downgrade」的原則一致。
+- **apply 時調整：指出回退目標之後的第一個邊界，而非最近一次**。`latest_boundary()` 改為 `first_boundary()`，收縮與 Prefect 的拒絕訊息都用它。只有一個邊界時兩者相同；跨越多個邊界時（例如先收縮遷移、再升級 Prefect，要回到收縮之前），最近一次的邊界備份已經包含較早的改變，還原它回不去。`fallback()` 同樣取上一個成功版本之後的第一個邊界。
 
 ### D3：演練還原 `prefect` 並核對
 
@@ -67,6 +69,10 @@
   5. 依既有程序處理 `industry_research`；
   6. 以舊版 image `scheduler-start`。
 - 改名保留而不刪除，符合既有「不覆寫現有資料，先保全最新狀態」的原則。
+- **apply 時補充第 5、6 步的實際做法**：
+  - 第 6 步的「以舊版 image」由 `deploy --commit <邊界之前運行的提交>` 完成，再 `scheduler-start`。`stop` 之後沒有 app 容器，防護通過；舊版腳本建置、initialize、替換並寫入部署紀錄，紀錄與容器重新一致。`rollback` 依部署紀錄判斷 Prefect 版本，資料庫還原後仍會拒絕，不能用。
+  - 第 5 步只在升版那次部署帶了遷移（`alembic_before` ≠ `alembic_after`）時才需要還原 `industry_research`：否則舊版腳本的 `deploy` 不會因遷移鏈拒絕，舊版程式可直接用現有資料。
+  - 第 3–7 步尚未在正式環境執行過，文件標明信心。
 
 ### D5：互斥檢查涵蓋 `scheduler-start` 與 `rollback`
 

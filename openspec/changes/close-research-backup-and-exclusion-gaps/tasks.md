@@ -4,13 +4,13 @@
 
 ## 1. `prefect` 資料庫納入備份
 
-- [ ] 1.1 `backup()` 傾印 `prefect` 資料庫（design D1）：
+- [x] 1.1 `backup()` 傾印 `prefect` 資料庫（design D1）：
   - `pg_dump -Fc --exclude-table-data=log --exclude-table-data=events --exclude-table-data=event_resources`，寫成 `prefect.dump`。
   - manifest 新增 `prefect`：`alembic_version`，以及 `deployment`、`work_pool`、`flow_run` 的筆數（傾印前查詢）。
   - `prefect.dump` 與其他檔案一樣列入 `files`、`sizes`，並複製到第二份副本。
 
   驗證：`tests/test_research_backup.py` 確認傾印參數（三張表只排除資料）、manifest 的 `prefect` 欄位、`prefect.dump` 出現在主副本與第二份副本，且既有欄位不變。
-- [ ] 1.2 Prefect 升版的回退邊界（design D2）：
+- [x] 1.2 Prefect 升版的回退邊界（design D2）：
   - 目標與目前的 `prefect_version` 不同時，部署前備份標記 `rollback_boundary`，紀錄寫入 `prefect_boundary: true`。
   - `latest_boundary()` 同時考慮收縮與 Prefect 邊界。
   - `rollback_refusals()` 的 Prefect 拒絕訊息指出 Prefect 邊界備份與 `docs/research-backup.md` 的事故程序。
@@ -19,7 +19,7 @@
 
 ## 2. 演練還原 `prefect`
 
-- [ ] 2.1 `research_drill.py restore` 還原 `prefect`（design D3）：
+- [x] 2.1 `research_drill.py restore` 還原 `prefect`（design D3）：
   - manifest 列有 `prefect.dump` 時，在演練 cluster 建立 `prefect` 資料庫，以 `pg_restore --exit-on-error` 還原，核對 `alembic_version` 與三項筆數。
   - 報告加入 `prefect_restored` 與核對結果；舊備份記為 `prefect_restored: false` 並註明原因，不算失敗。
 
@@ -27,16 +27,16 @@
 
 ## 3. 互斥檢查與 `bootstrap`
 
-- [ ] 3.1 `scheduler-start` 與 `rollback` 執行原服務互斥檢查（design D5）：
+- [x] 3.1 `scheduler-start` 與 `rollback` 執行原服務互斥檢查（design D5）：
   - `scheduler-start` 在啟動 `prefect` 前檢查。
   - `rollback` 在現行腳本判斷相容性時一併檢查，位於備份與 checkout 之前。
 
   驗證：`tests/test_research_lab_actions.py`、`tests/test_research_rollback.py` 確認原服務運行或 port 被占用時拒絕，訊息指出占用者，且沒有任何 compose、備份或 checkout。
-- [ ] 3.2 `bootstrap` 改用 `git -c core.autocrlf=false archive`（design D6）。驗證：測試確認 archive 參數；`tests/test_research_lab_actions.py` 的靜態檢查擴充為「所有 `git archive` 呼叫都帶 `core.autocrlf=false`」。
+- [x] 3.2 `bootstrap` 改用 `git -c core.autocrlf=false archive`（design D6）。驗證：測試確認 archive 參數；`tests/test_research_lab_actions.py` 的靜態檢查擴充為「所有 `git archive` 呼叫都帶 `core.autocrlf=false`」。
 
 ## 4. 文件
 
-- [ ] 4.1 更新文件：
+- [x] 4.1 更新文件：
   - `docs/research-backup.md`：檔案表加入 `prefect.dump`、manifest 的 `prefect` 欄位、事故時還原 `prefect` 的程序（design D4）。
   - `docs/research-deployment.md`：Prefect 邊界、回退的拒絕訊息、`scheduler-start` 與 `rollback` 的互斥檢查，以及 Prefect 升版時要重新確認被排除的表名。
   - `docs/research-lab.md`：`scheduler-start` 的互斥檢查。

@@ -99,7 +99,7 @@ docker image inspect industryflow-research-api:<sha12> --format '{{json .Config.
 | `alembic_before`、`alembic_after` | 操作前後資料庫的遷移版本 |
 | `alembic_head`、`migrations`、`contract_revisions` | image 的遷移 head、該提交的遷移鏈與收縮遷移清單 |
 | `prefect_version` | image 的 Prefect 版本 |
-| `backup`、`contract_boundary` | 操作前備份的資料夾名稱，以及它是否為回退邊界 |
+| `backup`、`contract_boundary`、`prefect_boundary` | 操作前備份的資料夾名稱，以及它是否因收縮遷移或 Prefect 版本改變而成為回退邊界（`prefect_boundary` 自 2026-10-30 起記錄，較舊的紀錄沒有） |
 | `replaced` | 服務是否已被替換。正在運行的版本是最後一筆 `replaced: true` 的紀錄 |
 | `services` | 操作結束時每個運行容器的 container、image ID、revision 與 Compose working_dir |
 | `smoke` | 每項 smoke 檢查的結果（見「部署」） |
@@ -129,7 +129,7 @@ cd C:\Users\User\industryflow-prod
    - Prefect 無法查詢（例如它停止或不斷重啟）：無法判斷是否有資料更新在執行，所以拒絕；加 `--force` 才略過檢查。
    - 目標相對目前資料庫新增收縮遷移，沒有加 `--allow-contract`。
    - db 容器不是從這個目錄建立的，沒有加 `--recreate-db`。只會在第一次部署發生，見下方「第一次部署」。
-5. 部署前備份，含第二份副本（位置取自 `--secondary` 或 `home.json`）。有收縮遷移時，這份備份標記為回退邊界。
+5. 部署前備份，含第二份副本（位置取自 `--secondary` 或 `home.json`）。有收縮遷移，或目標的 Prefect 版本與目前紀錄的不同時，這份備份標記為回退邊界（紀錄的 `contract_boundary`、`prefect_boundary`；見「Prefect 升版」）。
 6. 依「建置與 image 版本」建置或重用 image。
 7. 以新 tag 執行 `compose run --rm --no-deps initialize`：遷移、角色與地圖匯入。這時舊的 api、web 仍在服務。
 8. initialize 成功後才替換服務：
@@ -164,7 +164,7 @@ initialize 失敗時，舊服務始終沒被替換：部署紀錄寫入 `outcome
 部署紀錄標記 `outcome: failed`、`replaced: true`，新服務留在原地，**不自動回退**（Boris 的決定）。指令會印出下一步，同樣寫進紀錄的 `fallback`：
 
 - **可以回退**：印出可直接執行的 `python scripts/research_lab.py rollback --to <seq>`，目標是前一個成功版本。
-- **不能回退**（例如這次部署套用了收縮遷移）：說明原因，並指出要還原的部署前備份。依 [research-backup](research-backup.md) 的事故程序，先在演練環境還原核對。
+- **不能回退**（例如這次部署套用了收縮遷移，或改變了 Prefect 版本）：說明原因，並指出要還原的部署前備份。依 [research-backup](research-backup.md) 的事故程序，先在演練環境還原核對。
 - **前一筆是 `adopt`**：沒有可回退的 image 版本，依下方「回到 pre-ledger image」處理。
 
 先判斷問題再動手：`status` 列出每個容器的版本與不一致之處，紀錄的 `smoke` 欄位指出哪一項失敗。
@@ -181,9 +181,12 @@ initialize 失敗時，舊服務始終沒被替換：部署紀錄寫入 `outcome
 1. 由**現行腳本**取得 lock，檢查標記、乾淨的 working tree 與 HEAD。容器與紀錄不一致時不拒絕，只記在 `drift_before`。
 2. 現行腳本判斷拒絕條件。它的規則最新，所以由它判斷：
    - 目標的遷移 head 新於資料庫目前的版本。
-   - (目標 head, 資料庫版本] 之間有收縮遷移。舊提交看不到較新的遷移檔，所以用**部署紀錄中各次遷移鏈的聯集**判斷，並併入以現行規則重算的目前提交收縮清單（規則變嚴後，舊紀錄中的清單會偏少）。訊息會指出最近一次的回退邊界備份。
-   - 目標與目前的 Prefect 版本不同：Prefect server 會遷移自己的 `prefect` 資料庫。
+   - (目標 head, 資料庫版本] 之間有收縮遷移。舊提交看不到較新的遷移檔，所以用**部署紀錄中各次遷移鏈的聯集**判斷，並併入以現行規則重算的目前提交收縮清單（規則變嚴後，舊紀錄中的清單會偏少）。
+   - 目標與目前的 Prefect 版本不同：Prefect server 會遷移自己的 `prefect` 資料庫。訊息說明要還原的備份同時含 `industry_research` 與 `prefect`，並指向 [research-backup](research-backup.md#事故時還原-prefect-資料庫) 的事故程序。
    - Prefect 有執行中的 flow run，或無法查詢，除非加 `--force`。
+   - 原服務有容器在運行，或共用 port 被其他程式占用：與部署第 1 步相同的互斥檢查。它在備份與 checkout 之前，和其他拒絕條件一起列出；目標版本的腳本不再檢查。
+
+   收縮遷移與 Prefect 的拒絕訊息都指出**回退目標之後第一個回退邊界**的部署前備份。跨越多個邊界時（例如先部署收縮遷移、再升級 Prefect），最近一次的邊界備份已經包含較早的那次改變，只有第一個還保有目標能用的 schema 與 Prefect 版本。
 3. 現行腳本做回退前備份。
 4. checkout 目標提交，**交給目標版本的腳本接手**（與部署第 3 步相同）。現行腳本的 compose 檢查可能比目標新，所以替換一律用目標自己的規則：
    1. image 已被清除時從 archive 重建，紀錄標記 `rebuilt: true`。
@@ -192,7 +195,7 @@ initialize 失敗時，舊服務始終沒被替換：部署紀錄寫入 `outcome
 
 **不執行 initialize**：這樣可以避開舊版 alembic 的「Can't locate revision」，也避免 `import_map` 以舊內容改寫 legacy 地圖表、追加不實的判讀版本，或因缺 `change_reason` 而失敗。代價是回退後 legacy 地圖表保留較新版本匯入的內容，所以**回退期間不產出公開快照**，免得混用新地圖資料與舊程式。
 
-跨不過收縮遷移時，從回退邊界備份在演練環境還原、核對，再依 [research-backup](research-backup.md) 的事故程序處理。不使用 alembic downgrade：多數遷移的 downgrade 刻意 raise。
+跨不過收縮遷移時，從回退邊界備份在演練環境還原、核對，再依 [research-backup](research-backup.md) 的事故程序處理；跨不過 Prefect 版本時，依其中的「事故時還原 `prefect` 資料庫」。不使用 alembic downgrade：多數遷移的 downgrade 刻意 raise，Prefect 的也未經驗證。
 
 ## 第一次部署（正式環境切換）
 
@@ -269,12 +272,26 @@ python scripts/migration_rules.py --commit <sha>     # 某個提交的遷移鏈�
 
 1. **移除結構分兩步**：先部署「不再使用該結構」的版本（擴充），之後的部署才放入刪除它的收縮遷移。這樣在兩步之間，正在運行的版本永遠不依賴即將被刪的結構。
 2. **收縮遷移要明確確認**：`deploy` 偵測到目標相對目前資料庫新增收縮遷移時，沒有 `--allow-contract` 就拒絕並列出它們。
-3. **回退邊界**：含收縮遷移那次部署的部署前備份就是回退邊界，manifest 標記 `rollback_boundary`，30 天清理不刪除它（保存多久由 Boris 手動決定）。要回到邊界之前的版本，只能把那份備份還原到演練環境，核對後再依 [research-backup](research-backup.md) 的事故程序處理。`rollback` 跨越收縮遷移時一律拒絕。
+3. **回退邊界**：含收縮遷移那次部署的部署前備份就是回退邊界，manifest 標記 `rollback_boundary`，30 天清理不刪除它（保存多久由 Boris 手動決定）。要回到邊界之前的版本，只能把那份備份還原到演練環境，核對後再依 [research-backup](research-backup.md) 的事故程序處理。`rollback` 跨越收縮遷移時一律拒絕。改變 Prefect 版本的部署同樣是回退邊界，見「Prefect 升版」。
 4. **已合併的遷移不得刪除或改寫**：要撤回某個變更，新增一個遷移來做。改寫已部署的遷移會讓資料庫的實際 schema 與遷移鏈不一致，而 `deploy` 遇到「資料庫版本不在目標遷移鏈上」時會拒絕。
 
 ### 限制
 
 lint 只看語法。新增 trigger、constraint、policy 這類語意上的破壞抓不到，例如新的 constraint 拒絕前一版會寫入的值。這類變更由合併前的回退預演（`research_drill.py rollback-rehearsal`）補足：預演失敗時，把該遷移改標為 `CONTRACT`。
+
+## Prefect 升版
+
+Prefect server 以自己的 alembic 遷移管理同一個 cluster 裡的 `prefect` 資料庫，啟動時自動升級，沒有經過驗證的 downgrade。版本取自 `backend/runtime-constraints.txt`，記在 image label 與部署紀錄的 `prefect_version`。
+
+- **回退邊界**：`deploy` 的目標 Prefect 版本與目前紀錄的不同時，部署前備份是回退邊界：manifest 的 `rollback_boundary`、`prefect_boundary` 為 true，30 天清理不刪除它；部署紀錄的 `prefect_boundary` 為 true。這份備份含 `industry_research` 與升版前的 `prefect`（[research-backup](research-backup.md)）。
+- **回不去舊版**：之後要回到升版前的版本，`rollback` 拒絕並指出這份備份，依 [事故時還原 prefect 資料庫](research-backup.md#事故時還原-prefect-資料庫) 處理。
+- **重新確認備份排除的表**：`prefect.dump` 以 `--exclude-table-data` 排除 `log`、`events`、`event_resources` 的資料。新版若改了表名，`pg_dump` 不會報錯，只是不排除，備份會悄悄變大；若新版讓其他表以 foreign key 指向它們，還原時建立 constraint 會失敗。manifest 的 `prefect` 欄位也假設 `alembic_version`、`deployment`、`work_pool`、`flow_run` 存在。演練不啟動 Prefect，所以在升版部署後、下一次每日備份之前，以唯讀查詢確認：
+
+  ```powershell
+  docker exec industryflow-research-db-1 psql -U industry -d prefect -At -c "SELECT string_agg(tablename, ',' ORDER BY tablename) FROM pg_tables WHERE schemaname='public' AND tablename IN ('alembic_version','deployment','event_resources','events','flow_run','log','work_pool')" -c "SELECT count(*) FROM pg_constraint WHERE contype='f' AND confrelid::regclass::text IN ('log','events','event_resources')"
+  ```
+
+  第一行要列出全部 7 張表，第二行要是 `0`（2026-10-30，Prefect 3.8.8 的結果）。不符時修改 `scripts/research_lab.py` 的 `PREFECT_EXCLUDED`、`PREFECT_COUNTED`，再手動觸發一次備份並還原到演練環境核對。
 
 ## 合併前演練
 

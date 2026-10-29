@@ -2,7 +2,7 @@
 
 2026-10-21 起這是正式研究服務。正式環境切換後，所有會改變正式服務的指令都在部署目錄 `C:\Users\User\industryflow-prod` 以它自己的 `.venv` 執行；開發 checkout 不保有 `.env.research`，從那裡執行會被拒絕。部署、回退、部署紀錄與防護見 [部署與回退](research-deployment.md)。此獨立 Compose 不讀原 `.env`，也不啟動原 project；`start` 不啟動 Prefect 或抓取 worker。
 
-研究服務與原服務（project `industryflow`）共用 3010／8010／4201，兩者不可同時運行。`deploy`／`start` 偵測到原服務有容器在運行，或 port 被其他程式占用時，會拒絕並列出占用者，但不會自動停止任何服務。`stop` 會一併停止 reader、scheduler、web 與 API，釋放全部共用 port。
+研究服務與原服務（project `industryflow`）共用 3010／8010／4201，兩者不可同時運行；原服務的 worker 同樣抓官方來源，同時運行會重複抓取。會啟動、替換或回退正式服務的 `deploy`、`rollback`、`start`、`scheduler-start`、`reader-start`，在改變任何狀態前偵測原服務有容器在運行，或 port（含 reader 的 3015）被其他程式占用時，會拒絕並列出占用者，但不會自動停止任何服務。`restore`（從原服務匯入）刻意不檢查：它的來源就是運行中的原服務資料庫，而且只啟動不對外發布 port 的 db。`stop` 會一併停止 reader、scheduler、web 與 API，釋放全部共用 port。
 
 ```powershell
 cd C:\Users\User\industryflow-prod
@@ -41,7 +41,7 @@ cd C:\Users\User\industryflow-prod
 .venv\Scripts\python.exe scripts\research_lab.py scheduler-start
 ```
 
-它依序啟動 `prefect`、執行一次 `deploy` 註冊 deployments、再啟動 `worker`，都使用部署紀錄中運行的 image。之後的 `deploy` 與 `rollback` 會一併替換運行中的排程服務。
+它先做原服務互斥檢查（原服務仍在運行或 4201 等共用 port 被占用時拒絕，什麼都不啟動），再依序啟動 `prefect`、執行一次 `deploy` 註冊 deployments、再啟動 `worker`，都使用部署紀錄中運行的 image。之後的 `deploy` 與 `rollback` 會一併替換運行中的排程服務。
 
 `db`、`api`、`web`、`prefect`、`worker` 都是 `restart: unless-stopped`：Docker 或主機重開機後會自動回到運行狀態，不必再執行上面的指令。`deploy` 是一次性服務，不會重跑；deployments 與排程存在 Prefect 的資料庫，重啟後仍在。`research_lab.py check` 會拒絕缺少此設定的排程服務。重啟策略在建立容器時生效，compose 檔的修改會在下一次 `deploy` 替換容器時套用。
 

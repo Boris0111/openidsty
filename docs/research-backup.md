@@ -36,14 +36,16 @@ Unregister-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"
 | 檔案 | 內容 |
 |---|---|
 | `database.dump` | `industry_research` 的 `pg_dump -Fc`，以二進位直接寫檔，不經文字轉碼 |
+| `prefect.dump` | Prefect server 自己的 `prefect` 資料庫（同一個 cluster），`pg_dump -Fc --exclude-table-data=log --exclude-table-data=events --exclude-table-data=event_resources`。這三張觀測資料表只留 schema、不帶資料：沒有其他表以 foreign key 指向它們，合計占資料庫四分之三以上，`log` 的內容也已由各 flow 的報告與 `source_refresh_jobs` 記錄。其餘全部保留：遷移版本、deployments、work pools、排程、flow run 與 task run 的狀態歷史、concurrency limits、blocks、variables。2026-10-30 起才有 |
 | `roles.sql` | `pg_dumpall --roles-only --no-role-passwords`：角色與成員關係，不含密碼 |
 | `git.bundle` | managed Git 的 `bundle --all`，含 release、job 與 `research/published` 等全部 refs |
 | `assets.tar` | 內容定址資產目錄；檔名即內容 SHA-256 |
-| `manifest.json` | 建立時間、耗時、各檔 SHA-256 與大小、啟用中的 release（ID、代數、內容 hash、commit）、`public` 與 `research` 每張表的筆數與內容 md5、Git refs；運行中 API 容器的 image ID（`api_image`）與提交（`api_revision`）、資料庫遷移版本（`alembic_version`）；是否為回退邊界（`rollback_boundary`、`contract_revisions`）。欄位只增不改，較舊的 manifest 沒有 `api_revision` 等欄位 |
+| `manifest.json` | 建立時間、耗時、各檔 SHA-256 與大小、啟用中的 release（ID、代數、內容 hash、commit）、`public` 與 `research` 每張表的筆數與內容 md5、Git refs；運行中 API 容器的 image ID（`api_image`）與提交（`api_revision`）、資料庫遷移版本（`alembic_version`）；`prefect`：Prefect 自己的遷移版本（`alembic_version`）、`deployment`、`work_pool`、`flow_run` 的筆數，以及只排除資料的表（`excluded_table_data`）；是否為回退邊界（`rollback_boundary`），以及原因：收縮遷移（`contract_revisions`）或 Prefect 版本改變（`prefect_boundary`）。欄位只增不改，較舊的 manifest 沒有 `api_revision`、`prefect` 等欄位 |
 
-- **一致性**：DB 傾印前後各算一次全表筆數與內容 md5；兩次不同就重做，最多 3 次。這樣清單記錄的就是傾印當下的狀態，還原時可以逐表比對。
+- **一致性**：`industry_research` 傾印前後各算一次全表筆數與內容 md5；兩次不同就重做，最多 3 次。這樣清單記錄的就是傾印當下的狀態，還原時可以逐表比對。
+- **`prefect` 的一致性**：Prefect 每分鐘都有 flow run 寫入，前後比對會一直不同，所以改用同一個 snapshot：一個 psql session 以 `REPEATABLE READ READ ONLY` 匯出 snapshot、在其中查詢 manifest 的 `prefect` 欄位，再讓 `pg_dump --snapshot` 匯入它。manifest 記的筆數因此正好是 `prefect.dump` 的內容，演練還原後可以逐項比對。傾印檔先寫在 db 容器的 `/tmp/prefect-backup.dump`，讀出後刪除；`pg_dump` 失敗時整份備份失敗。
 - **結果紀錄**：成功與失敗都記在 `backups/research/backup-log.jsonl`。失敗時只刪除該次未完成的資料夾。
-- **保留**：兩處都保留 30 天。只會刪除名稱符合時間格式、有 `manifest.json`、且不是回退邊界的完整備份資料夾，其他檔案不碰。回退邊界是含收縮遷移那次部署的部署前備份（`rollback_boundary: true`），不自動刪除，由 Boris 手動清理；manifest 讀不出來的資料夾也保留。
+- **保留**：兩處都保留 30 天。只會刪除名稱符合時間格式、有 `manifest.json`、且不是回退邊界的完整備份資料夾，其他檔案不碰。回退邊界是含收縮遷移、或改變 Prefect 版本那次部署的部署前備份（`rollback_boundary: true`），不自動刪除，由 Boris 手動清理；manifest 讀不出來的資料夾也保留。
 
 **不在備份內**：`.env.research` 的祕密（DB 密碼、session secret）要另外以受保護的方式保存，例如放在加密的隨身碟或密碼管理器。DB 傾印本身含 owner 的 Argon2id 密碼 hash，所以備份資料夾也要視為敏感資料。
 
@@ -54,7 +56,7 @@ Unregister-ScheduledTask -TaskName "IndustryFlow Research Daily Backup"
 - **環境**：自己的 DB、Git 與資產 volume，web 綁 `127.0.0.1:3016`、API 綁 `127.0.0.1:8016`。
 - **祕密**：放在 `INDUSTRYFLOW_DRILL_HOME`（預設 `%USERPROFILE%\industryflow-drill`）的 `.env.research-drill`，與 checkout 無關。`setup` 只產生新的演練祕密，不讀正式的 `.env.research`；線上來源更新需要的 SEC 聯絡字串以 `setup --sec-user-agent` 傳入；env 檔已由其他動作建立時，同一個指令會補寫或取代它。錯誤輸出同時遮蔽演練與正式祕密。
 - **image**：以備份 manifest 記錄的基準提交（`api_revision`）從 `git archive` 建置或重用（[建置與 image 版本](research-deployment.md#建置與-image-版本)）。manifest 較舊、沒有這個欄位時，以 `--baseline-commit` 指定當時正式 image 的提交。因為用的是基準 image，待合併提交的新遷移不會讓還原失敗。
-- **隔離**：沒有排程，不會自動抓取來源。不動正式服務與原服務，演練前後都會比對兩者的容器指紋。
+- **隔離**：沒有排程，不會自動抓取來源；也不啟動 Prefect server，所以還原的 `prefect` 資料庫不會被寫入。不動正式服務與原服務，演練前後都會比對兩者的容器指紋。
 
 ```powershell
 python scripts/research_drill.py setup                       # 第一次：在 INDUSTRYFLOW_DRILL_HOME 產生演練祕密
@@ -69,10 +71,11 @@ python scripts/research_drill.py down                         # 只移除演練 
 
 1. 核對備份各檔的 hash，依 manifest 決定基準提交，建置或重用它的 image。
 2. 啟動空 DB，先套用角色，再以 `pg_restore --exit-on-error` 還原，最後由 `research_roles` 設定演練用登入密碼。
-3. 以 `clone --mirror` 還原 managed Git，並移除指向 bundle 的 remote 設定。
-4. 解開資產。
-5. 啟動 API 與 web。
-6. 逐項核對：全表筆數與內容 md5、啟用中的 release、API 實際提供的 release、Git refs、資產內容 hash 與數量、遷移版本（manifest 有記錄時）、`/next` 能否開啟。
+3. 備份含 `prefect.dump` 時，在演練 cluster 建立 `prefect` 資料庫，以 `pg_restore --exit-on-error` 還原。較舊的備份沒有這個檔案：不建立資料庫，報告記 `prefect_restored: false` 並在 `prefect_note` 註明原因，不算失敗。
+4. 以 `clone --mirror` 還原 managed Git，並移除指向 bundle 的 remote 設定。
+5. 解開資產。
+6. 啟動 API 與 web。
+7. 逐項核對：全表筆數與內容 md5、啟用中的 release、API 實際提供的 release、Git refs、資產內容 hash 與數量、遷移版本（manifest 有記錄時）、`/next` 能否開啟；還原了 `prefect` 時，再核對它的遷移版本與三項筆數（`prefect_match`，不符時 `prefect_differing` 逐項列出備份與還原的值）。
 
 合併前的預演部署、預演回退與分支程式的 PostgreSQL 檢查也在這個環境進行，見 [合併前演練](research-deployment.md#合併前演練)。
 
@@ -104,6 +107,41 @@ python scripts/research_drill.py down                         # 只移除演練 
    - **營收指標與事件**：較新的部分由來源單次更新重新取得。
 4. **切換**：演練環境（3016）可以先暫時作為服務使用，研究服務的 volume 保留不刪，供事後比對。要把資料併回 3010 時，先停止研究服務的 web 與 API，再依 `research-lab.md` 的方式還原到新 DB，核對後才啟動。任何步驟都不使用 `git reset` 回復資料，也不刪除原 volume。
 5. **研究還原與資料庫還原分開**：只是內容發布錯誤時，用管理介面的 release 還原（`/api/admin/releases/{id}/restore`）回到前一版即可，不需要還原整個 DB。
+
+## 事故時還原 `prefect` 資料庫
+
+Prefect server 啟動時會遷移自己的 `prefect` 資料庫，而且不使用 downgrade。所以要回到 Prefect 升版之前的版本時，`rollback` 一律拒絕，訊息指出要還原的回退邊界備份：回退目標之後第一個回退邊界的部署前備份，它同時含 `industry_research` 與 `prefect`（[部署與回退](research-deployment.md#回退)）。`prefect` 資料庫毀損時也用這個程序，備份改用最近一份正常的每日備份。
+
+1. **停止正式服務**：`research_lab.py stop`，含排程。Prefect server 運行時不能替換它的資料庫。
+2. **先在演練環境還原並核對**：
+   ```powershell
+   python scripts/research_drill.py down
+   python scripts/research_drill.py restore --backup C:\Users\User\industryflow-prod\backups\research\<邊界備份>
+   ```
+   報告的 `prefect_restored` 要是 `true`，`checks` 全部相符。
+3. **改名保留現有的 `prefect`，不刪除**，符合「不覆寫現有資料，先保全最新狀態」：
+   ```powershell
+   docker exec industryflow-research-db-1 psql -U industry -d postgres -v ON_ERROR_STOP=1 -c "ALTER DATABASE prefect RENAME TO prefect_before_<UTC 時間>"
+   ```
+4. **新建空的 `prefect`，還原邊界備份的 `prefect.dump`**：
+   ```powershell
+   docker exec industryflow-research-db-1 psql -U industry -d postgres -v ON_ERROR_STOP=1 -c "CREATE DATABASE prefect"
+   docker cp <邊界備份>\prefect.dump industryflow-research-db-1:/tmp/prefect.dump
+   docker exec industryflow-research-db-1 pg_restore -U industry -d prefect --exit-on-error /tmp/prefect.dump
+   docker exec industryflow-research-db-1 rm /tmp/prefect.dump
+   ```
+5. **`industry_research`**：看 Prefect 升版那筆部署紀錄。
+   - `alembic_before` 等於 `alembic_after`（升版沒有帶遷移）：不必還原，舊版程式可以直接用現有資料。
+   - 不相等：舊版的遷移鏈不認得較新的版本，下一步的 `deploy` 會拒絕。同樣把 `industry_research` 改名保留、新建，以邊界備份的 `database.dump` 還原；邊界之後的研究內容與數據依上一節第 3 步比對、補回。
+6. **以舊版 image 接手**：`stop` 之後沒有 app 容器在運行，所以可以部署邊界之前運行的提交：
+   ```powershell
+   .venv\Scripts\python.exe scripts\research_lab.py deploy --commit <邊界之前運行的提交>
+   .venv\Scripts\python.exe scripts\research_lab.py scheduler-start
+   ```
+   舊版腳本以它自己的規則建置、initialize、替換並寫入部署紀錄，所以紀錄、checkout 與容器重新一致。`rollback` 在這裡不能用：它依部署紀錄判斷 Prefect 版本，資料庫還原後仍會拒絕。`scheduler-start` 後在 Prefect（http://127.0.0.1:4201）確認 deployments 與下一個排程。
+7. 確認正常後，`prefect_before_<時間>`（與改名保留的 `industry_research`）由 Boris 決定何時刪除。經過記在 `docs/research-acceptance.md`。
+
+**信心**：第 2 步已在演練環境實測（2026-10-30，見下方「`prefect` 傾印與還原驗證」）；第 3–7 步依腳本與 PostgreSQL 的行為推導，尚未在正式環境執行過。
 
 ## 排程實際執行紀錄
 
