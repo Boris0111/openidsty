@@ -327,9 +327,11 @@
   驗證：`research_lab.py status` 回報「尚無部署紀錄」，`git status` 乾淨。
 
   結果：2026-10-28 18:15 UTC clone 並 detached 在 `e21c4fd`，`.venv` 為 Python 3.12.10，`init-home` 完成；`status` 回報 `No deployment record yet`，`git status` 乾淨。
-- [ ] 9.2 複製 `.env.research` 與 `backups/research` 到部署目錄。驗證：
+- [x] 9.2 複製 `.env.research` 與 `backups/research` 到部署目錄。驗證：
   - 逐檔 SHA-256 相同。
   - Boris 確認祕密已另存受保護副本，例如密碼管理器。
+
+  結果：`.env.research` 與 41 個備份檔共 42 個檔案的 SHA-256 全部相同；19:30 UTC 的每日備份補同步後 46 個檔案相符。2026-10-29 Boris 確認已把部署目錄的 `.env.research` 另存為受保護副本。
 - [x] 9.3 保留回復點：
   - 以 `research_lab.py adopt` 把目前的 `:dev` image 另標為 `industryflow-research-api:pre-ledger`、`industryflow-research-web:pre-ledger`。
   - 寫入一筆 `adopt` 紀錄（容器、image ID、alembic 版本）。

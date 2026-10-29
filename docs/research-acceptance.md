@@ -446,7 +446,7 @@ change `harden-research-operations`（tasks 1.4、4.1）。PR #3 先於演練合
 | 步驟（UTC） | 結果 |
 |---|---|
 | 9.1 建立部署目錄（18:15） | 從 origin clone，detached 在 `e21c4fd`；`.venv` 為 Python 3.12.10；`init-home` 寫入 `deployments/home.json`（第二份備份 `D:\backups\industryflow-research`）。`status` 回報 `No deployment record yet`，`git status` 乾淨 |
-| 9.2 複製祕密與備份 | `.env.research` 與 41 個備份檔，共 42 個檔案的 SHA-256 全部相同。19:30 的每日備份（仍由開發 checkout 的舊排程執行，`20261028T193006Z`）之後補同步，46 個檔案相符。**受保護的另存副本尚待 Boris 確認** |
+| 9.2 複製祕密與備份 | `.env.research` 與 41 個備份檔，共 42 個檔案的 SHA-256 全部相同。19:30 的每日備份（仍由開發 checkout 的舊排程執行，`20261028T193006Z`）之後補同步，46 個檔案相符。2026-10-29 Boris 確認 `.env.research` 已另存為受保護副本 |
 | 9.3 adopt（19:59） | 部署紀錄第 1 筆：api `d733d36322cf`、web `b2e3393f77f7` 另標為 `industryflow-research-{api,web}:pre-ledger`；遷移 `0017`、Prefect 3.8.8；`status` 沒有不一致 |
 | 9.4 首次部署（20:08:25–20:11:08） | `deploy --commit e21c4fd --recreate-db`，部署紀錄第 2 筆 `succeeded`；部署前備份 `20261028T200837Z`；smoke 六項全過（release `a5df290c…`、遷移 `0017`）。db、api、web、prefect、worker 都換成新容器，revision 為 `e21c4fd`，Compose working_dir 與 db 的 bind mount 都指向部署目錄；原服務維持停止 |
 | 停機 | 每秒探測：API 在 20:10:12–20:10:27 不可用（約 15 秒），`/next` 在 20:10:24–20:10:30 不可用（約 6 秒），受影響的時間窗合計約 18 秒 |
