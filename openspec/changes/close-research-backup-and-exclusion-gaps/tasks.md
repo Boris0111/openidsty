@@ -48,7 +48,8 @@
 開始前記錄正式服務的指紋（容器、image、資料庫清單、volume），每一步完成後都核對一次，必須全部不變。
 
 - [ ] 5.1 root unittest 全數通過，CI 全綠。驗證：run 編號記在本 task。
-- [ ] 5.2 以真實資料驗證 `prefect` 的傾印與還原：
+  - 2026-10-30：本機 root unittest 264 個、`validate_map.py`、`run_validator_tests.py` 全部通過。CI run `40974330708` 沒有啟動：GitHub Actions 回報帳號付款失敗或 spending limit 不足。恢復後重跑，把 run 編號記在這裡再勾選。
+- [x] 5.2 以真實資料驗證 `prefect` 的傾印與還原：
   - 複製最新一份正式備份到暫存資料夾。
   - 以 1.1 的相同參數，從正式 `prefect` 資料庫唯讀傾印一份 `prefect.dump`；這與每日備份讀取的內容相同。
   - 把 SHA-256、大小與 `prefect` 欄位補進暫存資料夾的 manifest。

@@ -143,6 +143,21 @@ Prefect server 啟動時會遷移自己的 `prefect` 資料庫，而且不使用
 
 **信心**：第 2 步已在演練環境實測（2026-10-30，見下方「`prefect` 傾印與還原驗證」）；第 3–7 步依腳本與 PostgreSQL 的行為推導，尚未在正式環境執行過。
 
+## `prefect` 傾印與還原驗證（2026-10-30）
+
+close-research-backup-and-exclusion-gaps task 5，從該 change 的 worktree 執行，報告在它的 `.work/research-drill/restore-20261029T233907Z.json`。正式部署的程式還沒有這個傾印，所以把最新一份正式備份複製到暫存資料夾，再以 `backup()` 使用的同一個函式補上 `prefect.dump`。
+
+| 項目 | 結果 |
+|---|---|
+| 備份 | 正式每日備份 `20261029T193007Z`（基準 `e21c4fd`，52 張表）複製到暫存資料夾，各檔 SHA-256 與 manifest 相符 |
+| `prefect.dump` | `dump_prefect()` 從正式 `prefect` 唯讀傾印：**6.4 MiB（6,713,672 bytes）、3.8 秒**，正式資料庫為 940 MB。遷移版本 `d4a7e1c93f52`，deployments 5、work pools 1、flow runs 10,984。SHA-256、大小與 `prefect` 欄位寫進暫存資料夾的 manifest |
+| 還原 | 從空的演練環境 `restore`：表、release、API 提供的 release、Git refs、資產、遷移版本全部相符，`/next` 200；`prefect_restored: true`、`prefect_match: true`。RTO 77.3 秒，其中建立並還原 `prefect` 約 15 秒（16.5 → 31.4 秒） |
+| 還原後的 `prefect` | 76 MB；`log`、`events`、`event_resources` 保留 schema、0 筆；`task_run` 150 筆、`flow_run_state` 62,111 筆完整 |
+| 正式服務 | 指紋（含原服務共 20 個容器的 ID、image、狀態、啟動時間與 restart 次數；20 個 image tag；資料庫清單；8 個 volume）在傾印、`down`、`restore` 之後都不變。傾印檔已從正式 db 容器的 `/tmp` 刪除 |
+| 測試 | 本機：root unittest 264 個、地圖驗證器與其測試全部通過。CI：GitHub Actions 因帳號付款問題沒有啟動（run `40974330708`），恢復後補記 |
+
+**大小與耗時**：遠低於 design 設定的 30 MiB 評估門檻，每日備份多約 4 秒；主副本與 D 槽各保留 30 天約 0.4 GB。Prefect 的保留期限（`events` 與 `event_resources` 的成長）不影響這個傾印，仍另行決定。
+
 ## 排程實際執行紀錄
 
 | 時間（UTC） | 觸發方式 | 結果 | 耗時 |
