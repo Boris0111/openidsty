@@ -245,7 +245,8 @@ class SequenceTests(TargetHarness):
         record = self.deploy()
         self.assertEqual(self.names(), ['backup', 'build', 'initialize', 'up', 'smoke'])
         backup = next(c for c in self.calls if c[0] == 'backup')
-        self.assertEqual(backup[2], {'tag': OLD[:12], 'boundary': []}, 'the backup runs on the serving image')
+        self.assertEqual(backup[2], {'tag': OLD[:12], 'boundary': [], 'prefect_boundary': False},
+                         'the backup runs on the serving image')
         initialize = next(c for c in self.calls if c[0] == 'compose' and 'initialize' in c)
         self.assertEqual(initialize[1:], (NEW[:12], 'run', '--rm', '--no-deps', '-T', 'initialize'))
         self.assertEqual(self.ups(), [('up', '-d', '--no-deps', '--wait', 'api', 'web')])
@@ -285,6 +286,29 @@ class SequenceTests(TargetHarness):
         backup = next(c for c in self.calls if c[0] == 'backup')
         self.assertEqual(backup[2]['boundary'], ['0018'])
         self.assertTrue(record['contract_boundary'])
+        self.assertFalse(record['prefect_boundary'])
+
+    def test_same_prefect_version_is_no_boundary(self):
+        record = self.deploy()
+        self.assertIs(next(c for c in self.calls if c[0] == 'backup')[2]['prefect_boundary'], False)
+        self.assertEqual((record['contract_boundary'], record['prefect_boundary']), (False, False))
+
+    def test_prefect_upgrade_marks_the_boundary_backup(self):
+        self.target = target_info(NEW, prefect='3.9.0')
+        record = self.deploy()
+        backup = next(c for c in self.calls if c[0] == 'backup')
+        self.assertEqual(backup[2], {'tag': OLD[:12], 'boundary': [], 'prefect_boundary': True})
+        self.assertEqual((record['contract_boundary'], record['prefect_boundary']), (False, True))
+        self.assertEqual(record['prefect_version'], '3.9.0')
+
+    def test_smoke_failure_after_a_prefect_upgrade_points_to_its_backup(self):
+        self.target = target_info(NEW, prefect='3.9.0')
+        self.smoke = (False, {**SMOKE_OK, 'health': {'ok': False, 'status': 502}})
+        with self.assertRaises(RuntimeError):
+            self.deploy()
+        fallback = self.ledger()[-1]['fallback']
+        self.assertIn('Prefect would change from 3.9.0 to 3.8.8', fallback)
+        self.assertIn('restore the rollback-boundary backup 20261028T010000Z', fallback)
 
     def test_initialize_failure_replaces_nothing(self):
         self.initialize_error = 'import_map failed: theme change_reason missing'

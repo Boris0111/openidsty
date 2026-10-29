@@ -590,13 +590,20 @@ def rollback_refusals(target, current, db_version, records, boundary=None):
             refusals.append(f'Rolling back from {db_version} to {head} crosses contract migration(s) '
                             f'{", ".join(crossed)}; restore {where} instead (docs/research-deployment.md)')
     if target['prefect_version'] != current.get('prefect_version'):
+        where = (f'the rollback-boundary backup {boundary}' if boundary else
+                 'the pre-deploy backup of the deploy that changed Prefect')
         refusals.append(f'Prefect would change from {current.get("prefect_version")} to {target["prefect_version"]}; '
-                        'the Prefect server migrates its own database, so restore a backup instead')
+                        f'the Prefect server migrates its own database, so restore {where} instead. It holds both '
+                        'industry_research and prefect; follow the prefect incident procedure in docs/research-backup.md')
     return refusals
 
 
-def latest_boundary(ledger):
-    return next((r['backup'] for r in reversed(ledger) if r.get('contract_boundary') and r.get('backup')), None)
+def first_boundary(records):
+    """The pre-deploy backup of the first deploy in records that crossed a contract migration or changed Prefect.
+    Going back to a version before records needs the state just before that deploy; the latest boundary is too
+    new when several lie in between."""
+    return next((r['backup'] for r in records
+                 if (r.get('contract_boundary') or r.get('prefect_boundary')) and r.get('backup')), None)
 
 
 def run_initialize(compose_fn, tag, *profile):
@@ -671,7 +678,7 @@ def fallback(ledger, failed):
     if previous is None:
         return ('No earlier image deployment to roll back to; return to the pre-ledger images as described in '
                 'docs/research-deployment.md')
-    boundary = failed.get('backup') if failed.get('contract_boundary') else latest_boundary(ledger)
+    boundary = first_boundary([*(r for r in ledger if r['seq'] > previous['seq']), failed])
     refusals = rollback_refusals(previous, failed, failed.get('alembic_after'), [*ledger, failed], boundary)
     if refusals:
         return ('Rollback is refused (' + '; '.join(refusals) + f'). Restore the pre-deploy backup {failed.get("backup")} '
@@ -755,7 +762,7 @@ def deploy(commit, secondary=None, force=False, allow_contract=False, recreate_d
     require_home()
     with deployment_lock():
         refuse_if(guard_problems(), 'deploy')
-        refuse_if(exclusion_conflicts(running_containers(), listening_ports(), [p for p, _ in PORTS.values()]), 'deploy')
+        refuse_if(shared_origin_conflicts(), 'deploy')
         backup_secondary(secondary)
         run(['git', 'fetch', '--quiet', 'origin'], cwd=ROOT)
         commit = resolve_commit(commit)
@@ -788,10 +795,14 @@ def deploy_target(commit, token, secondary=None, force=False, allow_contract=Fal
     refuse_if(refusals, 'deploy')
     secondary, tag = backup_secondary(secondary), commit[:12]
     validate(tag)
+    # The Prefect server migrates its own database on start, so a version change is a rollback boundary too.
+    prefect_boundary = target['prefect_version'] != current.get('prefect_version')
     record = {'kind': 'deploy', 'commit': commit, 'tag': tag, **target, 'alembic_before': db_version,
-              'contract_boundary': bool(added), 'replaced': False, 'rebuilt': False, 'started_at': utc_now()}
+              'contract_boundary': bool(added), 'prefect_boundary': prefect_boundary, 'replaced': False,
+              'rebuilt': False, 'started_at': utc_now()}
     try:
-        record['backup'] = Path(backup(secondary, tag=current['tag'], boundary=added)['backup']).name
+        record['backup'] = Path(backup(secondary, tag=current['tag'], boundary=added,
+                                       prefect_boundary=prefect_boundary)['backup']).name
         tag, built = build_images(commit)
         record.update(images=image_ids(tag), built=built)
         run_initialize(compose, tag)
@@ -838,11 +849,14 @@ def rollback(seq, secondary=None, force=False):
         db_version = alembic_version(running['db']['container'])
         # Each record holds the contract list of its own time; the current rules may know more.
         records = [*ledger, *([commit_info(current['commit'])] if current.get('kind') != 'adopt' else [])]
-        refusals = rollback_refusals(target, current, db_version, records, latest_boundary(ledger))
+        refusals = rollback_refusals(target, current, db_version, records,
+                                     first_boundary(r for r in ledger if r['seq'] > seq))
         busy, unreachable = prefect_busy(running, force)
         if busy:
             refusals.append(f'Prefect has {len(busy)} running flow run(s) ({", ".join(busy[:5])}); wait, or pass --force')
         refusals += [unreachable] if unreachable else []
+        # Before the backup and the checkout; the target script does not check again.
+        refusals += shared_origin_conflicts()
         refuse_if(refusals, 'roll back')
         secondary = backup_secondary(secondary)
         try:
@@ -999,6 +1013,11 @@ def exclusion_conflicts(containers, listening, ports):
     return conflicts
 
 
+def shared_origin_conflicts():
+    """Checked before every action that starts, replaces or rolls back production services, including the scheduler."""
+    return exclusion_conflicts(running_containers(), listening_ports(), [port for port, _ in PORTS.values()])
+
+
 def verify_protected(before):
     after = protected_snapshot()
     if after != before:
@@ -1057,6 +1076,14 @@ BACKUP_ROOT = ROOT / 'backups/research'
 STAMP = re.compile(r'\d{8}T\d{6}Z')
 GIT_REPO = '/home/app/research-git/repository.git'
 ASSET_DIR = '/home/app/research-assets'
+PREFECT_DB = 'prefect'
+# Prefect's observability data: no table points at them and they hold most of the database. Only their rows
+# are left out; the schema stays, so Prefect runs on the restored database (design D1).
+PREFECT_EXCLUDED = ('log', 'events', 'event_resources')
+PREFECT_COUNTED = ('deployment', 'work_pool', 'flow_run')
+PREFECT_STATE = ("SELECT json_build_object('alembic_version', (SELECT version_num FROM public.alembic_version)"
+                 + ''.join(f", '{table}', (SELECT count(*) FROM public.{table})" for table in PREFECT_COUNTED) + ')')
+PREFECT_DUMP_PATH = '/tmp/prefect-backup.dump'
 
 
 def sha256_file(path):
@@ -1084,6 +1111,37 @@ def db_inventory(container, database='industry_research'):
     head = sql("SELECT h.release_id || '|' || h.generation || '|' || r.content_hash || '|' || r.git_commit "
                "FROM research.release_head h JOIN research.research_releases r USING (release_id)")
     return inventory, dict(zip(('release_id', 'generation', 'content_hash', 'git_commit'), head.split('|')))
+
+
+def prefect_state(container):
+    """Prefect's own migration version and its deployment, work pool and flow run counts."""
+    return json.loads(psql(container, PREFECT_STATE, PREFECT_DB))
+
+
+def dump_prefect(container):
+    """The prefect database without its observability rows, and the state the dump holds. Prefect writes every
+    minute, so one psql session exports its snapshot, reads the state in it and has pg_dump import it: the
+    manifest then describes exactly what the dump contains."""
+    command = ['pg_dump', '-U', 'industry', '-d', PREFECT_DB, '-Fc', '--snapshot="$PREFECT_SNAPSHOT"',
+               *[f'--exclude-table-data={table}' for table in PREFECT_EXCLUDED], '-f', PREFECT_DUMP_PATH]
+    script = '\n'.join([
+        'BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;',
+        'SELECT pg_export_snapshot() AS snapshot \\gset',
+        '\\setenv PREFECT_SNAPSHOT :snapshot',
+        PREFECT_STATE + ';',
+        '\\! ' + ' '.join(command),
+        # \! never fails psql by itself; PostgreSQL 16 reports the command's result in SHELL_ERROR.
+        '\\if :SHELL_ERROR',
+        "DO $$BEGIN RAISE EXCEPTION 'pg_dump of the prefect database failed'; END$$;",
+        '\\endif',
+        'COMMIT;', ''])
+    state = run(['docker', 'exec', '-i', container, 'psql', '-X', '-q', '-At', '-v', 'ON_ERROR_STOP=1',
+                 '-U', 'industry', '-d', PREFECT_DB], input=script.encode())
+    try:
+        dump = run(['docker', 'exec', container, 'cat', PREFECT_DUMP_PATH])
+    finally:
+        run(['docker', 'exec', container, 'rm', '-f', PREFECT_DUMP_PATH])
+    return dump, json.loads(state.decode().strip())
 
 
 def remove_folder(folder):
@@ -1139,10 +1197,10 @@ def log_backup(stamp, status, seconds):
         log.write(json.dumps({'stamp': stamp, 'status': status, 'seconds': seconds}) + '\n')
 
 
-def backup(secondary=None, keep_days=30, *, tag, boundary=()):
-    """Daily and pre-deploy backup: DB dump, roles without passwords, managed Git refs, assets and the
-    active release. The caller holds deployments/.lock. A pre-deploy backup that precedes contract
-    migrations (boundary) is the rollback boundary and is never pruned."""
+def backup(secondary=None, keep_days=30, *, tag, boundary=(), prefect_boundary=False):
+    """Daily and pre-deploy backup: DB dump, Prefect's own database, roles without passwords, managed Git refs,
+    assets and the active release. The caller holds deployments/.lock. A pre-deploy backup that precedes contract
+    migrations (boundary) or a Prefect version change is the rollback boundary and is never pruned."""
     before = protected_snapshot()
     started = time.time()
     stamp = time.strftime('%Y%m%dT%H%M%SZ', time.gmtime(started))
@@ -1164,19 +1222,25 @@ def backup(secondary=None, keep_days=30, *, tag, boundary=()):
                 break
         else:
             raise RuntimeError('Database kept changing during backup; retry when writes are idle')
+        # No before/after comparison: the state is read in the dump's own snapshot.
+        prefect_dump, prefect = dump_prefect(db)
+        (folder / 'prefect.dump').write_bytes(prefect_dump)
         (folder / 'roles.sql').write_bytes(compose('exec', '-T', 'db', 'pg_dumpall', '-U', 'industry',
                                                    '--roles-only', '--no-role-passwords', tag=tag))
         tool = ('run', '--rm', '--no-deps', '-T', 'initialize')
         (folder / 'git.bundle').write_bytes(compose(*tool, 'git', '-C', GIT_REPO, 'bundle', 'create', '-', '--all', tag=tag))
         refs = compose(*tool, 'git', '-C', GIT_REPO, 'show-ref', tag=tag).decode().splitlines()
         (folder / 'assets.tar').write_bytes(compose(*tool, 'tar', '-C', ASSET_DIR, '-cf', '-', '.', tag=tag))
-        files = {name: sha256_file(folder / name) for name in ('database.dump', 'roles.sql', 'git.bundle', 'assets.tar')}
+        files = {name: sha256_file(folder / name)
+                 for name in ('database.dump', 'prefect.dump', 'roles.sql', 'git.bundle', 'assets.tar')}
         api = running_services(PROJECT).get('api') or {}
         manifest = {'created_at': stamp, 'duration_seconds': round(time.time() - started, 1), 'files': files,
                     'sizes': {name: (folder / name).stat().st_size for name in files}, 'active_release': head,
                     'tables': inventory, 'git_refs': refs, 'api_image': api.get('image_id'),
                     'api_revision': api.get('revision'), 'alembic_version': alembic_version(db),
-                    'rollback_boundary': bool(boundary), 'contract_revisions': list(boundary),
+                    'prefect': {**prefect, 'excluded_table_data': list(PREFECT_EXCLUDED)},
+                    'rollback_boundary': bool(boundary) or prefect_boundary, 'contract_revisions': list(boundary),
+                    'prefect_boundary': prefect_boundary,
                     'excluded': 'Environment secrets (.env.research) are backed up separately; the DB includes the owner password hash.'}
         (folder / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
         files['manifest.json'] = sha256_file(folder / 'manifest.json')
@@ -1295,9 +1359,9 @@ def main():
     else:
         with production(args.action) as (tag, report):
             before = protected_snapshot()
-            if args.action in ('start', 'reader-start'):
-                refuse_if(exclusion_conflicts(running_containers(), listening_ports(), [p for p, _ in PORTS.values()]),
-                          args.action)
+            # restore is left out on purpose: its source is the running original service's database.
+            if args.action in ('start', 'scheduler-start', 'reader-start'):
+                refuse_if(shared_origin_conflicts(), args.action)
             if args.action == 'start':
                 compose('start', 'api', 'web', tag=tag)
             elif args.action == 'stop':
@@ -1324,7 +1388,8 @@ def main():
                 report['managed_git'] = output.decode().strip()
             elif args.action == 'bootstrap':
                 commit = resolve_commit(args.commit or 'HEAD')
-                archive = run(['git', 'archive', '--format=tar', commit, 'industry-map',
+                # The committed bytes, as for images: the deployment directory's clone converts to CRLF otherwise.
+                archive = run(['git', '-c', 'core.autocrlf=false', 'archive', '--format=tar', commit, 'industry-map',
                                'data/company-research.yaml', 'data/theme-indicators.yaml'], cwd=ROOT)
                 output = compose('run', '--rm', '--no-deps', '-T', 'initialize', 'python', '-m', 'app.research_compile',
                                  '--commit', commit, '--bootstrap', input=archive, tag=tag)
