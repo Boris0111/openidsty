@@ -257,6 +257,17 @@ def restore(backup, baseline=None):
     tool = ('--profile', 'tools', 'run', '--rm', '--no-deps', '-T', 'bootstrap')
     compose(*tool, 'python', '-m', 'app.research_roles', tag=tag)
     timings['database_restored'] = time.time() - started
+    # Backups before 2026-10-30 have no prefect.dump. The drill never starts Prefect, so nothing writes to the
+    # restored database and its check below is stable.
+    prefect_restored = 'prefect.dump' in manifest['files']
+    if prefect_restored:
+        run(['docker', 'exec', db, 'psql', '-U', 'industry', '-d', 'postgres', '-v', 'ON_ERROR_STOP=1',
+             '-c', f'CREATE DATABASE {lab.PREFECT_DB}'])
+        compose('cp', str(folder / 'prefect.dump'), 'db:/tmp/prefect.dump', tag=tag)
+        compose('exec', '-T', 'db', 'pg_restore', '-U', 'industry', '-d', lab.PREFECT_DB, '--exit-on-error',
+                '/tmp/prefect.dump', tag=tag)
+        compose('exec', '-T', 'db', 'rm', '/tmp/prefect.dump', tag=tag)
+        timings['prefect_restored'] = time.time() - started
     compose(*tool, 'sh', '-c', 'cat > /tmp/restore.bundle && '
             f'git clone -q --mirror /tmp/restore.bundle {GIT_REPO} && git -C {GIT_REPO} config --remove-section remote.origin',
             input=(folder / 'git.bundle').read_bytes(), tag=tag)
@@ -283,14 +294,22 @@ def restore(backup, baseline=None):
         'alembic_version_match': manifest.get('alembic_version') in (None, lab.alembic_version(db)),
         'reader_page_status': page,
     }
+    if prefect_restored:
+        expected, restored = manifest['prefect'], lab.prefect_state(db)
+        keys = ('alembic_version', *lab.PREFECT_COUNTED)
+        checks['prefect_differing'] = [f'{key}: backup {expected[key]}, restored {restored.get(key)}'
+                                       for key in keys if restored.get(key) != expected[key]]
+        checks['prefect_match'] = not checks['prefect_differing']
     timings['verified'] = time.time() - started
     verify_protected(protected)
     report = {'backup': folder.name, 'backup_created_at': manifest['created_at'],
               'restored_at': time.strftime('%Y%m%dT%H%M%SZ', time.gmtime(started)),
               'baseline_commit': commit, 'baseline_tag': tag, 'baseline_built': built,
               'rto_seconds': round(timings['verified'], 1), 'timings': {k: round(v, 1) for k, v in timings.items()},
-              'checks': checks, 'worktree_dirty': worktree_dirty(), 'protected_services_unchanged': True,
-              'preview_unchanged': preview_snapshot() == preview}
+              'checks': checks, 'prefect_restored': prefect_restored, 'worktree_dirty': worktree_dirty(),
+              'protected_services_unchanged': True, 'preview_unchanged': preview_snapshot() == preview}
+    if not prefect_restored:
+        report['prefect_note'] = 'This backup predates the prefect dump; only industry_research was restored and checked'
     REPORTS.mkdir(parents=True, exist_ok=True)
     path = REPORTS / ('restore-' + report['restored_at'] + '.json')
     path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding='utf-8')

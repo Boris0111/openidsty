@@ -19,6 +19,7 @@ import research_drill as drill  # noqa: E402
 import research_lab as lab  # noqa: E402
 
 THEMES = 'public.theme_assessment_versions'
+PREFECT = {'alembic_version': 'd4a7e1c93f52', 'deployment': 5, 'work_pool': 1, 'flow_run': 17561}
 
 
 class DrillDir(unittest.TestCase):
@@ -118,12 +119,13 @@ class RestoreTests(DrillDir):
         self.patch(lab, 'build_images', side_effect=lambda commit: self.calls.append(('build', commit)) or (commit[:12], ['api', 'web']))
         self.patch(drill, 'check', side_effect=lambda tag: self.calls.append(('check', tag)) or ['industryflow-research-drill_pg-data'])
         self.patch(drill, 'compose', side_effect=self.compose)
-        self.patch(drill, 'run', side_effect=lambda args, **kw: '' if args[:3] == ['docker', 'volume', 'ls'] else b'')
+        self.patch(drill, 'run', side_effect=self.run_command)
         for name, value in (('protected_snapshot', {}), ('verify_protected', None), ('preview_snapshot', {}),
                             ('worktree_dirty', False)):
             self.patch(drill, name, return_value=value)
         self.patch(drill, 'db_inventory', return_value=({THEMES: '7:abc'}, {'release_id': 'r1'}))
         self.patch(lab, 'alembic_version', return_value='0017')
+        self.prefect_state = self.patch(lab, 'prefect_state', return_value=dict(PREFECT))
         response = mock.MagicMock(status=200)
         response.__enter__.return_value = io.BytesIO(json.dumps({'release_id': 'r1'}).encode())
         self.patch(drill.urllib.request, 'urlopen', return_value=response)
@@ -138,6 +140,59 @@ class RestoreTests(DrillDir):
         if 'sha256sum *' in ' '.join(args):
             return (('a' * 64) + '  ' + 'a' * 64 + '\n').encode()
         return b''
+
+    def run_command(self, args, **kwargs):
+        if args[:3] == ['docker', 'volume', 'ls']:
+            return ''
+        self.calls.append(('run', *args))
+        return b''
+
+    def add_prefect_dump(self):
+        """A backup taken since prefect.dump exists: the file, its digest and the manifest's prefect state."""
+        (self.backup / 'prefect.dump').write_bytes(b'prefect dump')
+        self.manifest['files']['prefect.dump'] = hashlib.sha256(b'prefect dump').hexdigest()
+        self.manifest['prefect'] = {**PREFECT, 'excluded_table_data': ['log', 'events', 'event_resources']}
+        (self.backup / 'manifest.json').write_text(json.dumps(self.manifest), encoding='utf-8')
+
+    def prefect_steps(self):
+        return [c for c in self.calls if 'CREATE DATABASE prefect' in c or 'prefect.dump' in ' '.join(map(str, c))]
+
+    def test_prefect_database_is_restored_and_checked(self):
+        self.add_prefect_dump()
+        report = drill.restore(str(self.backup))
+        create, copy, restore, remove = self.prefect_steps()
+        self.assertEqual(create, ('run', 'docker', 'exec', 'db1', 'psql', '-U', 'industry', '-d', 'postgres',
+                                  '-v', 'ON_ERROR_STOP=1', '-c', 'CREATE DATABASE prefect'))
+        self.assertEqual(copy[2:], ('cp', str(self.backup / 'prefect.dump'), 'db:/tmp/prefect.dump'))
+        self.assertEqual(restore[2:], ('exec', '-T', 'db', 'pg_restore', '-U', 'industry', '-d', 'prefect',
+                                       '--exit-on-error', '/tmp/prefect.dump'))
+        self.assertEqual(remove[2:], ('exec', '-T', 'db', 'rm', '/tmp/prefect.dump'))
+        self.prefect_state.assert_called_once_with('db1')
+        self.assertIs(report['prefect_restored'], True)
+        self.assertEqual((report['checks']['prefect_match'], report['checks']['prefect_differing']), (True, []))
+        self.assertNotIn('prefect_note', report)
+        self.assertIn('prefect_restored', report['timings'])
+        self.assertFalse(any('prefect' in c[2:] for c in self.calls if c[0] == 'compose' and 'up' in c),
+                         'the drill never starts the Prefect server')
+
+    def test_prefect_mismatch_names_each_difference(self):
+        self.add_prefect_dump()
+        self.prefect_state.return_value = {**PREFECT, 'alembic_version': '3c7a8f4e9b12', 'flow_run': 17560}
+        checks = drill.restore(str(self.backup))['checks']
+        self.assertIs(checks['prefect_match'], False)
+        self.assertEqual(checks['prefect_differing'], ['alembic_version: backup d4a7e1c93f52, restored 3c7a8f4e9b12',
+                                                       'flow_run: backup 17561, restored 17560'])
+        [path] = drill.REPORTS.glob('restore-*.json')
+        self.assertIs(json.loads(path.read_text(encoding='utf-8'))['checks']['prefect_match'], False)
+
+    def test_backup_without_prefect_dump_restores_the_research_data_only(self):
+        report = drill.restore(str(self.backup))
+        self.assertEqual(self.prefect_steps(), [], 'no prefect database is created')
+        self.prefect_state.assert_not_called()
+        self.assertIs(report['prefect_restored'], False)
+        self.assertIn('predates the prefect dump', report['prefect_note'])
+        self.assertNotIn('prefect_match', report['checks'])
+        self.assertTrue(all(value for key, value in report['checks'].items() if key.endswith('_match')), report['checks'])
 
     def test_baseline_image_restores_the_backup(self):
         report = drill.restore(str(self.backup))

@@ -39,6 +39,20 @@ class NoBuildTests(unittest.TestCase):
                     owners.add(function.name)
         self.assertEqual(owners, {'build_images'})
 
+    def test_every_git_archive_takes_the_committed_bytes(self):
+        """A clone with core.autocrlf=true would otherwise put CRLF into images and compiled research content."""
+        archives = []
+        for path in sorted((ROOT / 'scripts').glob('*.py')):
+            for node in ast.walk(ast.parse(path.read_text(encoding='utf-8'))):
+                words = [getattr(e, 'value', None) for e in node.elts] if isinstance(node, ast.List) else []
+                if words[:1] == ['git'] and 'archive' in words:
+                    archives.append((path.name, ast.unparse(node)))
+                    before = words[:words.index('archive')]
+                    pairs = list(zip(before, before[1:]))
+                    self.assertIn(('-c', 'core.autocrlf=false'), pairs, f'{path.name}: {ast.unparse(node)}')
+        self.assertGreaterEqual({name for name, _ in archives}, {'research_lab.py', 'research_drill.py'})
+        self.assertEqual(sum(name == 'research_lab.py' for name, _ in archives), 2, 'build_images and bootstrap')
+
 
 class GuardedActionTests(unittest.TestCase):
     def setUp(self):
@@ -69,13 +83,65 @@ class GuardedActionTests(unittest.TestCase):
         build.assert_not_called()
 
     def test_scheduler_start_registers_deployments_between_prefect_and_worker(self):
-        for name, value in (('guard_problems', []), ('validate', {}), ('protected_snapshot', {}), ('verify_protected', None)):
+        for name, value in (('guard_problems', []), ('validate', {}), ('protected_snapshot', {}), ('verify_protected', None),
+                            ('running_containers', {}), ('listening_ports', set())):
             mock.patch.object(lab, name, return_value=value).start()
         main('scheduler-start')
         self.assertEqual([call.args for call in self.compose.call_args_list], [
             ('--profile', 'scheduler', 'up', '-d', '--no-deps', '--wait', 'prefect'),
             ('--profile', 'scheduler', 'run', '--rm', '--no-deps', 'deploy'),
             ('--profile', 'scheduler', 'up', '-d', '--no-deps', '--wait', 'worker')])
+
+    def test_scheduler_start_refuses_while_the_original_service_runs(self):
+        for name, value in (('guard_problems', []), ('validate', {}), ('protected_snapshot', {}), ('verify_protected', None)):
+            mock.patch.object(lab, name, return_value=value).start()
+        containers = mock.patch.object(lab, 'running_containers').start()
+        listening = mock.patch.object(lab, 'listening_ports').start()
+        for running, ports, pattern in (
+                ({'industryflow-worker-1': ('industryflow', set()), 'industryflow-prefect-1': ('industryflow', {4201}),
+                  'industryflow-research-web-1': ('industryflow-research', {3010})}, {3010, 4201},
+                 'Original service still running: industryflow-prefect-1, industryflow-worker-1\n'
+                 '- Port 4201 occupied by industryflow-prefect-1'),
+                ({}, {4201}, 'Port 4201 occupied by a non-Docker process')):
+            containers.return_value, listening.return_value = running, ports
+            with self.subTest(pattern=pattern), self.assertRaisesRegex(lab.Refused, 'Refusing to scheduler-start:\n- ' + pattern):
+                main('scheduler-start')
+        self.compose.assert_not_called()
+
+    def test_restore_from_the_original_service_is_not_excluded(self):
+        # Its source is the running original database; it starts only the db, which publishes no port.
+        for name, value in (('guard_problems', []), ('validate', {}), ('protected_snapshot', {}), ('verify_protected', None)):
+            mock.patch.object(lab, name, return_value=value).start()
+        conflicts = mock.patch.object(lab, 'shared_origin_conflicts', return_value=['Original service still running']).start()
+        mock.patch.object(lab, 'restore', return_value={'tables': {'public.segments': '12:abc'}}).start()
+        self.assertEqual(main('restore')['restored_tables'], {'public.segments': 12})
+        conflicts.assert_not_called()
+
+
+class BootstrapTests(unittest.TestCase):
+    def setUp(self):
+        self.root = deployment_dir(self)
+        lab.append_record(deploy_record())
+        for name, value in (('guard_problems', []), ('validate', {}), ('protected_snapshot', {}), ('verify_protected', None)):
+            mock.patch.object(lab, name, return_value=value).start()
+        self.commands = []
+        mock.patch.object(lab, 'run', side_effect=self.fake_run).start()
+        self.compose = mock.patch.object(lab, 'compose', return_value=json.dumps({'release_id': 'r1'}).encode()).start()
+        self.addCleanup(mock.patch.stopall)
+
+    def fake_run(self, args, **kwargs):
+        self.commands.append(args)
+        if args[:2] == ['git', 'rev-parse']:
+            return OLD + '\n'
+        return b'committed tar' if 'archive' in args else b''
+
+    def test_research_content_comes_from_the_committed_bytes(self):
+        report = main('bootstrap', '--commit', OLD[:7])
+        self.assertIn(['git', '-c', 'core.autocrlf=false', 'archive', '--format=tar', OLD, 'industry-map',
+                       'data/company-research.yaml', 'data/theme-indicators.yaml'], self.commands)
+        self.assertEqual(self.compose.call_args.kwargs['input'], b'committed tar')
+        self.assertIn(['git', 'update-ref', 'refs/research/releases/r1', OLD], self.commands)
+        self.assertEqual(report['result'], {'release_id': 'r1'})
 
 
 class PublicSnapshotTests(unittest.TestCase):

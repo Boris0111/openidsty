@@ -23,6 +23,7 @@ class RollbackHarness(unittest.TestCase):
         self.previous = lab.append_record(deploy_record(OLD))
         self.current = lab.append_record(deploy_record(NEW, chain=[*CHAIN, '0018']))
         self.calls, self.running, self.busy = [], services(self.current), []
+        self.containers, self.listening = {}, set()
         self.head, self.built, self.smoke = NEW, [], (True, SMOKE_OK)
         self.infos = {OLD: target_info(OLD), NEW: target_info(NEW, chain=[*CHAIN, '0018'])}
         self.child_code, self.child_records = 0, True
@@ -36,7 +37,8 @@ class RollbackHarness(unittest.TestCase):
                  'image_ids': lambda tag: {'api': 'sha256:api-' + tag[:4], 'web': 'sha256:web-' + tag[:4]},
                  'compose': self.compose, 'run': self.fake_run, 'git_head': lambda: self.head,
                  'smoke_checks': lambda *a, **kw: self.log('smoke', a[3], a[4]) or self.smoke,
-                 'wait_for_idle': lambda: self.log('wait') or []}
+                 'wait_for_idle': lambda: self.log('wait') or [],
+                 'running_containers': lambda: self.containers, 'listening_ports': lambda: self.listening}
         for name, fake in fakes.items():
             patcher = mock.patch.object(lab, name, side_effect=fake)
             patcher.start()
@@ -125,6 +127,32 @@ class RefusalTests(RollbackHarness):
         lab.append_record(self.current)
         self.assert_refused(1, 'Prefect would change from 3.8.8 to 3.8.7')
 
+    def test_prefect_refusal_points_to_the_boundary_backup(self):
+        lab.LEDGER.unlink()
+        lab.append_record(deploy_record(OLD, prefect='3.8.7'))
+        lab.append_record(deploy_record(NEW, chain=[*CHAIN, '0018'], prefect_boundary=True, backup='20261029T020000Z'))
+        self.assert_refused(1, 'Prefect would change from 3.8.8 to 3.8.7; .*restore the rollback-boundary backup '
+                               '20261029T020000Z instead. It holds both industry_research and prefect; .*'
+                               'docs/research-backup.md')
+
+    def test_first_boundary_after_the_target_is_named(self):
+        # A contract deploy, then a Prefect upgrade: only the backup before the contract deploy still has both the
+        # target's schema and its Prefect version. The latest boundary would already include 0018.
+        middle = 'c' * 40
+        lab.LEDGER.unlink()
+        lab.append_record(deploy_record(OLD, prefect='3.8.7'))
+        lab.append_record(deploy_record(middle, chain=[*CHAIN, '0018'], contracts=('0009', '0017', '0018'),
+                                        prefect='3.8.7', contract_boundary=True, backup='20261020T000000Z'))
+        lab.append_record(deploy_record(NEW, chain=[*CHAIN, '0018'], contracts=('0009', '0017', '0018'),
+                                        prefect_boundary=True, backup='20261025T000000Z'))
+        with self.assertRaises(lab.Refused) as caught:
+            lab.rollback(1)
+        message = str(caught.exception)
+        self.assertEqual(message.count('restore the rollback-boundary backup 20261020T000000Z'), 2, message)
+        self.assertNotIn('20261025T000000Z', message)
+        self.assertEqual(self.names(), [])
+        self.assertEqual(lab.first_boundary(r for r in lab.read_ledger() if r['seq'] > 2), '20261025T000000Z')
+
     def test_busy_prefect(self):
         self.running = services(self.current, scheduler=True)
         self.busy = ['publish-run']
@@ -136,6 +164,24 @@ class RefusalTests(RollbackHarness):
         self.assert_refused(1, 'cannot tell whether a data update is running.*pass --force')
         lab.rollback(1, force=True)
         self.assertIn('--force', next(c for c in self.calls if c[0] == 'child')[1])
+
+    def test_original_service_running(self):
+        self.containers = {'industryflow-worker-1': ('industryflow', set()),
+                           'industryflow-prefect-1': ('industryflow', {4201}),
+                           'industryflow-research-api-1': ('industryflow-research', {8010})}
+        self.listening = {4201, 8010}
+        self.assert_refused(1, 'Original service still running: industryflow-prefect-1, industryflow-worker-1\n'
+                               '- Port 4201 occupied by industryflow-prefect-1')
+
+    def test_port_held_by_another_program(self):
+        self.listening = {3010}
+        self.assert_refused(1, 'Port 3010 occupied by a non-Docker process')
+
+    def test_exclusion_is_listed_with_the_other_refusals(self):
+        self.running = services(self.current, scheduler=True)
+        self.busy = ['publish-run']
+        self.containers = {'industryflow-web-1': ('industryflow', set())}
+        self.assert_refused(1, r'running flow run\(s\) \(publish-run\).*\n- Original service still running: industryflow-web-1')
 
     def test_disagreeing_chains(self):
         lab.LEDGER.unlink()
