@@ -154,7 +154,7 @@ close-research-backup-and-exclusion-gaps task 5，從該 change 的 worktree 執
 | 還原 | 從空的演練環境 `restore`：表、release、API 提供的 release、Git refs、資產、遷移版本全部相符，`/next` 200；`prefect_restored: true`、`prefect_match: true`。RTO 77.3 秒，其中建立並還原 `prefect` 約 15 秒（16.5 → 31.4 秒） |
 | 還原後的 `prefect` | 76 MB；`log`、`events`、`event_resources` 保留 schema、0 筆；`task_run` 150 筆、`flow_run_state` 62,111 筆完整 |
 | 正式服務 | 指紋（含原服務共 20 個容器的 ID、image、狀態、啟動時間與 restart 次數；20 個 image tag；資料庫清單；8 個 volume）在傾印、`down`、`restore` 之後都不變。傾印檔已從正式 db 容器的 `/tmp` 刪除 |
-| 測試 | 本機：root unittest 264 個、地圖驗證器與其測試全部通過。CI：GitHub Actions 因帳號付款問題沒有啟動（run `40974330708`），恢復後補記 |
+| 測試 | 本機：root unittest 264 個、地圖驗證器與其測試全部通過。CI：run `40975089932`（attempt 2，提交 `2770036`）全綠；第一次因 GitHub 帳號付款問題沒有啟動，2026-11-01 重跑 |
 
 **大小與耗時**：遠低於 design 設定的 30 MiB 評估門檻，每日備份多約 4 秒；主副本與 D 槽各保留 30 天約 0.4 GB。Prefect 的保留期限（`events` 與 `event_resources` 的成長）不影響這個傾印，仍另行決定。
 

@@ -47,8 +47,9 @@
 
 開始前記錄正式服務的指紋（容器、image、資料庫清單、volume），每一步完成後都核對一次，必須全部不變。
 
-- [ ] 5.1 root unittest 全數通過，CI 全綠。驗證：run 編號記在本 task。
-  - 2026-10-30：本機 root unittest 264 個、`validate_map.py`、`run_validator_tests.py` 全部通過。CI run `40974330708` 沒有啟動：GitHub Actions 回報帳號付款失敗或 spending limit 不足。恢復後重跑，把 run 編號記在這裡再勾選。
+- [x] 5.1 root unittest 全數通過，CI 全綠。驗證：run 編號記在本 task。
+  - 2026-10-30：本機 root unittest 264 個、`validate_map.py`、`run_validator_tests.py` 全部通過。CI run `40974330708` 沒有啟動：GitHub Actions 回報帳號付款失敗或 spending limit 不足。
+  - 2026-11-01：付款問題解決後重跑，CI run `40975089932`（attempt 2，提交 `2770036`）全綠，4 分 46 秒。
 - [x] 5.2 以真實資料驗證 `prefect` 的傾印與還原：
   - 複製最新一份正式備份到暫存資料夾。
   - 以 1.1 的相同參數，從正式 `prefect` 資料庫唯讀傾印一份 `prefect.dump`；這與每日備份讀取的內容相同。
@@ -59,7 +60,7 @@
   - 研究資料核對全部相符，`prefect_restored: true`，遷移版本與三項筆數相符。
   - 記下 `prefect.dump` 的大小與傾印耗時。
   - 正式服務指紋不變。
-- [ ] 5.3 把 5.1–5.2 的結果記入 `docs/research-backup.md`（傾印大小、耗時、還原核對）。驗證：文件數字與 `.work/research-drill/` 的報告一致。
+- [x] 5.3 把 5.1–5.2 的結果記入 `docs/research-backup.md`（傾印大小、耗時、還原核對）。驗證：文件數字與 `.work/research-drill/` 的報告一致。
 
 ## Workflow follow-up
 
