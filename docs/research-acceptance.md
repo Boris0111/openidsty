@@ -467,3 +467,21 @@ change `harden-research-operations`（tasks 1.4、4.1）。PR #3 先於演練合
 - 回到切換前的程式時，依 [部署與回退](research-deployment.md)「回到 pre-ledger image」，`pre-ledger` image 都保留著。
 - 開發 checkout 建立、已停止的一次性容器（`deploy-1`、`initialize-1`、`reader-1`）仍在，沒有運行，部署不會動它們。讀者入口目前未啟動；之後 `reader-start` 會使用部署紀錄中的 image。
 - initialize 照例把 `public.sources` 的 `url` 與 `data.registry_url` 寫回 `sources.yaml` 的形式，下一次每小時更新再寫回抓取用網址（與演練相同，見「演練紀錄」）。
+
+## 十四、2026-11-01 備份納入 `prefect` 的部署與核對（close-research-backup-and-exclusion-gaps）
+
+PR #12 merge 為 `01de3e0`（12:36 UTC）後，依 [部署與回退](research-deployment.md) 從部署目錄部署，再依該 change 的 merge 後步驟核對每日備份與演練還原。這次沒有遷移，Prefect 仍是 3.8.8。
+
+| 步驟（UTC） | 結果 |
+|---|---|
+| 部署前狀況 | 電腦在 05:43 開機後沒有啟動 Docker Desktop，正式服務與排程停到 12:39（約 7 小時）。12:38 啟動 Docker Desktop，12:39 引擎就緒；db、api、web、prefect、worker 依 `unless-stopped` 自動回來，原服務維持停止，演練容器沒有重啟策略所以沒起來。`status` 沒有不一致（seq 2、`e21c4fd`、遷移 `0017`），`main` 的 CI（run `41307274147`）全綠 |
+| 部署（12:43:33–12:45:48） | `deploy --commit 01de3e0`，部署紀錄第 3 筆 `succeeded`，`contract_boundary`、`prefect_boundary` 都是 false。部署前備份 `20261101T124333Z`（53.5 秒）由目標版本的腳本產生，已含 `prefect.dump`（10.0 MiB，flow runs 17,665）。smoke 六項全過（release `a5df290c…`、遷移 `0017`）；api、web、prefect、worker 換成 revision `01de3e0` 的新容器，db 容器不變。部署目錄 HEAD 為 `01de3e0`，working tree 乾淨 |
+| 每日備份（12:46） | `Start-ScheduledTask` 觸發，`LastTaskResult 0`，備份 `20261101T124643Z`（54.6 秒）。`prefect.dump` 10,441,954 bytes（10.0 MiB）；manifest 的 `prefect`：遷移 `d4a7e1c93f52`、deployments 5、work pools 1、flow runs 17,667；`api_revision` 為 `01de3e0`。主副本與 D: 副本 6 個檔案的 SHA-256 全部相符，兩邊 manifest 相同 |
+| 演練還原（12:48） | `down` 後從空的演練環境 `restore --backup latest`：選到 `20261101T124643Z`，以 `01de3e0` 為基準 image（重用正式 image）。全表、release、API 提供的 release、Git refs、資產與遷移版本全部相符，`/next` 200；`prefect_restored: true`、`prefect_match: true`。RTO 95.2 秒，其中 `prefect` 還原 27.4 秒。正式服務指紋（20 個容器、22 個 image tag、資料庫清單、8 個 volume）在 `down` 與 `restore` 後都不變 |
+| 排程 | 部署後每分鐘的兩個 reconciliation 照常完成。停機前預先排好、在停機期間到期的 123 個 Late run（hourly 3、publication-reconciliation 59、source-reconciliation 60）由 worker 從最舊的開始逐一補跑，12:50 剩 102 個，13:38 清空。13:07 的 `official-information/hourly` 因此排在後面，13:23 才執行（2 秒完成）；06:07 那輪在 12:52 執行（37 秒），07:07、08:07 兩輪在 13:11 各 1 秒完成（推論：12:52 剛抓過，來源未到下次更新時間）。部署到 13:38 之間完成 216 個 run，沒有失敗。不像切換時有卡住的 run 占住槽位，這次不需要清理 |
+
+**附註**：
+
+- **Docker Desktop 不會在登入時啟動**：Windows「啟動應用程式」中的 Docker Desktop 被停用（`StartupApproved` 為停用），Docker Desktop 的 `AutoStart` 也是 false。所以「重開機後排程自動恢復」目前要等手動開啟 Docker Desktop 才成立，這次因此停機約 7 小時。是否改為登入時啟動由 Boris 決定。
+- **`prefect.dump` 的成長**：10-30 演練時為 6.4 MiB（flow runs 10,984），這次為 10.0 MiB（17,667）。兩個每分鐘排程每天約新增 2,900 筆 flow run，以這個速度推估約 2 週後會超過 design 設定的 30 MiB 評估門檻（推論，實際取決於主機運行的時間）。Prefect 保留期限的決定因此變得較急，見 change 的 Open Questions。
+- 演練報告在 change worktree 的 `.work/research-drill/restore-20261101T124829Z.json`。
