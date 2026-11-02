@@ -17,7 +17,7 @@
 
 ## 1. 量測工具
 
-- [ ] 1.1 `scripts/research_draft_bench.py` 的預覽量測改為多次（design D8）：
+- [x] 1.1 （2026-11-02：`--help` 可執行；root `tests/test_research_draft_bench.py` 10 項通過，新增 4 項：timing log 解析與中位數、沒有 log 時為 `null`、20 次輪流的頁面清單、`measure()` 報告的 `draft_id`／預覽統計／圖解分開計。原本只供單次預覽選頁的 `preview_entity()` 與 `validations_since()` 已無呼叫端，一併移除）`scripts/research_draft_bench.py` 的預覽量測改為多次（design D8）：
   - 驗證一次後，依固定清單輪流預覽 20 次（`--previews`，預設 20），記錄 p50、p95 與最大值。
   - 從演練 API 容器的 log 擷取 `draft-preview timing`，算出各段的中位數。修正前的程式沒有這行 log，報告記為 `null`，不算失敗。
   - 報告寫出 `draft_id`，給 1.2 的腳本使用。
@@ -26,7 +26,7 @@
   驗證：
   - `python scripts/research_draft_bench.py --help` 可以執行。
   - root `tests/test_research_draft_bench.py` 新增案例並通過：預覽的統計欄位、log 行的解析（含沒有 log 的情況）、`draft_id` 欄位。
-- [ ] 1.2 新增 `scripts/research_editor_latency.cjs`（design D7）：
+- [x] 1.2 （2026-11-02：`--help` 可執行；`npm run test:unit` 23 項通過，含新增的 `editor-latency.node.cjs` 7 項。另加 `--interval`（預設 150 ms）、`--timeout`（預設 180 秒）、`--env-file`。trace 摘要以 self time 分類，`other` 另列前幾名事件名稱，讓拼字檢查這類不屬於前四類的成本看得到）新增 `scripts/research_editor_latency.cjs`（design D7）：
   - 參數：`--draft`、`--path`、`--mode raw|form`、`--keys`（預設 30）、`--label`、`--trace`、`--origin`（預設 `http://127.0.0.1:3016`）。
   - owner 密碼從 `INDUSTRYFLOW_DRILL_HOME` 的演練 env 檔讀取，不印出，也不寫入報告。
   - 延遲取 Event Timing 中同一個 `interactionId` 的最大 `duration`；每個按鍵最多等 180 秒，逾時記為失敗並繼續。

@@ -8,9 +8,12 @@ scaled: create a draft, then import research_scale.build_tree() (300 companies, 
         same import endpoint the CLI uses. A rejected create/import is recorded and the remaining steps continue.
 
 Each run measures 30 company-document saves, 30 relation-manifest saves (scaled only), first and repeated
-validation, the diff against the base and one preview including every diagram it references. The API
-container's memory peak is sampled with docker stats. Writes .work/research-draft-bench/<label>.json.
-Drafts are never published; the readers' release does not change.
+validation, the diff against the base and --previews reading previews (default 20) that rotate through a fixed
+list of pages. Diagram requests of a previewed page are recorded separately, not in the preview time. The API's
+`draft-preview timing` log lines (builds that write them) give the per-stage medians; older builds report null.
+The API container's memory peak is sampled with docker stats. Writes .work/research-draft-bench/<label>.json,
+including draft_id, which scripts/research_editor_latency.cjs opens. Drafts are never published; the readers'
+release does not change.
 """
 import argparse
 from concurrent.futures import ThreadPoolExecutor
@@ -30,6 +33,13 @@ API_CONTAINER = 'industryflow-research-drill-api-1'
 COMPANY = 'industry-map/companies/company-auras.md'
 RELATIONS = 'industry-map/research-relations.yaml'
 VALIDATION_LOG = 'draft-validation computed'
+TIMING_LOG = 'draft-preview timing'
+TIMING_FIELDS = ('project_ms', 'flush_ms', 'detail_ms', 'graph_ms')
+# Pages previewed in turn: a concept with diagrams, a company, segments and themes; the scaled tree adds
+# synthetic companies whose relations exist only there.
+PREVIEW_PAGES = ['concept-hbm-stack', 'company-auras', 'segment-thermal', 'segment-pcb', 'theme-liquid-cooling',
+                 'segment-compute', 'theme-hbm4']
+SCALED_PAGES = ['company-synth-001', 'company-synth-150']
 
 
 def percentile(values, q):
@@ -82,11 +92,41 @@ class MemoryPeak:
         self.thread.join(timeout=30)
 
 
-def validations_since(started):
-    """Count full validations the API logged since `started` (only builds that log them)."""
+def api_log_since(started):
+    """The drill API's log since `started`, or None when docker cannot read it."""
     result = subprocess.run(['docker', 'logs', '--since', started, API_CONTAINER], capture_output=True, text=True,
                             encoding='utf-8', errors='replace')
-    return (result.stdout + result.stderr).count(VALIDATION_LOG) if result.returncode == 0 else None
+    return result.stdout + result.stderr if result.returncode == 0 else None
+
+
+def preview_timings(log, draft_id):
+    """The numeric fields of every `draft-preview timing` line for this draft, in log order."""
+    rows = []
+    for line in (log or '').splitlines():
+        if TIMING_LOG not in line or f'draft={draft_id}' not in line:
+            continue
+        fields = dict(re.findall(r'(\w+)=([0-9.]+)', line.split(TIMING_LOG, 1)[1]))
+        rows.append({key: float(fields[key]) for key in TIMING_FIELDS if key in fields})
+    return rows
+
+
+def timing_medians(rows):
+    """Median of each stage over the logged previews; None when the build logs no timing (before the change)."""
+    if not rows:
+        return None
+    medians = {}
+    for key in TIMING_FIELDS:
+        values = sorted(row[key] for row in rows if key in row)
+        if values:
+            middle = len(values) // 2
+            medians[key] = values[middle] if len(values) % 2 else round((values[middle - 1] + values[middle]) / 2, 1)
+    return medians
+
+
+def preview_pages(dataset, count):
+    """`count` previews rotating through the fixed page list."""
+    pages = PREVIEW_PAGES + (SCALED_PAGES if dataset == 'scaled' else [])
+    return [pages[index % len(pages)] for index in range(count)]
 
 
 def timed(owner, method, path, data=None, headers=None):
@@ -109,17 +149,7 @@ def scaled_files(exported):
     return files
 
 
-def preview_entity(files):
-    """A company or concept page that references at least one diagram, so asset requests are measured."""
-    for path, content in sorted(files.items()):
-        if path.endswith('.md') and re.search(r'^diagram-assets:[ \t]*(\[[ \t]*[\w-]|\n[ \t]*-[ \t]*[\w-])', content, re.M):
-            found = re.search(r'^entity-id:\s*(\S+)', content, re.M)
-            if found:
-                return found[1]
-    return 'company-auras'
-
-
-def measure(owner, dataset, saves):
+def measure(owner, dataset, saves, previews=20):
     report = {'dataset': dataset, 'steps': {}}
     steps = report['steps']
     sample, created = timed(owner, 'POST', '/api/admin/drafts', {})
@@ -127,6 +157,7 @@ def measure(owner, dataset, saves):
     if sample['status'] != 201:
         return report
     draft = created['draft_id']
+    report['draft_id'] = draft
     url = '/api/admin/drafts/' + draft
     revision = created['revision']
     sample, exported = timed(owner, 'GET', url + '/export')
@@ -173,17 +204,20 @@ def measure(owner, dataset, saves):
     sample, _ = timed(owner, 'GET', url + '/diff')
     steps['diff'] = summarize([sample])
 
-    entity = preview_entity(files)
     started_log = time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
-    began = time.perf_counter()
-    sample, preview = timed(owner, 'GET', f'{url}/preview?entity_id={entity}&revision={revision}')
-    assets = [asset['url'] for asset in preview.get('data', {}).get('assets', [])] if sample['status'] == 200 else []
-    with ThreadPoolExecutor(max_workers=6) as pool:  # browsers fetch a page's images in parallel
-        asset_samples = list(pool.map(lambda path: timed(owner, 'GET', path)[0], assets))
-    steps['preview'] = summarize([sample])
-    steps['preview_assets'] = summarize(asset_samples)
-    steps['preview_total'] = {'ms': round((time.perf_counter() - began) * 1000, 1), 'entity': entity, 'assets': len(assets),
-                              'validations_logged': validations_since(started_log)}
+    samples, asset_samples, pages = [], [], preview_pages(dataset, previews)
+    for entity in pages:
+        sample, preview = timed(owner, 'GET', f'{url}/preview?entity_id={entity}&revision={revision}')
+        samples.append({**sample, 'entity': entity})
+        assets = [asset['url'] for asset in preview.get('data', {}).get('assets', [])] if sample['status'] == 200 else []
+        with ThreadPoolExecutor(max_workers=6) as pool:  # browsers fetch a page's images in parallel
+            asset_samples += list(pool.map(lambda path: timed(owner, 'GET', path)[0], assets))
+    steps['preview'] = {**summarize(samples), 'pages': pages}
+    steps['preview_assets'] = summarize(asset_samples)  # diagrams are not part of the preview time
+    log = api_log_since(started_log)
+    rows = preview_timings(log, draft)
+    report['preview_timing'] = {'lines': None if log is None else len(rows), 'medians_ms': timing_medians(rows)}
+    report['preview_validations_logged'] = None if log is None else log.count(VALIDATION_LOG)
     return report
 
 
@@ -207,6 +241,7 @@ def main(argv=None):
     parser.add_argument('--label', required=True, help='report name, e.g. before-real')
     parser.add_argument('--dataset', choices=['real', 'scaled'], default='real')
     parser.add_argument('--saves', type=int, default=30)
+    parser.add_argument('--previews', type=int, default=20, help='reading previews after validation (default 20)')
     parser.add_argument('--env-file', type=Path, default=default_env_file(),
                         help='drill secrets; default from INDUSTRYFLOW_DRILL_HOME, shared by every checkout and worktree')
     args = parser.parse_args(argv)
@@ -219,7 +254,7 @@ def main(argv=None):
     owner.login(drill_password(args.env_file))
     try:
         with MemoryPeak() as memory:
-            report = measure(owner, args.dataset, args.saves)
+            report = measure(owner, args.dataset, args.saves, args.previews)
     finally:
         owner.call('DELETE', '/api/admin/session')
     report.update(label=args.label, commit=commit, api_image=image, measured_at=time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),
