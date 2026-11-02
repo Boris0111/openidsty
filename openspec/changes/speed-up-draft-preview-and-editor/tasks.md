@@ -40,14 +40,14 @@
 
 ## 2. 修正前的基準（演練環境）
 
-- [ ] 2.1 量出修正前的預覽基準：
+- [x] 2.1 （2026-11-02：備份 `20261101T193004Z`、基準 `01de3e0`，還原核對全部相符，RTO 66.7 秒。`before-real` 預覽 20／20 成功，p50 2,636、p95 2,819、最大 2,869 ms；`before-scaled` 20／20，p50 9,159、p95 9,854、最大 10,320 ms。正式服務指紋在 down、restore、owner、量測後都與開始時相同）量出修正前的預覽基準：
   - `research_drill.py down`，再 `restore --backup latest`。演練此時執行的是備份的基準 image，也就是 `main` 的程式。
   - 以 1.1 的工具量 `before-real` 與 `before-scaled`；擴大資料以 import 匯入，與上一輪相同。
 
   驗證：
   - 兩份報告都存在，各含 20 次預覽的 p50、p95 與最大值。
   - 正式服務的指紋不變。
-- [ ] 2.2 量出修正前的輸入延遲，並查清 108 秒的成因：
+- [x] 2.2 （2026-11-02：三組都沒有逾時、30 字都打進文字框。`before-real-company` p95 24、最大 32 ms；`before-real-relations`（49,473 字）p95 24、最大 32 ms；`before-scaled-relations`（972,942 字）p95 168、最大 168 ms。**108 秒沒有重現**，修正前就已符合 spec 的延遲目標。trace：60 個長工作合計 3,902 ms，paint 41%、其他（原生文字編輯與選取同步）26%、style／layout 25%、script 8%、GC 0，沒有拼字檢查事件。主因是 Chromium 處理百萬字文字框，不在 D6 主要範圍內，已告知 Boris，group 4 等他決定。量測中修正了 latency 腳本的 trace 分類，並加上「輸入後增加的字數」核對）量出修正前的輸入延遲，並查清 108 秒的成因：
   - 量三組：
     - `before-real-company`：真實資料的 `company-auras.md`，表單模式。
     - `before-real-relations`：真實資料的 `research-relations.yaml`，原始文字模式。

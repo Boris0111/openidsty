@@ -111,8 +111,10 @@ function summarize(keys, timeoutMs) {
 const CATEGORIES = [
   ['gc', name => /^(MinorGC|MajorGC|V8\.GC|BlinkGC\.|CppGC|GCEvent|ThreadState::)/.test(name)],
   ['script', name => /^(FunctionCall|EvaluateScript|TimerFire|FireAnimationFrame|FireIdleCallback|RunMicrotasks|XHRReadyStateChange|v8\.|V8\.Execute|V8\.Compile|V8\.ScriptCompiler)/.test(name)],
-  ['style_layout', name => /^(UpdateLayoutTree|RecalculateStyles|Layout|UpdateLayerTree|HitTest|ScheduleStyleRecalculation|InvalidateLayout|LayoutShift)$/.test(name)],
-  ['paint', name => /^(Paint|PaintImage|PrePaint|Layerize|CompositeLayers|Commit|RasterTask|UpdateLayer|PaintSetup|Decode Image)$/.test(name)],
+  ['style_layout', name => /^(UpdateLayoutTree|RecalculateStyles|Layout|UpdateLayerTree|HitTest|ScheduleStyleRecalculation|InvalidateLayout|LayoutShift)$/.test(name)
+    || /^(LocalFrameView::(performLayout|UpdateStyleAndLayout)|Blink\.(Style|Layout)\.)/.test(name)],
+  ['paint', name => /^(Paint|PaintImage|PrePaint|Layerize|CompositeLayers|Commit|RasterTask|UpdateLayer|PaintSetup|Decode Image)$/.test(name)
+    || /^(Blink\.(PrePaint|Paint|CompositingInputs|Compositing\w*)\.|PaintArtifactCompositor::|PaintController::)/.test(name)],
 ];
 
 function category(name) {
@@ -280,7 +282,9 @@ async function measure(args) {
     const entries = (await within(page.evaluate(() => window.__latency), args.timeout)).value || [];
     const latencies = keyLatencies(starts, entries);
     keys.forEach((key, index) => { key.latency_ms = latencies[index] ?? null; });
-    return {chars, keys, trace, errors, chromium: browser.version()};
+    // Every pressed key must have reached the text box, or the latencies measured something else.
+    const after = (await within(box.evaluate(element => element.value.length), args.timeout)).value ?? null;
+    return {chars, inserted: after === null ? null : after - chars, keys, trace, errors, chromium: browser.version()};
   } finally {
     await browser.close();
   }
@@ -293,7 +297,7 @@ async function main(argv = process.argv.slice(2)) {
   const measured = await measure(args);
   const report = {
     label: args.label, draft_id: args.draft, path: args.path, mode: args.mode, chars: measured.chars,
-    keys_typed: args.keys, interval_ms: args.interval, timeout_ms: args.timeout,
+    keys_typed: args.keys, characters_inserted: measured.inserted, interval_ms: args.interval, timeout_ms: args.timeout,
     latency: summarize(measured.keys, args.timeout), keys: measured.keys,
     method: 'Event Timing: longest entry duration per interaction (key press to next frame); entries under 16 ms are not reported and count as 16',
     trace: measured.trace, page_errors: measured.errors,
@@ -306,7 +310,7 @@ async function main(argv = process.argv.slice(2)) {
   fs.mkdirSync(REPORTS, {recursive: true});
   fs.writeFileSync(path.join(REPORTS, args.label + '.json'), JSON.stringify(report, null, 2));
   const {values, ...stats} = report.latency;
-  console.log(JSON.stringify({label: report.label, chars: report.chars, ...stats, trace: report.trace && {long_tasks: report.trace.long_tasks, total_ms: report.trace.total_ms, by_category_ms: report.trace.by_category_ms}}, null, 2));
+  console.log(JSON.stringify({label: report.label, chars: report.chars, inserted: report.characters_inserted, ...stats, trace: report.trace && {long_tasks: report.trace.long_tasks, total_ms: report.trace.total_ms, by_category_ms: report.trace.by_category_ms}}, null, 2));
 }
 
 module.exports = {percentile, keyLatencies, summarize, traceSummary, category, completeEvents, parseArgs, drillPassword, envFile, THRESHOLD};

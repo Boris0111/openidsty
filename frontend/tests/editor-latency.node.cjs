@@ -48,7 +48,13 @@ test('trace events fall into script, style/layout, paint, GC and other',()=>{
   assert.equal(latency.category('v8.callFunction'),'script');
   assert.equal(latency.category('UpdateLayoutTree'),'style_layout');
   assert.equal(latency.category('Layout'),'style_layout');
+  assert.equal(latency.category('LocalFrameView::performLayout'),'style_layout');
+  assert.equal(latency.category('Blink.Style.UpdateTime'),'style_layout');
   assert.equal(latency.category('Paint'),'paint');
+  assert.equal(latency.category('Blink.PrePaint.UpdateTime'),'paint');
+  assert.equal(latency.category('Blink.CompositingInputs.UpdateTime'),'paint');
+  assert.equal(latency.category('PaintArtifactCompositor::Update'),'paint');
+  assert.equal(latency.category('GetSelectionOffsets'),'other'); // native text editing stays visible in other_top
   assert.equal(latency.category('MinorGC'),'gc');
   assert.equal(latency.category('V8.GC_SCAVENGER'),'gc');
   assert.equal(latency.category('EventDispatch'),'other');
