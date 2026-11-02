@@ -22,4 +22,9 @@ Legacy API 暫時需要 public 表的 SELECT；原 API 的診斷路徑尚待私�
 
 重建檢查只讀 application DB 的歷史，在 `industry_research_test` 的 rollback-only transaction 內匯入所需父資料與原始歷史、建立投影、再次重建並核對。成功或失敗均 rollback，fixtures 不進 application DB。只含目前 Git commit 而沒有 DB 備份，無法還原動態事件／指標歷史；完整恢復需同時保留兩者。
 
+投影的寫入方式也在這裡核對（2026-11 起，`speed-up-draft-preview-and-editor`）：`project()` 平常把每張表的列累積起來，依 `research_compile.PROJECTION_ORDER`（foreign key 由上而下）整批送出；`immediate=True` 則像以前一樣逐列寫入。重建檢查在既有斷言之前，先在 savepoint 內以逐列方式投影並記下每張投影表的列數與 md5，rollback 後再以批次方式投影，兩邊必須相同；兩次都使用從 application DB 複製來的真實舊歷史，所以 legacy_history 也一併比對。報告 JSON 新增：
+
+- `projection_tables`：每張投影表的 `rows` 與 `md5`（release 的列；entities、documents、document_revisions、assets 為整張表），依主鍵排序後計算，由 `research_compile.projection_tables()` 產生，`backend/tests/test_projection_writer.py` 用同一個函式。
+- `writer_equivalent`：兩種寫法的版本識別、內容 hash 與上述各表都相同時為 `true`；不同時檢查直接失敗，不會寫出報告。
+
 `research_lab.py bootstrap` 是本機維護者的一次性初始化操作：第一份研究發布在單一 DB 交易完成，已有 head 就拒絕替換，並在開發 repo 留 `refs/research/releases/<uuid>` 保護內容 commit。日常編輯／後續發布改走尚待實作的 owner／managed-clone 流程；這不是繞過管理授權的讀者上傳 API。資產保存於獨立 research-assets volume，API 僅唯讀掛載。

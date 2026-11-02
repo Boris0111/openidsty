@@ -61,7 +61,7 @@
 
 ## 3. 投影批次寫入（後端）
 
-- [ ] 3.1 `research_compile.py` 新增 `ProjectionWriter` 與 `PROJECTION_ORDER`（design D1），`project()` 改用它：
+- [x] 3.1 （2026-11-02：臨時 PostgreSQL 上 `test_research_compile.py`、drafts、publication、v2、publication_interfaces、restart 共 40 passed、1 skipped。與 design 的差異：同一張表內「連續且形狀相同」的列合成一批，形狀改變就另起一批，各批依加入順序送出。這完整保留原本的寫入順序，比「依欄位組合分組」更嚴格；欄位會變動的表（如 listings）只是多幾批。PG 套件以 3 GB 上限的容器執行；之後一次完整 `all` 清單在約 42%（96 項全過）時因主機記憶體不足被系統中止，完整套件改由 5.2 的 `pg-check --suite all` 執行）`research_compile.py` 新增 `ProjectionWriter` 與 `PROJECTION_ORDER`（design D1），`project()` 改用它：
   - 只在兩個時間點 `flush()`：把 release 改成 `ready` 之前，以及 `activate_bootstrap` 之前。
   - `project()` 新增 keyword 參數 `immediate=False`。
   - 未列在 `PROJECTION_ORDER` 的表直接拋錯。
@@ -71,13 +71,13 @@
   驗證：
   - `backend/tests/test_research_compile.py` 等離線測試通過。
   - 臨時 PostgreSQL 上，`test_research_drafts.py`、`test_research_publication.py`、`test_research_v2.py`、`test_publication_interfaces.py`、`test_research_restart.py` 全數通過。
-- [ ] 3.2 `legacy_history()` 改為每張表只讀一次（design D2），寫入改走寫入器。
+- [x] 3.2 （2026-11-02：`test_projection_writer.py` 的 `test_legacy_history_reads_lookups_once_and_keeps_every_row` 與 `test_missing_entity_message_is_unchanged` 通過。預期列由測試內保留的舊規則（逐列查詢）推得，六種都有；兩種寫法下 `public.*` 的查詢都是 9 次（3 張對照表各 1 次、6 張歷史表各 1 次），與舊歷史的筆數無關）`legacy_history()` 改為每張表只讀一次（design D2），寫入改走寫入器。
 
   驗證：臨時 PostgreSQL 上新增測試並通過：
   - 建立六種舊歷史（assessment、indicator-definition、indicator-observation、technical-document、technical-observation、technical-review）各至少一筆。
   - 斷言寫出的 legacy_history 列（entity、kind、legacy ID、content hash、data）與依原規則推得的預期列完全相同。
   - 引用不存在的實體時，錯誤訊息與修改前相同。
-- [ ] 3.3 新增 `backend/tests/test_projection_writer.py`（design D5 第一層），並加入 `research_pg_checks.py` 的 `all` suite：
+- [x] 3.3 （2026-11-02：臨時 PostgreSQL 上 10 passed，含 slow。擴大資料案例的 call 15.9 秒（兩種寫法各投影一次並逐表算 md5），另有 setup 建資料樹 5.9 秒。另含 3 個不需 DB 的寫入器單元測試，CI 離線也會執行：送出順序、每批 1,000 列、表內順序與衝突規則的先後。臨時環境為了讓 `authored`／`scaled_tree` 和 CI 一樣走 `git archive`，在容器內把程式複製成臨時 Git 快照後執行）新增 `backend/tests/test_projection_writer.py`（design D5 第一層），並加入 `research_pg_checks.py` 的 `all` suite：
   - 同一份 bundle 分別在兩個 savepoint 內以立即模式與批次模式投影。每張 `research.*` 投影表依主鍵排序後算 hash，比對兩邊相同，release ID 與 content hash 也相同。
   - 資料包括 `tests/fixtures/valid`、目前已發布的研究，以及擴大資料。擴大資料標為 `slow`；`scripts/` 不存在時（API image）skip，與既有的 scaled-tree 測試相同。
   - 失敗案例：寫入未列出的表時拋錯；一批寫入違反限制（重複的 relation ID）時整次 rollback，savepoint 外查不到這次的任何列。
@@ -85,14 +85,14 @@
   驗證：
   - 臨時 PostgreSQL 上全數通過，含 slow 案例；本 task 記錄 slow 案例的耗時。
   - `grep -n "test_projection_writer" backend/app/research_pg_checks.py` 有結果。
-- [ ] 3.4 `draft_preview` 在 rollback 後記一行 INFO `draft-preview timing`（design D4），欄位：草稿 ID、修訂號、`project_ms`、`flush_ms`、`detail_ms`、`graph_ms`。預覽的回應格式不變。
+- [x] 3.4 （2026-11-02：臨時 PostgreSQL 上 `test_preview_logs_stage_times_only_and_leaves_no_candidate` 通過。3 次預覽剛好 3 行，欄位都是數字，不含實體 ID、名稱或內文；預覽後、以及 graph 階段故意拋錯後，所有投影表的列數都與預覽前相同）`draft_preview` 在 rollback 後記一行 INFO `draft-preview timing`（design D4），欄位：草稿 ID、修訂號、`project_ms`、`flush_ms`、`detail_ms`、`graph_ms`。預覽的回應格式不變。
 
   驗證：臨時 PostgreSQL 上新增測試並通過：
   - 每次預覽剛好記一行，欄位都是數字。
   - log 不含實體名稱或內文。
   - 預覽後資料庫沒有新增 release，也沒有投影列（spec「預覽不留下候選版本」）。
   - 預覽途中拋錯時，同樣沒有留下任何列。
-- [ ] 3.5 `research_rebuild_check.py` 加上立即模式與批次模式的比對（design D5 第二層）：
+- [x] 3.5 （2026-11-02：共用函式為 `research_compile.projection_tables()`，3.3 的等價測試都用它；實機執行在 5.2）`research_rebuild_check.py` 加上立即模式與批次模式的比對（design D5 第二層）：
   - 在既有的斷言之前，先在 savepoint 內以立即模式投影並記下各表的列數與 md5，rollback 後再以批次模式投影，比對必須相同。
   - 報告 JSON 新增 `projection_tables` 與 `writer_equivalent`。
   - 比對用的「各表列數與 md5」寫成共用函式，3.3 的測試也用同一個函式。
@@ -100,7 +100,7 @@
   驗證：
   - 3.3 的測試透過共用函式涵蓋比對邏輯。
   - 實機執行在 5.2。
-- [ ] 3.6 更新文件：
+- [x] 3.6 （2026-11-02：兩個 grep 都有結果）更新文件：
   - `docs/research-data-model.md` 的 rebuild-check 段落補上寫入方式的比對與新的報告欄位。
   - `docs/research-drafts.md` 的預覽段落補上 `draft-preview timing` 這行 log。
   - `docs/research-deployment.md`「合併前演練」中 `rebuild-check` 的註解改為「PR 改了研究內容的編譯或投影時」。
