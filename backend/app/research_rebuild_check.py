@@ -5,7 +5,7 @@ import sys
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import make_url
 from .config import DATABASE_URL
-from .research_compile import compile_archive, digest, project
+from .research_compile import compile_archive, digest, project, projection_tables
 
 
 def main():
@@ -58,7 +58,16 @@ def main():
                 connection.execute(text('INSERT INTO public.' + table + ' (' + ','.join(keys) + ') VALUES (' + ','.join(expressions) + ')'), values)
         # Other pg-check suites may leave a head in the test DB; this check runs in a rolled-back transaction.
         connection.execute(text('DELETE FROM research.release_head'))
+        # Writing row by row (as before batching) and batched must leave identical tables; both use the real
+        # lineage copied above, so legacy_history is compared too.
+        with connection.begin_nested() as rowwise:
+            immediate = project(connection, bundle, args.commit, publish=True, immediate=True)
+            immediate_tables = projection_tables(connection, immediate['release_id'])
+            rowwise.rollback()
         first = project(connection, bundle, args.commit, publish=True)
+        tables = projection_tables(connection, first['release_id'])
+        assert (immediate['release_id'], immediate['content_hash']) == (first['release_id'], first['content_hash'])
+        assert immediate_tables == tables, 'Batched projection differs from row-by-row projection'
         second = project(connection, bundle, args.commit, publish=True)
         assert first['release_id'] == second['release_id'] and second['reused']
         rows = connection.execute(text('SELECT entity_id,kind,name,summary,markdown,data,reviewed,semantic_hash FROM research.entity_snapshots WHERE release_id=CAST(:id AS uuid) ORDER BY entity_id'), {'id': first['release_id']}).mappings().all()
@@ -79,6 +88,7 @@ def main():
             search_plans.append({'query': q, 'sql': sql, 'plan': plan})
         print(json.dumps({'commit': args.commit, 'content_hash': first['content_hash'],
             'entities': len(rows), 'same_commit_rebuild': True, 'legacy_history': counts,
+            'projection_tables': tables, 'writer_equivalent': True,
             'test_transaction_rolled_back': True, 'search_plans': search_plans}))
     finally:
         transaction.rollback()

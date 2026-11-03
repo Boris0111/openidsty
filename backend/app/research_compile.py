@@ -17,6 +17,7 @@ import sys
 import tarfile
 import tempfile
 import threading
+import time
 import unicodedata
 import uuid
 from sqlalchemy import create_engine, text
@@ -126,59 +127,179 @@ def compile_archive(content):
                       'assets': research['assets'], 'asset_bytes': asset_bytes, 'indicator_definitions': indicators})
 
 
+# Every table project() writes, parents before children: the batched writer sends the tables in this order, so
+# each foreign key's parent rows exist first. A new projection table MUST be added here, after every table it
+# references; ProjectionWriter refuses tables that are not listed.
+PROJECTION_ORDER = ('research_releases', 'entities', 'entity_snapshots', 'legacy_mappings', 'listings',
+                    'source_identifiers', 'entity_aliases', 'release_sources', 'documents', 'document_revisions',
+                    'release_documents', 'research_claims', 'claim_evidence', 'taxonomy_links', 'company_offerings',
+                    'offering_claims', 'relations', 'relation_claims', 'assets', 'release_assets', 'legacy_history')
+BATCH_ROWS = 1000
+STATEMENTS = {}
+
+
+def statement(table, values, conflict=False):
+    """(SQL, parameters) for one row. All table/column names originate in this module, never request strings."""
+    json_columns = tuple(isinstance(value, (dict, list)) for value in values.values())
+    key = (table, tuple(values), json_columns, conflict)
+    sql = STATEMENTS.get(key)
+    if sql is None:
+        expressions = ['CAST(:' + column + ' AS jsonb)' if is_json else ':' + column
+                       for column, is_json in zip(values, json_columns)]
+        sql = ('INSERT INTO research.' + table + ' (' + ','.join(values) + ') VALUES (' + ','.join(expressions) + ')' +
+               (' ON CONFLICT DO NOTHING' if conflict else ''))
+        if len(STATEMENTS) > 1000:  # a few dozen shapes in practice; bound it anyway
+            STATEMENTS.clear()
+        STATEMENTS[key] = sql
+    parameters = {column: canonical(value) if is_json else value
+                  for (column, value), is_json in zip(values.items(), json_columns)}
+    return sql, parameters
+
+
 def insert(connection, table, values, conflict=False):
-    # All table/column names originate in this module, never request strings.
-    columns = ','.join(values)
-    expressions = []
-    parameters = {}
-    for key, value in values.items():
-        if isinstance(value, (dict, list)):
-            expressions.append('CAST(:' + key + ' AS jsonb)')
-            parameters[key] = canonical(value)
-        else:
-            expressions.append(':' + key)
-            parameters[key] = value
-    suffix = ' ON CONFLICT DO NOTHING' if conflict else ''
-    connection.execute(text('INSERT INTO research.' + table + ' (' + columns + ') VALUES (' +
-                            ','.join(expressions) + ')' + suffix), parameters)
+    """Write one row now (callers outside project(), and tests that prepare data)."""
+    sql, parameters = statement(table, values, conflict)
+    connection.execute(text(sql), parameters)
 
 
-def document(connection, release, document_id, version, title, url, kind, data, cited=True):
+def write_document(write, release, document_id, version, title, url, kind, data, cited=True):
     revision = digest([document_id, version, title, url, kind, data])
-    insert(connection, 'documents', {'document_id': document_id}, True)
-    insert(connection, 'document_revisions', {'revision_id': revision, 'document_id': document_id,
+    write('documents', {'document_id': document_id}, True)
+    write('document_revisions', {'revision_id': revision, 'document_id': document_id,
         'version_key': version, 'title': title, 'url': url, 'doc_kind': kind, 'data': data}, True)
     if cited:
-        insert(connection, 'release_documents', {'release_id': release, 'revision_id': revision}, True)
+        write('release_documents', {'release_id': release, 'revision_id': revision}, True)
     return revision
 
 
-def legacy_history(connection, release, mappings):
-    """Copy legacy lineage, retaining original precision, dates and review state."""
-    for table, kind in [('theme_assessment_versions', 'assessment'), ('indicators', 'indicator-definition'),
-                        ('indicator_observations', 'indicator-observation'), ('technical_documents', 'technical-document'),
-                        ('technical_observations', 'technical-observation'), ('technical_reviews', 'technical-review')]:
+def document(connection, release, document_id, version, title, url, kind, data, cited=True):
+    """Write a document revision now; project() uses ProjectionWriter.document instead."""
+    return write_document(lambda table, values, conflict=False: insert(connection, table, values, conflict),
+                          release, document_id, version, title, url, kind, data, cited)
+
+
+class ProjectionWriter:
+    """Collects project()'s rows and sends them per table in PROJECTION_ORDER, up to BATCH_ROWS rows per execute
+    (psycopg runs a multi-row execute as a pipelined executemany). Rows of one table keep the order they were
+    added in, so ON CONFLICT DO NOTHING keeps the same row as writing them one by one. immediate=True writes each
+    row when it is added, exactly as before batching; only the equivalence checks use it."""
+
+    def __init__(self, connection, immediate=False):
+        self.connection, self.immediate = connection, immediate
+        self.pending = {table: [] for table in PROJECTION_ORDER}  # table -> [[sql, rows], ...] in add order
+        self.texts = {}
+
+    def text(self, sql):
+        if sql not in self.texts:
+            self.texts[sql] = text(sql)
+        return self.texts[sql]
+
+    def insert(self, table, values, conflict=False):
+        if table not in self.pending:
+            raise ValueError('Projection table missing from PROJECTION_ORDER: ' + table)
+        sql, parameters = statement(table, values, conflict)
+        if self.immediate:
+            self.connection.execute(self.text(sql), parameters)
+            return
+        runs = self.pending[table]
+        if runs and runs[-1][0] == sql:
+            runs[-1][1].append(parameters)
+        else:  # a new column shape or conflict rule starts a new run; runs are sent in order
+            runs.append([sql, [parameters]])
+
+    def document(self, release, document_id, version, title, url, kind, data, cited=True):
+        return write_document(self.insert, release, document_id, version, title, url, kind, data, cited)
+
+    def flush(self):
+        for table in PROJECTION_ORDER:
+            for sql, rows in self.pending[table]:
+                for start in range(0, len(rows), BATCH_ROWS):
+                    self.connection.execute(self.text(sql), rows[start:start + BATCH_ROWS])
+            self.pending[table] = []
+
+
+def projection_tables(connection, release):
+    """Row count and md5 for every projection table: the release's rows, or the whole table for tables that
+    releases share (entities, documents, document_revisions, assets), ordered by primary key. Two projections of
+    one bundle wrote the same rows exactly when these match (rebuild-check and the writer tests compare them)."""
+    result = {}
+    for table in PROJECTION_ORDER:
+        keys = connection.execute(text(
+            'SELECT a.attname FROM pg_index i JOIN pg_attribute a ON a.attrelid=i.indrelid AND a.attnum=ANY(i.indkey) '
+            'WHERE i.indrelid=CAST(:name AS regclass) AND i.indisprimary ORDER BY array_position(CAST(i.indkey AS int2[]), a.attnum)'),
+            {'name': 'research.' + table}).scalars().all()
+        scoped = connection.execute(text(
+            "SELECT count(*) FROM information_schema.columns WHERE table_schema='research' AND table_name=:name "
+            "AND column_name='release_id'"), {'name': table}).scalar_one()
+        order = ','.join('t."' + key + '"' for key in keys)  # catalog names of a table listed in this module
+        where = ' WHERE t.release_id=CAST(:release AS uuid)' if scoped else ''
+        rows, checksum = connection.execute(text(
+            "SELECT count(*), md5(coalesce(string_agg(CAST(t AS text), E'\\n' ORDER BY " + order + "), '')) "
+            'FROM research.' + table + ' t' + where), {'release': str(release)}).one()
+        result[table] = {'rows': rows, 'md5': checksum}
+    return result
+
+
+LEGACY_TABLES = [('theme_assessment_versions', 'assessment'), ('indicators', 'indicator-definition'),
+                 ('indicator_observations', 'indicator-observation'), ('technical_documents', 'technical-document'),
+                 ('technical_observations', 'technical-observation'), ('technical_reviews', 'technical-review')]
+
+
+def missing_row():
+    from sqlalchemy.exc import NoResultFound
+    return NoResultFound('No row was found when one was required')
+
+
+def legacy_history(connection, release, mappings, writer=None):
+    """Copy legacy lineage, retaining original precision, dates and review state. The lookup tables are read
+    once each; rows go through `writer` (project()'s ProjectionWriter) or are written now."""
+    write = writer.insert if writer else (lambda table, values, conflict=False: insert(connection, table, values, conflict))
+    themes_by_indicator = {}
+    for indicator_id, theme_id in connection.execute(text('SELECT indicator_id,theme_id FROM public.theme_indicators')):
+        themes_by_indicator.setdefault(indicator_id, []).append(theme_id)
+    observation_documents = dict(connection.execute(text('SELECT id,document_id FROM public.technical_observations')).all())
+    document_scopes = dict(connection.execute(text('SELECT id,data FROM public.technical_documents')).all())
+    for table, kind in LEGACY_TABLES:
         for row in connection.execute(text('SELECT * FROM public.' + table + ' ORDER BY id')).mappings():
             payload = clean(dict(row))
             if kind == 'assessment':
                 entities = ['theme-' + row['theme_id']]
             elif kind.startswith('indicator-'):
                 indicator_id = row['id'] if kind == 'indicator-definition' else row['indicator_id']
-                entities = ['theme-' + t for t in connection.execute(text('SELECT theme_id FROM public.theme_indicators WHERE indicator_id=:id'), {'id': indicator_id}).scalars()]
+                entities = ['theme-' + t for t in themes_by_indicator.get(indicator_id, [])]
             else:
                 doc_id = row['id'] if kind == 'technical-document' else row.get('document_id')
                 if kind == 'technical-review':
-                    doc_id = connection.execute(text('SELECT document_id FROM public.technical_observations WHERE id=:id'), {'id': row['observation_id']}).scalar_one()
-                scopes = connection.execute(text('SELECT data FROM public.technical_documents WHERE id=:id'), {'id': doc_id}).scalar_one()
+                    if row['observation_id'] not in observation_documents:
+                        raise missing_row()
+                    doc_id = observation_documents[row['observation_id']]
+                if doc_id not in document_scopes:
+                    raise missing_row()
+                scopes = document_scopes[doc_id]
                 entities = ['segment-' + key for key in scopes.get('segments', [])] + ['theme-' + key for key in scopes.get('themes', [])]
             for entity in entities:
                 if entity not in mappings:
                     raise ValueError('Legacy history references missing entity ' + entity)
-                insert(connection, 'legacy_history', {'release_id': release, 'entity_id': entity, 'history_kind': kind,
+                write('legacy_history', {'release_id': release, 'entity_id': entity, 'history_kind': kind,
                     'legacy_id': entity + ':' + str(row['id']), 'content_hash': digest(payload), 'data': payload})
 
 
-def project(connection, bundle, commit, publish=False, reason='Initial legacy migration'):
+class Stopwatch:
+    """Milliseconds per projection stage; numbers only, never content."""
+
+    def __init__(self):
+        self.timings, self.mark = {}, time.perf_counter()
+
+    def lap(self, stage):
+        now = time.perf_counter()
+        self.timings[stage] = round((now - self.mark) * 1000, 1)
+        self.mark = now
+
+
+def project(connection, bundle, commit, publish=False, reason='Initial legacy migration', *, immediate=False):
+    """Project a compiled bundle as a release. Rows are batched per table (ProjectionWriter); immediate=True writes
+    them one by one as before and is only for checking that both produce the same projection."""
+    clock = Stopwatch()
     content_hash = digest(bundle)
     release = uuid.uuid5(uuid.NAMESPACE_URL, commit + ':' + SCHEMA + ':' + content_hash)
     existing = connection.execute(text('SELECT status,content_hash FROM research.research_releases WHERE release_id=:id'), {'id': release}).mappings().first()
@@ -191,34 +312,40 @@ def project(connection, bundle, commit, publish=False, reason='Initial legacy mi
         if publish and existing['status'] == 'ready':
             activate_bootstrap(connection, release, commit, content_hash, reason)
             existing = {**existing, 'status': 'published'}
-        return {'release_id': str(release), 'content_hash': content_hash, 'status': existing['status'], 'reused': True, 'entities': len(actual)}
-    insert(connection, 'research_releases', {'release_id': release, 'git_commit': commit,
+        clock.lap('reused')
+        return {'release_id': str(release), 'content_hash': content_hash, 'status': existing['status'], 'reused': True,
+                'entities': len(actual), 'timings': clock.timings}
+    clock.lap('prepare')
+    writer = ProjectionWriter(connection, immediate)
+    write = writer.insert
+    write('research_releases', {'release_id': release, 'git_commit': commit,
         'schema_version': SCHEMA, 'content_hash': content_hash, 'status': 'preparing', 'reason': reason})
     mappings = {s['entity_id']: s for s in bundle['snapshots']}
     legacy_company = {}
     for snapshot in bundle['snapshots']:
         entity = snapshot['entity_id']
-        insert(connection, 'entities', {'entity_id': entity, 'kind': snapshot['kind']}, True)
-        insert(connection, 'entity_snapshots', {'release_id': release, **snapshot})
+        write('entities', {'entity_id': entity, 'kind': snapshot['kind']}, True)
+        write('entity_snapshots', {'release_id': release, **snapshot})
         data = snapshot['data']
         aliases = [(snapshot['name'], 'name')] + [(a, 'alias') for a in data.get('aliases', [])]
         if snapshot['kind'] in ('segment', 'theme'):
             old = data[snapshot['kind']]
-            insert(connection, 'legacy_mappings', {'release_id': release, 'kind': snapshot['kind'], 'legacy_key': old, 'entity_id': entity})
+            write('legacy_mappings', {'release_id': release, 'kind': snapshot['kind'], 'legacy_key': old, 'entity_id': entity})
         for old in data.get('legacy-keys', []):
             legacy_company[old] = entity
-            insert(connection, 'legacy_mappings', {'release_id': release, 'kind': 'company', 'legacy_key': old, 'entity_id': entity})
+            write('legacy_mappings', {'release_id': release, 'kind': 'company', 'legacy_key': old, 'entity_id': entity})
             aliases.append((old, 'legacy'))
         for listing in data.get('listings', []):
-            insert(connection, 'listings', {'release_id': release, 'listing_id': digest([entity, listing]),
+            write('listings', {'release_id': release, 'listing_id': digest([entity, listing]),
                 'company_id': entity, **{k.replace('-', '_'): v for k, v in listing.items()}})
             aliases.append((listing['ticker'], 'ticker'))
         for ident in data.get('source-identifiers', []):
-            insert(connection, 'source_identifiers', {'release_id': release, 'company_id': entity,
+            write('source_identifiers', {'release_id': release, 'company_id': entity,
                 'provider': ident['provider'], 'value': ident['value'].lstrip('0') if ident['provider'] == 'sec-cik' else ident['value']})
         for alias, kind in aliases:
-            insert(connection, 'entity_aliases', {'release_id': release, 'entity_id': entity,
+            write('entity_aliases', {'release_id': release, 'entity_id': entity,
                 'alias': alias, 'normalized': normalize(alias), 'alias_kind': kind}, True)
+    clock.lap('snapshots')
     revisions = {}
     cited_documents = set()
 
@@ -234,14 +361,15 @@ def project(connection, bundle, commit, publish=False, reason='Initial legacy mi
 
     find_citations([s['data'] for s in bundle['snapshots']])
     for source in bundle['sources']:
-        insert(connection, 'release_sources', {'release_id': release, 'source_id': source['id'],
+        write('release_sources', {'release_id': release, 'source_id': source['id'],
             'name': source['name'], 'url': source['url'], 'data': source})
     for doc in bundle['documents']:
         for version in doc['versions']:
-            revisions[(doc['id'], version['id'])] = document(connection, release, doc['id'], version['id'],
+            revisions[(doc['id'], version['id'])] = writer.document(release, doc['id'], version['id'],
                 doc['title'], version['url'], doc['doc-kind'],
                 {'document': {k: v for k, v in doc.items() if k != 'versions'}, 'version': version},
                 (doc['id'], version['id']) in cited_documents)
+    clock.lap('documents')
     for snapshot in bundle['snapshots']:
         entity = snapshot['entity_id']
         authored_claims = list(snapshot['data'].get('claims', []))
@@ -260,27 +388,29 @@ def project(connection, bundle, commit, publish=False, reason='Initial legacy mi
                     'confidence': old['confidence'], 'conditions': assessment['conditions'],
                     'reviewed': assessment['reviewed'], 'evidence': evidence})
         for claim in authored_claims:
-            insert(connection, 'research_claims', {'release_id': release, 'entity_id': entity, 'claim_id': claim['id'],
+            write('research_claims', {'release_id': release, 'entity_id': entity, 'claim_id': claim['id'],
                 **{k: claim[k] for k in ('statement', 'confidence', 'conditions', 'reviewed')}})
             for ordinal, evidence in enumerate(claim['evidence']):
-                revision = revisions[(evidence['document-id'], evidence['version-id'])] if 'document-id' in evidence else document(
-                    connection, release, 'page-' + digest([evidence['source-id'], evidence['url']]), digest(evidence),
+                revision = revisions[(evidence['document-id'], evidence['version-id'])] if 'document-id' in evidence else writer.document(
+                    release, 'page-' + digest([evidence['source-id'], evidence['url']]), digest(evidence),
                     evidence['locator'], evidence['url'], 'informative', evidence)
-                insert(connection, 'claim_evidence', {'release_id': release, 'entity_id': entity, 'claim_id': claim['id'],
+                write('claim_evidence', {'release_id': release, 'entity_id': entity, 'claim_id': claim['id'],
                     'ordinal': ordinal, 'revision_id': revision, 'locator': evidence['locator'],
                     'stance': evidence['stance'], 'applicable_period': evidence['applicable-period'], 'data': evidence})
+    clock.lap('claims')
     for item in bundle['taxonomy']:
-        insert(connection, 'taxonomy_links', {'release_id': release, 'link_id': item['id'], 'parent_id': item['parent'], 'child_id': item['child']})
+        write('taxonomy_links', {'release_id': release, 'link_id': item['id'], 'parent_id': item['parent'], 'child_id': item['child']})
     for snapshot in bundle['snapshots']:
         for role in snapshot['data'].get('roles', []):
-            insert(connection, 'taxonomy_links', {'release_id': release, 'link_id': 'baseline-' + digest([snapshot['entity_id'], role['segment-id']]),
+            write('taxonomy_links', {'release_id': release, 'link_id': 'baseline-' + digest([snapshot['entity_id'], role['segment-id']]),
                 'parent_id': role['segment-id'], 'child_id': snapshot['entity_id']}, True)
     for item in bundle['offerings']:
-        insert(connection, 'company_offerings', {'release_id': release, 'offering_id': item['id'],
+        write('company_offerings', {'release_id': release, 'offering_id': item['id'],
             'company_id': item['company'], 'product_id': item['product'], 'role_id': item['role'], 'conditions': item['conditions']})
         for claim in item['claim-refs']:
-            insert(connection, 'offering_claims', {'release_id': release, 'offering_id': item['id'],
+            write('offering_claims', {'release_id': release, 'offering_id': item['id'],
                 'entity_id': claim['entity-id'], 'claim_id': claim['claim-id']})
+    clock.lap('taxonomy_offerings')
     relations = list(bundle['relations'])
     for snapshot in bundle['snapshots']:
         if snapshot['kind'] != 'segment':
@@ -306,14 +436,15 @@ def project(connection, bundle, commit, publish=False, reason='Initial legacy mi
         source, target = relation['source'], relation['target']
         if relation['direction'] == 'symmetric':
             source, target = sorted([source, target])
-        insert(connection, 'relations', {'release_id': release, 'relation_id': relation['id'],
+        write('relations', {'release_id': release, 'relation_id': relation['id'],
             'source_id': source, 'target_id': target, 'kind': relation['kind'], 'direction': relation['direction'],
             'mechanism': relation['mechanism'], 'conditions': relation['conditions'], 'confidence': relation['confidence'],
             'reviewed': relation.get('reviewed'), 'product_id': relation.get('product'),
             'application_id': relation.get('application'), 'data': relation})
         for claim in relation.get('claim-refs', []):
-            insert(connection, 'relation_claims', {'release_id': release, 'relation_id': relation['id'],
+            write('relation_claims', {'release_id': release, 'relation_id': relation['id'],
                 'entity_id': claim['entity-id'], 'claim_id': claim['claim-id']})
+    clock.lap('relations')
     for key, asset in bundle['assets'].items():
         if not any(key in s['data'].get('diagram-assets', []) for s in bundle['snapshots']):
             continue
@@ -326,15 +457,23 @@ def project(connection, bundle, commit, publish=False, reason='Initial legacy mi
         if not target.exists():
             with target.open('xb') as output:
                 output.write(content)
-        insert(connection, 'assets', {'sha256': asset['sha256'], 'storage_key': asset['sha256'],
+        write('assets', {'sha256': asset['sha256'], 'storage_key': asset['sha256'],
             'media_type': asset['media-type'], 'byte_size': len(content)}, True)
-        insert(connection, 'release_assets', {'release_id': release, 'asset_id': key, 'sha256': asset['sha256'], 'metadata': asset})
-    legacy_history(connection, release, mappings)
+        write('release_assets', {'release_id': release, 'asset_id': key, 'sha256': asset['sha256'], 'metadata': asset})
+    clock.lap('assets')
+    legacy_history(connection, release, mappings, writer)
+    clock.lap('legacy_history')
+    # Nothing above reads the projection tables back, so the rows can wait until here. They must be in the DB
+    # before the release turns ready and before activate_bootstrap reads release_head.
+    writer.flush()
+    clock.lap('flush')
     connection.execute(text("UPDATE research.research_releases SET status='ready' WHERE release_id=:id"), {'id': release})
     if publish:
+        writer.flush()
         activate_bootstrap(connection, release, commit, content_hash, reason)
+    clock.lap('finish')
     return {'release_id': str(release), 'content_hash': content_hash, 'status': 'published' if publish else 'ready',
-            'reused': False, 'entities': len(mappings)}
+            'reused': False, 'entities': len(mappings), 'timings': clock.timings}
 
 
 def activate_bootstrap(connection, release, commit, content_hash, reason):

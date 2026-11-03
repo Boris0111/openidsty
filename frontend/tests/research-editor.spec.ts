@@ -81,6 +81,45 @@ for(const mobile of [false,true])test(`草稿編輯、預覽與 stale revision �
   await page.screenshot({path:`../.work/editor-review/${mobile?'mobile':'desktop'}.png`,fullPage:true});
 });
 
+for(const mobile of [false,true])test(`文字框關閉拼字檢查與原始文字的自動換行，輸入與儲存照舊${mobile?'（手機）':'（桌機）'}`,async({page})=>{
+  if(mobile)await page.setViewportSize({width:390,height:844});
+  const id='66666666-6666-4666-8666-666666666666',base='22222222-2222-4222-8222-222222222222';
+  const company='industry-map/companies/company-auras.md',relations='industry-map/research-relations.yaml';
+  let revision=1,manifest='relations:\n- id: synthetic\n';
+  const patches:{changes:{path:string;content:string}[]}[]=[];
+  const draft=()=>({draft_id:id,base_release_id:base,revision,schema_version:'research-draft-v1',paths:[company,relations],assets:{}});
+  const companyDocument={path:company,content:'synthetic markdown',frontmatter:{'entity-id':'company-auras',kind:'company','name-zh':'雙鴻',summary:'合成摘要'},markdown:'## 合成研究\n測試內文'};
+  const relationDocument=()=>({path:relations,content:manifest,frontmatter:null,markdown:''});
+  await page.route('**/api/admin/**',async route=>{
+    const request=route.request(),url=new URL(request.url());let data:unknown;
+    if(url.pathname.endsWith('/session'))data={authenticated:true,csrf_token:'synthetic-csrf'};
+    else if(url.pathname==='/api/admin/drafts')data={items:[{draft_id:id,current_revision:revision,status:'editing',created_at:'2026-11-03'}]};
+    else if(url.pathname.endsWith('/summary'))data=draft();
+    else if(url.pathname.endsWith('/document'))data=url.searchParams.get('path')===relations?relationDocument():companyDocument;
+    else if(request.method()==='PATCH'){const body=request.postDataJSON();patches.push(body);manifest=body.changes[0].content;revision++;data={...draft(),documents:{[relations]:relationDocument()}}}
+    else if(url.pathname==='/api/admin/releases')data={items:[],active_release_id:base,has_more:false,next_cursor:null};
+    else if(['/api/admin/sources','/api/admin/audit'].includes(url.pathname))data={items:[],has_more:false,next_cursor:null};
+    else{await route.fulfill({status:500,json:{message:'unexpected '+url.pathname}});return}
+    await route.fulfill({json:data});
+  });
+  await page.goto('/admin');
+  await page.getByLabel('工作草稿').selectOption(id);
+  const body=page.getByLabel('研究內文（Markdown）');
+  await expect(body).toHaveAttribute('spellcheck','false');
+  expect(await body.getAttribute('wrap')).toBeNull(); // no wrap attribute: prose keeps the default soft wrapping
+  await page.getByLabel('研究檔案').selectOption(relations);
+  const raw=page.getByLabel('Markdown／YAML');
+  for(const [name,value] of [['spellcheck','false'],['wrap','off'],['autocomplete','off'],['autocorrect','off'],['autocapitalize','off']])await expect(raw).toHaveAttribute(name,value);
+  await raw.click();await raw.press('Control+End');await page.keyboard.type('# typed');
+  await expect(page.locator('.ra-context')).toContainText('有未儲存修改');
+  await expect(page.getByRole('button',{name:'閱讀預覽'})).toBeDisabled();
+  await page.getByRole('button',{name:'儲存修訂',exact:true}).click();
+  await expect(page.getByRole('status')).toContainText('已儲存修訂 2');
+  expect(patches).toEqual([{changes:[{path:relations,content:'relations:\n- id: synthetic\n# typed'}]}]);
+  await expect(raw).toHaveValue('relations:\n- id: synthetic\n# typed');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+});
+
 test('真實管理入口依 owner 狀態顯示本機設定說明或登入表單',async({page,request})=>{
   const configured=(await (await request.get('/api/admin/session')).json()).owner_configured;
   await page.goto('/admin');

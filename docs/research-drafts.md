@@ -57,6 +57,6 @@ python -m app.research_cli upload-asset --file .work/new-diagram.svg --asset-pat
 | `GET /drafts/{id}/preview?entity_id=...&revision=N` | owner 私有閱讀預覽 |
 | `GET /drafts/{id}/assets/{sha}?revision=N` | 僅提供這份修訂引用且驗證通過的資產 |
 
-草稿 JSON 上限 5 MiB，文字／路徑及 YAML 結構另有界限：每份 YAML（含 Markdown frontmatter）的巢狀深度最多 32 層、parser 事件最多 400,000 個、alias 展開後節點最多 400,000 個，不接受遞迴 alias；超過時錯誤訊息以檔案路徑開頭。上限依 300 家公司、3,000 條關係的擴大資料校準（關係檔約 9.8 萬個事件、4.7 萬個節點）。YAML 以 libyaml 解析，重複鍵規則不變。拒絕 raw HTML、外部 Markdown 圖片及危險連結；圖解由資產 manifest 管理。預覽在 DB savepoint 建立臨時投影，使用正式 detail／graph 函式組合結果，回應序列化後立即 rollback；不建立正式 head。Reader 的 RLS 及已發布 release 檢查維持生效。資產使用內容 hash，預覽 URL 另有 owner 驗證，不讓猜中 hash 的讀者取得未發布資產。
+草稿 JSON 上限 5 MiB，文字／路徑及 YAML 結構另有界限：每份 YAML（含 Markdown frontmatter）的巢狀深度最多 32 層、parser 事件最多 400,000 個、alias 展開後節點最多 400,000 個，不接受遞迴 alias；超過時錯誤訊息以檔案路徑開頭。上限依 300 家公司、3,000 條關係的擴大資料校準（關係檔約 9.8 萬個事件、4.7 萬個節點）。YAML 以 libyaml 解析，重複鍵規則不變。拒絕 raw HTML、外部 Markdown 圖片及危險連結；圖解由資產 manifest 管理。預覽在 DB savepoint 建立臨時投影，使用正式 detail／graph 函式組合結果，回應序列化後立即 rollback；不建立正式 head。投影與發布共用 `project()`，每張表的列整批送出（2026-11 起）。每次預覽 rollback 後，API 在 `uvicorn.error` 記一行 INFO：`draft-preview timing draft=<草稿 UUID> revision=<修訂> project_ms=… flush_ms=… detail_ms=… graph_ms=…`，只有各階段的毫秒數（`flush_ms` 是投影中實際寫入資料庫的時間），不含實體名稱或內文；`scripts/research_draft_bench.py` 從演練 API 的 log 讀這行算出各段中位數。Reader 的 RLS 及已發布 release 檢查維持生效。資產使用內容 hash，預覽 URL 另有 owner 驗證，不讓猜中 hash 的讀者取得未發布資產。
 
 草稿與預覽完成不等於發布完成；發布排程、衝突協調、還原及完整管理流程由 tasks 4.4–4.6 接續。

@@ -304,7 +304,7 @@ python scripts/research_drill.py restore --backup latest                   # 以
 python scripts/research_drill.py deploy-rehearsal --commit <PR HEAD>
 python scripts/research_drill.py rollback-rehearsal                        # 回到 restore 的基準 image
 python scripts/research_drill.py pg-check --commit <PR HEAD> --suite all
-python scripts/research_drill.py rebuild-check --commit <PR HEAD>          # PR 改了研究內容的編譯時
+python scripts/research_drill.py rebuild-check --commit <PR HEAD>          # PR 改了研究內容的編譯或投影時
 ```
 
 - **`deploy-rehearsal`**：與「部署」第 4–10 步相同的拒絕條件、建置、initialize、替換與 smoke（project 換成演練的，網址換成 8016／3016）。演練的目的就是部署尚未合併的提交，所以**不檢查**第一父鏈與部署目錄；收縮遷移要 `--allow-contract` 等拒絕條件照樣適用。報告 `.work/research-drill/deploy-rehearsal-<時間>.json` 列出每張變動表的列數與 md5 前後、遷移版本前後、`theme_assessment_versions` 的增減、提交與 `worktree_dirty`，以及 smoke 結果。

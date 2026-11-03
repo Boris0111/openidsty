@@ -7,6 +7,7 @@ import os
 import re
 from pathlib import Path
 import threading
+import time
 import uuid
 from typing import Literal
 import yaml
@@ -394,10 +395,14 @@ def draft_preview(draft_id: uuid.UUID, entity_id: str = Query(..., max_length=20
     # No candidate release is exposed through the public reader role.
     with connection.begin_nested() as candidate:
         try:
+            started = time.perf_counter()
             projected = project(connection, bundle, base['git_commit'], reason='Owner-only draft preview')
+            projected_at = time.perf_counter()
             release = {'release_id': uuid.UUID(projected['release_id'])}
             detail = detail_payload(connection, release, entity(connection, release, entity_id))
+            detailed_at = time.perf_counter()
             graph = graph_payload(connection, release, entity_id)
+            graphed_at = time.perf_counter()
             for asset in detail['assets']:
                 sha = asset['url'].split('/assets/')[1].split('?')[0]
                 asset['url'] = f'/api/admin/drafts/{draft_id}/assets/{sha}?revision={current["revision"]}'
@@ -405,6 +410,10 @@ def draft_preview(draft_id: uuid.UUID, entity_id: str = Query(..., max_length=20
                 'data': detail, 'graph': graph, 'draft': {'id': str(draft_id), 'revision': current['revision'], 'content_hash': result['content_hash']}}, current['revision'])
         finally:
             candidate.rollback()
+    # Stage times only (numbers), never content; scripts/research_draft_bench.py reads these lines.
+    log.info('draft-preview timing draft=%s revision=%s project_ms=%.1f flush_ms=%.1f detail_ms=%.1f graph_ms=%.1f',
+             draft_id, current['revision'], (projected_at - started) * 1000, projected['timings'].get('flush', 0.0),
+             (detailed_at - projected_at) * 1000, (graphed_at - detailed_at) * 1000)
     return response
 
 

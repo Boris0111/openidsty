@@ -232,6 +232,11 @@ python research_drill.py deploy-rehearsal --commit <要量測的提交>    # 量
 
 ### 未在本 change 處理的後續問題
 
+2026-11 處理結果見下方「預覽與編輯器修正前後」：
+
+- 第 1 項（預覽的臨時投影）：投影改為批次寫入。真實資料的預覽 p95 2.8 → 0.83 秒，已達標；擴大資料 9.9 → 2.9 秒，未達原定 2 秒，Boris 決定目標改為 3 秒。
+- 第 2 項（大型檔案的輸入延遲）：108 秒沒有重現；修正前後都在目標內。文字框只加了關閉拼字檢查與自動換行等屬性。
+
 1. **預覽的臨時投影**（design D7 門檻：已驗證修訂的預覽 p95 > 2 秒）。在演練 worker 容器內逐段計時，savepoint 內 rollback：
 
    | 草稿 | 臨時投影 `project()` | detail | graph |
@@ -263,3 +268,121 @@ python research_drill.py deploy-rehearsal --commit <要量測的提交>    # 量
 | 讀者 | 演練前後的 release 都是 `a5df290c…`，`company-auras` 摘要 hash 相同（`6bcd2587…`），`/next` 回 200，當天沒有發布作業 |
 
 這次預覽的頁面都沒有圖解，所以沒有圖解請求；圖解共用驗證結果已在演練環境確認（上表「每次預覽的完整驗證次數」）。演練草稿留在 DB，沒有發布，不影響讀者。
+
+## 預覽與編輯器修正前後（2026-11，`speed-up-draft-preview-and-editor`）
+
+處理上一節「未在本 change 處理的後續問題」的兩項。量測工具都留在 repo：
+
+- 預覽：`scripts/research_draft_bench.py`，報告在 `.work/research-draft-bench/{before,after}-{real,scaled}.json`。
+- 輸入延遲：`scripts/research_editor_latency.cjs`，報告在 `.work/research-editor-latency/<label>.json`，加 `--trace` 時原始 trace 存成 `<label>.trace.json`。
+
+```powershell
+python scripts/research_drill.py down; python scripts/research_drill.py restore --backup latest; python scripts/research_drill.py owner
+python scripts/research_drill.py deploy-rehearsal --commit <要量測的提交>    # 量修正後時；量 main 的程式就跳過
+python scripts/research_draft_bench.py --label <名稱> [--dataset scaled]     # 報告的 draft_id 給下一行使用
+node scripts/research_editor_latency.cjs --draft <draft_id> --path <檔案> --mode raw|form --label <名稱> [--trace]
+```
+
+### 修正前（2026-11-02）
+
+| 項目 | 設定 |
+|---|---|
+| 環境 | 從本 change 的 worktree 以 `down`、`restore --backup latest`、`owner` 重建演練 `industryflow-research-drill`（web 3016、API 8016）。備份 `20261101T193004Z`，核對全部相符，RTO 66.7 秒 |
+| 程式 | 備份的基準 image，也就是 `main` `01de3e0` 的程式（之後的 `c3938d3` 只改文件）：API `sha256:677f15df…`、web `sha256:d46bb9fa…` |
+| 正式服務 | 量測期間照常運作，沒有暫停（上一輪有暫停）；指紋在每一步前後都相同 |
+| 主機 | 同「工作負載與環境」；開始前主機可用記憶體約 2.2 GB |
+| 預覽 | 驗證一次後連續預覽 20 次，輪流 7 頁（`concept-hbm-stack`、`company-auras`、`segment-thermal`、`segment-pcb`、`theme-liquid-cooling`、`segment-compute`、`theme-hbm4`）；擴大資料再加 `company-synth-001`、`company-synth-150`。圖解請求另計，不算進預覽時間 |
+| 擴大資料 | 與上一節相同：建立草稿後匯入 `research_scale.build_tree()` 的樹，466 個檔案、2.19 MB |
+| 輸入延遲 | headless Chromium 153.0.8010.12（Playwright 1.63.0），1280×720。游標放在文字中段，輸入 30 個字元，間隔 150 ms。每個按鍵取 Event Timing 中同一個 interaction 的最長 duration（與 INP 同一套定義）；低於 16 ms 不會回報，記為 `<16`，統計時以 16 計。輸入後文字框增加的字數都等於 30，確認按鍵都打進文字框 |
+
+預覽（毫秒）：
+
+| 項目 | 真實資料（261 檔） | 擴大資料（466 檔） |
+|---|---|---|
+| 預覽 20 次 p50 | 2,636 | 9,159 |
+| 預覽 20 次 p95 | **2,819** | **9,854** |
+| 預覽 20 次最大 | 2,869 | 10,320 |
+| 成功 | 20／20 | 20／20 |
+| 圖解（6 次）p95 | 83 | 184 |
+| 首次驗證 | 2,049 | 6,810 |
+| `draft-preview timing` | `null`（修正前沒有這行 log） | `null` |
+| API 記憶體高點 | 110 MiB | 205 MiB |
+
+輸入延遲（毫秒）：
+
+| 量測 | 檔案 | 模式 | 字數 | p50 | p95 | 最大 | `<16` | 逾時 |
+|---|---|---|---|---|---|---|---|---|
+| `before-real-company` | `company-auras.md` | 表單內文 | 1,592 | 16 | 24 | 32 | 27 | 0 |
+| `before-real-relations` | `research-relations.yaml` | 原始文字 | 49,473 | 16 | 24 | 32 | 26 | 0 |
+| `before-scaled-relations` | 擴大資料的 `research-relations.yaml` | 原始文字 | 972,942 | 120 | **168** | **168** | 0 | 0 |
+
+**108 秒的判定**：
+
+- **沒有重現**。擴大資料的關係檔量了兩次，30 鍵都打進文字框、沒有逾時，最大值分別是 200 ms 與 168 ms。第一次量完後修正了 trace 分類規則（`LocalFrameView::performLayout` 與 `Blink.PrePaint`／`CompositingInputs` 原本落在「其他」），所以重量一次，表中是第二次；第一次的輸出留在 `before-scaled-relations-run1.txt`（p50 120、p95 152、最大 200）。
+- **修正前就已符合 spec 的延遲目標**（p95 ≤ 300 ms、最大 ≤ 1 秒），三組都是。
+- **trace（第二次）**：超過 50 ms 的主執行緒工作 60 個，合計 3,902 ms：
+
+  | 類別 | 毫秒 | 比例 |
+  |---|---|---|
+  | paint（PrePaint、compositing） | 1,612 | 41% |
+  | 其他 | 1,018 | 26% |
+  | style／layout | 962 | 25% |
+  | script（含 React） | 311 | 8% |
+  | GC | 0 | 0% |
+
+  「其他」幾乎都是瀏覽器原生的文字編輯：`GetSelectionOffsets` 548、`Editor::SyncSelection` 277、`HTMLTextAreaElement::SubtreeHasChanged` 73、`TypingCommand::InsertText` 37。trace 裡沒有拼字檢查的事件。最長的一個工作 103 ms：其他 58、style／layout 32、script 13。
+- **主因**：Chromium 本身處理近百萬字文字框的成本（重繪、排版、選取範圍同步），React script 約占 8%；不是 React 重繪，也不是拼字檢查。
+- **上一輪為何量到 108 秒**：上一輪的量法沒有留下工具，無法確定。推論（needs verification）：量法不同（例如游標位置或輸入方式），或當時主機有記憶體壓力。上一輪公司表單 p95 247 ms、關係檔 p50 277 ms，也都比這次高，同樣無法逐項比對。
+- 依 tasks 2.2，主因不在 design D6 主要處理的範圍內（D6 針對 React 逐鍵重繪與拼字檢查；`wrap="off"` 可能減少排版，但沒有量過），交給 Boris 決定是否照 D6 繼續 group 4。
+- **Boris 的決定（2026-11-03）**：文字框維持 controlled，不改成 uncontrolled；只在原始文字框關閉拼字檢查、自動換行、autocomplete／autocorrect／autocapitalize，表單內文關閉拼字檢查（design D6）。
+
+### 修正後（2026-11-03）
+
+| 項目 | 設定 |
+|---|---|
+| 環境 | 從本 change 的 worktree 重做 `down`、`restore --backup latest`（備份 `20261102T193005Z`，核對全部相符，RTO 99.1 秒）、`deploy-rehearsal --commit 21560f6`（smoke 全過，遷移 `0017 → 0017`）、`owner` |
+| 程式 | branch `21560f6`：API `sha256:f3a5af18…`、web `sha256:2ad8b81f…` |
+| 正式服務 | 照常運作；指紋在每一步前後都相同 |
+| 量法 | 與修正前相同（同一組頁面、同樣匯入擴大資料、同一支 latency 腳本與 Chromium） |
+
+預覽（毫秒）：
+
+| 項目 | 真實資料 修正前 | 真實資料 修正後 | 擴大資料 修正前 | 擴大資料 修正後 | 目標 |
+|---|---|---|---|---|---|
+| 預覽 20 次 p50 | 2,636 | 762 | 9,159 | 2,640 | — |
+| 預覽 20 次 p95 | 2,819 | **833** | 9,854 | **2,899** | ≤ 1,000／≤ 3,000（原定 2,000） |
+| 預覽 20 次最大 | 2,869 | 833 | 10,320 | 2,939 | — |
+| 成功 | 20／20 | 20／20 | 20／20 | 20／20 | 全部成功 |
+| 圖解（6 次）p95 | 83 | 98 | 184 | 133 | — |
+| 預覽期間的完整驗證次數 | 0 | 0 | 0 | 0 | — |
+| API 記憶體高點 | 110 MiB | 102 MiB | 205 MiB | 185 MiB | 與上一輪 178 MiB 比較 |
+
+`draft-preview timing` 各段中位數（毫秒，20 行）：
+
+| 階段 | 真實資料 | 擴大資料 |
+|---|---|---|
+| `project_ms`（整段投影） | 585 | 2,079 |
+| 其中 `flush_ms`（批次寫入資料庫） | 432 | 1,579 |
+| 其中 Python 端（`project_ms − flush_ms`：組列、序列化、hash） | 153 | 500 |
+| `detail_ms` | 113 | 438 |
+| `graph_ms` | 15 | 45 |
+
+輸入延遲（毫秒）：
+
+| 量測 | 字數 | p50 | p95 | 最大 | `<16` | 逾時 | 修正前 p95／最大 |
+|---|---|---|---|---|---|---|---|
+| `after-real-company` | 1,592 | 16 | 24 | 32 | 27 | 0 | 24／32 |
+| `after-real-relations` | 49,473 | 16 | 24 | 24 | 27 | 0 | 24／32 |
+| `after-scaled-relations` | 972,942 | 120 | **144** | **168** | 0 | 0 | 168／168 |
+
+`after-scaled-relations` 的 trace：超過 50 ms 的主執行緒工作 57 個，合計 3,463 ms（修正前 3,902 ms）：paint 1,354、style／layout 869、其他 930（`GetSelectionOffsets` 467、`Editor::SyncSelection` 274）、script 311、GC 0。paint 與排版各少約 10%，可能是 `wrap="off"` 的效果，但差距接近兩次量測之間的變動，不作為結論。
+
+**判定**：
+
+- **真實資料的預覽達標**：p95 833 ms ≤ 1 秒，20 次都成功。
+- **擴大資料的預覽未達原定目標**：p95 2,899 ms，原定 2 秒，差約 900 ms；比修正前快約 3.4 倍。依 design D3 不自行調整目標、不在本 change 擴大範圍，交給 Boris 決定。**Boris 2026-11-03 決定把擴大資料的目標改為 3 秒後收尾**（spec 已同步）；目前真實資料有 95 家公司，投影中的關係 59 條（擴大資料 300 家、3,034 條），離這個規模還遠，廣度擴充接近時再用同一套工具重量。耗時拆解：
+  - 批次寫入 1,579 ms 仍是最大一塊（約 10,800 列；每列約 0.15 ms）。
+  - 投影的 Python 端 500 ms、detail 438 ms。detail 在修正前另量為 100–280 ms（上一輪 worker 內單頁計時，量法不同）；推論（needs verification）：savepoint 內剛寫入的列沒有統計資訊，查詢計畫可能較差。
+- **輸入延遲三組都達標**（p95 ≤ 300 ms、最大 ≤ 1 秒、沒有逾時），與修正前相同；108 秒沒有在任何一次量測中出現。
+- **API 記憶體**：擴大資料 185 MiB，比上一輪的 178 MiB 多 7 MiB，比本輪修正前的 205 MiB 少；批次寫入先把列放在記憶體，沒有造成明顯上升。
+- **投影等價**：演練 `rebuild-check` 以真實舊歷史比對兩種寫法，`writer_equivalent: true`，21 張投影表的列數與 md5 都相同（`rebuild-check-20261103T044926Z.json`）。

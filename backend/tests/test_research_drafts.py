@@ -192,6 +192,55 @@ def test_validation_preview_and_diagrams_share_one_compile(draft_context, compil
     assert client.post(url + '/validate?revision=2', headers=headers).json()['valid'] and len(compiles) == 2
 
 
+def projection_counts(engine):
+    from app.research_compile import PROJECTION_ORDER
+    with engine.connect() as connection:
+        return {table: connection.execute(text('SELECT count(*) FROM research.' + table)).scalar_one() for table in PROJECTION_ORDER}
+
+
+def test_preview_logs_stage_times_only_and_leaves_no_candidate(draft_context, monkeypatch):
+    import logging
+    import app.research_drafts as drafts
+    client, engine, release, headers = draft_context
+    draft = client.post('/api/admin/drafts', json={'base_release_id': release}, headers=headers).json()
+    url = '/api/admin/drafts/' + draft['draft_id']
+    path, marker = 'industry-map/companies/company-auras.md', '僅供預覽計時測試的合成內文。'
+    content = client.get(url + '/export').json()['files'][path]
+    # An edited revision: an unchanged draft would reuse the published release instead of projecting.
+    saved = client.patch(url, json={'changes': [{'path': path, 'content': content + '\n' + marker + '\n'}]}, headers={**headers, 'If-Match': '"1"'})
+    assert saved.status_code == 200
+    before = projection_counts(engine)
+    records, handler, logger = [], logging.Handler(), logging.getLogger('uvicorn.error')
+    handler.emit = records.append
+    level = logger.level
+    logger.addHandler(handler); logger.setLevel(logging.INFO)
+    try:
+        for entity in ('company-auras', 'concept-hbm-stack'):
+            preview = client.get(url + '/preview', params={'entity_id': entity, 'revision': 2})
+            assert preview.status_code == 200, preview.text
+        assert marker in client.get(url + '/preview', params={'entity_id': 'company-auras', 'revision': 2}).json()['data']['markdown']
+    finally:
+        logger.removeHandler(handler); logger.setLevel(level)
+    lines = [record.getMessage() for record in records if 'draft-preview timing' in record.getMessage()]
+    assert len(lines) == 3  # exactly one line per preview
+    for line in lines:
+        fields = dict(part.split('=', 1) for part in line.split('draft-preview timing ', 1)[1].split())
+        assert set(fields) == {'draft', 'revision', 'project_ms', 'flush_ms', 'detail_ms', 'graph_ms'}
+        assert fields['draft'] == draft['draft_id'] and fields['revision'] == '2'
+        assert all(float(fields[key]) >= 0 for key in ('project_ms', 'flush_ms', 'detail_ms', 'graph_ms'))
+        assert not any(value in line for value in ('company-auras', 'concept-hbm-stack', '雙鴻', marker))
+    assert projection_counts(engine) == before  # no candidate release and no projected rows remain
+
+    def fail(*args, **kwargs):
+        raise RuntimeError('synthetic failure after projection')
+    monkeypatch.setattr(drafts, 'graph_payload', fail)
+    try:
+        assert client.get(url + '/preview', params={'entity_id': 'company-auras', 'revision': 2}).status_code == 500
+    except RuntimeError:
+        pass  # TestClient re-raises server errors
+    assert projection_counts(engine) == before
+
+
 def test_invalid_revision_diagrams_are_refused_without_recompiling(draft_context, compiles):
     client, _, release, headers = draft_context
     draft = client.post('/api/admin/drafts', json={'base_release_id': release}, headers=headers).json()
