@@ -129,8 +129,13 @@
 
 ## 5. 修正後的整合量測與記錄（演練環境，從本 change 的 worktree）
 
-- [ ] 5.1 推送 branch、開 draft PR，確認 GitHub Actions 全部通過（validator、root unittest、離線後端、前端 typecheck／unit／build、離線 E2E、公開靜態頁）。驗證：PR 與 run 編號記在本 task。
-- [ ] 5.2 演練環境依序執行：
+- [x] 5.1 （2026-11-03：draft PR #14。PR HEAD `21560f6` 的 push run `41579204107`、PR run `41579210281` 全綠；之前的 `20d3533`、`8baefca` 也全綠）推送 branch、開 draft PR，確認 GitHub Actions 全部通過（validator、root unittest、離線後端、前端 typecheck／unit／build、離線 E2E、公開靜態頁）。驗證：PR 與 run 編號記在本 task。
+- [x] 5.2 （2026-11-03，第二輪，PR HEAD `21560f6`。第一輪對 `8baefca` 的 `pg-check` 有 2 項失敗：新測試讀 root `tests/fixtures/valid`，API image 裡沒有這個目錄。修正後從 `down` 重做。報告都在本 worktree 的 `.work/research-drill/`：
+  - `restore-20261103T043754Z.json`：備份 `20261102T193005Z`、基準 `01de3e0`，核對全部相符，RTO 99.1 秒（`restore-20261103T042311Z.json` 為第一輪）。
+  - `deploy-rehearsal-20261103T044130Z.json`：smoke 全過，遷移 `0017 → 0017`，只有 `public.sources` 變動（initialize 的既有行為），其餘 51 張表不變，67.9 秒。
+  - `pg-check-20261103T044848Z.json`：165 passed、3 skipped，6 分 53 秒；含 `test_projection_writer.py`，fixture 等價案例與擴大資料案例在 image 內 skip（CI 與臨時 PostgreSQL 上已通過）。
+  - `rebuild-check-20261103T044926Z.json`：`writer_equivalent: true`，21 張投影表兩種寫法相同；254 個研究物件，舊歷史 assessment 7、指標定義 9、指標觀測 29、技術文件 8、技術觀測 8、技術審查 8，與演練 DB 中還原自正式備份的資料相同。
+  - 正式服務指紋在每一步前後都與開始時相同）演練環境依序執行：
   - `restore --backup latest`
   - `deploy-rehearsal --commit <PR HEAD>`
   - `pg-check --commit <PR HEAD> --suite all`
@@ -141,7 +146,7 @@
   - `pg-check` 全數通過，含 `test_projection_writer.py`。
   - `rebuild-check` 報告的 `writer_equivalent` 為 `true`，舊歷史的各類筆數與正式資料相同。
   - 報告路徑記在本 task；正式服務的指紋不變。
-- [ ] 5.3 在 5.2 部署的演練上，量修正後的數字：
+- [ ] 5.3 （2026-11-03：量測完成，**擴大資料的預覽未達標，等 Boris 決定**，所以未勾選。真實資料預覽 20／20 成功，p95 833 ms ≤ 1 秒；擴大資料 20／20 成功，p95 2,899 ms > 2 秒，分段中位數 project 2,079（其中 flush 1,579）、detail 438、graph 45 ms。輸入延遲三組 p95 24／24／144 ms、最大 32／24／168 ms、沒有逾時，達標。API 記憶體高點 102／185 MiB，上一輪 178 MiB。另對演練 3016 跑完整 `research-editor.spec.ts`，6 項全過，含 4.2 留下的 2 項真實 API 測試）在 5.2 部署的演練上，量修正後的數字：
   - 預覽：`after-real` 與 `after-scaled`。
   - 輸入延遲：`after-real-company`、`after-real-relations`、`after-scaled-relations`（加 `--trace`）。
 
@@ -151,8 +156,8 @@
   - API 記憶體高點與上一輪的 178 MiB 比較，並記錄下來。
 
   未達標時，記錄實際數字與分段耗時（`draft-preview timing`、trace 摘要），交給 Boris 決定。不得調整目標來湊數。
-- [ ] 5.4 `rollback-rehearsal`：回到 restore 的基準 image，判定應為 `expand-only`，回退後 smoke 通過。驗證：報告路徑記在本 task；正式服務的指紋不變。
-- [ ] 5.5 記錄結果：
+- [x] 5.4 （2026-11-03：`rollback-rehearsal-20261103T045540Z.json`：`21560f6` → `01de3e0`，判定 `expand-only`，沒有執行 initialize，smoke 全過，52 張表全部不變；正式服務指紋不變）`rollback-rehearsal`：回到 restore 的基準 image，判定應為 `expand-only`，回退後 smoke 通過。驗證：報告路徑記在本 task；正式服務的指紋不變。
+- [x] 5.5 （2026-11-03：三處文件都已更新；以一次性腳本從 10 份 JSON 報告重算並比對文件中的 49 個數字，全部一致。擴大資料預覽未達標的處理結果，等 Boris 決定後補記）記錄結果：
   - `docs/research-performance.md` 的新一節補上修正後的數字、分段耗時與 108 秒的處理結果。
   - 上一節「未在本 change 處理的後續問題」逐項標註處理結果。
   - `docs/research-acceptance.md`「草稿編輯的剩餘成本」這一列改為修正後的狀態。
