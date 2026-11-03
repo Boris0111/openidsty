@@ -482,7 +482,7 @@ PR #12 merge 為 `01de3e0`（12:36 UTC）後，依 [部署與回退](research-de
 
 **附註**：
 
-- **Docker Desktop 不會在登入時啟動**：Windows「啟動應用程式」中的 Docker Desktop 被停用（`StartupApproved` 為停用），Docker Desktop 的 `AutoStart` 也是 false。所以「重開機後排程自動恢復」目前要等手動開啟 Docker Desktop 才成立，這次因此停機約 7 小時。是否改為登入時啟動由 Boris 決定。
+- **Docker Desktop 不會在登入時啟動**：Windows「啟動應用程式」中的 Docker Desktop 被停用（`StartupApproved` 為停用），Docker Desktop 的 `AutoStart` 也是 false。所以「重開機後排程自動恢復」目前要等手動開啟 Docker Desktop 才成立，這次因此停機約 7 小時。2026-11-02 Boris 決定暫不改為登入時啟動，重開機後以桌面的「Docker Desktop」捷徑（`C:\Program Files\Docker\Docker\Docker Desktop.exe`）手動啟動，再以 `research_lab.py status` 確認恢復（[研究服務的啟動與維運](research-lab.md)「排程與重開機」）。
 - **`prefect.dump` 的成長**：10-30 演練時為 6.4 MiB（flow runs 10,984），這次為 10.0 MiB（17,667）。兩個每分鐘排程每天約新增 2,900 筆 flow run，以這個速度推估約 2 週後會超過 design 設定的 30 MiB 評估門檻（推論，實際取決於主機運行的時間）。Prefect 保留期限的決定因此變得較急，見 change 的 Open Questions。
 - 演練報告在 change worktree 的 `.work/research-drill/restore-20261101T124829Z.json`。
 
