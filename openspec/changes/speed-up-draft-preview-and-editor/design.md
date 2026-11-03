@@ -91,6 +91,8 @@
 
 **未達標時**：如果批次寫入後仍不符合 spec「已驗證修訂的閱讀預覽有時間上限」，記錄 D4 的分段耗時，交給 Boris 決定下一步。不調整目標，也不在本 change 擴大範圍。
 
+**結果（2026-11-03）**：真實資料 p95 833 ms，達標；擴大資料 p95 2,899 ms，未達原定 2 秒。分段中位數：寫入資料庫 1,579 ms、投影的 Python 端 500 ms、detail 438 ms、graph 45 ms。Boris 決定把擴大資料的目標改為 3 秒，本 change 依此收尾，不再擴大範圍。日後若要壓到 2 秒以內，可能方向（推論，未驗證）：寫入改用多列 `VALUES` 或 `COPY`；查 detail 是否因 savepoint 內新寫入的列沒有統計資訊而選了較差的查詢計畫。
+
 ### D4：`project()` 的分段計時
 
 - `project()` 回傳值新增 `timings`：各階段的毫秒數，包括 snapshots、documents、claims、taxonomy 與 offerings、relations、assets、legacy history、flush。值只有數字，不含內容。
