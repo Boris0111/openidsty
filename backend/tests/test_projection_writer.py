@@ -111,6 +111,9 @@ def published(authored):
 
 def fixture_bundle():
     folder = ROOT / 'tests/fixtures/valid'
+    # The API image ships no root tests/ folder, so research_drill.py pg-check skips this; CI runs it from the checkout.
+    if not folder.is_dir():
+        pytest.skip('tests/fixtures/valid is not in the API image; CI runs this test from the checkout')
     return compile_archive(make_archive({'industry-map/' + path.relative_to(folder).as_posix(): path.read_bytes()
                                          for path in folder.rglob('*') if path.is_file()}))
 
@@ -234,12 +237,22 @@ def test_legacy_history_reads_lookups_once_and_keeps_every_row(connection, publi
         assert sum('FROM public.' in statement for statement in statements) == 9
 
 
-def test_missing_entity_message_is_unchanged(connection):
+def test_missing_entity_message_is_unchanged(connection, published):
+    from sqlalchemy.orm import Session
+    from app.models import Theme, ThemeAssessmentVersion
     seed_legacy(connection)
-    bundle = fixture_bundle()  # segments and one theme only: the importer's themes are missing
+    # A retired theme that still has assessment history but no snapshot in the research.
+    session = Session(bind=connection, join_transaction_mode='create_savepoint')
+    session.add(Theme(id='legacy-only-theme', data={}, prose='', active=False))
+    session.flush()
+    session.add(ThemeAssessmentVersion(theme_id='legacy-only-theme', version_number=1, payload={'synthetic': True},
+                                       content_hash='4' * 64, reviewed='2026-11-03', reason='已退場的合成題材'))
+    session.commit()
+    session.close()
+    bundle = published
     with pytest.raises(ValueError) as before:
         reference_rows(connection, {snapshot['entity_id'] for snapshot in bundle['snapshots']})
-    assert str(before.value).startswith('Legacy history references missing entity ')
+    assert str(before.value) == 'Legacy history references missing entity theme-legacy-only-theme'
     for immediate in (True, False):
         with pytest.raises(ValueError) as after:
             with connection.begin_nested():
