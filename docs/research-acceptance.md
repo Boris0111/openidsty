@@ -485,3 +485,19 @@ PR #12 merge 為 `01de3e0`（12:36 UTC）後，依 [部署與回退](research-de
 - **Docker Desktop 不會在登入時啟動**：Windows「啟動應用程式」中的 Docker Desktop 被停用（`StartupApproved` 為停用），Docker Desktop 的 `AutoStart` 也是 false。所以「重開機後排程自動恢復」目前要等手動開啟 Docker Desktop 才成立，這次因此停機約 7 小時。是否改為登入時啟動由 Boris 決定。
 - **`prefect.dump` 的成長**：10-30 演練時為 6.4 MiB（flow runs 10,984），這次為 10.0 MiB（17,667）。兩個每分鐘排程每天約新增 2,900 筆 flow run，以這個速度推估約 2 週後會超過 design 設定的 30 MiB 評估門檻（推論，實際取決於主機運行的時間）。Prefect 保留期限的決定因此變得較急，見 change 的 Open Questions。
 - 演練報告在 change worktree 的 `.work/research-drill/restore-20261101T124829Z.json`。
+
+## 十五、2026-11-03 預覽批次投影的部署與正式核對（speed-up-draft-preview-and-editor）
+
+PR #14 merge 為 `7ebb8f9` 後，依 [部署與回退](research-deployment.md) 從部署目錄部署，再依該 change 的 merge 後步驟在正式 `/admin` 預覽。這次沒有遷移，Prefect 仍是 3.8.8。
+
+| 步驟（UTC） | 結果 |
+|---|---|
+| 部署前狀況 | `status` 沒有不一致（seq 3、`01de3e0`、遷移 `0017`）。`7ebb8f9` 的內容與 PR 最後的 `bd311ca` 相同；backend、frontend、scripts、compose 與 docker 和演練部署驗證過的 `21560f6` 相同，之後的提交只改文件與 OpenSpec |
+| 部署（06:05:47–06:08:06） | `deploy --commit 7ebb8f9`，部署紀錄第 4 筆 `succeeded`，重新建置 api 與 web，`contract_boundary`、`prefect_boundary` 都是 false。部署前備份 `20261103T060548Z`。smoke 六項全過（`health`、`release`、`next`、`containers`、`alembic`、`working_dir`），遷移 `0017 → 0017`。部署後 `status`：api、web、prefect、worker 的 revision 都是 `7ebb8f9`，db 容器不變，沒有不一致；`/api/health`、`/next` 回 200 |
+| 正式預覽 | Boris 在 `/admin` 對草稿 `e701a6ea…` 修訂 4 預覽 4 次（`company-auras`、`company-arm` 兩次、`company-amat`），都回 200。正式 API 的 `draft-preview timing`（毫秒）：project 870／755／603／601（其中寫入資料庫 712／486／456／458），detail 59／100／47／104，graph 20／13／12／12；三段合計 950／867／662／717。演練的修正後中位數為 project 585（寫入 432）、detail 113、graph 15；修正前只有投影一段就約 2.7 秒（[效能基準](research-performance.md)「未在本 change 處理的後續問題」） |
+
+**附註**：
+
+- 這些是 API 內各階段的時間，不是瀏覽器看到的完整回應時間；正式環境沒有量端到端的 p95，端到端的數字以演練為準（真實資料 p95 833 ms）。
+- 部署會重啟 API，驗證快取隨之清空，所以第一次預覽前另做了一次完整驗證（log 中 `draft-validation computed` 出現 1 次，之後 3 次預覽沒有再驗證）；第一次預覽的回應時間因此包含驗證，之後同一修訂的預覽不再需要。
+- 如果之後要回到前一版，`rollback --to 3` 屬 `expand-only`，已在演練中確認（`rollback-rehearsal-20261103T045540Z.json`）。
