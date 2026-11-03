@@ -18,14 +18,16 @@
 - **預覽維持 savepoint ＋ rollback**：
   - 不把預覽用的候選 release 留在資料庫，讀者角色永遠看不到未發布的內容，這點不變。
   - 不做「依修訂快取投影結果」或「只投影需要的實體」。批次寫入後仍未達標時，記錄耗時拆解，交給 Boris 決定下一步。
-- **管理頁的原始文字編輯框不再逐鍵重繪**：
-  - 原始 Markdown／YAML 文字框與表單的內文文字框，改為不受 React 控制（uncontrolled）。打字時不更新 React state，只在第一次修改時標記「有未儲存修改」；儲存與切換模式時才從文字框讀出內容。
-  - 原始文字框關閉拼字檢查與自動換行（`spellCheck={false}`、`wrap="off"`）。
-  - 選擇另一份文件或重新載入草稿時，文字框必須換成新內容，不得留著舊文字。
+- **管理頁文字框只加低風險屬性，維持 controlled**（Boris 2026-11-03 決定，見下一項的量測）：
+  - 原始 Markdown／YAML 文字框關閉拼字檢查與自動換行（`spellCheck={false}`、`wrap="off"`），並關閉 autocomplete、autocorrect、autocapitalize。
+  - 表單的內文文字框關閉拼字檢查（`spellCheck={false}`），保留自動換行。
+  - 不改成 uncontrolled：資料流動方式不變，儲存與切換模式照舊使用 React state。
   - 不新增前端套件（Boris 2026-11-02 決定），也不限制網頁上可編輯的檔案大小。
+  - 原提案是把兩個文字框改為 uncontrolled（打字不更新 React state，儲存時才從文字框讀出）。修正前的量測顯示 React 只占輸入成本約 8%，而 uncontrolled 會讓畫面與 React state 成為兩份內容，帶來「存錯檔案、漏存最後輸入」的新風險，所以不採用。
 - **先查清 108 秒的成因，再修**：
   - 修正前，以 headless Chromium 錄下卡住那次按鍵的 performance trace，判定時間主要花在 React script、layout、拼字檢查或 GC。
   - 修正後用同一方法再量一次。如果卡頓的成因不在上述修法的範圍內，記錄下來交給 Boris 決定，不擴大範圍。
+  - 結果（2026-11-02）：108 秒沒有重現。擴大資料的關係檔 p95 168 ms，修正前就已在目標內；成本主要是 Chromium 本身的 paint、排版與選取同步，React script 約 8%，trace 沒有拼字檢查事件。依此由 Boris 改選上一項的作法。
 - **把量測工具留在 repo**：
   - `scripts/research_draft_bench.py` 的預覽量測從 1 次改為多次，才算得出 p95，並加上 `project()` 的分段計時。
   - 新增管理頁輸入延遲的量測腳本。上一輪的 108 秒是臨時量的，沒有留下工具。
@@ -39,11 +41,11 @@
 
 ### Modified Capabilities
 
-- `research-publishing`：新增四項 requirement：
+- `research-publishing`：新增三項 requirement：
   - 已驗證修訂的閱讀預覽有回應時間上限，不隨研究規模線性變慢。
   - 預覽與發布的投影內容與批次化之前逐列相同。
   - 管理頁編輯近百萬字的檔案時，按鍵不會凍結頁面。
-  - 管理頁儲存與切換模式時，用的是文字框當下的內容（改成 uncontrolled 之後的正確性保證）。
+  - 原本第四項「管理頁儲存與切換模式時，用的是文字框當下的內容」是 uncontrolled 改動的正確性保證；2026-11-03 不改成 uncontrolled，這項一併移除。
 
 ## Impact
 
@@ -54,8 +56,8 @@
   - `research_rebuild_check.py` 多做一件事：用真實的舊歷史資料比對逐列與批次兩種寫法，報告新增每張表的列數與 md5。
   - 不新增資料表或 migration。
 - **前端**：
-  - `frontend/components/ResearchEditor.tsx`：文字框改為 uncontrolled，並調整 dirty 判斷、儲存與切換模式。
-  - `frontend/tests/research-editor.spec.ts` 新增行為測試：打字後儲存送出的是畫面上的內容，切換文件時文字框會換成新內容。
+  - `frontend/components/ResearchEditor.tsx`：兩個文字框加上上述屬性，維持 controlled。
+  - `frontend/tests/research-editor.spec.ts` 新增測試：原始文字框與表單內文文字框帶有這些屬性，打字後仍標示有未儲存修改。
 - **量測**：
   - `scripts/research_draft_bench.py`：預覽改為多次，加上分段計時。
   - 新增管理頁輸入延遲腳本（Node＋前端既有的 `@playwright/test`，同 `scripts/reading_walkthrough.cjs` 的作法），報告寫到 `.work/`。
@@ -68,7 +70,7 @@
 - **相依套件**：不新增。
 - **不在範圍內**：
   - 依修訂快取投影結果、只投影部分實體、把預覽候選 release 保留在資料庫。
-  - 改用 CodeMirror 等編輯器套件；限制網頁可編輯的檔案大小。
+  - 改用 CodeMirror 等編輯器套件；限制網頁可編輯的檔案大小；把文字框改為 uncontrolled（2026-11-03 決定不做）。
   - 關係檔格式精簡或拆檔（屬於 Schema 變更，要另外決定）。
   - 首次驗證的耗時（擴大資料約 7.4 秒，每個修訂只算一次，已由上一個 change 的驗證快取處理）。
   - 讀者頁面與公開靜態快照。

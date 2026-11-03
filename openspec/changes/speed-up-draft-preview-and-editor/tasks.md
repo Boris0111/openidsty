@@ -110,20 +110,18 @@
 
 ## 4. 管理頁編輯器（前端）
 
-- [ ] 4.1 `frontend/components/ResearchEditor.tsx` 的兩個文字框改為 uncontrolled（design D6）：
-  - 使用 `defaultValue`、`ref`，`key` 由路徑加上 `loadVersion` 組成。
-  - `onInput` 只處理第一次修改。
-  - 儲存與切換模式前，以 `currentDocument()` 從 ref 讀出內容。
+**2026-11-03 Boris 決定**：修正前的量測（2.2）已在目標內，主因是 Chromium 本身，所以文字框**維持 controlled，只加低風險屬性**（design D6）。原本的 uncontrolled 改動與 spec「管理頁儲存的就是畫面上的內容」一併移除，4.1、4.2 依此改寫。
+
+- [x] 4.1 （2026-11-03：`npm run typecheck` 通過）`frontend/components/ResearchEditor.tsx` 的兩個文字框加上屬性（design D6），維持 controlled：
   - 原始文字框：`spellCheck={false}`、`wrap="off"`，並關閉 autocomplete、autocorrect、autocapitalize。
   - 表單內文的文字框：`spellCheck={false}`。
-  - frontmatter 的單行欄位維持 controlled。
+  - 輸入、儲存、切換模式與 dirty 判定都不改。
 
   驗證：`npm run typecheck` 通過。
-- [ ] 4.2 `frontend/tests/research-editor.spec.ts` 新增 spec「管理頁儲存的就是畫面上的內容」四個情境的測試，桌機與手機各一次：
-  - 輸入後立刻儲存：PATCH 的內容含最後輸入的字元。原始文字模式下用約 1 MB 的 mock 檔，只核對內容正確，不量時間。
-  - 從表單切換到原始文字：原始文字包含剛輸入的內容。
-  - 第一次修改：顯示「有未儲存修改」，選擇草稿、選擇檔案、驗證、比較、預覽都停用。
-  - 儲存後換另一份文件：文字框顯示新文件的內容，沒有殘留前一份的文字。
+- [x] 4.2 （2026-11-03：本 branch 的 `next start`（3017，`API_ORIGIN` 指向演練 API 8016）上，mock API 的 4 項通過：新增的桌機、手機各 1 項，既有的草稿編輯桌機、手機各 1 項。檔案中另 2 項打真實 API 的既有測試在 3017 失敗，原因是演練 API 只允許 3016 的管理來源（回 403 `admin-origin-denied`），與本 change 無關，改在 5.2 部署本 branch 到演練後對 3016 執行完整檔案。`npm run test:e2e:offline` 64 passed）`frontend/tests/research-editor.spec.ts` 新增測試，桌機與手機各一次：
+  - 原始文字框（YAML 檔）帶有 `spellcheck="false"`、`wrap="off"`、`autocomplete="off"`、`autocorrect="off"`、`autocapitalize="off"`。
+  - 表單內文的文字框帶有 `spellcheck="false"`，仍會自動換行。
+  - 在原始文字框輸入後顯示「有未儲存修改」，儲存送出的內容含剛輸入的字元（controlled 行為不變）。
 
   驗證：
   - 以本 branch 的 `next start`（127.0.0.1:3017，不碰正式服務）設 `RESEARCH_E2E` 執行 `research-editor.spec.ts`，全數通過（含既有測試）。
@@ -163,7 +161,7 @@
 
 ## Workflow follow-up
 
-- 1–5 全部勾完、在 branch 上 archive（`research-publishing` 主 spec 合入本 change 新增的四項 requirement），CI 再確認一次全綠之後，PR 才交給 Boris merge（AGENTS.md「先驗證、再 merge」）。
+- 1–5 全部勾完、在 branch 上 archive（`research-publishing` 主 spec 合入本 change 新增的三項 requirement），CI 再確認一次全綠之後，PR 才交給 Boris merge（AGENTS.md「先驗證、再 merge」）。
 - merge 後由 Boris 依 `docs/research-deployment.md` 從部署目錄部署，部署紀錄的 smoke 結果就是紀錄。
 - 部署後 Boris 在正式 `/admin` 預覽幾頁，確認回應明顯變快；結果簡短記在 `docs/research-acceptance.md`。這是正式環境的確認，不阻擋 merge。
 - 之後依產品順序進入地圖廣度擴充（光通訊、電網／電力設備、網路系統）。

@@ -26,7 +26,7 @@
 
 **驅動程式**：SQLAlchemy 2.0.48 搭配 psycopg 3.3.3。以 `connection.execute(text(...), [dict, ...])` 傳入多筆參數時，會走 cursor 的 `executemany`；psycopg 3 的 `executemany` 會自動使用 pipeline mode，一次送出多筆，不必每筆等回應。
 
-**管理頁編輯器**（`frontend/components/ResearchEditor.tsx`）：
+**管理頁編輯器**（`frontend/components/ResearchEditor.tsx`；以下為提案時的了解，D6 的「為什麼改變」是量測後的結果）：
 
 - 兩個文字框都是 controlled：每次按鍵都 `setDocument({...current, content})`，整個 `ResearchEditor` 重新 render，React 再把近 1 MB 的字串寫回 `<textarea>`。
 - 每次按鍵也會呼叫 `setDirty(true)`、`setPreview(undefined)`、`setDiff('')`。
@@ -40,7 +40,7 @@
 **Goals:**
 
 - `project()` 的輸出完全不變，只改寫入方式；發布與預覽一起受惠。
-- 編輯器在打字時不經過 React，只在儲存或切換模式時讀出內容。
+- 編輯器的文字框關閉沒有用處的瀏覽器處理（拼字檢查、原始文字的自動換行），資料流動方式不變（2026-11-03 由 uncontrolled 改為此目標，見 D6）。
 - 先用 trace 查清 108 秒的成因，修完再用同一方法確認。
 - 量測工具與方法留在 repo，之後擴充時可以重量。
 
@@ -119,24 +119,28 @@
 - 寫入器遇到未列在 `PROJECTION_ORDER` 的表時拋錯。
 - 一批寫入違反限制時（例如重複的 relation ID），整次投影 rollback，資料庫不留下任何列。發布路徑以既有的發布失敗測試確認正式版本不切換。
 
-### D6：編輯器的兩個文字框改為 uncontrolled
+### D6：文字框維持 controlled，只加低風險屬性（Boris 2026-11-03 決定）
 
-- **`<textarea>` 改用 `defaultValue`＋`ref`**：
-  - `key` 由文件路徑加上一個每次載入、儲存、切換模式就加 1 的 `loadVersion` 組成。換文件、重新載入或儲存後，React 會換一個新的文字框，顯示已保存的內容，不會殘留舊文字。
-- **輸入事件只處理「第一次修改」**：
-  - `onInput` 只在 `dirty` 為 false 時 `setDirty(true)`，並清掉預覽與 diff。
-  - 之後的按鍵不更新任何 React state，所以整個編輯器不會重新 render。
-- **需要內容時才讀**：
-  - 儲存與切換模式前，用 `currentDocument()` 從 ref 讀出文字框目前的值，再組成要送出的 change。
-  - frontmatter 的單行欄位維持 controlled。它們改變時會重新 render，但 uncontrolled 的文字框不會被 React 重寫內容，成本很小。
-- **文字框屬性**：
-  - 原始文字框：`spellCheck={false}`、`wrap="off"`、`autoComplete="off"`、`autoCorrect="off"`、`autoCapitalize="off"`。
-  - 表單內文的文字框：`spellCheck={false}`（內文是中文，拼字檢查沒有用處）；保留自動換行，方便閱讀散文。
-- **dirty 的判定不變**：輸入後即使改回原樣，仍算有未儲存修改，與現在相同。
-- **替代方案**：
-  - 維持 controlled，改用 `useDeferredValue` 或 debounce 延後更新 state：React 仍要把整段字串寫回文字框，瀏覽器仍要重排版面，治標不治本。
-  - CodeMirror 等只渲染可見範圍的編輯器：Boris 2026-11-02 決定不新增套件。
-  - 限制網頁可編輯的大小：同樣不採用，spec 要求不新增大小限制。
+**選擇**：
+
+- 原始文字框：`spellCheck={false}`、`wrap="off"`、`autoComplete="off"`、`autoCorrect="off"`、`autoCapitalize="off"`。內容是 YAML 與 Markdown 原始碼，拼字檢查與自動修正沒有用處；YAML 以行為單位，不自動換行、改為水平捲動可以接受。
+- 表單內文的文字框：`spellCheck={false}`（內文是中文，拼字檢查沒有用處）；保留自動換行，方便閱讀散文。
+- 兩個文字框維持 controlled：輸入照舊更新 React state，儲存、切換模式與 dirty 判定都不變。
+
+**為什麼改變原本的 uncontrolled 設計**：
+
+- 修正前的量測（2026-11-02，D7）沒有重現 108 秒。約 97 萬字的關係檔 p95 168 ms，三組都已在 spec 目標內。
+- trace 中 React script 約占 8%（約每鍵 10 ms），其餘是 Chromium 本身的 paint、排版與選取同步。uncontrolled 只能省下 React 那一塊。
+- uncontrolled 讓「文字框裡的內容」與「React 以為的內容」成為兩份。只要有一處沒同步，就會出現切換檔案後把前一份文字存進新檔案、或漏存最後輸入的錯誤。效益小、風險新增，不採用。
+- 推論（needs verification）：headless Chromium 可能沒有拼字字典，所以 trace 看不到拼字檢查；日常使用的 Chrome 有字典時，關閉拼字檢查可能有幫助。
+
+**原本的設計（未採用）**：兩個文字框改用 `defaultValue`＋`ref`，`key` 隨載入、儲存、切換模式更換；`onInput` 只在第一次修改時標記 dirty；儲存與切換模式前以 `currentDocument()` 從 ref 讀出內容。若日後廣度擴充使延遲接近目標，可另開 change 重新評估。
+
+**其他替代方案**：
+
+- 維持 controlled，改用 `useDeferredValue` 或 debounce 延後更新 state：React 仍要把整段字串寫回文字框，瀏覽器仍要重排版面，治標不治本。
+- CodeMirror 等只渲染可見範圍的編輯器：Boris 2026-11-02 決定不新增套件。
+- 限制網頁可編輯的大小：同樣不採用，spec 要求不新增大小限制。
 
 ### D7：先錄 trace 查 108 秒的成因
 
@@ -152,6 +156,7 @@
 
 - 修正前先以 `--trace` 量 `before-*`，判定 108 秒的主因。
 - 修正後量 `after-*`。如果主因不在 D6 處理的範圍內，例如是 Chromium 本身排版百萬字文字框的成本，記錄下來交給 Boris 決定，不擴大範圍。
+- 結果：修正前的主因正是 Chromium 本身（見 D6），Boris 2026-11-03 據此改選 D6 的低風險屬性。
 
 量測需要的擴大資料草稿，由 `research_draft_bench.py --dataset scaled` 建立，並在報告中寫出 `draft_id`。latency 腳本以這個 ID 打開草稿。
 
@@ -169,7 +174,7 @@
 - [pipeline mode 下，錯誤要到同步時才回報，錯誤訊息或位置與逐列寫入不同] → 整次投影都在交易或 savepoint 內，失敗時一律整次 rollback。發布 worker 原本就以通用的例外處理把作業記為失敗；D5 的失敗案例確認不留下任何列。
 - [所有列先放在記憶體，API 記憶體上升] → 估計擴大資料約十多 MB（推論）。量測時記錄 API 的記憶體高點，與上一輪的 178 MiB 比較；明顯超出時記錄並交給 Boris。
 - [擴大資料的純 Python 成本本身就接近 2 秒] → 每組只建一個 `text()`，已省下每列重建 SQL 的成本。剩下的序列化與 hash 由 D4 的分段計時看出；未達標時依 D3 處理。
-- [uncontrolled 的文字框漏存最後輸入、切換文件後殘留舊字] → 儲存與切換一律從 ref 讀取；`key` 隨載入與儲存改變，強制換新文字框；spec 的四個情境都寫成 E2E 測試。
+- [輸入延遲隨關係檔變長而成長，廣度擴充後接近目標] → 推論：主要成本（選取同步、排版）大致隨文字長度成長。`research_editor_latency.cjs` 留在 repo，擴充後可重量；接近目標時另開 change，重新評估 uncontrolled 或其他作法。
 - [Event Timing 在 headless Chromium 的數字與實際使用的感受不同] → 量測方法與環境寫進報告；同時以 trace 檢查最長的那次。目標以演練環境的 headless 量測為準，與上一輪的量測方式一致。
 - [關閉拼字檢查與自動換行改變了編輯體驗] → 內容是中文與 YAML，拼字檢查沒有用處；只有原始文字框關閉自動換行，YAML 本來就以行為單位，水平捲動可以接受。
 
