@@ -44,12 +44,12 @@ claims:
   confidence: well-supported
   conditions:
   - 營業比重不拆分資料中心與 PON 產品
-  reviewed: '2026-10-18'
+  reviewed: '2026-11-24'
   evidence:
   - source-id: luxnet-annual-report-2025
     url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=4979&year=115&mtype=F&
     locator: 114 年度年報第 72 頁（PDF 第 73 頁）營業比重與商品項目；第 89 頁（PDF 第 90 頁）市場占有率段落
-    read-scope: 已讀業務內容段落
+    read-scope: 重新核對商品項目、收入比重與市場占有率段落；確認公司揭露的是產品組合與代工交付，不是特定終端模組料號或具名客戶採用。
     stance: supporting
     applicable-period: 113 至 114 年度
 - id: cw-laser-and-engines
