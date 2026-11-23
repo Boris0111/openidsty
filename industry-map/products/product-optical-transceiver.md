@@ -132,11 +132,9 @@ gaps:
 
 ### 同一個 800G 埠，可能需要不同光路
 
-| Cisco 料號 | 光路與連接器 | 標示距離 | 模組最大功耗 |
-|---|---|---|---|
-| QDD-800G-VR8 | 800GBASE-VR8，8 對平行 MMF，雙 MPO-12。標稱 850 nm | OM3 30 m，OM4／OM5 50 m | 15 W |
-| QDD-8X100G-FR | 800GBASE-DR8-2，8 對平行 SMF，雙 MPO-12 APC。每 lane 一個標稱 1310 nm 波長 | G.652 SMF 2 km。分接到 100G-DR 時上限 500 m | 17 W |
-| QDD-2X400G-FR4 | 兩組 400GBASE-FR4，雙 duplex LC。每組用 1270／1290／1310／1330 nm 四個 CWDM 波長 | G.652 SMF 2 km | 17 W |
+- **QDD-800G-VR8**（15 W）。800GBASE-VR8 採 8 對平行 MMF、雙 MPO-12，標稱 850 nm。OM3 可達 30 m，OM4／OM5 可達 50 m。
+- **QDD-8X100G-FR**（17 W）。800GBASE-DR8-2 採 8 對平行 SMF、雙 MPO-12 APC，每 lane 一個標稱 1310 nm 波長。G.652 SMF 可達 2 km，分接到 100G-DR 時上限 500 m。
+- **QDD-2X400G-FR4**（17 W）。兩組 400GBASE-FR4 共用一個模組，各組有一個 duplex LC，採 1270／1290／1310／1330 nm 四個 CWDM 波長。G.652 SMF 可達 2 km。
 
 表格依 Cisco 2026-09-21 版產品說明與表 2–4。VR8 的表 5 描述另列 500 m，和其他段落及表格不一致。正式選型需確認設備支援、接頭端面及通道測試。上述功耗是資料表最大值。
 
@@ -144,12 +142,10 @@ gaps:
 
 ### 路線比較
 
-| 路線 | 適用前提 | 容易失效的假設 |
-|---|---|---|
-| 帶 DSP 的可插拔光模組 | 光介面、光纖及主機相容。故障可依設備流程換單顆模組 | 同為 800G 或同外型即互通。實際仍須核對對端介面與光路 |
-| LPO | 仍可獨立插拔。100G-DR-LPO Rev 1.0 定義每 lane 100 Gb/s PAM4、單模最遠 500 m，主機須提供符合條件的 DSP SerDes 與 RS-FEC | 不能只拔掉模組內 DSP 就沿用原主機設計。§7.2 的電通道損耗上限為 16 dB，量測頻率 26.56 GHz，主機與模組還須通過端到端互通驗證 |
-| CPO | 交換設備採用共同封裝的光引擎。TH6-Davisson 公告列示 200 Gb/s 每通道，屬該平台配置 | 可直接換同速率可插拔模組，或假設光源與光引擎的維修範圍相同。須確認平台的更換單位與備援流程 |
-| 800G 主動電纜 | Arista E-D800-D800-xM 提供 1／2／3 m QSFP-DD 直連選項，適合兩端相容的短距離連接 | 將例示長度外推到其他平台或跨機櫃路由。須核對實際走線、彎折、埠模式與散熱 |
+- **帶 DSP 的可插拔光模組**。光介面、光纖及主機須相容，故障時可依設備流程換單顆模組。即使同為 800G 或外型相同，也要核對對端介面與光路。
+- **LPO**。仍可獨立插拔。100G-DR-LPO Rev 1.0 定義每 lane 100 Gb/s PAM4、單模最遠 500 m。主機須提供符合條件的 DSP SerDes 與 RS-FEC。§7.2 的電通道損耗上限為 16 dB，量測頻率 26.56 GHz，主機與模組還須通過端到端互通驗證。
+- **CPO**。交換設備採用共同封裝的光引擎。TH6-Davisson 公告列示該平台每通道 200 Gb/s。選型時須確認平台的更換單位、光源維修與備援流程。
+- **800G 主動電纜**。Arista E-D800-D800-xM 提供 1／2／3 m QSFP-DD 直連選項，適合兩端相容的短距離連接。換平台或走線路徑時，須重新核對距離、彎折、埠模式與散熱。
 
 比較雙端耗電、成本與維修前，先對齊協定、速率、距離、埠密度、負載及環境。可插拔方案通常需計入兩顆模組和光纖，AEC 計入整條線纜，CPO 計入交換系統的光引擎與光源維護。上述文件未提供同條件的完整成本與功耗資料。來源：[LPO MSA 規格](https://www.lpo-msa.org/files/live/sites/lpomsa/files/specs/LPO_MSA_Specification_v1p2_final.pdf)、[Broadcom TH6-Davisson 公告](https://investors.broadcom.com/news-releases/news-release-details/broadcom-announces-tomahawkr-6-davisson-industrys-first-1024)、[Arista 800G 線纜 Q&A](https://www.arista.com/assets/data/pdf/Datasheets/Arista-800G_Optics_FAQ.pdf)。
 
