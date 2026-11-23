@@ -58,7 +58,7 @@
 
 | 欄位 | 紀錄 |
 |---|---|
-| 內容 commit／draft UUID／revision／基準 release | 本次內容尚未另行 commit；演練 draft `5c41068e-20ce-4974-b920-b7da5822df3f`，revision 1；基準 release `a5df290c-0b6d-5011-b842-ae73cd8a1f99`，generation 4，研究 head `7a0bda265c3e83e2d86c6a03476cfc5be3ad55eb` |
+| 內容 commit／draft UUID／revision／基準 release | 內容 checkpoint `42e487a`（光模組樣本及 2.1／2.2）；演練 draft `5c41068e-20ce-4974-b920-b7da5822df3f`，revision 1；基準 release `a5df290c-0b6d-5011-b842-ae73cd8a1f99`，generation 4，研究 head `7a0bda265c3e83e2d86c6a03476cfc5be3ad55eb` |
 | 匯出 → 整合差異 → 匯入 → validate → preview | 261 檔匯出；把本次光模組產品頁、華星光公司證據與既有關係納入演練草稿；匯入回報 draft revision 1，validate 通過；application-ai-networking、product-optical-transceiver、company-4979-two、company-mrvl 均 preview revision 1 成功。演練程序：`.work/drill-draft.py import-preview .work/optical-sample` |
 | P1–P5 證據定位 | P1：LPO MSA §§6.1–6.2、Marvell brief Features／Description、Cisco 料號產品段落；P2：Cisco QSFP-DD800 表 2–5 與 VR8／FR／FR4 產品段落；P3：LPO MSA §§6–7、Broadcom TH6 公告、Arista FAQ p.3；P4：Cisco 可訂購料號、華星光年報第 72 頁（PDF 73）與 Marvell MV-CD822 brief；P5：Cisco 分接支援、Arista 1–3 m AEC 例與 CPO／LPO 反向條件。查核日 2026-11-24。 |
 | 完成的內容 task | 2.1 產品五面向與缺口已落地；2.2 選華星光，年報商品與營收主張、offering 及雙向閱讀連結已核對；另全量 validator 通過（結果見工作紀錄）。2.3 的程式化匯入、驗證、預覽已通過；人工裝置走讀仍未完成。 |
