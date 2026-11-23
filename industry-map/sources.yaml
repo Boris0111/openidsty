@@ -852,6 +852,42 @@ us:
     - power-bottleneck
 global:
   technical-documents:
+  - id: cisco-qsfp-dd800-datasheet
+    name: Cisco QSFP-DD800 光模組資料表
+    url: https://www.cisco.com/c/en/us/products/collateral/interfaces-modules/transceiver-modules/qsfp-dd800-transceiver-modules-ds.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: 查閱 2026-09-21 版產品說明、表 2–5 及相容性入口，VR8 的距離採產品段落與表 3／4。
+  - id: lpo-msa-100g-dr
+    name: LPO MSA 100G-DR-LPO Revision 1.0
+    url: https://www.lpo-msa.org/files/live/sites/lpomsa/files/specs/LPO_MSA_Specification_v1p2_final.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: 公開規格以封面 Revision 1.0 識別，查閱摘要及收發功能、主機電介面條件。
+  - id: arista-800g-cables-qa
+    name: Arista 800G 光模組與線纜 Q&A
+    url: https://www.arista.com/assets/data/pdf/Datasheets/Arista-800G_Optics_FAQ.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: 2026-09 版（04-0046-07），查閱第 3 頁的 800G 直連 AEC 料號及長度。
+  - id: marvell-spica-gen2-brief
+    name: Marvell Spica Gen2 MV-CD822 Product Brief
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/dsp/marvell-spica-gen2-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: 2022-12 版，查閱料號、功能與適用模組架構。
   - id: aph-liquid-cooling-product-page
     name: Amphenol Industrial 液冷快接頭產品頁
     url: https://amphenol-industrial.com/products/liquid-cooling-systems/
