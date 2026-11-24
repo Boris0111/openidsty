@@ -21,7 +21,7 @@ listings:
   valid-to: null
 source-identifiers: []
 research-depth: deep
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: tw-mops-summary
   confidence: well-supported
@@ -42,6 +42,64 @@ roles:
   tier: 1
   baseline-path: ai-server/power.md
 claims:
+- id: delta-33kw-shelf-delivery
+  statement: "台達提供 18 kW／15 kW 5+1 與 33 kW／27.5 kW 5+1 的機架電源；33 kW 方案可配置六顆熱插拔 5.5 kW PSU。"
+  confidence: well-supported
+  conditions:
+  - "兩種方案按指定輸入、架構、冗餘、散熱與驗收；額定不代表出貨或客戶。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: ocp-delta-18kw-power-shelf
+    url: https://www.opencompute.org/marketplace/facilities-physical-infrastructure/delta-18kw-1ou-open-rack-v3-power-shelf/
+    locator: "Product Details"
+    read-scope: "18 kW 48／50 VDC 規格。"
+    stance: supporting
+    applicable-period: "OCP 產品頁"
+  - source-id: delta-33kw-power-shelf
+    url: https://www.deltaww.com/en-US/products/power-solutions
+    locator: "Power Shelf"
+    read-scope: "33 kW／5+1 及熱插拔。"
+    stance: supporting
+    applicable-period: "OCP Summit 相關產品資料"
+- id: delta-rbc-board-module-delivery
+  statement: "台達 RBC 系列支援 40–60 V 輸入、12 V 輸出，供後續板端調節。"
+  confidence: well-supported
+  conditions:
+  - "只適用 RBC 產品級距，與直接供核心電壓的模組分開。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: delta-rbc-ubc-ai-converters
+    url: https://brandnews.deltaww.com/en/BrandCircleDetail/12476
+    locator: "RBC Series"
+    read-scope: "核對輸入輸出及位置。"
+    stance: supporting
+    applicable-period: "2023-10"
+- id: delta-vilink-rpdu-delivery
+  statement: "台達 ViLink Metered rPDU 為架內成品，提供 Ethernet 輸入／分路監測。"
+  confidence: well-supported
+  conditions:
+  - "官方使用手冊描述系列能力；額定與地區版需依個別資料表。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: delta-vilink-rpdu-manual
+    url: https://filecenter.deltaww.com/rPDU_Selector/Files/Manual-1-PDUA117BSA23500.pdf
+    locator: "§2.1 General Overview"
+    read-scope: "查安裝位置、單／三相輸入和監控內容。"
+    stance: supporting
+    applicable-period: "ViLink Metered 手冊"
+- id: modulon-dph-ups-delivery
+  statement: "台達 Modulon DPH v3.2 提供模組化三相 UPS，含可熱插拔關鍵模組，規格列 300／500／600 kVA 級距。"
+  confidence: well-supported
+  conditions:
+  - "需按型號、功率因數與當地版核對 kW 及旁路。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: delta-modulon-dph-ups
+    url: https://filecenter.deltaww.com/Products/download/07/070103/Catalogue/Leaflet_UPS_DPH-300-500-600kVA_en_v3.2.pdf
+    locator: "Features／Technical Specifications"
+    read-scope: "查 DPH 輸出額定、可熱插拔模組和 normal／ECO 分列。"
+    stance: supporting
+    applicable-period: "v3.2"
 - id: business-mix
   statement: 年報稱民國 114 年總營收為新台幣 5,548.85 億元，「電源及零組件」、「交通」、「自動化」與「基礎設施」營收比重分別為 50%、7%、10% 和 33%；電源及零組件包括零組件、電源及系統、風扇與散熱管理。
   confidence: well-supported
@@ -142,13 +200,19 @@ gaps:
 
 ## 供應角色
 
+Delta Electronics, Inc.（2308.TW）在電源架之外，公開交付[設施 UPS](/next?focus=product-facility-ups)、[機櫃 rPDU](/next?focus=product-rack-pdu)與[板端 DC/DC 模組](/next?focus=product-power-module)。
+
 台達在[電源環節](/next?focus=segment-power)提供[電源架與機架式電源](/next?focus=product-power-shelf-psu)，也透過基礎設施範疇交付液冷與資料中心整合方案。它同時出現在供電與散熱兩個研究情境，閱讀時要先分清楚是哪一種交付。
 
 ## 研究界線
 
+18／33 kW 電源架規格、DPH UPS、ViLink rPDU 和 RBC 模組按產品文件及其版本分開；以下仍沿用 114 年報的財務口徑。
+
 本頁以 114 年度股東會年報為依據。年報描述 800VDC、液冷與 AI 資料中心的產品方向，但沒有拆出這些業務的營收，也沒有客戶名稱；與 AI 晶片及雲端客戶的合作屬公司自述，標為待核實。
 
 ## 產品與用途
+
+[電源架](/next?focus=product-power-shelf-psu) 18 kW 5+1 為 15 kW，33 kW 5+1 為 27.5 kW。DPH 為設施 AC UPS，ViLink 分配並監測架內 AC，RBC 在板端將 40–60 V 轉至 12 V。
 
 - **AI 供電**：19 吋 90kW DC/DC 機架電源（800VDC 降至 50／48VDC）、超級電容機架式電容系統（約 10 秒備援）、晶片端 DC/DC 配電板、1.1MW 列間電源系統（第 90 頁）。
 - **資料中心基礎設施**：800VDC／±400VDC 供電、大型 UPS、800G 乙太網路交換器、液冷系統與 AI 貨櫃型資料中心（第 91 頁）。
@@ -164,9 +228,13 @@ gaps:
 
 ## 競爭與替代
 
+同 33 kW 級距可與康舒比較，核實 19／21 吋機框、輸入、同負載效率及 5+1 可用容量；同受保護負載與電池配置再比較 Vertiv UPS。
+
 年報沒有具名競爭者。[Vertiv](/next?focus=company-vertiv) 的 10-K 把台達列為利基型競爭者。在[機櫃與系統電源](/next?focus=role-rack-power-supply)角色，可與[光寶科](/next?focus=company-2301-tw)、[康舒](/next?focus=company-6282-tw)比較；800VDC 架構會改變電源轉換的位置，不是所有既有電源產品都等比例受惠。
 
 ## 業務曝險
+
+設施 AC UPS、機架 PSU 與板端 DC/DC 各自核算備援及收入。
 
 AI 資料中心相關業務分散在電源及零組件與基礎設施兩個範疇，合計占營收八成三，但其中多少來自 AI 或液冷，年報沒有揭露。
 

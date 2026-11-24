@@ -20,7 +20,7 @@ source-identifiers:
 - provider: sec-cik
   value: '751978'
 research-depth: deep
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: sec
   confidence: well-supported
@@ -41,6 +41,31 @@ roles:
   tier: 2
   baseline-path: ai-server/power.md
 claims:
+- id: vicor-nbm-and-current-multiplier-delivery
+  statement: "Vicor NBM2317S60E1560T0R 提供中間端 40–60 V／10–15 V 固定比轉換；FPA PRM 與 VTM 把調節與近負載變比拆開。Hydra II 公告列 48 V direct-to-XPU 組件。"
+  confidence: well-supported
+  conditions:
+  - "指定 VTM 舊料號標 NRND，與新一代產品公告及量產採用分開。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: vicor-nbm-datasheet
+    url: https://www.vicorpower.com/documents/datasheets/ds-NBM2317S60E1560T0R-VICOR.pdf
+    locator: "Features／Product Description"
+    read-scope: "查 1/4 固定比、800 W 連續額定與高／低側電壓。"
+    stance: supporting
+    applicable-period: "該料號 datasheet"
+  - source-id: vicor-vtm-095ba0-datasheet
+    url: https://www.vicorpower.com/documents/datasheets/VTM48K_020_095BA0.pdf
+    locator: "p.1 Features、NRND"
+    read-scope: "查 95 A nominal、VTM 配 PRM 與 NRND。"
+    stance: supporting
+    applicable-period: "2019-10"
+  - source-id: vicor-hydra-ii
+    url: https://www.vicorpower.com/press-room/hydra-ii
+    locator: "Hydra II announcement"
+    read-scope: "查發布的 XPU 電源組件與 48 V 位置。"
+    stance: supporting
+    applicable-period: "該公告"
 - id: product-categories
   statement: 10-K 將產品分為 Advanced Products 與 Brick Products；Advanced Products 用於自有的 Factorized Power Architecture（FPA），包括供 GPU 與 AI ASIC 使用的 Power-on-Package 與裝在主機板背面的垂直供電方案。
   confidence: well-supported
@@ -128,13 +153,19 @@ gaps:
 
 ## 供應角色
 
+Vicor Corporation（VICR，Nasdaq）交付中間端及近負載的[電源模組](/next?focus=product-power-module)。
+
 Vicor 在[電源環節](/next?focus=segment-power)屬[板端電源轉換](/next?focus=role-board-power-conversion)，以[高密度電源模組](/next?focus=product-power-module)把母線電壓送到 GPU 或 AI ASIC 附近。
 
 ## 研究界線
 
+95 A VTM 料號屬 NRND 的機理例；新平台需要合格料號、熱設計與客戶實際驗收。
+
 本頁以 FY2025 10-K 為依據。Advanced Products 的占比包含權利金，2025 年獲利又受一筆專利和解款影響，閱讀營收與毛利時要分開看。客戶名稱沒有揭露。
 
 ## 產品與用途
+
+NBM2317S60E1560T0R 為 1/4 固定比，用於相容的 48 V／12 V 中間橋接；PRM 調節，VTM 在負載附近改變電壓／電流。Hydra II 是近 XPU 的組件公告。
 
 - **Advanced Products**：FPA 架構元件、供 GPU／AI ASIC 的 Power-on-Package，以及裝在主機板背面的垂直供電方案（Item 1）。
 - **Brick Products**：傳統架構的整合式電源，用於航太國防、工業、測試與軌道運輸（Item 8 附註）。
@@ -150,6 +181,8 @@ Advanced Products 的客戶集中在資料中心與 hyperscaler；2025 年一家
 
 ## 競爭與替代
 
+與台達 RBC 比較可同為中間端，但固定比與穩壓架構輸出規格不同。與 MPS MPM3698 的比較須把兩路徑還原至同一輸入／輸出與負載。
+
 10-K 說 Advanced Products 主要與 IDM 及 fabless 電源半導體廠的電源模組與 IC 競爭，Brick Products 與大型電源供應器廠競爭，但未具名。在[板端電源轉換](/next?focus=role-board-power-conversion)角色，可與 [MPS](/next?focus=company-mpwr) 比較；模組與 IC 方案依設計取捨。
 
 ## 業務曝險
@@ -164,6 +197,8 @@ Advanced Products 占比由 2024 年 55.0% 升到 2025 年 61.0%，說明資料�
 - **出口管制**：中國營收約一成二，受美國出口管制規範。
 
 ## 財務可取性
+
+NBM、PRM／VTM 或 Hydra II 的單別營收採用及客戶在本輪原文未揭露。
 
 - SEC 公開財務資料 可自動取得標準科目；主要申報來源設為 SEC，會計年度為曆年。
 - Advanced 與 Brick 的營收占比可由 10-K 核對。

@@ -816,6 +816,42 @@ taxonomy:
 - id: taxonomy-crdo-from-optical-module
   parent: role-optical-module
   child: company-crdo
+- id: taxonomy-facility-transformer-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-facility-transformer
+- id: taxonomy-datacenter-transformer-from-facility-transformer
+  parent: role-facility-transformer
+  child: product-datacenter-transformer
+- id: taxonomy-facility-switchgear-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-facility-switchgear
+- id: taxonomy-datacenter-switchgear-from-facility-switchgear
+  parent: role-facility-switchgear
+  child: product-datacenter-switchgear
+- id: taxonomy-facility-ups-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-facility-ups
+- id: taxonomy-facility-ups-from-facility-ups
+  parent: role-facility-ups
+  child: product-facility-ups
+- id: taxonomy-rack-battery-backup-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-rack-battery-backup
+- id: taxonomy-rack-battery-backup-from-rack-battery-backup
+  parent: role-rack-battery-backup
+  child: product-rack-battery-backup
+- id: taxonomy-facility-busway-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-facility-busway
+- id: taxonomy-datacenter-busway-from-facility-busway
+  parent: role-facility-busway
+  child: product-datacenter-busway
+- id: taxonomy-rack-power-distribution-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-rack-power-distribution
+- id: taxonomy-rack-pdu-from-rack-power-distribution
+  parent: role-rack-power-distribution
+  child: product-rack-pdu
 offerings:
 - id: offering-auras-cold-plate
   company: company-auras
@@ -894,46 +930,46 @@ offerings:
   product: product-power-shelf-psu
   role: role-rack-power-supply
   conditions:
-  - 年報列出機架式 DC/DC 電源、電容系統與列間電源系統，未揭露客戶或出貨
+  - "18／33 kW 指定架方案，5+1 與適用介面另核。"
   claim-refs:
   - entity-id: company-delta-electronics
-    claim-id: ai-power-products
+    claim-id: delta-33kw-shelf-delivery
 - id: offering-2301-tw-power-shelf-psu
   company: company-2301-tw
   product: product-power-shelf-psu
   role: role-rack-power-supply
   conditions:
-  - 雲端及物聯網部門列有伺服器電源及儲能系統解決方案，未揭露客戶或出貨
+  - "33 kW QCT 展示；其他平台或量產驗證另核。"
   claim-refs:
   - entity-id: company-2301-tw
-    claim-id: segment-mix
+    claim-id: liteon-33kw-shelf-integration
 - id: offering-6282-tw-power-shelf-psu
   company: company-6282-tw
   product: product-power-shelf-psu
   role: role-rack-power-supply
   conditions:
-  - 年報列出伺服器電源與資料中心機櫃級電源系統，未揭露客戶或出貨
+  - "限 19 吋 33 kW OCP 產品及年報列的量產界線。"
   claim-refs:
   - entity-id: company-6282-tw
-    claim-id: server-power-products
+    claim-id: acbel-33kw-listed-shelf
 - id: offering-mpwr-pmic-voltage-regulator
   company: company-mpwr
   product: product-pmic-voltage-regulator
   role: role-board-power-conversion
   conditions:
-  - 10-K 將 DC to DC 方案用於伺服器與 AI 系統，未揭露具體平台或客戶
+  - "限 MP2965 控制晶片及典型介面。"
   claim-refs:
   - entity-id: company-mpwr
-    claim-id: end-market-mix
+    claim-id: mp2965-control-delivery
 - id: offering-vicr-power-module
   company: company-vicr
   product: product-power-module
   role: role-board-power-conversion
   conditions:
-  - 10-K 描述 Power-on-Package 與垂直供電模組，未揭露具體平台或客戶
+  - "分中間端、調節與近負載，NRND 型號只用於結構比較。"
   claim-refs:
   - entity-id: company-vicr
-    claim-id: product-categories
+    claim-id: vicor-nbm-and-current-multiplier-delivery
 - id: offering-3533-tw-high-speed-connector
   company: company-3533-tw
   product: product-high-speed-connector
@@ -1285,6 +1321,132 @@ offerings:
   claim-refs:
   - entity-id: company-crdo
     claim-id: zeroflap-800g-module-delivery
+- id: offering-1504-tw-datacenter-transformer
+  company: company-1504-tw
+  product: product-datacenter-transformer
+  role: role-facility-transformer
+  conditions:
+  - "限型錄的乾式與油浸設備能力；案場選型和試驗另核。"
+  claim-refs:
+  - entity-id: company-1504-tw
+    claim-id: facility-transformer-delivery
+- id: offering-1504-tw-datacenter-switchgear
+  company: company-1504-tw
+  product: product-datacenter-switchgear
+  role: role-facility-switchgear
+  conditions:
+  - "公司方案覆蓋中低壓與工程服務，案場設備驗收另核。"
+  claim-refs:
+  - entity-id: company-1504-tw
+    claim-id: teco-switchgear-delivery
+- id: offering-vertiv-datacenter-switchgear
+  company: company-vertiv
+  product: product-datacenter-switchgear
+  role: role-facility-switchgear
+  conditions:
+  - "限公開低壓 PowerBoard 系列與案場所需配置。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: powerboard-switchgear-delivery
+- id: offering-vertiv-facility-ups
+  company: company-vertiv
+  product: product-facility-ups
+  role: role-facility-ups
+  conditions:
+  - "限 480 V 型號表及指定溫度；實配電池另查。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: trinergy-ups-delivery
+- id: offering-delta-electronics-facility-ups
+  company: company-delta-electronics
+  product: product-facility-ups
+  role: role-facility-ups
+  conditions:
+  - "限 DPH v3.2 的三相配置，續航及地域版另核。"
+  claim-refs:
+  - entity-id: company-delta-electronics
+    claim-id: modulon-dph-ups-delivery
+- id: offering-2301-tw-rack-battery-backup
+  company: company-2301-tw
+  product: product-rack-battery-backup
+  role: role-rack-battery-backup
+  conditions:
+  - "72 kW 展示能力，續航和採用另核。"
+  claim-refs:
+  - entity-id: company-2301-tw
+    claim-id: liteon-rack-bbu-delivery
+- id: offering-vertiv-rack-battery-backup
+  company: company-vertiv
+  product: product-rack-battery-backup
+  role: role-rack-battery-backup
+  conditions:
+  - "限 800 VDC power rack 整合設計。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: vertiv-power-rack-bbu-design
+- id: offering-1504-tw-datacenter-busway
+  company: company-1504-tw
+  product: product-datacenter-busway
+  role: role-facility-busway
+  conditions:
+  - "東元集團的 TECOBAR 交付，依 LB 系列。"
+  claim-refs:
+  - entity-id: company-1504-tw
+    claim-id: tecobar-busway-delivery
+- id: offering-vertiv-datacenter-busway
+  company: company-vertiv
+  product: product-datacenter-busway
+  role: role-facility-busway
+  conditions:
+  - "限 PowerBar iMPB 北美版額定。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: powerbar-impb-delivery
+- id: offering-vertiv-rack-pdu
+  company: company-vertiv
+  product: product-rack-pdu
+  role: role-rack-power-distribution
+  conditions:
+  - "限 Geist UU30009L 配置。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: geist-rpdu-delivery
+- id: offering-delta-electronics-rack-pdu
+  company: company-delta-electronics
+  product: product-rack-pdu
+  role: role-rack-power-distribution
+  conditions:
+  - "限 ViLink Metered 系列，各料號額定另核。"
+  claim-refs:
+  - entity-id: company-delta-electronics
+    claim-id: delta-vilink-rpdu-delivery
+- id: offering-delta-electronics-power-module
+  company: company-delta-electronics
+  product: product-power-module
+  role: role-board-power-conversion
+  conditions:
+  - "屬 40–60 V → 12 V 中間端電源。"
+  claim-refs:
+  - entity-id: company-delta-electronics
+    claim-id: delta-rbc-board-module-delivery
+- id: offering-mpwr-power-module
+  company: company-mpwr
+  product: product-power-module
+  role: role-board-power-conversion
+  conditions:
+  - "限 MPM3698 的額定與模組介面。"
+  claim-refs:
+  - entity-id: company-mpwr
+    claim-id: mpm3698-module-delivery
+- id: offering-vertiv-power-shelf-psu
+  company: company-vertiv
+  product: product-power-shelf-psu
+  role: role-rack-power-supply
+  conditions:
+  - "限 50 VDC ORv3 產品表及訂貨資訊。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: powerdirect-33kw-shelf-delivery
 relations:
 - id: relation-vertiv-delta-competition
   source: company-vertiv

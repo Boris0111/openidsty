@@ -129,6 +129,8 @@ technical-profile:
 
 ## 傳導與受惠條件
 
+依[設施、機櫃與板端的供電比較與需求案例](/next?focus=research-ai-facility-to-board-power)以相同備援、負載與架構分辨接入 MVA、機櫃功率、設備交期和板端採用。
+
 `power → datacenter → compute` 連接設施供電、部署與晶片採購。VRT、2308.TW 為設備方案候選；MSFT 是部署瓶頸解除後的需求端候選，同時承擔能源、折舊及資本成本，不能一律視為正面受惠。**inference**：電力不足可能增加供電改善投資，也可能延後所有機櫃供應鏈收入，方向需按個案判斷。
 
 ## 狀態判定依據

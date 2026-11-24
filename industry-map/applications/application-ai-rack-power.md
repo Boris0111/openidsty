@@ -7,7 +7,7 @@ aliases:
 - AI rack power
 summary: 把設施電力轉換成晶片可用的電壓，並由功率元件執行轉換。
 question: 電力怎麼從設施一路降到晶片？
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 definition: 把設施電力轉換成晶片可用的電壓，並由功率元件執行轉換。
 purpose: 分開機櫃電源、板端電源轉換與功率／控制元件。
 boundary: PSU／power shelf 處理系統供電，板端 DC/DC 供晶片電壓；功率開關、整流保護、控制晶片與磊晶製程屬元件層。800VDC 是架構，不是 GPU 工作電壓。
@@ -20,23 +20,27 @@ substitution-limits:
 - BBU、UPS 與設施儲能功能不同
 - Si、SiC、GaN 適用條件不同，不是單一材料必勝
 flow-steps:
-- label: 設施
-  note: 市電或設施電力進入機櫃
-- label: AC/DC
-  note: 電源架或 PSU 把交流電轉成直流
-  products: [product-power-shelf-psu]
-- label: 母線
-  note: 機櫃直流母線把電力分到各伺服器
-- label: 板端
-  note: DC/DC 電壓調節到晶片工作電壓
-  products: [product-pmic-voltage-regulator, product-power-module]
+- label: 接入與配電
+  note: 由設施受電、變壓與保護
+  products: [product-datacenter-transformer, product-datacenter-switchgear]
+- label: 設施備援與分接
+  note: 依單線圖選 UPS 和幹線
+  products: [product-facility-ups, product-datacenter-busway]
+- label: 機櫃供電與備援
+  note: 依 AC 插座或 DC 母線配置，BBU 確認故障域
+  products: [product-rack-pdu, product-power-shelf-psu, product-rack-battery-backup]
+- label: 板端轉換
+  note: DC/DC 與多相電壓調節供應處理器
+  products: [product-power-module, product-pmic-voltage-regulator]
 claims: []
 gaps:
-- status: not-researched
-  reason: 已有 5 家深研公司在此應用的角色附能力連結（見各角色與公司頁）；其餘列名公司依既有環節角色列出，產品能力、客戶與收入尚未研究。
+- status: not-obtained
+  reason: 已讀產品文件可追溯設備與板端交付；案場同負載、同電壓及同冗餘的配置、整段成本與個別供應商驗收仍待查。
 ---
 
 ## 定義與用途
+
+從[變壓器](/next?focus=product-datacenter-transformer)、[開關與配電盤](/next?focus=product-datacenter-switchgear)和[設施 UPS](/next?focus=product-facility-ups)開始讀，往下連到[母線槽與分接](/next?focus=product-datacenter-busway)、[機櫃 rPDU](/next?focus=product-rack-pdu)、[電源架](/next?focus=product-power-shelf-psu)與[機櫃 BBU](/next?focus=product-rack-battery-backup)，最後到架內運算板。完整見[設施、機櫃與板端的供電比較與需求案例](/next?focus=research-ai-facility-to-board-power)。
 
 把設施電力轉換成晶片可用的電壓，並由功率元件執行轉換。分開機櫃電源、板端電源轉換與功率／控制元件。對應既有環節：[電源與供電架構](/next?focus=segment-power)、[功率與分離式元件](/next?focus=segment-power-discrete)。
 

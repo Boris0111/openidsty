@@ -888,6 +888,348 @@ us:
     - power-bottleneck
 global:
   technical-documents:
+  - id: vicor-nbm-datasheet
+    name: "Vicor NBM2317S60E1560T0R datasheet"
+    url: https://www.vicorpower.com/documents/datasheets/ds-NBM2317S60E1560T0R-VICOR.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "非隔離雙向固定比轉換器，條件式連續功率與熱規格。"
+  - id: vicor-hydra-ii
+    name: "Vicor Hydra II：48 V direct-to-XPU 產品公告"
+    url: https://www.vicorpower.com/press-room/hydra-ii
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "核對 XPU 近負載交付及垂直結構。"
+  - id: vertiv-powerdirect-ordering-datasheet
+    name: "Vertiv PowerDirect Rack：33 kW 電源架與 PSU 資料表"
+    url: https://www.vertiv.com/4994f8/globalassets/products/critical-power/dc-power-systems/vertiv-powerdirect-it-rack/vertiv-powerdirect-it-rack-ds-en-na.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "50 VDC、六顆模組及 PSS5033-21N2 訂貨資訊。"
+  - id: liteon-qct-gb300-power-integration
+    name: "光寶科：與 QCT 展示 GB300 NVL72 電源整合"
+    url: https://www.liteon.com/en/news/press-center/content/liteon-ocp-qct-2025
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "公告有兩家公司具名、33 kW power shelf 與實際展示情境。"
+  - id: liteon-2026-q3-power-outlook
+    name: "光寶科 3Q26：下一季電源產品展望"
+    url: https://www.liteon.com/en/news/press-center/content/quarterly-third-eps-2026
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "分別說明電源出貨展望、800 VDC 原型與公司自報 AI 收入。"
+  - id: tecobar-lb-busway
+    name: "TECOBAR：LB 系列低壓鑄樹脂銅母線"
+    url: https://www.tecobar.com.tw/en/product-396369/LV-Cast-Resin-Insulated-Busway-Copper-Busway-LB-Series.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "低於 1 kV 的銅 busway，按額定及安裝條件選型。"
+  - id: teco-2026-tecobar-affiliation
+    name: "東元：2026 新加坡模組化資料中心展示"
+    url: https://www.teco.com.tw/en-us/press/news/TECO-Showcases-Integrated-Modular-Data-Center-Solutions-in-Singapore--Targeting-Southeast-Asia-s-AI-Infrastructure-Opportunities?tags=1014
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "以公告確認 TECOBAR 為集團子公司及其展示品。"
+  - id: vertiv-powerbar-impb-datasheet
+    name: "Vertiv PowerBar iMPB 北美 datasheet"
+    url: https://www.vertiv.com/492f82/globalassets/shared/vertiv-powerbar-impb-data-sheet-sl-70397.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "三相 600 VAC、160–800 A、分接盒與北美規格。"
+  - id: vertiv-geist-universal-rpdu
+    name: "Vertiv Geist：Rack PDU brochure"
+    url: https://www.vertiv.com/globalassets/products/critical-power/power-distribution/vertiv-geist-rpdu---brochure.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "指定料號的供電架構、插座和監控方式。"
+  - id: delta-vilink-rpdu-manual
+    name: "Delta ViLink：Metered rPDU 操作手冊"
+    url: https://filecenter.deltaww.com/rPDU_Selector/Files/Manual-1-PDUA117BSA23500.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "架內供電與監控功能，個別額定另查。"
+  - id: apc-apdu10350me-rpdu
+    name: "Schneider Electric APC NetShelter APDU10350ME"
+    url: https://www.se.com/sg/en/product/APDU10350ME/apc-netshelter-rack-pdu-advanced-metered-3phase-22-1kw-400v-32a-or-17-3kw-415v-30a-48-outlets-iec309/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "三相計量 rPDU、端點與兩種額定條件。"
+  - id: ocp-orv3-bbu-module
+    name: "OCP：Open Rack V3 BBU Module Specification"
+    url: https://www.opencompute.org/documents/open-rack-v3-bbu-module-spec-1-4-pdf/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "3 kW battery pack、放電介面及 SOH 測試期間 5+1 備援。"
+  - id: liteon-datacloud-2025-power
+    name: "LITEON：Datacloud Global Congress 2025 電源產品"
+    url: https://www.liteon.com/en/news/press-center/content/liteon-datacloudglobalcongress
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "分別列 72 kW BBU、電源架及 capacitor shelf 展示。"
+  - id: vertiv-800vdc-power-rack-2026
+    name: "Vertiv：800 VDC 供電技術"
+    url: https://www.vertiv.com/en-in/about/news-and-events/news-releases/2026/vertiv-advances-800-vdc-power-architectures-to-support-growing-ai-data-center-demands/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "對外公布 800 VDC power rack 內建 BBU 的設計。"
+  - id: vertiv-trinergy-ups-brochure
+    name: "Vertiv Trinergy：UPS Technical Data"
+    url: https://www.vertiv.com/4a095b/globalassets/shared/vertiv-trinergy-ups-brochure-sl-71331.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "同系列按 35°C、電壓和功率標示不同配置。"
+  - id: delta-modulon-dph-ups
+    name: "Delta Modulon DPH：50–300／500／600 kVA UPS"
+    url: https://filecenter.deltaww.com/Products/download/07/070103/Catalogue/Leaflet_UPS_DPH-300-500-600kVA_en_v3.2.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "模組化 UPS，列分模式效率、熱插拔與額定容量。"
+  - id: schneider-galaxy-vx-ups-modes
+    name: "Schneider Galaxy VX：UPS 與電池櫃運行模式"
+    url: https://productinfo.se.com/galaxyvx_ul/990-914303-energy-storage-system-for-ul9540-galaxy-vx-ups-and-galaxy-lithium-ion-battery-cabinets-operation/English/990-914303_EN.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "比較雙變換、電池、靜態及外部維護旁路。"
+  - id: vertiv-powerboard-lv-switchgear
+    name: "Vertiv PowerBoard：低壓開關設備"
+    url: https://www.vertiv.com/en-asia/products-catalog/critical-power/switchgear/vertiv-ei-low-voltage-switchgear-iec/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "800–6,300 A 低壓組合、保護及分隔設計。"
+  - id: schneider-mcset-24kv-ratings
+    name: "Schneider Electric MCSeT：24 kV 櫃額定值"
+    url: https://productinfo.se.com/mcset_24kv_installation_guide/bqt6904400_mcset_installation-guide/English/BQT6904400_MCSeT4_Installation_Guide_DD00597955.xml/%24/TPC_MCSeT4IG_MCSeTCubicleRatingsCPT_DD00739416
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "按中壓等級分列正常電流及短時耐受。"
+  - id: teco-transformer-catalog
+    name: "東元電機：變壓器產品與規格"
+    url: https://www.teco.com.tw/en-us/products/power-transmission/transformer/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "區分乾式及油浸配電、150／161 kV 油浸電力用；額定為產品範圍。"
+  - id: teco-transformer-spec-guide
+    name: "東元電機：變壓器型錄"
+    url: https://www.teco.com.tw/upload/userfiles/files/%E8%AE%8A%E5%A3%93%E5%99%A8%E5%9E%8B%E9%8C%84%E8%8B%B1%E6%96%87%E7%89%88_251210_final_TECO_Transformers.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "乾式乾鑄樹脂 22.8 kV／380 V 範例表含無載、75°C 負載損耗及阻抗。"
+  - id: teco-datacenter-solutions
+    name: "東元電機：資料中心解決方案"
+    url: https://www.teco.com.tw/en-us/solution/data-center/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "區分工程、開關設備、UPS、母線與變壓器；產品和項目驗收分開。"
+  - id: teco-2026-agm
+    name: "東元電機：2026 年股東會與 FY2025 結果"
+    url: https://www.teco.com.tw/en-us/press/news/20260528?tags=2260
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "1504 TWSE、FY2025 合併總收入與 AIDC 策略。"
+  - id: eaton-secondary-substations-guide
+    name: "Eaton Secondary Unit Substations Design Guide"
+    url: https://www.eaton.com/content/dam/eaton/products/design-guides---consultant-audience/eaton-secondary-unit-substation-design-guide-dg022017en.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "低壓側單元變電站、乾式 cast coil 與液浸比較參考。"
+  - id: eaton-2025-annual
+    name: "Eaton Corporation plc：2025 Annual Report"
+    url: https://www.eaton.com/content/dam/eaton/company/investor-relations/annual-report/eaton-2025-annual-report.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "10-K 封面確認愛爾蘭註冊與 NYSE 普通股上市。"
+  - id: hitachi-energy-hidry
+    name: "Hitachi Energy：HiDry 乾式變壓器"
+    url: https://www.hitachienergy.com/us/en/products-and-solutions/transformers/distribution-transformers/dry-type-transformers/hidry-dry-type-transformers-40-5-kv
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "高級距乾式設備的電壓、容量和冷卻選項。"
+  - id: hitachi-energy-ownership
+    name: "日立：Hitachi Energy 剩餘股權收購公告"
+    url: https://www.hitachi.com/en/press/articles/2022/09/0930/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "2022 年簽訂收購剩餘股權之公告；日立 6501，設備公司保留原法律主體。"
+  - id: mps-mp2965-datasheet
+    name: "MPS MP2965：雙迴路數位 PWM controller datasheet"
+    url: https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/EN/sku/MP2965
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "VR13.HC／AVSBus controller，典型應用圖列外部功率級及電感。"
+  - id: mps-mpm3698-datasheet
+    name: "MPS MPM3698：整合式降壓 power module datasheet"
+    url: https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MPM3698GBH/document_id/11450/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "整合度、連續與峰值電流、功能與熱資料。"
+  - id: renesas-raa228228-datasheet
+    name: "Renesas RAA228228：多相控制器 Short-Form Datasheet"
+    url: https://www.renesas.com/en/document/sds/raa228228-short-form-datasheet
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "16+4 智慧功率級應用圖。"
+  - id: vicor-vtm-095ba0-datasheet
+    name: "Vicor VTM48KP020x095BA0：current multiplier datasheet"
+    url: https://www.vicorpower.com/documents/datasheets/VTM48K_020_095BA0.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "Rev 1.5；標註不建議新設計，作為架構與額定口徑例。"
+  - id: delta-rbc-ubc-ai-converters
+    name: "Delta：AI 伺服器 RBC／UBC DC/DC 方案"
+    url: https://brandnews.deltaww.com/en/BrandCircleDetail/12476
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "說明中間匯流排與負載端穩壓的分工。"
+  - id: ocp-delta-18kw-power-shelf
+    name: "OCP Marketplace：Delta 18 kW ORv3 power shelf"
+    url: https://www.opencompute.org/marketplace/facilities-physical-infrastructure/delta-18kw-1ou-open-rack-v3-power-shelf/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "台達提交的 18 kW 電源架，含 5+1 輸出及 48／50 VDC。"
+  - id: delta-33kw-power-shelf
+    name: "Delta：33 kW 電源架與 OCP 供電解決方案"
+    url: https://www.deltaww.com/en-US/products/power-solutions
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "產品與展示公告列 5+1、PSU 熱插拔及瞬態條件。"
+  - id: ocp-acbel-33kw-power-shelf
+    name: "OCP Marketplace：AcBel 19 吋 33 kW power shelf"
+    url: https://www.opencompute.org/marketplace/facilities-physical-infrastructure/acbel-19-33kw-power-shelf/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "康舒提交的 19 吋 1RU 三相 AC 轉 50VDC 電源架。"
+  - id: liteon-ocp-2023-power
+    name: "LITEON：ORv3 power 與備援產品展示"
+    url: https://www.liteon.com/en/news/press-center/content/683
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "供應商公告區分 power shelf、PSU 與備援，量產查核另列。"
+  - id: ocp-orv3-hvdc-100kw-shelf
+    name: "OCP：ORV3 HVDC-LVDC 100 kW Power Shelf Specification"
+    url: https://www.opencompute.org/documents/orv3-hvdc-lvdc-100kw-power-shelf-spec-1-0-0-pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "機架側 ±400 VDC 輸入、48 V 等級輸出及接頭介面。"
+  - id: ocp-diablo-400-power-spec
+    name: "OCP Diablo 400 v0.7.0：Rack and Power"
+    url: https://www.opencompute.org/documents/ocp-specification-diablo-400-v0-7-0-final-pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "端到端效率的輸入電壓與負載分組，為規格要求。"
   - id: oif-800zr-ia
     name: "OIF 800ZR Implementation Agreement 01.0"
     url: https://www.oiforum.com/wp-content/uploads/OIF-800ZR-01.0.pdf
