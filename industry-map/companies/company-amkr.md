@@ -20,7 +20,7 @@ source-identifiers:
 - provider: sec-cik
   value: '1047127'
 research-depth: deep
-reviewed: '2026-10-19'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: sec
   confidence: well-supported
@@ -41,6 +41,54 @@ roles:
   tier: 2
   baseline-path: ai-server/advanced-packaging.md
 claims:
+- id: amkor-fcbga-bump-and-qualification
+  statement: "Amkor 的 FCBGA 服務列 4–18 層 laminate、10–67.5 mm 成品與陣列最小 90 μm 節距，85 mm 為開發中；5 nm 在 qualification。"
+  confidence: well-supported
+  conditions: ["限該公開服務頁，指定尺寸與節點資格須按廠區、熱與材料重新核對。"]
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: amkor-fcbga-product-spec
+    url: https://amkor.com/packaging/laminate/fcbga/
+    locator: "Technology Solutions／Features／Options"
+    read-scope: "查基板、尺寸、凸塊、開發及資格。"
+    stance: supporting
+    applicable-period: "FCBGA 型錄查核日"
+  - source-id: amkr-10k-2025
+    url: https://www.sec.gov/Archives/edgar/data/1047127/000104712726000014/amkr-20251231.htm
+    locator: "Item 1 Advanced Products"
+    read-scope: "查 FCBGA／試產交付。"
+    stance: supporting
+    applicable-period: "FY2025 10-K"
+- id: amkor-tsv-meol-and-assembly
+  statement: "Amkor 提供 TSV 晶圓薄化、露孔與背面金屬化，10-K 列部分 FCBGA 含 2.5D 矽中介層整合。"
+  confidence: well-supported
+  conditions: ["從已有盲孔的 300 mm 晶圓開始，foundry wafer TSV 形成不在該服務內。"]
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: amkor-tsv-backend
+    url: https://amkor.com/technology/25d-3d-tsv/
+    locator: "MEOL production tooling and processes"
+    read-scope: "查 blind TSV 及後段邊界。"
+    stance: supporting
+    applicable-period: "查核日平台頁"
+  - source-id: amkr-10k-2025
+    url: https://www.sec.gov/Archives/edgar/data/1047127/000104712726000014/amkr-20251231.htm
+    locator: "Item 1 FCBGA Products"
+    read-scope: "查部分 2.5D FCBGA 服務。"
+    stance: supporting
+    applicable-period: "FY2025 10-K"
+- id: amkor-test-service-catalog
+  statement: "Amkor 列 wafer probe、package test 和 system-level test，台灣據點有 FCBGA 與 final test 的組合交付。"
+  confidence: well-supported
+  conditions: ["平台及據點能力不代表特定客戶合格。"]
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: amkor-semiconductor-test-services
+    url: https://amkor.com/test-services/
+    locator: "Test Services／Amkor Technology Taiwan"
+    read-scope: "查測試工序、據點與 full-turnkey 選項。"
+    stance: supporting
+    applicable-period: "查核日官方頁"
 - id: sales-and-end-markets
   statement: 10-K 揭露 2025 年營收 6,707,981 千美元，較 2024 年成長 6.2%；依終端市場估計為通訊 46%、運算（資料中心、基礎設施、PC、儲存）20%、車用工業及其他 19%、消費 15%，運算比重由 2023 年 16% 逐年上升。
   confidence: well-supported
@@ -117,9 +165,13 @@ Amkor 在[先進封裝環節](/next?focus=segment-advanced-packaging)屬[委外�
 
 ## 研究界線
 
+型錄的 85 mm 與 5 nm 分別為開發及資格中。2.5D／HDFO 平台及工廠計畫各有自己的合格／產出界線。
+
 本頁以 FY2025 10-K 為依據，並分開三種狀態：**已營運**的封裝與測試服務；**技術能力**（2.5D、HDFO），10-K 未揭露量產規模；**規劃**中的亞利桑那廠，預計 2028 年上半年開始生產。客戶比例是直接銷售口徑。
 
 ## 產品與用途
+
+[FCBGA](/next?focus=product-flip-chip-package-service)提供 4–18 層 laminate 等選項；[2.5D 矽中介層](/next?focus=product-2p5d-interposer-package)的 MEOL 從已有 blind TSV 的晶圓開始。[測試](/next?focus=role-test-service)則包含晶圓、封裝及系統級。
 
 - **封裝**：先進覆晶、高密度扇出（SWIFT、S-Connect）、2.5D、晶圓級與 SiP（Item 1）。
 - **測試**：晶圓針測、預燒、系統級與最終測試（Item 1）。
@@ -131,9 +183,13 @@ Amkor 在[先進封裝環節](/next?focus=segment-advanced-packaging)屬[委外�
 
 ## 客戶與供應商
 
+保留既有具名封測證據的範圍，MEOL、各 FCBGA 及個別測試站未經同證據驗證。
+
 前十大客戶 72%，Apple 29.8%、Qualcomm 11.1%（Item 1）。兩家客戶目前不在地圖中，未建立關係。客戶端 10-K 具名 Amkor 為封測廠的包括 [Broadcom](/next?focus=company-avgo)、[Credo](/next?focus=company-crdo) 與 [Astera Labs](/next?focus=company-alab)（見關係）。
 
 ## 競爭與替代
+
+與日月光同製程比較先核對中介層來源、bump pitch、熱、電測覆蓋與設施；可從整合後成品或個別工序報價，條件不同。
 
 10-K 具名 [日月光投控](/next?focus=company-3711-tw)、JCET 與[力成](/next?focus=company-6239-tw)，並指出[台積電](/next?focus=company-tsmc)等代工廠也提供部分先進封裝（Item 1）。
 
@@ -149,6 +205,8 @@ Amkor 在[先進封裝環節](/next?focus=segment-advanced-packaging)屬[委外�
 - **原料價格**：金、銅與載板價格波動（Item 1A）。
 
 ## 財務可取性
+
+Advanced Products 合計涵蓋覆晶、記憶體、晶圓級加工和相關測試。沒有 MEOL、指定 FCBGA 或 2.5D 的收入。
 
 - SEC 公開財務資料 可自動取得標準科目；主要申報來源設為 SEC，會計年度為曆年。
 - 終端市場比重可由 10-K 核對。

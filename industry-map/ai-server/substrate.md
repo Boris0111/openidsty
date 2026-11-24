@@ -97,6 +97,8 @@ Shinko 已於 2025-06-06 下市，仍是供應鏈玩家，故用未上市識別�
 
 ## 傳導鏈
 
+從[ABF 封裝載板](/next?focus=product-abf-substrate)讀到[載板增層介電膜](/next?focus=product-substrate-build-up-dielectric)、[載板雷射微孔設備](/next?focus=product-substrate-laser-microvia-drill)及[載板線路曝光設備](/next?focus=product-substrate-patterning-lithography)，比較完成載板與上游交付，詳見[先進封裝與 ABF 載板的規格傳導](/next?focus=research-chip-integration-abf-demand)。
+
 **上游 `materials` → 本環節**：樹脂、銅材與相關材料的交期、品質或規格變動，透過材料認證、製程良率與成本影響可交付產出。
 
 **本環節 → 下游 `advanced-packaging` → `odm`**：載板尺寸或層數升級提高製造難度；若合格載板供給落後，封裝廠即使已有晶粒與 HBM，也可能無法完成交付。反向看到封裝擴產時，應沿封裝的 `upstream` 查載板配套，而不能把封裝名目產能直接當成載板訂單。

@@ -93,6 +93,8 @@ technical-profile:
 
 ## 傳導鏈
 
+晶圓、封裝和系統級的測試覆蓋依封裝架構及分工改變。可沿[先進封裝與 ABF 載板的規格傳導](/next?focus=research-chip-integration-abf-demand)核對供應與可交付成品。
+
 `equipment / foundry → test → advanced-packaging`：製造良率與測試能力影響可供封裝的良品，測試不足可能讓昂貴的多晶片模組報廢。CoWoS 擴產可從 `advanced-packaging.upstream` 反查測試服務與探針玩家。**inference**：測試時間拉長，在機台產能與收費不變時增加工時需求，但也可能成為產線瓶頸；需查並行測試、程式最佳化和報價，不能假定收入等比例增加。
 
 ## 監測指標

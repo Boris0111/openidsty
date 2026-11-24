@@ -888,6 +888,528 @@ us:
     - power-bottleneck
 global:
   technical-documents:
+  - id: twse-unimicron-company-3037
+    name: "TWSE 欣興電子 3037 公司資訊"
+    url: https://wwwc.twse.com.tw/pdf/en/3037_en.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "本次只用上市資訊與業務描述。"
+  - id: unimicron-hkex-subsidiary-substrate-draft
+    name: "欣興子公司香港上市文件草稿：載板技術歷史"
+    url: https://www1.hkexnews.hk/app/sehk/2026/108620/a133776/sehk26060800915_c.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "從 FCBGA 製程與歷史核對集團子公司，文件仍為草稿。"
+  - id: unimicron-fy2025-mops-report
+    name: "欣興電子民國 114 年股東會年報"
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3037&year=115&mtype=F&
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "封面、股東報告與營運概況；載板與 PCB 並列。"
+  - id: nan-ya-pcb-company-8046
+    name: "南亞電路板：公司簡介"
+    url: https://www.nanyapcb.com.tw/nypcb/english/AboutNanYaPCB/CompanyProfile/Company
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "主要業務、ABF／PP／PCB 與公司身分。"
+  - id: nan-ya-pcb-abf-technology-roadmap
+    name: "南亞電路板：ABF Substrate Technology Roadmap"
+    url: https://www.nanyapcb.com.tw/nypcb/english/Technology/ABFSRoadmap
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "現行能力、各期目標與指定介電牌號分列。"
+  - id: nan-ya-pcb-2025-consolidated
+    name: "南亞電路板 114 年合併財報"
+    url: https://www.nanyapcb.com.tw/nypcb/images/InvestorRelations/FinancialReport/114Q4ENG%28Consolidated%29.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "封面與 IFRS 財務口徑、風險及公司基礎資料。"
+  - id: kinsus-fcbga-substrates-product
+    name: "景碩：FCBGA、SiP 與 PBGA 產品"
+    url: https://www.kinsus.com.tw/en/product/products/products_overview
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "覆晶載板與其他家族，產品用途區分。"
+  - id: kinsus-chairman-capability
+    name: "景碩董事長致詞：ABF 與產品資格"
+    url: https://www.kinsus.com.tw/en/html/message_from_the_chairman/index
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "公司自述大型多層、資格與工廠布局。"
+  - id: twse-kinsus-company-3189
+    name: "TWSE 景碩 3189 公司資訊"
+    url: https://www.twse.com.tw/pdf/ch/3189_ch.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "上市身分及公司基本資料。"
+  - id: kinsus-youth-nvidia-expansion
+    name: "景碩與 NVIDIA 幼獅先進載板產能公告"
+    url: https://www.kinsus.com.tw/zh-tw/news/newsroom/detail/news_category1/news_20261118
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "合約、設備投入、未來合格產能。"
+  - id: nvidia-oct2026-substrate-capacity
+    name: "NVIDIA 2026-10-21 供應鏈產能公告"
+    url: https://nvidianews.nvidia.com/news/nvidia-and-supply-chain-partners-expand-capacity-to-accelerate-ai-infrastructure-buildout
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "IBIDEN、欣興載板以及其他環節的產能安排。"
+  - id: nvidia-nov2026-substrate-capacity
+    name: "NVIDIA 2026-11-17 供應鏈資源公告"
+    url: https://nvidianews.nvidia.com/news/nvidia-expands-commitments-with-supply-chain-partners-to-support-ai-infrastructure-buildout
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "景碩幼獅 ABF 產能計畫、既有供應及時程。"
+  - id: ibiden-flip-chip-pkg-sap
+    name: "IBIDEN Flip Chip PKG 產品"
+    url: https://www.ibiden.com/product/electronics/merchandise/fliptippkg/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "SAP、微孔與 CPU／GPU 應用。"
+  - id: ibiden-4062-stock-fy2025
+    name: "IBIDEN 2026 年 5 月股票公告"
+    url: https://www.ibiden.com/ir/items/cashdividendofsurplus.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "公司、股票 4062 及東京／名古屋掛牌。"
+  - id: ibiden-gama-substrate-capex
+    name: "IBIDEN Gama 高性能封裝載板計畫"
+    url: https://www.ibiden.com/company/2026/02/notice-regarding-capital-investment-plan-for-high-performance-ic-package-substrates.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "分列產線計畫、既有工廠及量產預期。"
+  - id: shinko-jpx-delisting-6967
+    name: "JPX 6967 新光下市公告"
+    url: https://www.jpx.co.jp/english/news/1023/20250520-11.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "下市日 2025-06-06、舊上市主體與規則。"
+  - id: shinko-jicc-merger-2025
+    name: "新光電氣工業電子公告"
+    url: https://www.shinko.co.jp/ir/kk/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "2025-12-01 JICC-04 存續、舊公司消滅。"
+  - id: shinko-pre-delisting-ir-archive
+    name: "Shinko IR Archive"
+    url: https://www.shinko.co.jp/english/ir/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "2025-03 期財報與下市前史料。"
+  - id: shinko-iatf-substrate-certification
+    name: "Shinko IATF 16949 載板認證公告"
+    url: https://www.shinko.co.jp/english/news/docs/20250716-01_en.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "IATF 認證針對列示據點及設計製造範圍。"
+  - id: amkor-semiconductor-test-services
+    name: "Amkor：IC Test Services"
+    url: https://amkor.com/test-services/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "晶圓針測、封裝、系統級測試與據點能力。"
+  - id: pti-flip-chip-package-catalog
+    name: "Powertech Technology：Flip Chips 服務"
+    url: https://www.pti.com.tw/en/service/packaging/flip-chips
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "FCBGA、FCCSP、多晶粒、BT／ETS 與封裝交付。"
+  - id: pti-flip-chip-production-scope
+    name: "Powertech Technology：Advanced Flip Chip Packaging"
+    url: https://www.pti.com.tw/en/tech/advancetechnologycategories/flip-chip
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "原廠列入生產的 BT、ETS、MIS 與記憶體加控制器。"
+  - id: ase-silicon-interposer-2p5d
+    name: "ASE 2.5D and 3D IC Packaging"
+    url: https://ase.aseglobal.com/3d-ic-packaging/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "矽中介層、TSV、HBM 及歷史量產自述。"
+  - id: ase-kh-parent-legal
+    name: "ASE Inc. 財務與法律主體"
+    url: https://ase.aseglobal.com/About%20ASE/Financials/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "ASE Inc. 為 ASE Technology Holding 旗下法律主體。"
+  - id: onto-jetstep-x500
+    name: "Onto Innovation JetStep X500 面板曝光系統"
+    url: https://ontoinnovation.com/products/jetstep-x500/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "面板厚度與變形補償、高階 IC 載板定位。"
+  - id: onto-fy2025-10k
+    name: "Onto Innovation FY2025 10-K"
+    url: https://www.sec.gov/Archives/edgar/data/704532/000119312526066937/onto-20260103.htm
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "NYSE ONTO、X500 有機 laminate、產業與風險。"
+  - id: screen-ledia-qs-package
+    name: "SCREEN PE Ledia Qs 載板直接成像"
+    url: https://www.screen.co.jp/pe/en/info/PE240603E
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "先進封裝載板版、解析、轉讓及上市節點。"
+  - id: screen-ir-day-2025-lithography
+    name: "SCREEN IR Day 2025 曝光系統"
+    url: https://hdjp-corporateweb-files.screen.co.jp/7417/6603/8973/20251216_Mtg_E.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "Ledia Qs 5/5 μm、各產品應用及曝光差異。"
+  - id: atotech-gplate-ultrafine
+    name: "MKS Atotech G-Plate 設備"
+    url: https://www.atotech.com/products/electronics/electronics-equipment/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "去膠渣和化學鍍銅、SAP 適用範圍。"
+  - id: moea-ic-substrate-equipment-19449
+    name: "產發署：PCB／IC 載板製程與設備現況"
+    url: https://www.ida.gov.tw/ctlr?PRO=filepath.DownloadFile&f=executive&id=19449&t=f
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "場域案例、工序與台灣高階載板曝國產能力的資料時點。"
+  - id: csun-2023-annual-equipment
+    name: "志聖年報：PCB／IC 載板製程設備"
+    url: https://s3.ap-northeast-1.amazonaws.com/csun.com.tw/wp-content/uploads/2024/05/%E3%80%90%E4%B8%8A%E5%82%B3%E3%80%912024%E5%B9%B4%E5%A0%B1%E4%B8%AD%E6%96%87.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "台灣供應商既有壓膜、對準、防焊及軟板曝光交付。"
+  - id: mks-esi-geode-a
+    name: "ESI Geode A CO₂ ABF microvia 系統"
+    url: https://www.esi.com/f/geode-a-abf-via-drilling-system
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "ABF 30–85 μm 與系統對位、面板尺寸。"
+  - id: mks-esi-brand
+    name: "MKS ESI Equipment & Solutions"
+    url: https://www.mks.com/b/esi
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "ESI 品牌與 MKS 交付歸屬。"
+  - id: mksi-fy2025-10k
+    name: "MKS Inc. FY2025 10-K"
+    url: https://www.sec.gov/Archives/edgar/data/1049502/000119312526066820/mksi-20251231.htm
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "MKSI Nasdaq、產品與電子封裝終端市場口徑。"
+  - id: contrel-smart-machinery-abf-microvia
+    name: "東捷 ABF 雷射微鑽孔機"
+    url: https://industry.meettaiwan.com/smartmachinery/zh-tw/product/detail/ABF-Laser-Microvia-Drilling
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "展台列 10–50 μm、定位及速度條件。"
+  - id: contrel-company-profile
+    name: "東捷科技公司簡介"
+    url: https://www.contrel.com.tw/corp_brief.php
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "公司身分、營運與製造服務。"
+  - id: mitsubishi-jpca-package-laser
+    name: "三菱電機 JPCA Show 載板雷射設備"
+    url: https://www.mitsubishielectric.co.jp/fa/events-seminars/exhibitions/2024/jpca2024/index.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "ML605GTF5-UVP 與 CO₂ 型號的展示及用途。"
+  - id: itri-abf-microvia-tech
+    name: "工研院 ABF 載板超快雷射微孔技術"
+    url: https://www.itri.org.tw/ListStyle.aspx?DisplayStyle=13_content&MmmID=1036233375626243454&SiteID=1&Trt_idx=10714
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "原型／技轉的孔徑、錐角、圓度。"
+  - id: aft-abf-grade-catalog
+    name: "Ajinomoto Fine-Techno ABF 增層膜"
+    url: https://www.aft-website.com/en/products/insulating_film-abf/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "GX、GZ、GL 牌號及 PET／樹脂／保護膜結構。"
+  - id: ajinomoto-stock-data
+    name: "Ajinomoto IR 公司與股票資訊"
+    url: https://www.ajinomoto.co.jp/company/en/ir/faq.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "上市公司、股票代碼與財務文件入口。"
+  - id: ajinomoto-aft-company-and-abf
+    name: "Ajinomoto Fine-Techno 增層膜分工"
+    url: https://www.ajinomoto.co.jp/company/en/presscenter/press/detail/g2016_04_13.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "載板乾膜、varnish 製程及 AFT 法律關係。"
+  - id: ajinomoto-ict-abf-briefing
+    name: "Ajinomoto ICT 事業說明會"
+    url: https://www.ajinomoto.co.jp/company/en/ir/event/business_briefing/main/01113/teaserItems1/01/linkList/00/link/3_ICT_E.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "ABF 原液、塗膜、物流分工與應用。"
+  - id: sekisui-taiwan-build-up-film
+    name: "積水化學 BUF 絕緣增層膜"
+    url: https://www.sekisui.com.tw/product/21/17
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "製程、NX04H／NQ07XP 量產階段與典型 CTE／Dk。"
+  - id: sekisui-nx-build-up-film
+    name: "積水化學工業 熱硬化層間絕緣膜"
+    url: https://www.sekisui.co.jp/search/detail-3585.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "系列、SAP 相容性及具名客戶自述。"
+  - id: waferchem-tbf-material
+    name: "晶化科技 Taiwan Build-Up Film"
+    url: https://www.waferchem.com.tw/taiwan-build-up-film-en.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "TBF 原廠頁，試驗與資格資料按用途另查。"
+  - id: qnity-ic-substrate-materials
+    name: "Qnity IC Substrate 產品"
+    url: https://www.qnityelectronics.com/ic-substrates.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "光阻、鍍銅及 IC substrate 產品清單。"
+  - id: ibiden-integrated-report-2026
+    name: "Ibiden Integrated Report 2026：AI 伺服器載板"
+    url: https://www.ibiden.com/ir/items/IntegratedReport2026_en.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "p.9–10 尺寸／層數趨勢、翹曲、細線與研究路徑。"
+  - id: shinko-dll-dll3-substrate
+    name: "Shinko：DLL／DLL3 覆晶載板"
+    url: https://www.shinko.co.jp/english/product/package/substrate/dll.php
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "CO₂／UV 微孔、SAP、堆疊 vias 及 coreless 交付。"
+  - id: shinko-glass-core-tgv-prototype
+    name: "Shinko：玻璃核心 TGV 載板原型"
+    url: https://www.shinko.co.jp/english/news/2026/07/b2e0e1c9fadd06989a3ba3940788615cdb6ddaf4.php
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "ECTC 2025 研究、TGV、CTE、260°C 回焊與限制。"
+  - id: ajinomoto-abf-innovation
+    name: "Ajinomoto：Ajinomoto Build-up Film 材料"
+    url: https://www.ajinomoto.com/innovation/our_innovation/buildupfilm
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "膜料絕緣、雷射及鍍銅製程適性。"
+  - id: intel-lens-glass-substrate-2026
+    name: "Intel：與 Lens Technology 研究玻璃基板"
+    url: https://www.intel.com/content/www/us/en/newsroom/news/corporate/intel-and-lens-technology-collaborate-to-enable-advanced-semiconductor-packaging-for-the-ai-era.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "2026 合作與開發意向。"
+  - id: tsmc-3dfabric-cowos
+    name: "TSMC 3DFabric：CoWoS-S／R／L"
+    url: https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "晶圓級整合的三種架構與 3.5× 與 3.3× 級距。"
+  - id: tsmc-2025-rd-packaging
+    name: "TSMC FY2025 年報：Research and Development"
+    url: https://investor.tsmc.com/static/annualReports/2025/english/pdf/2025_tsmc_ar_e_ch5.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "CoWoS-L 3.5× 生產與 5.5× 資格的年報時程。"
+  - id: tsmc-3dfabric-hpc-qualification
+    name: "TSMC HPC Platform 3DFabric：CoWoS 認證"
+    url: https://www.tsmc.com/english/dedicatedFoundry/technology/platform_HPC_tech_WLSI
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "5.5× Q&R 說明，與年報的資格時程口徑分列。"
+  - id: ase-focos-test-vehicles
+    name: "ASE FOCoS：CF／CL／Bridge 示範件"
+    url: https://ase.aseglobal.com/focos/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "RDL、局部矽橋、HBM 及 BGA substrate 的位置。"
+  - id: ase-kaohsiung-flip-chip
+    name: "ASE Kaohsiung：Flip Chip 封裝"
+    url: https://asekh.aseglobal.com/products-services/flip-chip.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "覆晶的多種組裝交付及技術表。"
+  - id: amkor-tsv-backend
+    name: "Amkor：2.5D/3D TSV backend"
+    url: https://amkor.com/technology/25d-3d-tsv/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "晶圓薄化、TSV reveal 及 backside metallization；TSV 形成另行。"
+  - id: amkor-fcbga-product-spec
+    name: "Amkor：FCBGA Laminate Packaging"
+    url: https://amkor.com/packaging/laminate/fcbga/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "封裝尺寸、凸塊、基板、節點資格與開發分列。"
   - id: vicor-nbm-datasheet
     name: "Vicor NBM2317S60E1560T0R datasheet"
     url: https://www.vicorpower.com/documents/datasheets/ds-NBM2317S60E1560T0R-VICOR.pdf

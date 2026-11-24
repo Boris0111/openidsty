@@ -99,31 +99,31 @@ Boris 於 2026-11-24 確認沿用既有閱讀模板，華星光樣本的研究�
 
 | 產品／既有 role／task | P1 | P2 | P3 | P4 | P5 | 來源定位／適用範圍／查核日 | 具體缺口 | 分類／證據／內容／網站 |
 |---|---|---|---|---|---|---|---|---|
-| 2.5D 中介層封裝 [product-2p5d-interposer-package](../industry-map/products/product-2p5d-interposer-package.md)；[role-interposer-integration](../industry-map/roles/role-interposer-integration.md)；5.1 | 待補：中介層、晶粒與封裝整合分工 | 待補：製程、材料、布線與認證範圍 | 待補：同用途的整合路線；名稱不作角色證據 | 待補：整合服務、材料與中介層交付區別 | 待補：規格變化、良率及認證對有效產出的限制 | 待查原文／待核型號版本期間／未查核 | not-researched：五面向尚未核讀；成本及同條件數值待查 | 已有／未／未／未 |
-| 覆晶與委外封裝服務 [product-flip-chip-package-service](../industry-map/products/product-flip-chip-package-service.md)；[role-osat-assembly](../industry-map/roles/role-osat-assembly.md)；5.1 | 待補：覆晶與封裝服務流程／責任 | 待補：製程、材料、測試及認證範圍 | 待補：同交付服務的比較及適用限制 | 待補：封裝整合、測試與服務交付邊界 | 待補：晶粒／封裝規格傳導及良率／認證風險 | 待查原文／待核型號版本期間／未查核 | not-researched：五面向尚未核讀；成本及同條件數值待查 | 已有／未／未／未 |
-| ABF 封裝載板 [product-abf-substrate](../industry-map/products/product-abf-substrate.md)；[role-ic-substrate](../industry-map/roles/role-ic-substrate.md)；5.2 | 待補：堆疊、布線、微孔及封裝內位置 | 待補：線寬距、孔徑、層數、面積、翹曲、可靠度 | 待補：玻璃核心等路線的研究／認證／商業化階段 | 待補：完成載板與材料／設備的不同交付 | 待補：規格 → 製程限制 → 有效產出；不以面積換算收入 | 待查原文／待核型號版本期間／未查核 | not-researched：五面向尚未核讀；成本及同條件數值待查 | 已有／未／未／未 |
+| 2.5D 中介層封裝；5.1 [product-2p5d-interposer-package](../industry-map/products/product-2p5d-interposer-package.md)；[role-interposer-integration](../industry-map/roles/role-interposer-integration.md) | D2D、HBM、中介層與載板分層 | CoWoS-S／R／L、3.5× 量產，5.5× 資格口徑不一 | 全矽、RDL、局部橋，以同 I/O／可靠度比較 | TSMC CoWoS／ASE FOCoS／Amkor MEOL；各自責任 | interposer-yield-demand：良品、面積、組裝與替代 | TSMC 3DFabric CoWoS 及 HPC、2025 年報 R&D；ASE FOCoS test vehicles；Amkor MEOL；2026-11-24 | 5.5× 資格需核，缺同產品良率、成本與具名採用 | 已有／已／已／待 C 批預覽 |
+| 覆晶與委外封裝服務；5.1 [product-flip-chip-package-service](../industry-map/products/product-flip-chip-package-service.md)；[role-osat-assembly](../industry-map/roles/role-osat-assembly.md) | 覆晶、底膠、模封或封蓋、上板與測試 | Amkor 封裝尺寸、節距、基板層數及資格狀態 | 同服務比較 FCBGA、fan-out 及 CoW 應用 | ASE 高雄與 Amkor 成品；力成按工序證據 | flip-chip-service-demand：良率、委外邊界與認證 | ASE Flip Chip Package Offerings；Amkor FCBGA Features、Additional Options；2026-11-24 | 同封裝測試、份額、量產與料號收入仍待取得 | 已有／已／已／待 C 批預覽 |
+| ABF 封裝載板；5.2 [product-abf-substrate](../industry-map/products/product-abf-substrate.md)；[role-ic-substrate](../industry-map/roles/role-ic-substrate.md) | 核心至增層／SAP／微孔／BGA，在封裝與 PCB 間 | Ibiden 80×80 mm／約 18 層為 CY2025 級距，Shinko CO₂／UV 及層間布線 | 有機、coreless、玻璃的同條件比較，玻璃原型與研發分開 | Ibiden、Shinko 與台股載板廠供應成品；膜料另列 | substrate-yield-and-demand：面積、層數、套位、可靠度及良率 | Ibiden IR 2026 p.9；Shinko DLL／DLL3 與 ECTC TGV；Ajinomoto 材料；Intel 2026 合作；2026-11-24 | 未有同尺寸、層數、線寬與孔徑的成本、良率、具名採用及收入 | 已有／已／已／待 C 批預覽 |
 
 ### C：廣度研究與角色裁決
 
 | 交付範圍／task | P1 | P2 | P3 | P4 | P5 | 來源／範圍／查核日 | 角色、候選與市場查核紀錄 | 分類／證據／內容／網站 |
 |---|---|---|---|---|---|---|---|---|
-| 增層介電材料；5.3 | 待補：增層絕緣與製程介面 | 待補：材料性能、加工與可靠度條件 | 待補：同用途材料路線及既有角色去重 | 待補：材料不等於完成載板 | 待補：布線／堆疊需求與材料認證限制 | 未研究；待補 locator、版本期間與查核日 | not-researched：既有分類去重、台股／美股／其他關鍵市場候選、法律主體及納入／排除理由皆待查；沿用／新增 ID 待裁決 | 待裁決／未／未／未 |
-| 載板微孔加工；5.4 | 待補：微孔製程步驟與交付位置 | 待補：適用材料、孔徑及加工限制 | 待補：設備／製程替代前提 | 待補：製程步驟與設備供應界線 | 待補：規格與設備需求；能力不推定客戶良率 | 未研究；待補 locator、版本期間與查核日 | not-researched：既有分類去重、台股／美股／其他關鍵市場候選、法律主體及納入／排除理由皆待查；沿用／新增 ID 待裁決 | 待裁決／未／未／未 |
-| 載板線路形成；5.5 | 待補：線路形成步驟與相連材料 | 待補：線寬距、材料及製程／設備限制 | 待補：依工序與適用材料比較 | 待補：材料、製程服務與設備分開裁決 | 待補：規格、有效產出與採用限制 | 未研究；待補 locator、版本期間與查核日 | not-researched：既有分類去重、台股／美股／其他關鍵市場候選、法律主體及納入／排除理由皆待查；沿用／新增 ID 待裁決 | 待裁決／未／未／未 |
+| 增層介電材料；5.3；[product-substrate-build-up-dielectric](../industry-map/products/product-substrate-build-up-dielectric.md)；[role-substrate-dielectric-material](../industry-map/roles/role-substrate-dielectric-material.md) | 膜料隔離銅線，壓合後供雷射與 SAP | AFT GX／GZ／GL 與積水 NX04H 的適用試驗 | 按同溫區、頻率、銅附著、粗度和層壓比較 | 日本 AFT／積水、台灣晶化；美股 Qnity 光阻與藥水另計 | 層數與需求；裁切、合格率、換料和認證影響 | AFT Grade Table／所有權、積水 NX04H、晶化 TBF 厚度、Qnity IC Substrates；2026-11-24 | 與 PCB CCL、線路光阻及載板成品去重。納入日本 2802.T 集團 AFT；積水與晶化作同功能比較，上市母公司與地區據點分開。Qnity 來源證實耗材用途不同。規格級距及客戶採用未取得同口徑。 | 新增／已／已／待 C 批預覽 |
+| 載板微孔加工；5.4；[product-substrate-laser-microvia-drill](../industry-map/products/product-substrate-laser-microvia-drill.md)；[role-substrate-microvia-equipment](../industry-map/roles/role-substrate-microvia-equipment.md) | 增層成孔、去膠渣與填銅 | ESI 30–85 μm、東捷 10–50 μm、其他研發口徑 | 比較同材料／深度、位置、尾部缺陷與合格速度 | 美股 MKS／ESI；台股東捷、日股三菱設備比較 | 孔數、材料與合格設備時數，存在生產率抵銷 | ESI Geode A、MKS FY25 10-K、台灣智慧機械及東捷公司、三菱 JPCA 2024、工研院；2026-11-24 | 設備供應另建；有機膜微孔與玻璃 TGV、矽 TSV 分開。台灣 8064 東捷、日本三菱作同工序參照，台灣技轉樣件未列為量產。客戶良率與收入未公開。 | 新增／已／已／待 C 批預覽 |
+| 載板線路形成；5.5；[product-substrate-patterning-lithography](../industry-map/products/product-substrate-patterning-lithography.md)；[role-substrate-patterning-equipment](../industry-map/roles/role-substrate-patterning-equipment.md) | SAP 種子層、圖形曝光顯影、鍍銅、剝膜與除種子層 | SCREEN Ledia Qs 5/5 μm、X500 對位補償和面板條件 | 直寫／光罩曝光同膜、焦深、合格 L/S 及套位比較 | 美股 ONTO；日本 SCREEN；台股志聖相鄰工序；光阻及濕製程另列 | 面板翹曲、多層套位、成品良率及瓶頸轉移 | Onto X500／FY25 10-K、SCREEN PE 與 2025 IR Day、志聖年報與產發署、Atotech G-Plate、Qnity Riston；2026-11-24 | 新增曝光設備角色，與既有廣義設備、材料、去膠填銅和載板廠加工區別。台灣志聖可驗防焊／軟板與壓膜設備，未查到可比同線寬載板線路驗收。後續光阻／藥液收入及設備驗收仍待。 | 新增／已／已／待 C 批預覽 |
 
 ### C：優先公司與交付證據
 
 | 公司／task | 本次必查交付與比較界線 | 既有狀態（不代表本次完成） | 九段閱讀位置／產品五面向連結 | 主張／來源定位／適用範圍／查核日 | 具體缺口 | 證據／內容／網站紀錄 |
 |---|---|---|---|---|---|---|
-| 台積電 [company-tsmc](../industry-map/companies/company-tsmc.md)；5.6 | 封裝整合與服務範圍、認證／商業化階段 | 頁面存在，deep | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
-| 日月光投控 [company-3711-tw](../industry-map/companies/company-3711-tw.md)；5.6 | 集團／法律主體與實際封裝交付；不推定具名採用 | 頁面存在，deep | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
-| 艾克爾 [company-amkr](../industry-map/companies/company-amkr.md)；5.7 | 封裝／測試如何支撐本批角色，核對納入／排除 | 頁面存在，deep | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
-| 力成 [company-6239-tw](../industry-map/companies/company-6239-tw.md)；5.7 | 不因同屬封測建立不受支持的產品關聯 | 頁面存在，deep | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
-| Ibiden [company-4062-t](../industry-map/companies/company-4062-t.md)；5.8 | 載板產品、技術／交付差異；九段內容實質檢閱後才標 deep | 頁面存在，basic | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
-| Shinko [company-private-shinko](../industry-map/companies/company-private-shinko.md)；5.8 | 身分、載板能力、下市／財務可取性限制；九段檢閱 | 頁面存在，basic | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
-| 欣興 [company-3037-tw](../industry-map/companies/company-3037-tw.md)；5.9 | 產品組合、製程、認證與曝險；不將總營收／面積當產品出貨 | 頁面存在，basic | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
-| 南電 [company-8046-tw](../industry-map/companies/company-8046-tw.md)；5.9 | 產品組合、製程、認證與曝險；九段檢閱後才標 deep | 頁面存在，basic | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
-| 景碩 [company-3189-tw](../industry-map/companies/company-3189-tw.md)；5.9 | 載板能力、同條件比較、合格產出限制；九段檢閱 | 頁面存在，basic | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
+| 台積電；5.6 [company-tsmc](../industry-map/companies/company-tsmc.md) | TSMC 覆蓋 -S／-R／-L 整合，3.5× 量產與 5.5× 資格分開 | deep；本批重查九段 | 對齊覆晶、中介層、基板、已知良品與測試；既有代工關係保留 | CoWoS 平台、FY2025 R&D、HPC Q&R；2026-11-24 | 5.5× 口徑、具名封裝採用、產出與產品收入未查得 | 已／已／待 C 批預覽 |
+| 日月光投控；5.6 [company-3711-tw](../industry-map/companies/company-3711-tw.md) | ASE Inc. 持股法體、TSV 整合、FOCoS test vehicle 與覆晶服務 | deep；本批重查九段 | 整合、覆晶和測試連結各自引用；對齊封裝尺寸、熱與交付範圍 | ASE Financials、2.5D/3D、FOCoS、ASE 高雄與既有 20-F；2026-11-24 | 無同規格產出、成本、專案客戶與收入 | 已／已／待 C 批預覽 |
+| 艾克爾；5.7 [company-amkr](../industry-map/companies/company-amkr.md) | FCBGA、MEOL、2.5D 組裝與測試各分開 | deep；本批重查九段 | 與 ASE 對齊工序、尺寸、測試關係；保留客戶端既有封測證據 | Amkor FCBGA 型錄、MEOL、Test Services、FY2025 10-K；2026-11-24 | 85 mm／5 nm 階段及客戶資格，2.5D 獨立量產／收入未揭露 | 已／已／待 C 批預覽 |
+| 力成；5.7 [company-6239-tw](../industry-map/companies/company-6239-tw.md) | 6239.TW FCBGA／FCCSP、BT／ETS／MIS 及測試；大型 AI 方案仍查證 | deep；本批重查九段 | 覆晶、測試與已開發大型封裝；無 2.5D 中介層 offering | PTI Flip Chips／Tech、114 年報第 73–74 頁；2026-11-24 | 缺具名 HBM／85 mm 採用與量產。本批不以 TSV 開發推定中介層交付 | 已／已／待 C 批預覽 |
+| Ibiden；5.8 [company-4062-t](../industry-map/companies/company-4062-t.md) | 4062.T 的 SAP、微孔、大尺寸與多層覆晶載板 | deep；本批重查九段 | 成品與原料交付分開；Gama／Ono 擴建、資格和業務曝險分列 | Flip Chip PKG、IR 2026 pp.8–10、4062 官方及 Gama 計畫；2026-11-24 | 未取得具名驗收、同板良率及產品收入 | 已／已／待 C 批預覽 |
+| Shinko；5.8 [company-private-shinko](../industry-map/companies/company-private-shinko.md) | DLL／DLL3；6967 下市、JICC-04 存續更名及歷史財務 | deep；本批重查九段 | 同載板與 Ibiden 對齊；IATF 只限列示範圍，玻璃 prototype 分列 | DLL／DLL3 型錄、JPX、電子公告、IR Archive、IATF；2026-11-24 | 下市後財務資料不足，無產品客戶／收入、詳細驗收 | 已／已／待 C 批預覽 |
+| 欣興；5.9 [company-3037-tw](../industry-map/companies/company-3037-tw.md) | 3037.TW；PCB／IC Carrier 與集團 FCBGA；台灣 KF 產能預留 | deep；本批重查九段 | 子公司 HKEX 草稿及台灣產線分開；同條件比較 | TWSE 3037、114 年報、HKEX 歷史、NVIDIA 2026-10-21；2026-11-24 | 無 KF 合格料號、量產與獨立產品收入 | 已／已／待 C 批預覽 |
+| 南電；5.9 [company-8046-tw](../industry-map/companies/company-8046-tw.md) | 8046.TW；ABF、PP、HDI、PCB，現行 L/S 9/12 μm | deep；本批重查九段 | 材料、規格、資格與產線分開；與欣興／Ibiden 同角色比較 | 公司簡介、ABF 路線圖、114 合併財報；2026-11-24 | 同條件良率、驗收、ABF 單項收入未公開 | 已／已／待 C 批預覽 |
+| 景碩；5.9 [company-3189-tw](../industry-map/companies/company-3189-tw.md) | 3189.TW；FCBGA／ABF、SiP 與 PBGA；NVIDIA 幼獅具名合作 | deep；本批重查九段 | 比較同堆疊與認證；已供應、未來擴建及營收分開 | Products／董事長、TWSE 3189、雙方幼獅 2026-11-17；2026-11-24 | 無個別料號、專屬量的基期及收入；時程為目標 | 已／已／待 C 批預覽 |
 
 ## 既有供應角色逐列核對
 
@@ -140,9 +140,9 @@ Boris 於 2026-11-24 確認沿用既有閱讀模板，華星光樣本的研究�
 | [role-switch-system](../industry-map/roles/role-switch-system.md) | [product-datacenter-switch](../industry-map/products/product-datacenter-switch.md)（3.4） | Accton／Arista 整機資料表支持面板埠、風道及 NOS；限對齊整機條件時比較 | 已有／已／已／A 批 revision 3 預覽通過 |
 | [role-rack-power-supply](../industry-map/roles/role-rack-power-supply.md) | [product-power-shelf-psu](../industry-map/products/product-power-shelf-psu.md)（4.1） | OCP 台達、康舒列示 AC/DC 成品；機架或伺服器轉換位置與 N+1、電氣及機械介面一致才能互比。 | 已有／已／已／B 批 revision 4 預覽通過 |
 | [role-board-power-conversion](../industry-map/roles/role-board-power-conversion.md) | [product-pmic-voltage-regulator](../industry-map/products/product-pmic-voltage-regulator.md)、[product-power-module](../industry-map/products/product-power-module.md)（4.2） | 以 MPS、Renesas、Vicor 與台達原文區分控制晶片、功率級、中間端及近負載模組。 | 已有／已／已／B 批 revision 4 預覽通過 |
-| [role-interposer-integration](../industry-map/roles/role-interposer-integration.md) | [product-2p5d-interposer-package](../industry-map/products/product-2p5d-interposer-package.md)（5.1） | 待隨產品核對可替換交付與來源；not-researched | 已有／未／未／未 |
-| [role-osat-assembly](../industry-map/roles/role-osat-assembly.md) | [product-flip-chip-package-service](../industry-map/products/product-flip-chip-package-service.md)（5.1） | 待隨產品核對可替換交付與來源；not-researched | 已有／未／未／未 |
-| [role-ic-substrate](../industry-map/roles/role-ic-substrate.md) | [product-abf-substrate](../industry-map/products/product-abf-substrate.md)（5.2） | 待隨產品核對可替換交付與來源；not-researched | 已有／未／未／未 |
+| [role-interposer-integration](../industry-map/roles/role-interposer-integration.md) | [product-2p5d-interposer-package](../industry-map/products/product-2p5d-interposer-package.md)（5.1） | 與載板、材料及封裝局部加工依交付拆分；TSMC、ASE 與 Amkor 依各自平台範圍。 | 已有／已／已／待 C 批預覽 |
+| [role-osat-assembly](../industry-map/roles/role-osat-assembly.md) | [product-flip-chip-package-service](../industry-map/products/product-flip-chip-package-service.md)（5.1） | ASE／Amkor 同一尺寸與覆晶服務再互比；製造、整合和純測試分開。 | 已有／已／已／待 C 批預覽 |
+| [role-ic-substrate](../industry-map/roles/role-ic-substrate.md) | [product-abf-substrate](../industry-map/products/product-abf-substrate.md)（5.2） | Ibiden／Shinko 等成品並依核心、層數、用途區分，材料與設備各自交付。 | 已有／已／已／待 C 批預覽 |
 
 ## 閱讀入口、比較與需求案例
 
@@ -177,3 +177,7 @@ Boris 於 2026-11-24 確認沿用既有閱讀模板，華星光樣本的研究�
 ## B 批需求案例
 
 [設施、機櫃與板端的供電](../industry-map/research/research-ai-facility-to-board-power.md#案例同一機房由-60-kw-升到-100-kw-的機櫃)（4.10）。分開假設的 60／100 kW 機櫃持續負載、5+1 PSU 備援、機房接入容量與實際設備交期。沿變壓、開關、UPS、BBU、幹線、架端及板端追蹤。預留容量、集中式 HVDC、削峰或提高單 shelf 功率可抵銷，追蹤單線圖、型號、末期續航及驗收。
+
+## C 批需求案例
+
+[先進封裝與 ABF 載板的規格傳導](../industry-map/research/research-chip-integration-abf-demand.md)（5.10）。用 Ibiden 的尺度例示範面積和層數如何改變翹曲、微孔、曝光、填鍍與終檢，固定同材料、排版及驗收才推有效產出。附假設算例、不同公司證據階段、設計及良率的反向條件。

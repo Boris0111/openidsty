@@ -19,7 +19,7 @@ listings:
   valid-to: null
 source-identifiers: []
 research-depth: deep
-reviewed: '2026-10-19'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: tw-mops-summary
   confidence: well-supported
@@ -40,6 +40,30 @@ roles:
   tier: 2
   baseline-path: ai-server/advanced-packaging.md
 claims:
+- id: pti-fcbga-and-memory-package
+  statement: "力成提供有機載板 FCBGA 與 FCCSP，官網列 BT／ETS／MIS、記憶體與控制器的混合封裝已在生產。114 年報稱大型 AI 伺服器 85 mm FCBGA 及 HBM TSV 開發完成。"
+  confidence: well-supported
+  conditions: ["既有產品、開發里程碑與 2.5D 整合量產須分開。"]
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: pti-flip-chip-package-catalog
+    url: https://www.pti.com.tw/en/service/packaging/flip-chips
+    locator: "Overview／Feature／Application"
+    read-scope: "查 FCBGA、FCCSP、有機載板與材料。"
+    stance: supporting
+    applicable-period: "查核日產品頁"
+  - source-id: pti-flip-chip-production-scope
+    url: https://www.pti.com.tw/en/tech/advancetechnologycategories/flip-chip
+    locator: "Advanced Flip Chip Packaging Technology"
+    read-scope: "查 BT、ETS、MIS 與 hybrid 在生產。"
+    stance: supporting
+    applicable-period: "查核日技術頁"
+  - source-id: pti-annual-report-2025
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=6239&year=115&mtype=F&
+    locator: "第 73–74 頁 研究發展成果"
+    read-scope: "查 85 mm FCBGA 與 HBM TSV 開發。"
+    stance: supporting
+    applicable-period: "114 年度年報"
 - id: revenue-mix
   statement: 年報揭露 114 年度合併營收 74,929,320 仟元，其中 IC 封裝服務 61.76%、IC 測試服務 13.95%、模組加工服務 10.77%、晶圓級測試服務 8.25%、晶圓級封裝服務 5.24%；記憶體（DRAM、NAND）與邏輯 IC 的封測代工約各占一半。
   confidence: well-supported
@@ -142,9 +166,13 @@ gaps:
 
 ## 研究界線
 
+原廠技術頁所稱量產為所列 BT／ETS／MIS 與混合封裝等，不能從這些推定大型 HPC 專案量產。
+
 本頁以 114 年度股東會年報為依據，並把技術分成三種狀態：**已量產**（記憶體封測、BF2O 面板級扇出用於消費性產品）、**開發完成**（AI 伺服器用大尺寸 FCBGA、HBM TSV、CPO 用 TSV）、**規劃**（FOPLP 2026 年大規模量產）。後兩者不能當成已取得 AI 訂單的證據。
 
 ## 產品與用途
+
+[覆晶及委外封裝](/next?focus=product-flip-chip-package-service)提供有機載板 FCBGA、FCCSP、多晶粒組裝；[晶圓及成品測試](/next?focus=role-test-service)各按服務驗證。85 mm AI 伺服器 FCBGA 與 HBM TSV 屬年報開發成果。
 
 - **記憶體封測**：TSOP、BGA、MCP、DRAM 堆疊、記憶卡、eMMC／UFS／SSD（第 68–69 頁）。
 - **邏輯封測**：覆晶、銅柱凸塊、晶圓級封裝、扇出型封裝與 SiP（第 69、77 頁）。
@@ -161,9 +189,13 @@ gaps:
 
 ## 競爭與替代
 
+和艾克爾、日月光在相同 BT／有機載板、封裝尺寸、凸塊及測試覆蓋等條件比較。HBM TSV 開發不能單獨證明同規格 2.5D 交付。
+
 年報未具名競爭者。[Amkor](/next?focus=company-amkr) 的 10-K 把力成列為主要競爭者之一。在[委外封裝](/next?focus=role-osat-assembly)可與 Amkor、[日月光投控](/next?focus=company-3711-tw)比較；FOPLP 是否取代晶圓級封裝，要看 AI 晶片的尺寸、成本與良率。
 
 ## 業務曝險
+
+記憶體、一般邏輯封裝與大尺寸 HPC 設計導入不同；使用年報的交付階段追蹤，無法據此量化 AI 相關收入。
 
 記憶體約占一半，受記憶體廠資本支出與庫存循環影響；AI 曝險主要透過 HBM 與大尺寸封裝的開發計畫，年報沒有收入數字。
 

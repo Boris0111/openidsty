@@ -96,6 +96,8 @@ technical-profile:
 
 ## 傳導鏈
 
+伺服器板接收已封裝產品。與封裝內的[ABF 封裝載板](/next?focus=product-abf-substrate)比較位置、線路和認證，詳見[先進封裝與 ABF 載板的規格傳導](/next?focus=research-chip-integration-abf-demand)。
+
 **上游 `materials` → 本環節**：樹脂、玻纖與銅材的供給／品質影響板材成本、加工與認證；材料漲價不必然可立即轉嫁到成板售價。
 
 **本環節 → `odm` → `datacenter`**：板材或成板交期延長會影響系統組裝交付；平台改版則透過板面積、層數與低損耗材料比重改變單機價值量。

@@ -104,6 +104,8 @@ technical-profile:
 
 ## 傳導鏈
 
+以[先進封裝與 ABF 載板的規格傳導](/next?focus=research-chip-integration-abf-demand)從中介層及覆晶整合追到載板、可靠度與量產限制。
+
 **上游最寬的環節**，同時牽動六個方向：`materials`、`equipment`、`test`、`substrate`、`memory`、`compute`。
 
 因此擴產消息的候選影響面包括設備、載板、測試與材料。看到擴產，應往上游六個方向各走一步；**inference** 的個股受惠仍取決於實際材料、設備料號、客戶認證及訂單，不能把關聯直接當已確認收入。

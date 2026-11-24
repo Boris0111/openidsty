@@ -19,7 +19,7 @@ listings:
   valid-to: null
 source-identifiers: []
 research-depth: deep
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: tw-mops-summary
   confidence: well-supported
@@ -40,6 +40,48 @@ roles:
   tier: 1
   baseline-path: ai-server/advanced-packaging.md
 claims:
+- id: ase-tsv-and-focos-integration
+  statement: "ASE Inc. 為日月光投控子公司，提供 TSV 2.5D／3D 整合，官方另列 FOCoS-CL 的 ASIC＋2 HBM 與 2/2 μm RDL 示範件。"
+  confidence: well-supported
+  conditions: ["歷史量產自述、當前示範件與個別案驗收分開；FOCoS 的 RDL 非全尺寸矽中介層。"]
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: ase-silicon-interposer-2p5d
+    url: https://ase.aseglobal.com/3d-ic-packaging/
+    locator: "What is 2.5D & 3D、Benefits"
+    read-scope: "查 TSV、HBM 及品牌的歷史量產陳述。"
+    stance: supporting
+    applicable-period: "查核日產品頁"
+  - source-id: ase-focos-test-vehicles
+    url: https://ase.aseglobal.com/focos/
+    locator: "FOCoS-CL／Bridge"
+    read-scope: "查示範件及 RDL/Si bridge 路徑。"
+    stance: supporting
+    applicable-period: "產品頁示範件"
+  - source-id: ase-kh-parent-legal
+    url: https://ase.aseglobal.com/About%20ASE/Financials/
+    locator: "ASE financials entity"
+    read-scope: "查 ASE Inc. 與上市控股關係。"
+    stance: supporting
+    applicable-period: "查核日"
+- id: ase-kaohsiung-fc-assembly-delivery
+  statement: "ASE 高雄的覆晶交付列 FCBGA、FOCoS 與 CoW，三者分別在載板、RDL 及矽中介層上整合。"
+  confidence: well-supported
+  conditions: ["適用型號、應力、測試與委外範圍需逐案核實。"]
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: ase-kaohsiung-flip-chip
+    url: https://asekh.aseglobal.com/products-services/flip-chip.html
+    locator: "Flip Chip Package Offerings"
+    read-scope: "查各種覆晶組裝的交付落點。"
+    stance: supporting
+    applicable-period: "查核日 ASE 高雄型錄"
+  - source-id: ase-kh-parent-legal
+    url: https://ase.aseglobal.com/About%20ASE/Financials/
+    locator: "ASE financials entity"
+    read-scope: "核對法律主體。"
+    stance: supporting
+    applicable-period: "查核日"
 - id: revenue-mix
   statement: 20-F 揭露 2025 年營收 NT$645,387.7 百萬元，較 2024 年成長 8.4%；封裝 NT$308,342.6 百萬元（成長 17.8%）、測試 NT$71,900.2 百萬元（成長 31.8%），成長主要來自領先先進封裝與測試需求；EMS NT$257,192.7 百萬元（衰退 5.2%），占營收 39.9%。
   confidence: well-supported
@@ -127,13 +169,19 @@ gaps:
 
 ## 供應角色
 
+上市的 ASE Technology Holding（TWSE 3711）與交付方 ASE Inc. 分開。ASE 高雄型錄對應集團內的[覆晶組裝](/next?focus=product-flip-chip-package-service)與[中介層整合](/next?focus=product-2p5d-interposer-package)。
+
 日月光投控在[先進封裝環節](/next?focus=segment-advanced-packaging)同時屬[委外封裝](/next?focus=role-osat-assembly)、[晶圓與成品測試服務](/next?focus=role-test-service)與[中介層與 2.5D／3D 整合](/next?focus=role-interposer-integration)。EMS 約占營收四成，不在地圖範圍。
 
 ## 研究界線
 
+供應商歷史量產、公司型錄與 test vehicle 各對應不同時間及規格。型錄未揭露同案封裝良率與出貨量。
+
 本頁以 FY2025 20-F 為依據。中文年報多數頁面無法擷取文字，未能交叉核對。20-F 只列出 2.5D、CoWoS 類技術能力，沒有揭露先進封裝營收，所以中介層角色的規模無法量化；EMS 營收需排除。
 
 ## 產品與用途
+
+FOCoS-CL 以 RDL 示範 ASIC＋2 HBM；Bridge 示範局部矽橋。另有 TSV 矽中介層 2.5D 能力，從 FCBGA、FOCoS 到 CoW 分開。
 
 - **封裝**：覆晶、打線、堆疊、扇出與 2.5D／3D 先進封裝，含 CoWoS、CoPoS、CoWoP 與 CPO（Item 4）。
 - **測試**：晶圓與成品測試，2025 年成長 31.8%（Item 5）。
@@ -150,9 +198,13 @@ gaps:
 
 ## 競爭與替代
 
+與台積電、艾克爾依同 I/O、封裝尺寸、測試介面、die 採購與供應者分工比較。測試能力不能代替中介層交付。
+
 20-F 未具名封測同業，但把[台積電](/next?focus=company-tsmc)的 InFO 列為供應鏈其他層級的競爭例子（Item 4）。在[委外封裝](/next?focus=role-osat-assembly)可與 [Amkor](/next?focus=company-amkr)、[力成](/next?focus=company-6239-tw)比較；IDM 也可能自行封測。
 
 ## 業務曝險
+
+觀察同平台合格面積、客戶採用與測試量，EMS 與泛封測收入不直接對應單一架構。
 
 封測成長由領先先進封裝與測試帶動，通訊與運算合計約七成；但 AI 相關封裝營收沒有揭露。
 
