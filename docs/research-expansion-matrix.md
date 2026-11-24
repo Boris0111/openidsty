@@ -4,9 +4,9 @@
 
 ## 填寫與驗收方式
 
-- 下列產品的五面向是**待研究問題**，不是已證實論述。完成時將「待補」替換成本文章節連結、claim ID、來源 locator／read-scope、型號／版本／期間及實際查核日；不能只填來源首頁。
+- 五面向以本文的章節、claim ID 與來源 locator／read-scope 核對；依型號、版本、期間及實際查核日解讀。
 - 狀態逐列分為「分類存在／證據完成／內容審閱／網站走讀」。目前只核對檔案、ID 與 taxonomy；既有 deep、claims 或 offerings 均不表示本次研究已完成。證據、內容與網站三欄的「未」分別指本 change 尚未完成該項審查。
-- 缺口依 not-researched／not-public／not-obtained／not-applicable 分開。初始列都是 not-researched；沒有讀原文不能改寫成未公開。核心用途或原理未查核時不得勾選內容 task。
+- 缺口依 not-researched／not-public／not-obtained／not-applicable 分開。新研究起始時為 not-researched，已讀證據及實際限制在各列更新。核心用途或原理未查核時不得勾選內容 task。
 - P1 原理與用途；P2 規格／製程與成本因素（數值附型號、版本、單位與測試條件）；P3 有條件路線比較；P4 公司實際交付；P5 需求傳導與風險。成本未取得同口徑資料時保留限制，不推算排名。
 - 公司完成時補九段內容定位：供應角色、研究界線、產品與用途、商業模式、客戶與供應商、競爭與替代、業務曝險、風險、財務可取性。財務可取性只記來源與缺口。
 - 新交付範圍先查台股、美股及已發現的其他關鍵市場，紀錄法律主體、既有 ID／aliases／legacy keys、候選納入／排除理由、去重及比較限制；未核對前不預造 product／role ID 或公司關係。
@@ -131,8 +131,8 @@ Boris 於 2026-11-24 確認沿用既有閱讀模板，華星光樣本的研究�
 
 | 既有角色 | 本次對應產品與 task | 邊界與來源定位 | 分類／證據／內容／網站 |
 |---|---|---|---|
-| [role-optical-module](../industry-map/roles/role-optical-module.md) | [product-optical-transceiver](../industry-map/products/product-optical-transceiver.md)（2.1、2.3） | 待隨產品核對可替換交付與來源；not-researched | 已有／未／未／未 |
-| [role-optical-dsp](../industry-map/roles/role-optical-dsp.md) | [product-optical-dsp](../industry-map/products/product-optical-dsp.md)（3.1） | 待隨產品核對可替換交付與來源；not-researched | 已有／未／未／未 |
+| [role-optical-module](../industry-map/roles/role-optical-module.md) | [product-optical-transceiver](../industry-map/products/product-optical-transceiver.md)（2.1、2.3） | Cisco QSFP-DD800 成品型號、華星光年報與 Marvell 元件；以距離、lane 與 FEC 核對成品交付及替代。 | 已有／已／已／樣本驗收完成 |
+| [role-optical-dsp](../industry-map/roles/role-optical-dsp.md) | [product-optical-dsp](../industry-map/products/product-optical-dsp.md)（3.1） | Marvell Spica／Nova、Credo Dove 的 lane、driver 與主機側 LPO 分工。 | 已有／已／已／A 批 revision 3 預覽通過 |
 | [role-optical-chip](../industry-map/roles/role-optical-chip.md) | [product-inp-laser-chip](../industry-map/products/product-inp-laser-chip.md)（3.2） | Lumentum HL13B5CP00-Ln、Coherent EML 官方頁和 IPSR-I §2.2.5 支持晶粒交付；磊晶、載體與成品模組按不同節點審查 | 已有／已／已／A 批 revision 3 預覽通過 |
 | [role-optical-epiwafer](../industry-map/roles/role-optical-epiwafer.md) | [product-optical-epiwafer](../industry-map/products/product-optical-epiwafer.md)（3.2） | 聯亞 Data center 與 IQE InP 型錄支持磊晶片交付；光柵或 p-metal 加工可納入約定，但晶粒合格量另核 | 已有／已／已／A 批 revision 3 預覽通過 |
 | [role-electrical-connectivity](../industry-map/roles/role-electrical-connectivity.md) | [product-retimer](../industry-map/products/product-retimer.md)、[product-active-electrical-cable](../industry-map/products/product-active-electrical-cable.md)（3.3） | Aries、Toucan、SPAN、SHIFT、Taurus 原文核對；應用按 PCIe／CXL 晶片、Ethernet 線組和線端內部模組分開 | 已有／已／已／A 批 revision 3 預覽通過 |
@@ -148,11 +148,11 @@ Boris 於 2026-11-24 確認沿用既有閱讀模板，華星光樣本的研究�
 
 | 範圍／task | 應用與既有入口 | 比較／傳導內容的閱讀位置 | 來源、限制與走讀紀錄 |
 |---|---|---|---|
-| 樣本 2.1–2.3 | [AI networking](../industry-map/applications/application-ai-networking.md) → 光收發模組 → A 代表公司 → 來源 | 代表公司依證據選取後連回 3.7／3.8／3.9；未先指定已供應完整模組 | 尚未建立樣本；桌機與手機待 Boris 確認，見驗收紀錄 |
-| A 3.10–3.11 | [AI networking](../industry-map/applications/application-ai-networking.md)、[networking](../industry-map/ai-server/networking.md)、[CPO](../industry-map/themes/cpo-silicon-photonics.md) | [research-ai-networking-optical-electrical](../industry-map/research/research-ai-networking-optical-electrical.md)：「先固定通訊域與線組」對照 DAC／AEC、DSP 可插拔、LPO、CPO；「案例」列端點、介質、晶片與公司 | 四步分列事實、inference、反向條件與追蹤證據；Accton AS9817-64O、Cisco QSFP-DD800、Credo SPAN、LPO §§5–8、Davisson Availability、OIF 800ZR §1，2026-11-24 已審；待 A 批草稿預覽 |
-| B 4.10–4.11 | [AI rack power](../industry-map/applications/application-ai-rack-power.md)、[power](../industry-map/ai-server/power.md)、[power discrete](../industry-map/semiconductor/power-discrete.md)；供電題材沿用既有 ID，待查適用項 | 待建立 research 頁；設施 → 機櫃 → 板端，分開容量、架構、交期與負載 | not-researched；抵銷情境、原文與追蹤來源待補；不擴至發電／輸電全產業；網站未走讀 |
-| C 5.10–5.11 | [chip integration](../industry-map/applications/application-chip-integration.md)、[advanced packaging](../industry-map/ai-server/advanced-packaging.md)、[substrate](../industry-map/ai-server/substrate.md)；材料／設備／測試入口隨交付裁決 | 待建立 research 頁；中介層、載板、PCB 分層；規格 → 製程限制 → 有效產出 → 公司能力 | not-researched；認證／良率假設、反向條件與來源待補；網站未走讀 |
-| 共用 6.1–6.6 | 全部上述穩定 ID、跨方向共用公司及研究連結 | 三種影響遍歷及回路、delta specs 對照、同版預覽／發布／公開快照 | 未執行；完整證據欄見驗收紀錄，不把基準驗證當成最終成功 |
+| 樣本 2.1–2.3 | [AI networking](../industry-map/applications/application-ai-networking.md) → [光收發模組](../industry-map/products/product-optical-transceiver.md) → [華星光](../industry-map/companies/company-4979-two.md) → 來源 | Cisco 成品、DSP、AEC、LPO、CPO 與華星光代工交付界線；見上列 P1–P5 | 樣本 revision 3 已匯入並驗證，Boris 完成樣本驗收。最終 release 的桌機與手機另查 6.5。 |
+| A 3.10–3.11 | [AI networking](../industry-map/applications/application-ai-networking.md)、[networking](../industry-map/ai-server/networking.md)、[CPO](../industry-map/themes/cpo-silicon-photonics.md) | [research-ai-networking-optical-electrical](../industry-map/research/research-ai-networking-optical-electrical.md)：「先固定通訊域與線組」對照 DAC／AEC、DSP 可插拔、LPO、CPO；「案例」列端點、介質、晶片與公司 | 四步分列事實、inference、反向條件與追蹤證據；Accton AS9817-64O、Cisco QSFP-DD800、Credo SPAN、LPO §§5–8、Davisson Availability、OIF 800ZR §1，2026-11-24 已審；Revision 3 已通過預覽 |
+| B 4.10–4.11 | [AI rack power](../industry-map/applications/application-ai-rack-power.md)、[power](../industry-map/ai-server/power.md)、[power discrete](../industry-map/semiconductor/power-discrete.md)、[電力瓶頸](../industry-map/themes/power-bottleneck.md) | [研究與案例](../industry-map/research/research-ai-facility-to-board-power.md)；設備、備援、交期及負載分層 | 以假設 60／100 kW 及 5+1 案例驗證；預留容量、架構與削峰抵銷。Revision 4 已通過預覽。 |
+| C 5.10–5.11 | [chip integration](../industry-map/applications/application-chip-integration.md)、[advanced packaging](../industry-map/ai-server/advanced-packaging.md)、[substrate](../industry-map/ai-server/substrate.md)；另有材料、設備、測試與 PCB | [規格傳導案例](../industry-map/research/research-chip-integration-abf-demand.md)；分中介層、載板、PCB 及相關交付 | 同材料和規格解讀良率及資格；局部矽橋、排版與設計改變作反向。Revision 5 已通過預覽。 |
+| 共用 6.1–6.6 | 三方向、共用公司與角色 | 影響路徑、delta specs 及最終同版的各階段 | 6.1、6.2 已核對。部署、Boris 走讀和靜態快照依[驗收紀錄](research-expansion-acceptance.md)各自記錄。 |
 
 ## 矩陣建置核對（task 1.2）
 

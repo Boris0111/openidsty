@@ -79,8 +79,8 @@
 
 | task／階段 | 必要證據 | 目前結果 |
 |---|---|---|
-| 6.1 | 穩定 ID、aliases、legacy keys、offerings、雙向邊；線性、題材、手足及回路的實際路徑 | 未執行 |
-| 6.2 | 三份 delta specs 的 requirement／scenario 對照、矩陣完整度、三個需求案例 | 未執行；task 1.2 只建立範圍索引 |
+| 6.1 | 穩定 ID、aliases、legacy keys、offerings、雙向邊；線性、題材、手足及回路 | 全量驗證通過。與 `a0791de` 核對 95 家既有公司的 ID、aliases、legacy keys 及 listings。NVDA 依 10-K 從 `UNKNOWN` 校正為 `XNAS`，沿用 ID／ticker；Shinko 保留 `PRIVATE:shinko`，舊 6967 只列歷史。74 筆 offering 的公司／產品／角色組合唯一；新增與更動的 offering 和兩筆關係均對到有證據的 well-supported 主張。444 個文字研究連結可解析。 |
+| 6.2 | 三份 delta specs 的 requirement／scenario 對照、矩陣完整度、三個需求案例 | 已逐項核對，見下方對照。章節、原文與例證均已讀，已修正矩陣的基準占位；6.3–6.6 的驗收各依實際結果記錄。 |
 | 6.3 | 同一內容 commit 的地圖、後端離線、前端與既有靜態快照 CI 檢查 | 未執行；基準 full 驗證不代替最終 CI |
 | 6.4 | 演練部署報告、同一內容 commit、draft revision、成功 job、release／研究 head、新舊連結 | 未執行；image 部署不等於研究發布 |
 | 6.5 桌機 | Boris 的裝置、release、三方向逐條閱讀結果、回饋、修正與確認 | 未執行 |
@@ -89,3 +89,26 @@
 | 正式部署 | merge 後部署目錄中的 commit、smoke 與部署紀錄 | 待 merge 後執行 |
 | 正式研究發布 | 正式最新 release 草稿整合、發布 job／release 與閱讀核對 | 待 merge 後執行 |
 | 公開發布 | 正式同版快照、公開產物、發布時間及 URL | 待 merge 後執行；未宣稱正式站或公開站已更新 |
+
+## 影響路徑與相容性（6.1）
+
+| 判定 | 本版驗證案例 |
+|---|---|
+| 線性上下游 | `substrate → advanced-packaging → odm → datacenter`。逐邊核對前節點 `downstream` 與後節點 `upstream`。 |
+| 題材橫向 | `networking → cpo-silicon-photonics → advanced-packaging`。兩環節均宣告題材，題材的 segments 包含兩者；兩環節沒有直接上下游邊。 |
+| 共享下游手足 | `thermal → odm ← pcb`。由 thermal 的下游 ODM 回查 `odm.upstream` 找到 PCB，並核對 PCB 也宣告 ODM 為下游。 |
+| 回路 | `compute → advanced-packaging → odm → datacenter → compute`。從 compute 以 visited 去重遍歷，正確終止於四個節點。 |
+| 同一公司與關係 | NVDA、AVGO、台達、Vertiv、ASE、Shinko 沿用原 ID。光通訊與設施端新增 offering 另引用直接能力，既有供應範圍不擴張到個別料號。新增 `relation-3189-tw-supplies-nvda-abf` 有雙方公告，已供應與未來擴充分開；Credo 與 Astera 的比較引用交付證據。 |
+
+## Delta spec 逐項核對（6.2）
+
+| 規格 requirement | 各 scenario 的驗收證據 |
+|---|---|
+| industry-map／重點產品原理、規格與替代 | 光收發模組 → 800GbE 比較連到 AEC，能讀端點、距離、速率、功耗／成本比較條件。14 個核心產品及 11 個廣度產品均有五面向、實質主張和指定來源，初始的通用定義已補實；各產品的未取得數據列於矩陣。 |
+| industry-map／三方向沿用途到供應角色 | B 預覽可走設施、變壓、開關、UPS、BBU、幹線、rPDU、電源架與板端。C 的 ABF 頁連增層膜、微孔、線路，另分中介層及 PCB。角色證據不足的市場與相鄰供應者保留排除理由（如 BBU 其他市場、台灣曝光設備）；未建立無證據的 offering。 |
+| industry-map／需求成立及失效條件 | A 為 800GbE 啟用埠與傳輸介質，B 為同供電架構及冗餘的持續負載，C 為更大尺寸、多布線層與良率。三例有情境、反向條件及待核訊號。C 的 12／9 片排版及 90%／80% 為假設，未用來估任何公司的出貨或收入。 |
+| company-research／以交付為公司深化依據 | Vertiv 從開關、UPS、busway、rPDU、電源架各連對應產品和型錄。安費諾、貿聯與 Broadcom 等能力按產品證據，缺客戶與數量仍保留。景碩具名關係有雙方公告。 |
+| company-research／代表公司選取 | D4 的台股、美股與其他市場逐列紀錄。台達、Vertiv、NVIDIA 沿用既有公司；東元母公司與 TECOBAR、ASE 投控與 ASE Inc.、MKS 與 ESI 分開。晶化與積水等比較候選列在矩陣，角色證據不足的市場保留缺口。 |
+| data-coverage／逐項證據矩陣 | 矩陣的 14 個核心產品、22 家優先公司、11 個廣度範圍、12 個既有角色及三個案例各有可核列。確認公司能力與產品五面向均已補，狀態分為分類、證據、內容及預覽。檢查清單、原文、限制和三批實測載於矩陣及上述驗收。 |
+| data-coverage／缺口與未完成分開 | CoWoS 5.5× 的兩份公開資格口徑、功耗同條件測試、料號收入及未具名客戶保留具體限制。已用可取得的公司技術／官方文件補核心原理。5.11 以前的草稿預覽有各自版本，Boris 最終裝置走讀以 6.5 的獨立記錄為準。 |
+| data-coverage／預覽、發布及公開版可核對 | 草稿修訂 3／4／5 均已完成對應批次預覽。後續逐一記錄 6.3 CI、6.4 演練部署及研究發布、6.5 最終走讀、6.6 演練公開快照。正式部署、正式研究發布及公開部署留在各自的 merge 後欄位。 |
