@@ -118,11 +118,9 @@ gaps:
 
 ### 拓樸決定需要的 ASIC 功能
 
-| 使用位置 | 要核對的限制 | 官方例 |
-|---|---|---|
-| Scale-up | 放大同一緊耦合運算域；看負載下的延遲、封包大小、重傳與 credit 流控 | Broadcom Tomahawk Ultra，2025-07-15 |
-| Scale-out | 用 leaf-spine 等拓樸連接多台伺服器；看上／下行埠、負載平衡、壅塞、遙測及 NOS | Teralynx 10 簡介、Tomahawk 6 公告 |
-| 跨機房 | 較長的鏈路需查傳輸設備、保護、加密、緩衝及鏈路延遲 | Jericho4 公告，HyperPort 是多條 800GbE 聚合的邏輯埠，Availability 列送樣 |
+- **Scale-up**。放大同一緊耦合運算域；看負載下的延遲、封包大小、重傳與 credit 流控。Broadcom Tomahawk Ultra，2025-07-15。
+- **Scale-out**。用 leaf-spine 等拓樸連接多台伺服器；看上／下行埠、負載平衡、壅塞、遙測及 NOS。Teralynx 10 簡介、Tomahawk 6 公告。
+- **跨機房**。較長的鏈路需查傳輸設備、保護、加密、緩衝及鏈路延遲。Jericho4 公告，HyperPort 是多條 800GbE 聚合的邏輯埠，Availability 列送樣。
 
 ## 供應角色與公司
 

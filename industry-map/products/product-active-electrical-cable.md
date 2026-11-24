@@ -114,11 +114,9 @@ gaps:
 
 ### 線長由料號與端點決定
 
-| 例 | 埠和速率 | 線長及條件 |
-|---|---|---|
-| Credo 800G SPAN | OSFP 至 OSFP-RHS，8×106.25 Gb/s PAM4 | 3–7 m，外殼 0–70 °C，CMIS 5.1，REV 100924 |
-| Credo 800G SHIFT DD 至 2×DD | QSFP-DD800 Type 2；400G 端依模式用 4 或 8 lane | 1–3 m，對照 2025-09 料號表 |
-| Taurus EM800-QDX-A／EM800-EPS-A | 可整合至 800G QSFP-DD／OSFP 線組 | 800G 範例為 3 m、30 AWG，指定 SCM 參考配線 |
+- **Credo 800G SPAN**。OSFP 至 OSFP-RHS，8×106.25 Gb/s PAM4。3–7 m，外殼 0–70 °C，CMIS 5.1，REV 100924。
+- **Credo 800G SHIFT DD 至 2×DD**。QSFP-DD800 Type 2；400G 端依模式用 4 或 8 lane。1–3 m，對照 2025-09 料號表。
+- **Taurus EM800-QDX-A／EM800-EPS-A**。可整合至 800G QSFP-DD／OSFP 線組。800G 範例為 3 m、30 AWG，指定 SCM 參考配線。
 
 距離越長，銅通道的插入損耗、線束彎折與線徑更可能限制機櫃佈局。線纜的電路也會用到兩端的供電及散熱預算。以同一端點和環境溫度核對 FEC 前後誤碼率、線材半徑、滿載功耗與裝配工時，再估材料及維護成本。Credo 的 BER 是 QPRBS31 測試條件。
 

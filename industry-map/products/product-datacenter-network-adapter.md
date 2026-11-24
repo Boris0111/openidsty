@@ -128,11 +128,9 @@ gaps:
 
 ### 配好 PCIe、機構與網路埠
 
-| 產品例 | 主機側 | 網路側與選用條件 |
-|---|---|---|
-| Broadcom BCM957708-P1800GOL02 | PCIe Gen6 x16、低背 PCIe CEM | 單埠 800GbE OSFP-RHS，57708-PB103；OCP 3.0 型式另有料號 |
-| NVIDIA 900-9X81E-00EX-ST0 | C8180 HHHL，PCIe 6 x16，支援另接 Socket Direct 擴充 | 單 OSFP cage，所讀 FW 清單列 800G XDR InfiniBand 或 2×400GbE，依 OPN、FW 及端口配置 |
-| 研華 PCIE-2711NP-MEA1E | PCIe 4 x16、低背 | 單 200GbE QSFP56，有效光模組清單需另取得，2022-10-17 型錄 |
+- **Broadcom BCM957708-P1800GOL02**。PCIe Gen6 x16、低背 PCIe CEM。單埠 800GbE OSFP-RHS，57708-PB103；OCP 3.0 型式另有料號。
+- **NVIDIA 900-9X81E-00EX-ST0**。C8180 HHHL，PCIe 6 x16，支援另接 Socket Direct 擴充。單 OSFP cage，所讀 FW 清單列 800G XDR InfiniBand 或 2×400GbE，依 OPN、FW 及端口配置。
+- **研華 PCIE-2711NP-MEA1E**。PCIe 4 x16、低背。單 200GbE QSFP56，有效光模組清單需另取得，2022-10-17 型錄。
 
 用每埠配置、封包負載與 PCIe 實際協商結果核對可用吞吐。CEM 和 OCP 3.0 各有插槽、風道與更換條件。導入成本包括卡、線組／收發器、交換器對端、驅動維護、壅塞控制整合及上線驗證。單一最大速率無法代表完整路徑。
 

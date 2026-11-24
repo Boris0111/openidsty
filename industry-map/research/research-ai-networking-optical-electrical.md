@@ -122,22 +122,37 @@ gaps:
 - **Scale-out** 連接多台運算節點。比較同一 NIC 至 leaf 或 leaf 至 spine 的 Ethernet 埠模式與佈線，並核對 FEC、已驗證的上行比例與故障轉移。
 - **跨機房** 須另查調變、光預算、加密、放大／波分及跨站流控。OIF 800ZR §1 的用途是 80–120 km 放大型單跨 DWDM，相干介面需搭配實際線路，不沿用機房內 DR／FR 距離。
 
-| 路線 | 已核對的選用範圍 | 同條件需比什麼 |
-|---|---|---|
-| DAC／[AEC](/next?focus=product-active-electrical-cable) | 被動 DAC 先查完整銅損耗；Credo 800G SPAN OSFP 直連 3–7 m，依料號及 CMIS | 實際線長與銅損耗、走線半徑、兩端供電、FEC 及外殼溫度 |
-| DSP [可插拔光模組](/next?focus=product-optical-transceiver) | Cisco QDD-2X400G-FR4 為 2 km 單模例；Credo 800G 2×DR4 以平行 SMF 500 m 為例，端面與光路不同 | 對齊端點分接模式、率及 FEC；合計兩顆模組、光纖及配線、換件工時 |
-| LPO | MSA 100G-DR-LPO Rev 1.0 為 100G/lane、0.5–500 m SMF，主機端至模組連接器限制 16 dB＠26.56 GHz，FEC 在主機 | 查主機 SerDes 及 RS-FEC、整個電通道、雙端互通及診斷。若端點未達規格，保留 DSP 方案 |
-| CPO | TH6-Davisson 是 200 Gb/s per channel 的交換端共同封裝光引擎例，ELSFP 光源可現場更換 | 先核對光引擎、遠端網卡與光路相容，再查光纖配線、交換設備換件範圍、服務備援和故障時間 |
+- **DAC／[AEC](/next?focus=product-active-electrical-cable)**。被動 DAC 先查完整銅損耗；Credo 800G SPAN OSFP 直連 3–7 m，依料號及 CMIS。實際線長與銅損耗、走線半徑、兩端供電、FEC 及外殼溫度。
+- **DSP [可插拔光模組](/next?focus=product-optical-transceiver)**。Cisco QDD-2X400G-FR4 為 2 km 單模例；Credo 800G 2×DR4 以平行 SMF 500 m 為例，端面與光路不同。對齊端點分接模式、率及 FEC；合計兩顆模組、光纖及配線、換件工時。
+- **LPO**。MSA 100G-DR-LPO Rev 1.0 為 100G/lane、0.5–500 m SMF，主機端至模組連接器限制 16 dB＠26.56 GHz，FEC 在主機。查主機 SerDes 及 RS-FEC、整個電通道、雙端互通及診斷。若端點未達規格，保留 DSP 方案。
+- **CPO**。TH6-Davisson 是 200 Gb/s per channel 的交換端共同封裝光引擎例，ELSFP 光源可現場更換。先核對光引擎、遠端網卡與光路相容，再查光纖配線、交換設備換件範圍、服務備援和故障時間。
 
 交付比較以同一對端點和同一網路組態為準。即使兩種路線同寫 800G，FEC、光路與分接模式也可能不同。目前缺同環境、同流量負載的雙端功耗、誤碼與維修成本。型錄的最大功耗與不同環境的典型量測應分開讀取。
 
 ### 案例：從啟用埠數追到供應角色
 
-| 步驟 | 已核對事實 | Inference、成立與失效條件 | 後續可核對 |
-|---|---|---|---|
-| 1. 端點與交換容量 | 智邦 AS9817-64O 有 64×800G OSFP800 與多種 breakout；[主機 NIC](/next?focus=product-datacenter-network-adapter) 的單埠 800G、雙 400G 與 IB 須按料號辨認 | 在節點數、上行比例上升且要原生 800GbE 時，新系統需求可能增加。若以每埠更高頻寬整併、減少交換層或分接給原端點，箱數與實體埠可能下降 | 核對機型、上下行 port map、NIC OPN／韌體及驗證通過的埠 |
-| 2. 介質與實際佈線 | SPAN 的 3–7 m 限指定 OSFP AEC，FR4 與 100G-DR-LPO 各有光、電條件 | 若新增的合格埠距離超過銅線料號範圍或需配線架，光埠占比可能提高。若改用相鄰機架、DAC 或 AEC，新增模組數下降 | 看實際連線長度分布、介質表、光纖插損、線組料號與埠互通結果 |
-| 3. 光埠內的設計變化 | LPO 把訊號處理移到主機，CPO 把光引擎放在交換封裝；EML 或 CW 光源有各自用途 | 若上線的光埠增加且沿用 DSP 可插拔，模組與 DSP 用量可能增加。換用 LPO／CPO 或把多條 lane 整併後，模組及 DSP 顆數可能少於原估；CW 與 EML 的占比也取決於平台設計 | 查[DSP](/next?focus=product-optical-dsp)、[雷射](/next?focus=product-inp-laser-chip)與[磊晶](/next?focus=product-optical-epiwafer)所支援的 lane、光源與主機驗證 |
-| 4. 公司能力與實際曝險 | [智邦](/next?focus=company-2345-tw)為交換整機，[博通](/next?focus=company-avgo)與[邁威爾](/next?focus=company-mrvl)有晶片交付證據，[Credo](/next?focus=company-crdo)有線組與光模組；[華星光](/next?focus=company-4979-two)交付晶粒／光引擎及相干模組，[聯亞](/next?focus=company-3081-two)供應磊晶 | 需證明所採用的型號、通過驗證、採購與交付。若出貨結構不同、客戶內製磊晶或沒有取得料號，產業規格上升未必形成該公司營收 | 回到各公司產品主張、資料表、量產公告及可核對的具名交易；估算時把整機、晶片與外購材料分開 |
+**1. 端點與交換容量**
+
+- **事實**。智邦 AS9817-64O 有 64×800G OSFP800 與多種 breakout；[主機 NIC](/next?focus=product-datacenter-network-adapter) 的單埠 800G、雙 400G 與 IB 須按料號辨認。
+- **Inference**。在節點數、上行比例上升且要原生 800GbE 時，新系統需求可能增加。若以每埠更高頻寬整併、減少交換層或分接給原端點，箱數與實體埠可能下降。
+- **後續可核對**。核對機型、上下行 port map、NIC OPN／韌體及驗證通過的埠。
+
+**2. 介質與實際佈線**
+
+- **事實**。SPAN 的 3–7 m 限指定 OSFP AEC，FR4 與 100G-DR-LPO 各有光、電條件。
+- **Inference**。若新增的合格埠距離超過銅線料號範圍或需配線架，光埠占比可能提高。若改用相鄰機架、DAC 或 AEC，新增模組數下降。
+- **後續可核對**。看實際連線長度分布、介質表、光纖插損、線組料號與埠互通結果。
+
+**3. 光埠內的設計變化**
+
+- **事實**。LPO 把訊號處理移到主機，CPO 把光引擎放在交換封裝；EML 或 CW 光源有各自用途。
+- **Inference**。若上線的光埠增加且沿用 DSP 可插拔，模組與 DSP 用量可能增加。換用 LPO／CPO 或把多條 lane 整併後，模組及 DSP 顆數可能少於原估；CW 與 EML 的占比也取決於平台設計。
+- **後續可核對**。查[DSP](/next?focus=product-optical-dsp)、[雷射](/next?focus=product-inp-laser-chip)與[磊晶](/next?focus=product-optical-epiwafer)所支援的 lane、光源與主機驗證。
+
+**4. 公司能力與實際曝險**
+
+- **事實**。[智邦](/next?focus=company-2345-tw)為交換整機，[博通](/next?focus=company-avgo)與[邁威爾](/next?focus=company-mrvl)有晶片交付證據，[Credo](/next?focus=company-crdo)有線組與光模組；[華星光](/next?focus=company-4979-two)交付晶粒／光引擎及相干模組，[聯亞](/next?focus=company-3081-two)供應磊晶。
+- **Inference**。需證明所採用的型號、通過驗證、採購與交付。若出貨結構不同、客戶內製磊晶或沒有取得料號，產業規格上升未必形成該公司營收。
+- **後續可核對**。回到各公司產品主張、資料表、量產公告及可核對的具名交易；估算時把整機、晶片與外購材料分開。
 
 作為算例，32 條 400GbE 升為 16 條 800GbE，在忽略協定開銷及備援時，兩者標稱容量同為 12.8 Tb/s，實體鏈路數減半。若新增 32 條 800GbE 並採兩端各一顆可插拔模組，才會新增 64 個模組位置。是否買足並出貨仍需通過埠配置、備品率及光路驗證，不能只看標稱頻寬。
