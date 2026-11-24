@@ -11,6 +11,18 @@
 - 公司完成時補九段內容定位：供應角色、研究界線、產品與用途、商業模式、客戶與供應商、競爭與替代、業務曝險、風險、財務可取性。財務可取性只記來源與缺口。
 - 新交付範圍先查台股、美股及已發現的其他關鍵市場，紀錄法律主體、既有 ID／aliases／legacy keys、候選納入／排除理由、去重及比較限制；未核對前不預造 product／role ID 或公司關係。
 
+## 公司研究最低驗收標準
+
+Boris 於 2026-11-24 確認沿用既有閱讀模板，華星光樣本的研究深度為最低標準。以下逐家公司核對，適用於本 change 新增及重查的公司，包含既有 `deep` 公司與新增角色的代表公司。每一列公司紀錄都須有對應頁面、證據與缺口，才可勾選所屬 task。
+
+| 驗收項目 | 最低交付 |
+|---|---|
+| 研究本文 | 檢閱既有九個段落。用具體產品、料號或產品家族交代供應角色、產品用途、交付層次與相鄰角色分工。 |
+| 一手證據 | 用年報、官方產品資料或其他適用原始文件支持核心主張。記錄來源、頁碼或段落、讀取範圍、適用型號／期間、查核日與信心標籤。 |
+| 能力與追溯 | 讓讀者可從產品找到公司，從公司回到產品與來源。`offerings` 引用直接支持該交付的主張。分別查核能力、認證、採用、量產、出貨與收入。 |
+| 比較、曝險與風險 | 交代比較適用的交付角色、場景與條件。區分已揭露的營收口徑、客戶集中或應用事實，以及依賴前提的曝險推論。 |
+| 具體缺口 | 指明未公開或未取得的客戶、終端用途、出貨、產品收入或比較資料，並記錄原文支持到哪裡。核心交付與用途缺少支持時保留未完成。 |
+
 ## 範圍核對
 
 | 批次 | 核心產品 | 廣度研究範圍 | 優先公司 | 閱讀與比較交付 |
@@ -25,8 +37,8 @@
 
 | 產品／既有 role／task | P1 | P2 | P3 | P4 | P5 | 來源定位／適用範圍／查核日 | 具體缺口 | 分類／證據／內容／網站 |
 |---|---|---|---|---|---|---|---|---|
-| 光收發模組 [product-optical-transceiver](../industry-map/products/product-optical-transceiver.md)；[role-optical-module](../industry-map/roles/role-optical-module.md)；2.1、2.3 | 電介面 ↔ 光路雙向轉換；DSP 重定時與 FEC 責任依介面分工（P1，claim `electrical-optical-boundary`） | Cisco QDD-800G-VR8：OM3 30 m／OM4–5 50 m、15 W；QDD-8X100G-FR：SMF 2 km、17 W；QDD-2X400G-FR4：SMF 2 km、17 W（P2，Cisco 2026-09-21 版） | DSP 可插拔、100G/lane LPO、TH6-Davisson CPO 及指定 1–3 m AEC；各自限於來源平台與互通條件（P3） | Cisco 可訂購成品模組；Marvell MV-CD822 是 8×100G DSP 元件，不推定供應 Cisco 料號；華星光以年報支持模組／光引擎代工範圍（P4） | 伺服器／交換器埠與合格鏈路增加可能帶動模組需求；埠數、breakout、AEC、LPO、CPO 可抵銷模組或 DSP 數量（P5，inference） | Cisco QSFP-DD800 表 2–5／產品段落；LPO MSA Rev 1.0 §§6–7；Arista FAQ p.3；Broadcom TH6 公告；Marvell Spica Gen2 Features／Description；適用型號／版本見產品 claims；查核 2026-11-24 | not-obtained：無同條件整體成本／雙端功耗／維修數據；not-public：供應關係、終端客戶及產品收入未揭露。Cisco 表 5 VR8 距離與表 3–4／產品段落矛盾，採購前需核對平台 | 已有／已／已／待 Boris 走讀 |
-| 光通訊 DSP [product-optical-dsp](../industry-map/products/product-optical-dsp.md)；[role-optical-dsp](../industry-map/roles/role-optical-dsp.md)；3.1 | 待補：訊號處理、介面及與雷射的分工 | 待補：調變、通道、速率與訊號限制 | 待補：同介面及同用途方案；無同口徑資料的限制 | 待補：DSP 與完整模組交付區別 | 待補：速率升級與 DSP 需求、架構移除 DSP 的條件 | 待查原文／待核型號版本期間／未查核 | not-researched：五面向尚未核讀；成本及同條件數值待查 | 已有／未／未／未 |
+| 光收發模組 [product-optical-transceiver](../industry-map/products/product-optical-transceiver.md)；[role-optical-module](../industry-map/roles/role-optical-module.md)；2.1、2.3 | 電介面 ↔ 光路雙向轉換；DSP 重定時與 FEC 責任依介面分工（P1，claim `electrical-optical-boundary`） | Cisco QDD-800G-VR8：OM3 30 m／OM4–5 50 m、15 W；QDD-8X100G-FR：SMF 2 km、17 W；QDD-2X400G-FR4：SMF 2 km、17 W（P2，Cisco 2026-09-21 版） | DSP 可插拔、100G/lane LPO、TH6-Davisson CPO 及指定 1–3 m AEC；各自限於來源平台與互通條件（P3） | Cisco 可訂購成品模組；Marvell MV-CD822 是 8×100G DSP 元件，不推定供應 Cisco 料號；華星光以年報支持模組／光引擎代工範圍（P4） | 伺服器／交換器埠與合格鏈路增加可能帶動模組需求；埠數、breakout、AEC、LPO、CPO 可抵銷模組或 DSP 數量（P5，inference） | Cisco QSFP-DD800 表 2–5／產品段落；LPO MSA Rev 1.0 §§6–7；Arista FAQ p.3；Broadcom TH6 公告；Marvell Spica Gen2 Features／Description；適用型號／版本見產品 claims；查核 2026-11-24 | not-obtained：無同條件整體成本／雙端功耗／維修數據；not-public：供應關係、終端客戶及產品收入未揭露。Cisco 表 5 VR8 距離與表 3–4／產品段落矛盾，採購前需核對平台 | 已有／已／已／樣本驗收完成 |
+| 光通訊 DSP [product-optical-dsp](../industry-map/products/product-optical-dsp.md)；[role-optical-dsp](../industry-map/roles/role-optical-dsp.md)；3.1 | 「定義與用途」：PAM4 等化、重定時與 gearbox，區分 SerDes／交換 ASIC、driver、雷射與接收前端 | 「先對齊雙側 lane 與光元件」：MV-CD822 8×100G；MV-CD432 16×100G ↔ 8×200G；Dove 800 8:8，driver 與診斷依型號 | 「LPO 如何改變分工」：100G/lane、0.5–500 m 單模設計範圍，16 dB＠26.56 GHz 電通道與主機 RS-FEC；同介面才比較 retimer | 「供應角色與公司」：Marvell Spica／Nova、Credo Dove 80X 的晶片交付及 driver 分工 | 「需求如何傳到 DSP」：埠速率／數量、兩側 lane、LPO 導入及合格料號，標為 inference | Spica Gen2 2022-12 Applications／Features／Description；Nova 2023-03 Applications／Features／Description；Dove 800 產品說明與規格表；LPO MSA Rev 1.0 §§5–8；查核 2026-11-24 | not-obtained：無同條件功耗、BER 或成本；not-public：公開產品文件未揭露具名採用與料號收入 | 已有／已／已／待 A 批預覽 |
 | 磷化銦雷射晶片 [product-inp-laser-chip](../industry-map/products/product-inp-laser-chip.md)；[role-optical-chip](../industry-map/roles/role-optical-chip.md)；3.2 | 待補：雷射晶粒作用及模組內位置 | 待補：材料、製程、測試與可用光源條件 | 待補：有條件的光源／整合路線比較 | 待補：晶粒、磊晶與後段整合不重複計算 | 待補：規格、良率及認證如何限制交付 | 待查原文／待核型號版本期間／未查核 | not-researched：五面向尚未核讀；成本及同條件數值待查 | 已有／未／未／未 |
 | III-V 族光通訊磊晶片 [product-optical-epiwafer](../industry-map/products/product-optical-epiwafer.md)；[role-optical-epiwafer](../industry-map/roles/role-optical-epiwafer.md)；3.2 | 待補：III-V 磊晶結構與後續晶粒分工 | 待補：磊晶製程、材料及均勻性等原文支持的瓶頸 | 待補：依用途、材料及製程範圍比較 | 待補：磊晶交付不等於模組或客戶採用 | 待補：材料規格傳導與客戶認證／良率限制 | 待查原文／待核型號版本期間／未查核 | not-researched：五面向尚未核讀；成本及同條件數值待查 | 已有／未／未／未 |
 | 重定時與橋接晶片 [product-retimer](../industry-map/products/product-retimer.md)；[role-electrical-connectivity](../industry-map/roles/role-electrical-connectivity.md)；3.3 | 待補：端點、協定、訊號恢復與連接位置 | 待補：速率、距離、介面與實際型號條件 | 待補：同協定光／電方案及不能替代情境 | 待補：重定時／橋接晶片的交付界線 | 待補：通道損耗及規格改變、架構抵銷 | 待查原文／待核型號版本期間／未查核 | not-researched：五面向尚未核讀；成本及同條件數值待查 | 已有／未／未／未 |
@@ -51,7 +63,7 @@
 | Astera Labs [company-alab](../industry-map/companies/company-alab.md)；3.8 | 互連介面與適用協定；不沿用無關競爭名單 | 頁面存在，deep | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
 | 智邦 [company-2345-tw](../industry-map/companies/company-2345-tw.md)；3.9 | 交換器整機交付、法律主體與採用證據 | 頁面存在，deep | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
 | 聯亞 [company-3081-two](../industry-map/companies/company-3081-two.md)；3.9 | 磊晶交付與應用；不能上推為完整模組或具名客戶 | 頁面存在，deep | 待逐段檢閱及連回適用產品 P1–P5 | 既有 claims 僅作線索；本批原文、版本期間與查核日待補 | not-researched：本批交付及比較尚未重查；客戶、認證、量產與收入分別待查 | 未／未／未 |
-| 華星光 [company-4979-two](../industry-map/companies/company-4979-two.md)；2.2 樣本、後續 3.9 | 年報支持光學引擎、相干模組與代工服務；不把雷射晶粒能力推成完整模組或具名客戶採用 | 頁面既有 deep；本次重新核對年報主張與 `offering-4979-two-optical-transceiver` | 「供應角色／產品與用途」段落連到光模組產品；產品頁反向連公司；供應角色、產品五面向互相追溯 | `product-mix`：114 年度主動元件及模組 86.35%、晶粒 11.05%；年報第 72 頁（PDF 73）及第 89 頁（PDF 90），適用 114 年度，查核 2026-11-24 | 年報不拆分資料中心／PON 營收；最大客戶僅代號，不能確認與特定 Cisco／Marvell 料號關係；後續全面公司重查仍屬 3.9 | 已／已／已／待 Boris 走讀 |
+| 華星光 [company-4979-two](../industry-map/companies/company-4979-two.md)；2.2 樣本、後續 3.9 | 年報支持光學引擎、相干模組與代工服務；不把雷射晶粒能力推成完整模組或具名客戶採用 | 頁面既有 deep；本次重新核對年報主張與 `offering-4979-two-optical-transceiver` | 「供應角色／產品與用途」段落連到光模組產品；產品頁反向連公司；供應角色、產品五面向互相追溯 | `product-mix`：114 年度主動元件及模組 86.35%、晶粒 11.05%；年報第 72 頁（PDF 73）及第 89 頁（PDF 90），適用 114 年度，查核 2026-11-24 | 年報不拆分資料中心／PON 營收；最大客戶僅代號，不能確認與特定 Cisco／Marvell 料號關係；後續全面公司重查仍屬 3.9 | 已／已／已／樣本驗收完成 |
 
 ## B：核心產品五面向
 

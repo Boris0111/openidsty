@@ -58,21 +58,20 @@
 
 | 欄位 | 紀錄 |
 |---|---|
-| 內容 commit／draft UUID／revision／基準 release | 樣本 checkpoint `42e487a`，本筆紀錄隨產品與公司頁修正一併提交。演練 draft `5c41068e-20ce-4974-b920-b7da5822df3f`，revision 3；基準 release `a5df290c-0b6d-5011-b842-ae73cd8a1f99`，generation 4，研究 head `7a0bda265c3e83e2d86c6a03476cfc5be3ad55eb`。 |
+| 內容 commit／draft UUID／revision／基準 release | 內容 checkpoint `34a8633`。演練 draft `5c41068e-20ce-4974-b920-b7da5822df3f`，revision 3，基準 release `a5df290c-0b6d-5011-b842-ae73cd8a1f99`，generation 4，研究 head `7a0bda265c3e83e2d86c6a03476cfc5be3ad55eb`。 |
 | 匯出 → 整合差異 → 匯入 → validate → preview | 首次匯入沿用未套用研究差異的 261 檔，revision 1 為基準內容，先前預覽只查到實體存在。2026-11-24 套用產品、公司與來源註冊表的三份差異後升至 revision 2。再從 revision 2 匯出並匯入公司 800G ZR 證據界線及產品條列，升至 revision 3。與基準比較恰為上述三檔，驗證通過，且依序確認 AI networking、光模組角色、光模組產品（指定 Cisco 料號、主張、華星光連結）、華星光（800G ZR 交付界線、年報連結、營收比重）皆可於 revision 3 的預覽回應讀取。 |
 | 讀者入口 | 在演練主機開啟 `http://127.0.0.1:3016/admin`，登入演練 owner，選取上述草稿及 `industry-map/applications/application-ai-networking.md` 後按「閱讀預覽」。`/next` 顯示已發布的基準 release。演練網站只綁 loopback，手機可讀另提供的研究內容，實機網站未走讀。 |
 | P1–P5 證據定位 | P1：LPO MSA §§6.1–6.2、Marvell brief Features／Description、Cisco 料號產品段落；P2：Cisco QSFP-DD800 表 2–5 與 VR8／FR／FR4 產品段落；P3：LPO MSA §§6–7、Broadcom TH6 公告、Arista FAQ p.3；P4：Cisco 可訂購料號、華星光年報第 72 頁（PDF 73）與 Marvell MV-CD822 brief；P5：Cisco 分接支援、Arista 1–3 m AEC 例與 CPO／LPO 反向條件。查核日 2026-11-24。 |
 | 完成的內容 task | 2.1 完成產品五面向與缺口。2.2 完成華星光年報商品與營收主張、offering 及雙向閱讀連結核對。全量 validator 通過（17 個環節、7 個題材、89 筆來源），OpenSpec strict validation 通過。2.3 已完成 revision 3 的匯入、驗證及 API 預覽內容核對。 |
-| 桌機：裝置、瀏覽器、時間、閱讀結果 | 待 Boris 實際走讀 |
-| 手機：裝置、瀏覽器、時間、閱讀結果 | 待 Boris 實際走讀 |
+| 裝置走讀紀錄 | Boris 於 2026-11-24 回報樣本驗收完成。裝置、瀏覽器與個別走讀結果未提供。 |
 | 閱讀問題／修正位置／修正後驗證 | Boris 於 2026-11-24 回報先前的閱讀模板可用，研究內容未提供。更正匯入並提供 revision 3 的正確入口與內容。 |
-| 深度標準確認人／時間／結論 | Boris 於 2026-11-24 確認沿用既有閱讀模板。樣本研究深度與裝置走讀待確認，依 task 2.3 的驗收條件，A／B／C 擴寫待該項完成。 |
+| 深度標準確認人／時間／結論 | Boris 於 2026-11-24 確認沿用既有閱讀模板、樣本驗收完成，並要求每間公司研究至少達到樣本標準。各公司逐家依[研究矩陣的最低驗收標準](research-expansion-matrix.md#公司研究最低驗收標準)審查。 |
 
 ## 各批內容與閱讀驗收
 
 | 批次／task | 同版閱讀鏈與範圍 | 內容 commit／草稿 revision | 證據與內容審閱 | 網站閱讀、修正及限制 |
 |---|---|---|---|---|
-| A／3.11 | 光／電互連、交換系統、光纖連接、主機端介面；應用 → 產品 → 公司 → 來源／比較／需求案例 | 未建立 | 未開始，依矩陣逐項核對 | 未預覽；待補實際結果 |
+| A／3.11 | 光／電互連、交換系統、光纖連接、主機端介面；應用 → 產品 → 公司 → 來源／比較／需求案例 | 批次草稿待建立 | 2026-11-24 完成 3.1 光通訊 DSP 產品五面向並通過全量地圖驗證（17 個環節、7 個題材、91 筆來源）。其餘依矩陣逐項核對。 | 批次預覽與走讀待執行。 |
 | B／4.11 | 變壓／配電 → UPS／BBU／供電分配 → 電源架 → 板端轉換 | 未建立 | 未開始，依矩陣逐項核對 | 未預覽；待補實際結果 |
 | C／5.11 | 中介層／封裝整合 → 載板 → 介電材料／微孔／線路形成，區分 PCB | 未建立 | 未開始，依矩陣逐項核對 | 未預覽；待補實際結果 |
 

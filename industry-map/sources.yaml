@@ -888,6 +888,24 @@ global:
     checked: '2026-11-24'
     segments: [networking]
     notes: 2022-12 版，查閱料號、功能與適用模組架構。
+  - id: marvell-nova-mv-cd432-brief
+    name: Marvell Nova MV-CD432 Product Brief
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/dsp/marvell-nova-1.6t-pam4-dsp-for-optical-transceiver-applications-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: 2023-03 版，已讀主機與線側 lane 映射、整合 driver、診斷及 FEC；限 MV-CD432。
+  - id: credo-dove-800-product
+    name: Credo Dove 800 官方產品頁
+    url: https://credosemi.com/products/optical-dsp/dove-800/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: 產品頁無修訂日期，已讀 Dove 80X 說明與 Dove 800 規格表。driver 配置依型號。
   - id: aph-liquid-cooling-product-page
     name: Amphenol Industrial 液冷快接頭產品頁
     url: https://amphenol-industrial.com/products/liquid-cooling-systems/
