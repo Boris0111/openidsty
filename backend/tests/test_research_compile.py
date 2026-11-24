@@ -33,8 +33,14 @@ def test_same_git_commit_rebuild_retains_content_dates_and_evidence():
         'data/company-research.yaml', 'data/theme-indicators.yaml'], cwd=ROOT)
     first, second = compile_archive(archive), compile_archive(archive)
     assert first == second and digest(first) == digest(second)
-    counts = {kind: sum(s['kind'] == kind for s in first['snapshots']) for kind in ('company', 'segment', 'theme')}
-    assert counts == {'company': 95, 'segment': 17, 'theme': 7}
+    with tarfile.open(fileobj=io.BytesIO(archive)) as source:
+        company_ids = {
+            Path(member.name).stem for member in source
+            if member.isfile() and member.name.startswith('industry-map/companies/') and member.name.endswith('.md')
+        }
+    assert {s['entity_id'] for s in first['snapshots'] if s['kind'] == 'company'} == company_ids
+    counts = {kind: sum(s['kind'] == kind for s in first['snapshots']) for kind in ('segment', 'theme')}
+    assert counts == {'segment': 17, 'theme': 7}
     themes = [s for s in first['snapshots'] if s['kind'] == 'theme']
     assert all(t['reviewed'] == '2026-10-07' for t in themes)
     assert all(t['data']['assessment']['evidence'] for t in themes)
