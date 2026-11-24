@@ -81,14 +81,24 @@
 |---|---|---|
 | 6.1 | 穩定 ID、aliases、legacy keys、offerings、雙向邊；線性、題材、手足及回路 | 全量驗證通過。與 `a0791de` 核對 95 家既有公司的 ID、aliases、legacy keys 及 listings。NVDA 依 10-K 從 `UNKNOWN` 校正為 `XNAS`，沿用 ID／ticker；Shinko 保留 `PRIVATE:shinko`，舊 6967 只列歷史。74 筆 offering 的公司／產品／角色組合唯一；新增與更動的 offering 和兩筆關係均對到有證據的 well-supported 主張。444 個文字研究連結可解析。 |
 | 6.2 | 三份 delta specs 的 requirement／scenario 對照、矩陣完整度、三個需求案例 | 已逐項核對，見下方對照。章節、原文與例證均已讀，已修正矩陣的基準占位；6.3–6.6 的驗收各依實際結果記錄。 |
-| 6.3 | 同一內容 commit 的地圖、後端離線、前端與既有靜態快照 CI 檢查 | 未執行；基準 full 驗證不代替最終 CI |
-| 6.4 | 演練部署報告、同一內容 commit、draft revision、成功 job、release／研究 head、新舊連結 | 未執行；image 部署不等於研究發布 |
-| 6.5 桌機 | Boris 的裝置、release、三方向逐條閱讀結果、回饋、修正與確認 | 未執行 |
-| 6.5 手機 | Boris 的裝置、release、三方向逐條閱讀結果、回饋、修正與確認 | 未執行 |
-| 6.6 演練快照 | 演練容器、同一 release、內容 commit、輸出路徑、build／parity／逐頁及資產引用檢查、私人資料核對 | 未執行 |
+| 6.3 | 同一內容 commit 的地圖、後端離線、前端與既有靜態快照 CI 檢查 | `7c3fd3630fb78b3acf38171f329339a9b54ed069`。本機重現既有 CI：全量地圖（17 個環節、7 個題材、239 筆來源）、66 類 validator 案例、267 個 unittest 均通過。後端依 CI 的 Python 3.12 與鎖定依賴，在無網路 Linux 容器從該 commit 執行，283 passed／103 skipped（需獨立 PostgreSQL 的案例依離線設定跳過）。Windows 的 managed Git worktree 用例另在 Linux 通過。前端使用鎖定依賴，typecheck、23 個 unit tests、production build、64 個 offline Playwright 與合成快照 build／52 個 static Playwright 均通過；建置依 workflow 環境重跑本機 agent 升級提示造成的中斷。兩項既有相容性測試改為比對舊代號映射及 Git archive 的公司 ID，既有 95 家及 100 個角色的檢查保留，四家新增公司使用 listings。 |
+| 6.4 | 演練部署報告、同一內容 commit、draft revision、成功 job、release／研究 head、新舊連結 | `7c3fd3630fb78b3acf38171f329339a9b54ed069`。Deploy report `.work/research-drill/deploy-rehearsal-20261124T104756Z.json` 的 smoke 與隔離檢查均通過，Alembic 維持 `0017`。從 release `a5df290c-0b6d-5011-b842-ae73cd8a1f99`（generation 4）開草稿 `19700086-74e0-40cd-85bb-03e33c62d0a1`，整合 84 份檔案，revision 2 驗證及 82 個實體預覽通過。發布 job `07ebbc87-510b-47ed-8c0d-11de5c4e57f5` 經 `run-job` 回 `published`／`complete`，啟用 release `d973c2d1-0a30-5221-ac20-adf00a0632bd`（generation 5，2026-11-24 18:49 UTC+8）。同步 job `c3ec4ac1-07dd-465f-9dfc-8364dcbb67e8` 完成，`research/published` 由 `7a0bda265c3e83e2d86c6a03476cfc5be3ad55eb` 前進至 `4be36cf61c13e4108df0a0179ec64a149b6085af`。新舊 release 保留於版本紀錄，五個舊代號在兩版均解析至相同 ID，四個新公司的上市代號可解析，`/companies/2330.TW` 及固定舊版的台積電頁均可讀。 |
+| 6.5 桌機 | Boris 的裝置、release、三方向逐條閱讀結果、回饋、修正與確認 | 同一 release 的 1440×1000 Chromium 自動走讀已通過。待 Boris 桌機走讀。 |
+| 6.5 手機 | Boris 的裝置、release、三方向逐條閱讀結果、回饋、修正與確認 | 同一 release 的 390×844 Chromium 自動走讀已通過。待 Boris 確認裝置、連線並以手機走讀。 |
+| 6.6 演練快照 | 演練容器、同一 release、內容 commit、輸出路徑、build／parity／逐頁及資產引用檢查、私人資料核對 | 待 6.5 確認 release 後匯出。 |
 | 正式部署 | merge 後部署目錄中的 commit、smoke 與部署紀錄 | 待 merge 後執行 |
 | 正式研究發布 | 正式最新 release 草稿整合、發布 job／release 與閱讀核對 | 待 merge 後執行 |
 | 公開發布 | 正式同版快照、公開產物、發布時間及 URL | 待 merge 後執行；未宣稱正式站或公開站已更新 |
+
+### 最終走讀入口（6.5）
+
+Chromium 以 1440×1000 與 390×844 驗證三條鏈的比較、案例、產品、公司和固定 release 的引用展開。Boris 的桌機與實體手機走讀結果待回覆。
+
+- 光／電互連比較與 800GbE 需求案例 → 主機 NIC → 博通，展開 Broadcom 57708 的引用。 [AI 叢集網路](http://127.0.0.1:3016/next?focus=application-ai-networking&release_id=d973c2d1-0a30-5221-ac20-adf00a0632bd)
+- 設施、機櫃與板端的供電比較與需求案例 → 變壓器 → 東元電機，展開東元變壓器原頁的引用。 [AI 機櫃供電](http://127.0.0.1:3016/next?focus=application-ai-rack-power&release_id=d973c2d1-0a30-5221-ac20-adf00a0632bd)
+- 先進封裝與 ABF 載板的規格傳導 → ABF 封裝載板 → 新光電氣，展開 Shinko DLL 載板的引用。 [晶片與記憶體整合封裝](http://127.0.0.1:3016/next?focus=application-chip-integration&release_id=d973c2d1-0a30-5221-ac20-adf00a0632bd)
+
+桌機可在演練主機直接開啟。實體手機仍待確認裝置與連線方式。驗收紀錄需包含裝置、瀏覽器、三條鏈與案例的閱讀結果，以及任何需修正的頁面。
 
 ## 影響路徑與相容性（6.1）
 
