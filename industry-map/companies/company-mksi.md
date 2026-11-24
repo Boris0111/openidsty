@@ -5,7 +5,7 @@ kind: company
 name-zh: "MKS"
 aliases: ["MKS Inc.","MKS Instruments","ESI"]
 summary: "提供先進載板雷射與電子製程設備。"
-legacy-keys: ["MKSI"]
+legacy-keys: []
 listings:
 - ticker: "MKSI"
   market: US

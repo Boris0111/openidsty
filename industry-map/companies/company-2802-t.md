@@ -5,7 +5,7 @@ kind: company
 name-zh: "味之素"
 aliases: ["Ajinomoto","Ajinomoto Co., Inc."]
 summary: "透過精細化學子公司 AFT 供應載板增層介電膜。"
-legacy-keys: ["2802.T"]
+legacy-keys: []
 listings:
 - ticker: "2802.T"
   market: JP

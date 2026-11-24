@@ -5,9 +5,9 @@ kind: company
 name-zh: 東元電機
 aliases: [東元, TECO, TECO Electric & Machinery]
 summary: 製造變壓器等機電設備，並以資料中心機電工程與產品交付參與設施供電。
-legacy-keys: [1504.TW]
+legacy-keys: []
 listings:
-- ticker: '1504'
+- ticker: "1504.TW"
   market: TW
   exchange: XTAI
   share-class: common stock

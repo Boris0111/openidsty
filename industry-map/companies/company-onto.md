@@ -5,7 +5,7 @@ kind: company
 name-zh: "Onto Innovation"
 aliases: ["Onto Innovation Inc.","Onto"]
 summary: "供應高階載板面板曝光與封裝量測設備。"
-legacy-keys: ["ONTO"]
+legacy-keys: []
 listings:
 - ticker: "ONTO"
   market: US
