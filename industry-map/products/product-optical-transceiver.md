@@ -157,6 +157,10 @@ gaps:
 
 ## 供應角色與公司
 
+[Credo](/next?focus=company-crdo) 的 800G ZeroFlap 2×DR4 OSFP-RHS 也是成品模組，公開產品頁列 500 m 平行單模與 MPO-12。2026-03-17 公告一般供應；從公司頁可查遙測軟體、光路及驗收條件。
+
+模組出光端可接[光纖連接組件](/next?focus=product-fiber-cable-assembly)；光路已端接的線組由被動組件供應者交付，各料號需核對不同的 MPO、LC 及端面要求。
+
 ### 交付界線
 
 - **成品模組。** Cisco 資料表列出可訂購模組料號、光纖接頭與主機相容性入口，示範採購成品時如何界定交付。[華星光](/next?focus=company-4979-two) 已有[光模組角色](/next?focus=role-optical-module)能力證據，公司頁分別記錄光引擎、次模組與相干模組。

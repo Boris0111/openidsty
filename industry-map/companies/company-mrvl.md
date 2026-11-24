@@ -20,7 +20,7 @@ source-identifiers:
 - provider: sec-cik
   value: '1835632'
 research-depth: deep
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: sec
   confidence: well-supported
@@ -133,6 +133,82 @@ claims:
     read-scope: 已讀競爭段落
     stance: supporting
     applicable-period: FY2026 10-K
+- id: novaspica-dsp-delivery
+  statement: "MV-CD822 Spica Gen2 為 800G 8×100G PAM4 retimer；MV-CD432 Nova 為 1.6T 16×100G 主機側對 8×200G 線側 gearbox，並整合調變器 driver。"
+  confidence: well-supported
+  conditions:
+  - "各自適用的 lane 配置與光元件須重新驗證；未揭露具名模組與料號出貨。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: marvell-spica-gen2-brief
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/dsp/marvell-spica-gen2-product-brief.pdf
+    locator: "Features、Applications"
+    read-scope: "已讀 8×100G、分接及光元件。"
+    stance: supporting
+    applicable-period: "MV-CD822，2022-12"
+  - source-id: marvell-nova-mv-cd432-brief
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/dsp/marvell-nova-1.6t-pam4-dsp-for-optical-transceiver-applications-product-brief.pdf
+    locator: "Features、Description"
+    read-scope: "已讀 16:8、調變器 driver、FEC。"
+    stance: supporting
+    applicable-period: "MV-CD432，2023-03"
+- id: teralynx-10-switch-delivery
+  statement: "Teralynx 10 交換 ASIC 公布最高 51.2 Tb/s、112G 級 SerDes 與 64×800GbE／128×400GbE 例，Marvell 於 2024-07-25 公告量產與未具名部署。"
+  confidence: well-supported
+  conditions:
+  - "實際面板與 NOS 依整機。FY2026 10-K 的 UALink／ESUN 開發方向另列。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: marvell-teralynx-10-brief
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/switching/marvell-teralynx-10-data-center-ethernet-switch-product-brief.pdf
+    locator: "Overview、Block Diagram"
+    read-scope: "已讀轉送、lane 與埠配置。"
+    stance: supporting
+    applicable-period: "2026-11-24 查閱"
+  - source-id: marvell-teralynx-10-production
+    url: https://www.marvell.com/company/newsroom/marvell-teralynx-512t-ethernet-switch-enters-volume-production-for-global-ai-cloud-deployments.html
+    locator: "公告開頭及 SONiC 段"
+    read-scope: "已讀量產、客戶部署與軟體。"
+    stance: supporting
+    applicable-period: "2024-07-25"
+- id: alaska-p-and-a-delivery
+  statement: "Alaska P MV-CHP10160 是 PCIe Gen6 x16、64 GT/s、CXL 3.x retimer；Alaska A MV-CHA180C0C 為 800G Ethernet AEC 用 8:8 PAM4 線端 DSP。"
+  confidence: well-supported
+  conditions:
+  - "線纜商交付成品。Alaska P 採用公告限系列，未列 MV-CHP10160 的具名採用與出貨。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: marvell-alaska-p-mv-chp10160
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/pcie-retimers/marvell-alaska-p-gen6-16l-pcie-retimer-product-brief.pdf
+    locator: "Overview、Key Features"
+    read-scope: "已讀 x16、64 GT/s、CXL 及損耗。"
+    stance: supporting
+    applicable-period: "2024-05"
+  - source-id: marvell-alaska-a-mv-cha180c0c
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/phys-transceivers/marvell-alaska-a-800g-pam4-dsp-product-brief.pdf
+    locator: "Overview、Block Diagram"
+    read-scope: "已讀 8:8 與 AEC 應用。"
+    stance: supporting
+    applicable-period: "2022-02"
+  - source-id: marvell-alaska-p-adoption-2025
+    url: https://www.marvell.com/company/newsroom/marvell-announces-pcie-retimers-adoption-by-ai-dc-providers.html
+    locator: "開頭、夥伴引言"
+    read-scope: "已讀系列採用與機型驗證界線。"
+    stance: supporting
+    applicable-period: "2025-12-09"
+- id: fastlinq-nic-form-factor
+  statement: "FastLinQ 41000 表 3 列 QL41262HLCU-11 系列為雙 25／10GbE SFP28 成卡，可支援 RoCE。"
+  confidence: well-supported
+  conditions:
+  - "是歷史例，未核目前供貨及同級 800G 成卡交付。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: marvell-fastlinq-41000-brief
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/ethernet-adaptersandcontrollers/marvell-ethernet-adapters-fastlinq-41000-series-product-brief.pdf
+    locator: "Table 3 Ordering Information"
+    read-scope: "已讀指定料號、埠型、雙埠和卸載。"
+    stance: supporting
+    applicable-period: "AH2058022-00 Rev J，2021-11"
 gaps:
 - status: not-public
   reason: 10-K 未拆分客製 ASIC、光 DSP、AEC DSP、retimer 或交換晶片營收，也未揭露客戶名稱。
@@ -140,13 +216,19 @@ gaps:
 
 ## 供應角色
 
+以型號連到[光 DSP](/next?focus=product-optical-dsp)、[交換 ASIC](/next?focus=product-ethernet-switch-asic)及[PCIe retimer](/next?focus=product-retimer)。Alaska A 是[AEC](/next?focus=product-active-electrical-cable)線端 DSP，供線纜商整合。
+
 Marvell 在[運算環節](/next?focus=segment-compute)屬[客製 ASIC 設計與交付](/next?focus=role-custom-asic-partner)，在[網路環節](/next?focus=segment-networking)屬[光通訊 DSP](/next?focus=role-optical-dsp)、[交換器晶片](/next?focus=role-switch-silicon)與[電訊號連接晶片與主動線材](/next?focus=role-electrical-connectivity)（PCIe retimer、AEC DSP）。
 
 ## 研究界線
 
+本批重讀 FY2026 Form 10-K 的 Interconnects、Ethernet Solutions、Item 1A，並按產品簡介及出貨公告核對型號、期間與採用範圍。
+
 本頁以 FY2026 10-K 為依據。資料中心占 74% 是終端市場口徑，包含 ASIC、DSP、交換晶片與儲存，不能拿來證明任何單一產品的規模。車用 Ethernet 已出售，Celestial AI 與 XConn 是期後收購。
 
 ## 產品與用途
+
+Spica Gen2 MV-CD822 為 800G 8×100G，Nova MV-CD432 為 1.6T 16×100G 至 8×200G 並整合 driver。Teralynx 10 為 51.2 Tb/s ASIC。MV-CHP10160 為 64 GT/s Gen6 x16 retimer。MV-CHA180C0C 為 800G 線端 8:8 DSP。FastLinQ QL41262HLCU-11 是雙 25／10GbE 歷史成卡例。
 
 - **客製 ASIC**：依客戶規格的 AI 與資料中心晶片，平台含 SerDes、ARM、矽光子與先進封裝（Item 1）。
 - **互連**：PAM／coherent 光 DSP、驅動器、TIA、矽光子、CPO、LPO、AEC DSP、PCIe retimer（Item 1）。
@@ -155,21 +237,31 @@ Marvell 在[運算環節](/next?focus=segment-compute)屬[客製 ASIC 設計與�
 
 ## 商業模式
 
+以晶片及配套軟體進入整合流程。AEC DSP 要由線材廠設計，交換 ASIC 需配整機電熱、NOS 或 SAI；產品交付與整機出貨在不同層級確認。
+
 Fabless，晶圓代工主要在台灣，封測在亞太（Item 1A）。FY2026 營收 8,194.6 百萬美元，成長 42.1%，資料中心占 74%（Item 7）。
 
 ## 客戶與供應商
+
+Teralynx 10 於 2024-07-25 公布量產與未具名部署。2025-12-09 公告確認 Alaska P 家族採用，Supermicro 表示其系統將支援，具體機型與合格料號仍待核。
 
 經銷商 A 占 37%、直接客戶 A 占 14%，前十大客戶 82%；亞洲出貨 77%（Item 1A、7）。10-K 說合格晶圓代工廠多數在台灣同一地區，但本頁未具名代工廠。
 
 ## 競爭與替代
 
+與[博通](/next?focus=company-avgo)比較 51.2 Tb/s 級 ASIC 要對齊埠、功能與負載。光 DSP 與[Credo](/next?focus=company-crdo)比較時核對 lane 映射。PCIe Gen6 x16 再與[Astera Labs](/next?focus=company-alab) Aries 比較。Alaska A 的晶片型錄不能直接與成品 AEC 的功耗對照。
+
 10-K 直接具名 [Broadcom](/next?focus=company-avgo)、[Credo](/next?focus=company-crdo)、[Astera Labs](/next?focus=company-alab)、[世芯](/next?focus=company-3661-tw)、[創意](/next?focus=company-3443-tw)、Nvidia、AMD 等。客戶自行開發晶片也是替代來源（Item 1）。
 
 ## 業務曝險
 
+高速光埠與主機 PCIe 的通道條件各自驅動不同產品。資料中心終端市場口徑仍含其他業務，需追實際產品採用。
+
 資料中心由 FY2024 的 40% 升到 FY2026 的 74%，前十大客戶占 82%，曝險集中在少數雲端客戶的 AI 支出。
 
 ## 風險
+
+光或電架構更動可降低 DSP／retimer 用量。10-K 指出已認證的零件仍須等待客戶整機量產，且製程或供應商變更可能觸發重新認證。
 
 - **客戶集中**：一家經銷商占 37%，前十大客戶 82%。
 - **代工集中**：多數合格代工廠位於台灣同一地區。
@@ -177,6 +269,8 @@ Fabless，晶圓代工主要在台灣，封測在亞太（Item 1A）。FY2026 �
 - **收購整合**：Celestial AI 與 XConn 的整合與技術落地。
 
 ## 財務可取性
+
+FY2026 Form 10-K 有終端市場銷售與期間口徑。所讀資料未拆各型號出貨、收入或下游客戶。
 
 - SEC 公開財務資料 可自動取得標準科目；主要申報來源設為 SEC。
 - 會計年度結束於 1 月底，與曆年差一個月，跨公司比較需對齊期間。

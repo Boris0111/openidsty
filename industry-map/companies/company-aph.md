@@ -20,7 +20,7 @@ source-identifiers:
 - provider: sec-cik
   value: '820313'
 research-depth: deep
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: sec
   confidence: well-supported
@@ -132,6 +132,19 @@ claims:
     read-scope: 已讀產品頁全文；未讀連結的白皮書與型錄
     stance: supporting
     applicable-period: 2026-10-18 讀取（頁面無日期）
+- id: mpo-fiber-assembly-capability
+  statement: "Amphenol Fiber Optic Products 的 MPO 組件有 8／12／24 芯、單模或多模、A／B／C 極性與主幹或分接組態。"
+  confidence: well-supported
+  conditions:
+  - "產品頁只支持組件供應與規格選項；指定終端客戶、量產與出貨未獲料號證據。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: aph-mpo-cable-assemblies
+    url: https://www.amphenol-fop.com/indoor-cable-assemblies/mpo-cable-assemblies
+    locator: "Features、Specifications"
+    read-scope: "已讀 8／12／24 芯、A/B/C 極性、插入與回波損耗型錄。"
+    stance: supporting
+    applicable-period: "MPO Cable Assemblies，2026-11-24 查閱"
 gaps:
 - status: not-public
   reason: 10-K 不拆分 AI 相關營收，也未揭露客戶名稱；液冷快接頭不在 10-K 中，收入未公開。
@@ -141,13 +154,19 @@ gaps:
 
 ## 供應角色
 
+新增核對的交付為[資料中心光纖連接組件](/next?focus=product-fiber-cable-assembly)。按可交付的完成線組歸入被動光纖互連。
+
 Amphenol 在[互連環節](/next?focus=segment-interconnect)同時屬於[高速與處理器連接器](/next?focus=role-high-speed-connector)、[高速線材與線束](/next?focus=role-cable-harness)與[液路快接頭](/next?focus=role-liquid-quick-disconnect)三個角色。前兩項來自 10-K，液冷快接頭來自官方產品頁。
 
 ## 研究界線
 
+本次核讀 Amphenol Fiber Optic Products 的 MPO 組件型錄。表上損耗選項限相應接頭與單／多模條件，未含整條場址光路。
+
 本頁以 FY2025 10-K 與 Amphenol Industrial 產品頁為依據。10-K 完全沒有提到液冷，快接頭只能證明產品能力，不能證明客戶採用或收入。2026 年 1 月完成的 CommScope 收購不在 FY2025 數字內。
 
 ## 產品與用途
+
+MPO Cable Assemblies 含 8／12／24 芯、主幹和 MPO 至 LC 分接，須按極性及接頭端面訂購。此交付別於整顆收發器與液冷接頭。
 
 - **IT datacom**：高速、電源與主動／被動光纖互連，用於 AI 與機器學習系統（Item 1）。
 - **三個分部**：Communications Solutions（連接器、高速／電源／光纖線纜、天線）、Harsh Environment Solutions（強固互連、特殊線纜、印刷電路）、Interconnect and Sensor Systems（Item 1）。
@@ -155,21 +174,31 @@ Amphenol 在[互連環節](/next?focus=segment-interconnect)同時屬於[高速�
 
 ## 商業模式
 
+光纖線組依芯數、極性、主幹或分接規格供應，並提供客製 wiring 選項。官網的詢價入口未含報價或交付量。
+
 在約 40 個國家垂直整合生產，以分散的事業單位經營並持續收購（Item 1）。2025 年營收 23,094.7 百萬美元，成長 52%，其中有機成長 38%；2025 年完成五件收購，2026 年 1 月再完成約 105 億美元的 CommScope 收購（Item 7、Note 15）。
 
 ## 客戶與供應商
+
+MPO 型錄未列客戶、終端認證、合格出貨或量產時間，既有 10-K 的終端市場分類不提供該料號訊號。
 
 客戶為數千家 OEM、EMS、ODM 與服務供應商，沒有單一客戶超過一成，經銷商約占 19%（Item 1）。客戶名稱未揭露。
 
 ## 競爭與替代
 
+在同樣選用單模 MPO／APC 端接組件時，可與[貿聯](/next?focus=company-3665-tw)比較。安費諾公開多種芯數、極性與損耗級別；需拿同長度、功率預算及端面驗證，現有證據無法量化兩家差異。
+
 10-K 列出 TE Connectivity、Molex、Foxconn Interconnect Technology、Luxshare、Corning 等主要競爭者。在[高速與處理器連接器](/next?focus=role-high-speed-connector)可與[嘉澤](/next?focus=company-3533-tw)比較，在[高速線材與線束](/next?focus=role-cable-harness)可與[貿聯](/next?focus=company-3665-tw)比較；液冷快接頭的替換要依流量、壓降與冷卻液相容性逐案驗證。
 
 ## 業務曝險
 
+已披露的 IT datacom 市場涵蓋多種互連。MPO 需求取決於實際光埠方案、芯數及既有佈線是否重用。
+
 IT datacom 約占 36%，Communications Solutions 有機成長 71%，backlog 由 61 億升到 89 億美元，10-K 都把增量歸因於 AI 應用。CommScope 收購會再提高光纖互連比重。
 
 ## 風險
+
+若客戶重用主幹、降低每埠纖芯數或跨改介質，整體光埠成長未必增加此類組件。
 
 - **收購整合與債務**：CommScope 是史上最大收購，預估 2026 年淨利息費用約 8 億美元。
 - **backlog 可取消**：訂單出貨前一般可取消。
@@ -177,6 +206,8 @@ IT datacom 約占 36%，Communications Solutions 有機成長 71%，backlog 由 
 - **終端循環**：AI 資本支出放緩會直接影響 IT datacom。
 
 ## 財務可取性
+
+FY2025 10-K 與後續申報是可查入口，所讀資料未提供 MPO 產品收入。
 
 - SEC 公開財務資料 可自動取得標準科目；主要申報來源設為 SEC，會計年度為曆年。
 - 終端市場與分部比重可由 10-K 核對。

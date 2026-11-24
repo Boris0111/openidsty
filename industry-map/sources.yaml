@@ -49,6 +49,33 @@ tw:
     themes:
     - cpo-silicon-photonics
     notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁（PDF 頁減 4）；營業比重、銷售地區與進銷貨表以 -table 模式核對。
+  - id: accton-annual-report-2025-ir
+    name: "智邦 2025 Annual Report 公司版"
+    url: https://www.accton.com/wp-content/uploads/2026/06/2025-Annual-Report.pdf
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "公司英版，已讀 Letter to Shareholders 與 Direct Liquid Cooling 的展示與產品進度。"
+  - id: landmark-annual-report-2025-ir
+    name: "聯亞 114 年度年報公司版"
+    url: https://www.lmoc.com.tw/index.php?i=1&id=390&lang=cht&option=module&task=dfile
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "下載頁內部標題仍寫 113，實際封面為 3081 民國 114 年度，115-03-31 刊印。已讀業務範圍及主要商品。"
+  - id: luxnet-annual-report-2025-ir
+    name: "華星光 114 年度年報公司版"
+    url: https://www.luxnetcorp.com.tw/storage/architecture/page~103/page~123/114_4.pdf
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "由官網公司年報索引的 114 年入口下載。已讀第 72、81、83、89 頁。"
   - id: accton-annual-report-2025
     name: 智邦科技 114 年度股東會年報
     url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2345&year=115&mtype=F&
@@ -510,6 +537,15 @@ us:
     themes:
     - cpo-silicon-photonics
     notes: SEC EDGAR 原文，申報日 2026-03-11、會計年度結束於 2026-01-31（52/53 週制）；已讀 Item 1、1A 與 MD&A 相關段落。
+  - id: nvda-10k-fy2026
+    name: "NVIDIA FY2026 Form 10-K"
+    url: https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [compute, networking]
+    notes: "已讀封面、Item 1 Data Center／Manufacturing、Item 1A Demand／Supply、Item 7 Customer Concentration。"
   - id: avgo-10k-fy2025
     name: Broadcom FY2025 Form 10-K
     url: https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm
@@ -852,6 +888,438 @@ us:
     - power-bottleneck
 global:
   technical-documents:
+  - id: oif-800zr-ia
+    name: "OIF 800ZR Implementation Agreement 01.0"
+    url: https://www.oiforum.com/wp-content/uploads/OIF-800ZR-01.0.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2024-10 版，已讀 §§1–2 的單跨、放大、點對點 DWDM 規格與用途。"
+  - id: broadcom-th5-bailly-production-context
+    name: "Broadcom 第三代 CPO 與 TH5-Bailly 生產公告"
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-announces-third-generation-co-packaged-optics-cpo
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀第三代 200G/lane 與第二代 Bailly 生產、合作夥伴說明。"
+  - id: fabrinet-optical-manufacturing-services
+    name: "Fabrinet Optical Communications 代工交付"
+    url: https://fabrinet.com/markets/opticalcommunications
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀光封裝、對準、整合、NPI 與量產服務；僅為同交付條件的技術比較參照。"
+  - id: luxnet-cwdm-milestones
+    name: "華星光光通訊產品開發沿革"
+    url: https://www.luxnetcorp.com.tw/about-111-page179
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀上市主體沿革及民國 108 至 113 年 CW DFB 晶粒與模組組裝里程碑。"
+  - id: pci-sig-retimer-integrators-2026
+    name: "PCI-SIG Integrators List PCIe 6.x Retimers"
+    url: https://pcisig.com/developers/integrators-list?field_il_comp_product_type_value=All&keys=&order=created&sort=desc
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 64 GT/s x16 的 CPR61664、PT6162 與日期，並對照 32 GT/s 名單。"
+  - id: astera-aries6-compliance-announcement
+    name: "Astera Labs Aries 6 與 Scorpio PCI-SIG 相容性說明"
+    url: https://www.asteralabs.com/resources/blog/industry-leading-high-volume-scorpio-smart-fabric-switches-and-aries-smart-retimers-achieve-compliance-at-first-pci-sig-6-x-workshop/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀公司對 Aries／Scorpio 的量產及相容測試描述，未見料號出貨數。"
+  - id: credo-800g-2xdr4-osfp-rhs
+    name: "Credo 800G 2×DR4 ZeroFlap OSFP-RHS 光模組"
+    url: https://credosemi.com/products/zeroflap-optical-transceivers/800g-2xdr4-zeroflap-transceiver-osfp-rhs/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 500 m 平行 SMF、MPO-12 與 PILOT／Host SDK 遙測條件。"
+  - id: credo-800g-zeroflap-ga
+    name: "Credo 800G ZeroFlap GA 公告"
+    url: https://s205.q4cdn.com/511065572/files/doc_news/Credo-Launches-800G-ZeroFlap-Optical-Transceivers-Engineered-for-AI-Networks-2026.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "原廠 2026-03-17 公告 800G 2×DR4 一般供應及遙測軟體。"
+  - id: broadcom-bcm85822-optical-dsp-brief
+    name: "Broadcom BCM85822 PAM4 PHY Product Brief"
+    url: https://docs.broadcom.com/doc/85822-DIE-PB
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "85822-DIE-PB100，已讀 8:4 gearbox、整合 driver 與 FEC。"
+  - id: broadcom-tomahawk-6-volume-2026
+    name: "Broadcom Tomahawk 6 量產出貨公告"
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-now-shipping-worlds-first-1024-tbps-switch-production
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2026-03-12，已讀家族量產出貨與 SerDes。"
+  - id: marvell-alaska-a-mv-cha180c0c
+    name: "Marvell Alaska A MV-CHA180C0C AEC DSP 資料"
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/phys-transceivers/marvell-alaska-a-800g-pam4-dsp-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2022-02 版，已讀 8:8、112G PAM4 和線端應用。"
+  - id: marvell-alaska-p-mv-chp10160
+    name: "Marvell Alaska P MV-CHP10160 PCIe Retimer 資料"
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/pcie-retimers/marvell-alaska-p-gen6-16l-pcie-retimer-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2024-05 版，已讀 PCIe 6 x16、64 GT/s、CXL 3.x 與通道條件。"
+  - id: marvell-alaska-p-adoption-2025
+    name: "Marvell Alaska P PCIe Retimer 採用公告"
+    url: https://www.marvell.com/company/newsroom/marvell-announces-pcie-retimers-adoption-by-ai-dc-providers.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2025-12-09，已讀系列採用與合作夥伴引言。"
+  - id: marvell-fastlinq-41000-brief
+    name: "Marvell FastLinQ 41000 Ethernet 介面卡簡介"
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/ethernet-adaptersandcontrollers/marvell-ethernet-adapters-fastlinq-41000-series-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "Rev J，2021-11，已讀表 3 的雙埠 25／10GbE 料號，限歷史產品。"
+  - id: broadcom-bcm57708-nic-brief
+    name: "Broadcom BCM57708 Ethernet NIC Adapters Product Brief"
+    url: https://docs.broadcom.com/doc/57708-PB
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "57708-PB103，2026-03-13。已讀網路埠、主機介面、RoCE 與料號。"
+  - id: nvidia-connectx8-compatible-opns
+    name: "NVIDIA ConnectX-8 OPN 與韌體相容清單"
+    url: https://networking-docs.nvidia.com/connectx8fwrn/40451020/firmware-compatible-products
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "v40.45.1020 表列 C8180、C8240 可訂購料號及速率。"
+  - id: nvidia-connectx8-hardware-specs
+    name: "NVIDIA ConnectX-8 SuperNIC 硬體規格"
+    url: https://networking-docs.nvidia.com/connectx8hw/specifications
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 C8180 規格，主機介面、散熱、單 OSFP cage 及協定分開核對。"
+  - id: nvidia-connectx8-system-requirements
+    name: "NVIDIA ConnectX-8 SuperNIC 系統需求"
+    url: https://networking-docs.nvidia.com/connectx8hw/introduction
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 Socket Direct 及 System Requirements、Features and Benefits，依 OPN 與驅動配套。"
+  - id: advantech-pcie-2711-datasheet
+    name: "研華 PCIE-2711 200GbE NIC 資料表"
+    url: https://advdownload.advantech.com/productfile/PIS/PCIE-2711/file/PCIE-2711_DS%28101722%2920221019135351.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2022-10-17 版，已讀單埠 200GbE、PCIe 4 x16、QSFP56 與 ConnectX-6 控制器。"
+  - id: silicom-o32cg2b608-nic
+    name: "Silicom O32CG2B608 200GbE OCP NIC 型錄"
+    url: https://www.silicom-usa.com/wp-content/uploads/2026/05/O32CG2B608-200G-OCP-Broadcom-based.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 200GbE、使用 BCM57608 的卡級交付與應用。"
+  - id: senao-sx906-smartnic
+    name: "神準 SX906 SmartNIC 產品頁"
+    url: https://www.senaonetworks.com/en/products/server/smartnic/sx906/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 Intel Xeon 6 SoC、主機端卸載與總帶寬依配置的限制。"
+  - id: aph-mpo-cable-assemblies
+    name: "Amphenol Fiber Optic Products MPO 組件"
+    url: https://www.amphenol-fop.com/indoor-cable-assemblies/mpo-cable-assemblies
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀 Features 與 Specifications，纖芯、極性與單／多模損耗級別依組件。"
+  - id: bizlink-xfs-optical-acquisition
+    name: "貿聯完成收購 XFS 公告"
+    url: https://www.bizlinktech.com/news/bizlink-completes-acquisition-of-xfs-communications-inc-advancing-optical-interconnect-leadership-for-ai-and-data-center-applications
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "2026-01-05，已讀 3665 上市身分、透過子公司完成收購與 XFS 交付範圍。"
+  - id: bizlink-mpo-assemblies
+    name: "貿聯 MPO 產品清單"
+    url: https://www.bizlinktech.com/product-categories/mpo-connectors
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀 All Products 所列 APC 光纜與 PPB 連接器，個別性能仍需料號規格。"
+  - id: corning-edge8-ge7e796glzddu030m
+    name: "Corning EDGE8 GE7E796GLZDDU030M 產品資料"
+    url: https://ecatalog.corning.com/optical-communications/EMEA/en/Fiber-Optic-Cable-Assemblies/Indoor-Cable-Assemblies/Multifiber-Indoor-Cable-Assemblies/EDGE8%C2%AE-MTP%C2%AE-Trunk/p/GE7E796GLZDDU030M
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀整線纖芯、極性、彎曲半徑、安裝環境與各接頭損耗口徑。"
+  - id: corning-aen163-edge8-loss
+    name: "Corning AEN163 光纖配線技術說明"
+    url: https://www.corning.com/catalog/coc/documents/application-engineering-notes/AEN163.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "Rev 1，第 3 頁表 3 及配接示例；源文件為 FICON 佈線，僅引用組件損耗方法。"
+  - id: senko-mpo-plus-standard
+    name: "SENKO MPO-PLUS Standard Connector 產品頁"
+    url: https://www.senko.com/product/mpo-plus-standard-connector/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀 MPO connector 的導引針、纖芯容量與規格，限光接頭零件交付。"
+  - id: senko-advanced-components-history
+    name: "SENKO Advanced Components 公司沿革"
+    url: https://www.senko.com/corporate/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [interconnect]
+    notes: "已讀 SENKO History，區分美國子公司與日本母公司。"
+  - id: broadcom-tomahawk-6-shipping
+    name: "Broadcom Tomahawk 6 交換晶片出貨公告"
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-ships-tomahawk-6-worlds-first-1024-tbps-switch
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 2025-06-03 開頭、SerDes 與連接方案。限晶片家族公布能力。"
+  - id: broadcom-tomahawk-ultra-release
+    name: "Broadcom Tomahawk Ultra scale-up 公告"
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-ships-tomahawk-ultra-reimagining-ethernet-switch-hpc
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 2025-07-15 公告的流控、重傳與 scale-up 用途。"
+  - id: broadcom-jericho4-release
+    name: "Broadcom Jericho4 跨資料中心公告"
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-ships-jericho4-enabling-distributed-ai-computing-across
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀深緩衝、MACsec、HyperPort 與 Availability。內文按送樣處理。"
+  - id: marvell-teralynx-10-brief
+    name: "Marvell Teralynx 10 交換晶片產品簡介"
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/switching/marvell-teralynx-10-data-center-ethernet-switch-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 overview、block diagram、Key Features 及埠組態。"
+  - id: marvell-teralynx-10-production
+    name: "Marvell Teralynx 10 量產公告"
+    url: https://www.marvell.com/company/newsroom/marvell-teralynx-512t-ethernet-switch-enters-volume-production-for-global-ai-cloud-deployments.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 2024-07-25 量產、SONiC／SAI 與未具名部署說明。"
+  - id: accton-as9817-64o-datasheet
+    name: "智邦 AS9817-64O 800G 交換器資料表"
+    url: https://www.accton.com/wp-content/uploads/2023/09/2023-036-AS9817-64O_Accton-R01-20230905-1.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "E092023-AP-R01，已讀埠、晶片、ONIE、風道、PSU 與風扇規格。"
+  - id: arista-7060x6-datasheet
+    name: "Arista 7060X6 交換器資料表"
+    url: https://www.arista.com/assets/data/pdf/Datasheets/7060X6-Datasheet.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "04-0053-08，已讀 Model Overview、EOS 與典型／最大功耗腳註。"
+  - id: astera-aries-retimer-2024
+    name: "Astera Labs Aries PCIe／CXL Retimer Portfolio Brief"
+    url: https://www.asteralabs.com/wp-content/uploads/2024/03/2402_Astera_Labs-Aries_Smart_DSP_Retimer_Family-Product_Brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2024-02 版，已讀 Benefits and Features、Description 及產品家族表。"
+  - id: astera-retimer-technical-faq
+    name: "Astera Labs PCIe Retimer 技術 FAQ"
+    url: https://www.asteralabs.com/resources/faqs/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀插入損耗、CDR、redriver 與通道配置的 PCIe 問答。"
+  - id: credo-toucan-gen6x16-pcisig-announcement
+    name: "Credo Toucan Gen6x16 PCIe 6.x 相容性公告"
+    url: https://investors.credosemi.com/news-events/news/news-details/2026/Credos-Toucan-PCIe-Retimer-Achieves-PCI-Express-Compliance-and-Joins-PCI-Express-6-x-Integrators-List/default.aspx
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2026-08-31 廠商公告，已讀 64 GT/s 測試及發佈範圍。"
+  - id: credo-800g-shift-dd-breakout-brief
+    name: "Credo 800G SHIFT QSFP-DD 分接 AEC Product Brief"
+    url: https://credosemi.com/wp-content/uploads/Credo_AEC_800G_SHIFT_DD-2xDD_Product_Brief_2025Sept26.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀分接埠、線路 lane、BER 測試與料號表。"
+  - id: credo-800g-span-osfp-brief
+    name: "Credo 800G SPAN OSFP AEC Product Brief"
+    url: https://credosemi.com/wp-content/uploads/2024/10/Credo-HiWire-SPAN-AEC-800G-CAC8XXXX1A1B-C1-Product-Brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "REV 100924，已讀 800G OSFP 對 OSFP-RHS、溫度、長度、BER 及料號表。"
+  - id: astera-taurus-scm-brief
+    name: "Astera Labs Taurus Ethernet Smart Cable Modules Product Brief"
+    url: https://www.asteralabs.com/wp-content/uploads/2025/05/PB_Taurus_Ethernet_Smart_Cable_Modules.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀 Description 與料號表。800G 例為 3 m 30 AWG 的線纜設計，交付為 SCM。"
+  - id: ipsr-inp-iii-v-roadmap
+    name: "IPSR-I InP 與 III-V 族製程技術路線圖"
+    url: https://www.ipsr-i.org/03-technologies/indium-phosphide-and-iii-v-compounds
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 §§2.2.1、2.2.5、2.3 及磊晶目標表。路線圖數值為目標，非商業規格。"
+  - id: lumentum-hl13b5cp00-eml
+    name: "Lumentum HL13B5CP00-Ln 100G EML"
+    url: https://www.lumentum.com/en/products/eml-100g-pam4-cwdm-laser
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 Overview 的晶片整合、波長、速率與合格聲明。"
+  - id: coherent-100g-200g-eml
+    name: "Coherent 100G／200G InP EML 晶片"
+    url: https://www.coherent.com/100-gbps-and-200-gbps-eml.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 Description 與 Specifications 的 PAM4、CWDM、溫度與封裝選項。"
+  - id: lumentum-100g-dml-sampling
+    name: "Lumentum 100G PAM4 DML 送樣公告"
+    url: https://investor.lumentum.com/financial-news-releases/news-details/2020/Lumentum-Announces-Industry-First-100g-PAM4-DMLs-Available-For-Sampling-2020-12-7/default.aspx
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2020-12-07 公告。已讀送樣、速率、用途與成本說法，未讀到同條件比較。"
+  - id: coherent-cw-inp-silicon-photonics
+    name: "Coherent 矽光子用 InP CW DFB 雷射公告"
+    url: https://www.coherent.com/news/press-releases/high-efficiency-lasers-for-silicon-photonics-transceivers
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2024-08-28 公告。已讀 O-band、CW DFB 與矽光子收發模組分工。"
+  - id: landmark-datacenter-epiwafer
+    name: "聯亞光電資料中心磊晶產品頁"
+    url: https://www.lmoc.com.tw/index.php?id=110&index=2&lang=en&option=module&task=pageinfo
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 DFB、VCSEL、CW、矽光子及 GaAs PD 磊晶的分類與部分加工選項。"
+  - id: iqe-inp-epiwafer
+    name: "IQE InP 磊晶產品頁"
+    url: https://www.iqep.com/products/inp/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 Wafer structures offered。涵蓋 InP FP、DFB、EML 與檢光磊晶。"
   - id: cisco-qsfp-dd800-datasheet
     name: Cisco QSFP-DD800 光模組資料表
     url: https://www.cisco.com/c/en/us/products/collateral/interfaces-modules/transceiver-modules/qsfp-dd800-transceiver-modules-ds.html

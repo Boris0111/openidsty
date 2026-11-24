@@ -119,6 +119,8 @@ gaps:
 
 ## 供應角色與公司
 
+[博通](/next?focus=company-avgo) BCM85822 的 800GbE 模式為 8×106 至 4×226 Gb/s，須按 8:4 gearbox 配置查光元件與 FEC。
+
 屬於[光通訊 DSP](/next?focus=role-optical-dsp)。[邁威爾](/next?focus=company-mrvl)的 Spica／Nova 與 [Credo](/next?focus=company-crdo) 的 Dove 都有公開產品證據。上述交付是 DSP 晶片，後段仍需由模組供應商整合光元件、接頭與散熱，並完成整顆模組驗證。
 
 ### 需求如何傳到 DSP
