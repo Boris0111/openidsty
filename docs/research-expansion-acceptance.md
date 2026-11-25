@@ -1,6 +1,6 @@
 # 三方向研究擴充驗收紀錄
 
-本文件對應 `expand-ai-infrastructure-research`，紀錄操作與閱讀證據；實作進度以 [tasks.md](../openspec/changes/expand-ai-infrastructure-research/tasks.md) checkbox 及 OpenSpec CLI 即時結果為準。逐項範圍見 [研究矩陣](research-expansion-matrix.md)。
+本文件對應 `expand-ai-infrastructure-research`，紀錄操作與閱讀證據。原研究實作進度見[已歸檔的任務](../openspec/changes/archive/2026-11-25-expand-ai-infrastructure-research/tasks.md)，逐項範圍見[研究矩陣](research-expansion-matrix.md)。
 
 ## 基準與工作目錄（task 1.1）
 
@@ -99,6 +99,37 @@ Chromium 以 1440×1000 與 390×844 驗證三條鏈的比較、案例、產品�
 - 先進封裝與 ABF 載板的規格傳導 → ABF 封裝載板 → 新光電氣，展開 Shinko DLL 載板的引用。 [晶片與記憶體整合封裝](http://127.0.0.1:3016/next?focus=application-chip-integration&release_id=d973c2d1-0a30-5221-ac20-adf00a0632bd)
 
 桌機使用演練主機的本機入口。iPhone 使用 Windows 臨時行動熱點，經一次性連結查看同一 release 的三條閱讀鏈。
+
+## 發布準備補驗（2026-11-25）
+
+| 環境 | 重新查核結果 | 後續回退目標 |
+|---|---|---|
+| 正式程式 | 部署紀錄序號 4，`7ebb8f92c8010c92dba27269891a1d9eaf01f634`，Alembic `0017`，`status` 的 `problems` 為空。部署前備份為 `20261103T060548Z`。 | 下一次正式部署的前一成功部署為序號 4，依 [部署與回退](research-deployment.md) 執行。 |
+| 正式研究 | `/api/v2/manifest` 為 `a5df290c-0b6d-5011-b842-ae73cd8a1f99`（generation 4）。Release ref 與 `research/published` 同指 `7a0bda265c3e83e2d86c6a03476cfc5be3ad55eb`。 | 正式研究切換前的 release `a5df290c-0b6d-5011-b842-ae73cd8a1f99`，依 [研究還原流程](research-publication.md) 重新啟用。 |
+| 演練研究 | `/api/v2/manifest` 為 Boris 已走讀的 `d973c2d1-0a30-5221-ac20-adf00a0632bd`（generation 5），release ref 與 `research/published` 同指 `4be36cf61c13e4108df0a0179ec64a149b6085af`。演練與正式的 generation 4 共同基準具有相同的 Git tree `505a9782954c1f5f207001bb9208927e0c511197` 及相同的 `sources.yaml`。 | 補驗以 `d973c2d1-0a30-5221-ac20-adf00a0632bd` 為基準，保留該 release。 |
+| 公開站 | Chromium 開啟 `/next` 時實際取得 [`a5df290c` 的快照 manifest](https://industryflow.pages.dev/snapshot/a5df290c-0b6d-5011-b842-ae73cd8a1f99/v2/manifest.json)，HTTP 200，generation 4。 | 主 checkout 已留存 `public-snapshot/a5df290c-0b6d-5011-b842-ae73cd8a1f99-site`，已確認站點副本包含同版 manifest，可依 [公開快照回復流程](public-snapshot.md#回復) 部署。 |
+
+在正式 PostgreSQL 以 `BEGIN READ ONLY` 查詢 `public.sources` 後 `ROLLBACK`。`twse-financials`、`twse-balance`、`tpex-financials`、`tpex-balance` 四筆均為 `retired`。
+
+2026-10-23 的 `884b443` 已從程式 repo 移除這四筆財報來源。正式研究 Git 沿用 10-20 的基準，仍有 89 筆來源。已走讀的演練 release 以相同基準加入 154 筆來源，共 243 筆。`a0791de` 的來源 ID 集合等於共同基準扣除四筆，故補驗從已走讀的演練 release 只移除四筆，預期剩 239 筆。Boris 的桌機與 iPhone 走讀紀錄仍以 generation 5 為準，補驗以草稿 diff、完整編譯比較、同版閱讀與靜態快照檢查核對此次來源修正。
+
+演練草稿 `b9987444-301c-4e35-b56b-3c39817a1eb2` revision 2 的 diff 僅含 `industry-map/sources.yaml` 的四筆刪除，資產相同。完整草稿驗證通過。從基準 Git archive 獨立編譯確認來源 243 → 239，實體快照、文件、分類、offerings、關係、舊版關係、資產與其 bytes、指標定義等其餘九個區段完全一致。三個研究頁均從 revision 2 預覽成功，預覽及 validate 回傳的 content hash 皆為 `a18fc1abf3bb24e8bee24eb02b2d7e097d3f59224256878e3fb05faa8ce45e69`。草稿 diff、驗證與編譯比對結果留存於 worktree 的 `.work/publication-expansion/`。
+
+2026-11-25 16:02:42（UTC+8），以演練 `run-job` 發布 revision 2。發布 job `a267b36f-0483-4f8b-9ce5-528d2a9c4df8` 及同步 job `a970f108-bdb6-4124-b2e4-e75185a751a8` 均回 `published`／`complete`。Manifest 指向 `efafaa59-6351-5cb0-ba03-e21c03d88792`（generation 6）。`research/published` 與不可改寫的 release ref 同指 `8958e50cac4e9b442ee74fdf6abb46d88d73dc9c`，Git diff 只有來源清單。發布資料庫有 239 筆 release sources，content hash 與草稿驗證相同。
+
+以 Chromium 1440×1000 及 390×844 走讀三條閱讀鏈，依序核對比較、需求案例、產品、公司及同版引用展開。主機 NIC／博通、變壓器／東元電機、ABF 封裝載板／Shinko 均通過。五個舊公司代號在 generations 5 與 6 解析成相同 ID，四個新增上市代號可解析。`/companies/2330.TW` 轉至 generation 6 的台積電頁，固定 generation 4 的台積電頁與固定 generation 5 的光電互連研究也可讀。正式研究 manifest 複查仍為 generation 4。
+
+### 補驗公開快照
+
+從演練 API image 的提交 `7c3fd3630fb78b3acf38171f329339a9b54ed069` 匯出 generation 6。API parity 共比對 6,723 筆，差異 0。站點內的 1,155 個快照檔逐位元與匯出一致，405 份文件引用均可解析至同版，14 個資產的 SHA-256 均符合。匯出與建置各自通過外洩掃描，七個私有入口實測 HTTP 404。靜態站的三條閱讀鏈在桌機及手機 viewport 均可展開同版引用。
+
+第一次建置在 Next.js 16.4.3 安全升級提示後退出，沿用 lockfile 重跑通過。全量 Playwright crawl 431 項通過，8 項合成 fixture 專用案例依設定跳過。工作樹留存匯出於 `public-snapshot/efafaa59-6351-5cb0-ba03-e21c03d88792/`，站點副本於 `public-snapshot/efafaa59-6351-5cb0-ba03-e21c03d88792-site/`（1,238 檔）。副本的快照檔與匯出一致，`_headers` 與建置輸出相同。建置、parity 與檔案比對記錄存於 `.work/publication-expansion/`。
+
+### PR 範圍與最終檢查
+
+GitHub `main` 的 ref 為 `a0791de`。相較於該基準，歸檔前預定 PR 範圍共 102 個路徑，含 84 個研究路徑、兩份驗收與矩陣文件、兩份既有相容性測試、原研究的歸檔和同步規格，以及這次發布提案的四份檔案。實際路徑清單留存於 `.work/publication-expansion/prospective-pr-paths.txt`。兩個 checkout 原有未提交修改保留在各自的目錄。新發布提案的任務進度以研究 worktree 為準。
+
+全量地圖驗證通過（17 個環節、7 個題材、239 筆來源）。從實作分支 Git archive 編譯得到與 generation 6 完全相同的 content hash。發布提案的 OpenSpec strict validation 通過。`git diff --check` 核對預定的追蹤檔案，新提案四檔以 Git 的 no-index whitespace check 核對，均無空白錯誤。
 
 ## 影響路徑與相容性（6.1）
 

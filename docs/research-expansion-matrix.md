@@ -1,6 +1,6 @@
 # 三方向研究擴充矩陣
 
-對應 [design D2–D5](../openspec/changes/expand-ai-infrastructure-research/design.md) 與 [tasks](../openspec/changes/expand-ai-infrastructure-research/tasks.md)。基準為 a0791ded84fa22fad6efc6224cdd341481aad167，盤點日 2026-11-24；操作及網站閱讀證據見 [驗收紀錄](research-expansion-acceptance.md)。本文件保留必做範圍與證據位置，進度由 OpenSpec 的 task checkbox 判定。
+對應 [design D2–D5](../openspec/changes/archive/2026-11-25-expand-ai-infrastructure-research/design.md) 與 [tasks](../openspec/changes/archive/2026-11-25-expand-ai-infrastructure-research/tasks.md)。基準為 a0791ded84fa22fad6efc6224cdd341481aad167，盤點日 2026-11-24；操作及網站閱讀證據見 [驗收紀錄](research-expansion-acceptance.md)。本文件保留必做範圍與證據位置，進度由 OpenSpec 的 task checkbox 判定。
 
 ## 填寫與驗收方式
 
