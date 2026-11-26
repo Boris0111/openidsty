@@ -138,6 +138,8 @@ EUV／High-NA 影響解析度與製程整合，GAA 與 3D 結構增加高選擇�
 
 ## 傳導鏈
 
+[載板雷射微孔設備](/next?focus=product-substrate-laser-microvia-drill)與[載板線路曝光設備](/next?focus=product-substrate-patterning-lithography)有不同產出、材料和驗證。與載板工廠的交付分工見[先進封裝與 ABF 載板的規格傳導](/next?focus=research-chip-integration-abf-demand)。
+
 `equipment → foundry / memory / advanced-packaging / test`：設備與量測能力限制新增製程、記憶體及封裝產能的爬坡。從 CoWoS 擴產事件反查 `advanced-packaging.upstream` 能找到設備玩家；2nm 題材連到晶圓代工與材料。**inference**：capex 上調增加潛在訂單，但土建支出、未驗收訂單及重複採購不等同設備當期認列收入。
 
 ## 監測指標

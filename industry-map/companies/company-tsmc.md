@@ -22,7 +22,7 @@ listings:
   valid-to: null
 source-identifiers: []
 research-depth: deep
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: tw-mops-summary
   confidence: well-supported
@@ -47,6 +47,42 @@ roles:
   tier: 1
   baseline-path: semiconductor/foundry.md
 claims:
+- id: tsmc-cowos-l-family-production
+  statement: "台積電 CoWoS-S 為矽中介層、CoWoS-R 為 RDL、CoWoS-L 為 RDL 加 LSI。CoWoS-L 3.5× 自 2024 年量產。"
+  confidence: well-supported
+  conditions: ["限指定技術家族與級距；未證實具名採用。"]
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: tsmc-3dfabric-cowos
+    url: https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm
+    locator: "CoWoS–S/R/L"
+    read-scope: "查結構、整合位置和量產級距。"
+    stance: supporting
+    applicable-period: "3DFabric 查核日"
+  - source-id: tsmc-2025-rd-packaging
+    url: https://investor.tsmc.com/static/annualReports/2025/english/pdf/2025_tsmc_ar_e_ch5.pdf
+    locator: "CoWoS 研發段"
+    read-scope: "FY2025 年報確認 3.5× 自 2024 年量產。"
+    stance: supporting
+    applicable-period: "FY2025"
+- id: tsmc-55x-qualification-boundary
+  statement: "FY2025 年報與 HPC 平台對 5.5× 的資格描述不同，分別指 2026 年完成資格及 2025 年完成 Q&R。"
+  confidence: needs-verification
+  conditions: ["公開資料無法核對兩種認證是否同一閘門或交付，量產案另查。"]
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: tsmc-2025-rd-packaging
+    url: https://investor.tsmc.com/static/annualReports/2025/english/pdf/2025_tsmc_ar_e_ch5.pdf
+    locator: "CoWoS 研發段"
+    read-scope: "查 CoWoS-L 5.5× qualification 展望。"
+    stance: supporting
+    applicable-period: "FY2025"
+  - source-id: tsmc-3dfabric-hpc-qualification
+    url: https://www.tsmc.com/english/dedicatedFoundry/technology/platform_HPC_tech_WLSI
+    locator: "CoWoS Q&R"
+    read-scope: "查 5.5× Q&R 與量產規劃。"
+    stance: counter
+    applicable-period: "平台頁查核日"
 - id: revenue-and-nodes
   statement: 年報揭露 114 年合併營收新台幣 3 兆 8,090.5 億元，較前一年成長 31.6%，稅後淨利 1 兆 7,178.8 億元，毛利率 59.9%；晶圓出貨約 1,500 萬片十二吋約當量，7 奈米及以下先進製程占晶圓銷售金額 74%（113 年 69%）。
   confidence: well-supported
@@ -138,9 +174,13 @@ gaps:
 
 ## 研究界線
 
+本批新增 3DFabric 官方資料並對照 FY2025 R&D。CoWoS-L 5.5× 的資格時間兩來源口徑存異，應查版本及客戶認證閘門。
+
 本頁以 114 年度股東會年報本冊為依據；此版每頁含兩個印刷頁，引用 PDF 頁碼。年報沒有揭露先進封裝營收，所以 CoWoS 的規模不能從總營收或高效能運算比重推估。「積體電路製造 2.0」市占是公司自訂的市場定義。
 
 ## 產品與用途
+
+在[2.5D 中介層封裝](/next?focus=product-2p5d-interposer-package)中，-S 用全矽、-R 用 RDL、-L 在 RDL 嵌 LSI；3.5× reticle CoWoS-L 明列自 2024 年量產。
 
 - **先進邏輯代工**：N2、N3、N4／N5、N6／N7 等製程，用於 AI 加速器、CPU、手機 SoC 與網路晶片（PDF 第 12、52 頁）。
 - **3DFabric 先進封裝**：CoWoS-S／R／L、SoIC、InFO、SoW 與 COUPE 矽光子引擎（PDF 第 52–53 頁）。
@@ -152,13 +192,19 @@ gaps:
 
 ## 客戶與供應商
 
+既有晶圓代工的供應關係沿用原證據，CoWoS 型號或 HBM 版型的客戶採用需另驗。
+
 114 年為 534 個客戶生產 1 萬 2,682 種產品；前十大客戶占 78%，最大客戶 19%、第二大 17%（PDF 第 7、71 頁）。北美客戶占 75%。客戶端 10-K 具名台積電為代工廠的包括 [Broadcom](/next?focus=company-avgo)、[Credo](/next?focus=company-crdo) 與 [Astera Labs](/next?focus=company-alab)（見關係）。
 
 ## 競爭與替代
 
+與 ASE 同功能比較時固定 HBM 數量、通道密度、封裝熱、良率和責任。全矽、局部 LSI 與 fan-out 的面積不是同一口徑。
+
 年報未具名競爭者，只說競爭對手可能以低價或分散供應鏈爭取訂單（PDF 第 70 頁）。在[先進邏輯代工](/next?focus=role-advanced-logic-foundry)可與[三星電子](/next?focus=company-005930-ks)比較；在[中介層整合](/next?focus=role-interposer-integration)可與[日月光投控](/next?focus=company-3711-tw)比較，日月光 20-F 把台積電的 InFO 列為封裝業的競爭來源。
 
 ## 業務曝險
+
+封裝負載還受中介層、載板、測試與合格出貨影響。HPC 應用比重與 CoWoS 服務費用各有不同口徑。
 
 高效能運算占 58%，前兩大客戶合計 36%；AI 需求同時透過先進製程與 CoWoS 封裝傳到營收，但年報只揭露前者的比重。
 

@@ -49,6 +49,33 @@ tw:
     themes:
     - cpo-silicon-photonics
     notes: 公開資訊觀測站電子書（115 年股東會，114 年度年報）；以 pdftotext 讀取全文，引用印刷頁碼並註 PDF 頁（PDF 頁減 4）；營業比重、銷售地區與進銷貨表以 -table 模式核對。
+  - id: accton-annual-report-2025-ir
+    name: "智邦 2025 Annual Report 公司版"
+    url: https://www.accton.com/wp-content/uploads/2026/06/2025-Annual-Report.pdf
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "公司英版，已讀 Letter to Shareholders 與 Direct Liquid Cooling 的展示與產品進度。"
+  - id: landmark-annual-report-2025-ir
+    name: "聯亞 114 年度年報公司版"
+    url: https://www.lmoc.com.tw/index.php?i=1&id=390&lang=cht&option=module&task=dfile
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "下載頁內部標題仍寫 113，實際封面為 3081 民國 114 年度，115-03-31 刊印。已讀業務範圍及主要商品。"
+  - id: luxnet-annual-report-2025-ir
+    name: "華星光 114 年度年報公司版"
+    url: https://www.luxnetcorp.com.tw/storage/architecture/page~103/page~123/114_4.pdf
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "由官網公司年報索引的 114 年入口下載。已讀第 72、81、83、89 頁。"
   - id: accton-annual-report-2025
     name: 智邦科技 114 年度股東會年報
     url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=2345&year=115&mtype=F&
@@ -510,6 +537,15 @@ us:
     themes:
     - cpo-silicon-photonics
     notes: SEC EDGAR 原文，申報日 2026-03-11、會計年度結束於 2026-01-31（52/53 週制）；已讀 Item 1、1A 與 MD&A 相關段落。
+  - id: nvda-10k-fy2026
+    name: "NVIDIA FY2026 Form 10-K"
+    url: https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm
+    type: filings
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [compute, networking]
+    notes: "已讀封面、Item 1 Data Center／Manufacturing、Item 1A Demand／Supply、Item 7 Customer Concentration。"
   - id: avgo-10k-fy2025
     name: Broadcom FY2025 Form 10-K
     url: https://www.sec.gov/Archives/edgar/data/1730168/000173016825000121/avgo-20251102.htm
@@ -852,6 +888,1356 @@ us:
     - power-bottleneck
 global:
   technical-documents:
+  - id: twse-unimicron-company-3037
+    name: "TWSE 欣興電子 3037 公司資訊"
+    url: https://wwwc.twse.com.tw/pdf/en/3037_en.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "本次只用上市資訊與業務描述。"
+  - id: unimicron-hkex-subsidiary-substrate-draft
+    name: "欣興子公司香港上市文件草稿：載板技術歷史"
+    url: https://www1.hkexnews.hk/app/sehk/2026/108620/a133776/sehk26060800915_c.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "從 FCBGA 製程與歷史核對集團子公司，文件仍為草稿。"
+  - id: unimicron-fy2025-mops-report
+    name: "欣興電子民國 114 年股東會年報"
+    url: https://doc.twse.com.tw/server-java/t57sb01?step=1&colorchg=1&co_id=3037&year=115&mtype=F&
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "封面、股東報告與營運概況；載板與 PCB 並列。"
+  - id: nan-ya-pcb-company-8046
+    name: "南亞電路板：公司簡介"
+    url: https://www.nanyapcb.com.tw/nypcb/english/AboutNanYaPCB/CompanyProfile/Company
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "主要業務、ABF／PP／PCB 與公司身分。"
+  - id: nan-ya-pcb-abf-technology-roadmap
+    name: "南亞電路板：ABF Substrate Technology Roadmap"
+    url: https://www.nanyapcb.com.tw/nypcb/english/Technology/ABFSRoadmap
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "現行能力、各期目標與指定介電牌號分列。"
+  - id: nan-ya-pcb-2025-consolidated
+    name: "南亞電路板 114 年合併財報"
+    url: https://www.nanyapcb.com.tw/nypcb/images/InvestorRelations/FinancialReport/114Q4ENG%28Consolidated%29.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "封面與 IFRS 財務口徑、風險及公司基礎資料。"
+  - id: kinsus-fcbga-substrates-product
+    name: "景碩：FCBGA、SiP 與 PBGA 產品"
+    url: https://www.kinsus.com.tw/en/product/products/products_overview
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "覆晶載板與其他家族，產品用途區分。"
+  - id: kinsus-chairman-capability
+    name: "景碩董事長致詞：ABF 與產品資格"
+    url: https://www.kinsus.com.tw/en/html/message_from_the_chairman/index
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "公司自述大型多層、資格與工廠布局。"
+  - id: twse-kinsus-company-3189
+    name: "TWSE 景碩 3189 公司資訊"
+    url: https://www.twse.com.tw/pdf/ch/3189_ch.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "上市身分及公司基本資料。"
+  - id: kinsus-youth-nvidia-expansion
+    name: "景碩與 NVIDIA 幼獅先進載板產能公告"
+    url: https://www.kinsus.com.tw/zh-tw/news/newsroom/detail/news_category1/news_20261118
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "合約、設備投入、未來合格產能。"
+  - id: nvidia-oct2026-substrate-capacity
+    name: "NVIDIA 2026-10-21 供應鏈產能公告"
+    url: https://nvidianews.nvidia.com/news/nvidia-and-supply-chain-partners-expand-capacity-to-accelerate-ai-infrastructure-buildout
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "IBIDEN、欣興載板以及其他環節的產能安排。"
+  - id: nvidia-nov2026-substrate-capacity
+    name: "NVIDIA 2026-11-17 供應鏈資源公告"
+    url: https://nvidianews.nvidia.com/news/nvidia-expands-commitments-with-supply-chain-partners-to-support-ai-infrastructure-buildout
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "景碩幼獅 ABF 產能計畫、既有供應及時程。"
+  - id: ibiden-flip-chip-pkg-sap
+    name: "IBIDEN Flip Chip PKG 產品"
+    url: https://www.ibiden.com/product/electronics/merchandise/fliptippkg/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "SAP、微孔與 CPU／GPU 應用。"
+  - id: ibiden-4062-stock-fy2025
+    name: "IBIDEN 2026 年 5 月股票公告"
+    url: https://www.ibiden.com/ir/items/cashdividendofsurplus.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "公司、股票 4062 及東京／名古屋掛牌。"
+  - id: ibiden-gama-substrate-capex
+    name: "IBIDEN Gama 高性能封裝載板計畫"
+    url: https://www.ibiden.com/company/2026/02/notice-regarding-capital-investment-plan-for-high-performance-ic-package-substrates.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "分列產線計畫、既有工廠及量產預期。"
+  - id: shinko-jpx-delisting-6967
+    name: "JPX 6967 新光下市公告"
+    url: https://www.jpx.co.jp/english/news/1023/20250520-11.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "下市日 2025-06-06、舊上市主體與規則。"
+  - id: shinko-jicc-merger-2025
+    name: "新光電氣工業電子公告"
+    url: https://www.shinko.co.jp/ir/kk/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "2025-12-01 JICC-04 存續、舊公司消滅。"
+  - id: shinko-pre-delisting-ir-archive
+    name: "Shinko IR Archive"
+    url: https://www.shinko.co.jp/english/ir/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "2025-03 期財報與下市前史料。"
+  - id: shinko-iatf-substrate-certification
+    name: "Shinko IATF 16949 載板認證公告"
+    url: https://www.shinko.co.jp/english/news/docs/20250716-01_en.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "IATF 認證針對列示據點及設計製造範圍。"
+  - id: amkor-semiconductor-test-services
+    name: "Amkor：IC Test Services"
+    url: https://amkor.com/test-services/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "晶圓針測、封裝、系統級測試與據點能力。"
+  - id: pti-flip-chip-package-catalog
+    name: "Powertech Technology：Flip Chips 服務"
+    url: https://www.pti.com.tw/en/service/packaging/flip-chips
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "FCBGA、FCCSP、多晶粒、BT／ETS 與封裝交付。"
+  - id: pti-flip-chip-production-scope
+    name: "Powertech Technology：Advanced Flip Chip Packaging"
+    url: https://www.pti.com.tw/en/tech/advancetechnologycategories/flip-chip
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "原廠列入生產的 BT、ETS、MIS 與記憶體加控制器。"
+  - id: ase-silicon-interposer-2p5d
+    name: "ASE 2.5D and 3D IC Packaging"
+    url: https://ase.aseglobal.com/3d-ic-packaging/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "矽中介層、TSV、HBM 及歷史量產自述。"
+  - id: ase-kh-parent-legal
+    name: "ASE Inc. 財務與法律主體"
+    url: https://ase.aseglobal.com/About%20ASE/Financials/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "ASE Inc. 為 ASE Technology Holding 旗下法律主體。"
+  - id: onto-jetstep-x500
+    name: "Onto Innovation JetStep X500 面板曝光系統"
+    url: https://ontoinnovation.com/products/jetstep-x500/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "面板厚度與變形補償、高階 IC 載板定位。"
+  - id: onto-fy2025-10k
+    name: "Onto Innovation FY2025 10-K"
+    url: https://www.sec.gov/Archives/edgar/data/704532/000119312526066937/onto-20260103.htm
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "NYSE ONTO、X500 有機 laminate、產業與風險。"
+  - id: screen-ledia-qs-package
+    name: "SCREEN PE Ledia Qs 載板直接成像"
+    url: https://www.screen.co.jp/pe/en/info/PE240603E
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "先進封裝載板版、解析、轉讓及上市節點。"
+  - id: screen-ir-day-2025-lithography
+    name: "SCREEN IR Day 2025 曝光系統"
+    url: https://hdjp-corporateweb-files.screen.co.jp/7417/6603/8973/20251216_Mtg_E.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "Ledia Qs 5/5 μm、各產品應用及曝光差異。"
+  - id: atotech-gplate-ultrafine
+    name: "MKS Atotech G-Plate 設備"
+    url: https://www.atotech.com/products/electronics/electronics-equipment/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "去膠渣和化學鍍銅、SAP 適用範圍。"
+  - id: moea-ic-substrate-equipment-19449
+    name: "產發署：PCB／IC 載板製程與設備現況"
+    url: https://www.ida.gov.tw/ctlr?PRO=filepath.DownloadFile&f=executive&id=19449&t=f
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "場域案例、工序與台灣高階載板曝國產能力的資料時點。"
+  - id: csun-2023-annual-equipment
+    name: "志聖年報：PCB／IC 載板製程設備"
+    url: https://s3.ap-northeast-1.amazonaws.com/csun.com.tw/wp-content/uploads/2024/05/%E3%80%90%E4%B8%8A%E5%82%B3%E3%80%912024%E5%B9%B4%E5%A0%B1%E4%B8%AD%E6%96%87.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "台灣供應商既有壓膜、對準、防焊及軟板曝光交付。"
+  - id: mks-esi-geode-a
+    name: "ESI Geode A CO₂ ABF microvia 系統"
+    url: https://www.esi.com/f/geode-a-abf-via-drilling-system
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "ABF 30–85 μm 與系統對位、面板尺寸。"
+  - id: mks-esi-brand
+    name: "MKS ESI Equipment & Solutions"
+    url: https://www.mks.com/b/esi
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "ESI 品牌與 MKS 交付歸屬。"
+  - id: mksi-fy2025-10k
+    name: "MKS Inc. FY2025 10-K"
+    url: https://www.sec.gov/Archives/edgar/data/1049502/000119312526066820/mksi-20251231.htm
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "MKSI Nasdaq、產品與電子封裝終端市場口徑。"
+  - id: contrel-smart-machinery-abf-microvia
+    name: "東捷 ABF 雷射微鑽孔機"
+    url: https://industry.meettaiwan.com/smartmachinery/zh-tw/product/detail/ABF-Laser-Microvia-Drilling
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "展台列 10–50 μm、定位及速度條件。"
+  - id: contrel-company-profile
+    name: "東捷科技公司簡介"
+    url: https://www.contrel.com.tw/corp_brief.php
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "公司身分、營運與製造服務。"
+  - id: mitsubishi-jpca-package-laser
+    name: "三菱電機 JPCA Show 載板雷射設備"
+    url: https://www.mitsubishielectric.co.jp/fa/events-seminars/exhibitions/2024/jpca2024/index.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "ML605GTF5-UVP 與 CO₂ 型號的展示及用途。"
+  - id: itri-abf-microvia-tech
+    name: "工研院 ABF 載板超快雷射微孔技術"
+    url: https://www.itri.org.tw/ListStyle.aspx?DisplayStyle=13_content&MmmID=1036233375626243454&SiteID=1&Trt_idx=10714
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, equipment]
+    notes: "原型／技轉的孔徑、錐角、圓度。"
+  - id: aft-abf-grade-catalog
+    name: "Ajinomoto Fine-Techno ABF 增層膜"
+    url: https://www.aft-website.com/en/products/insulating_film-abf/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "GX、GZ、GL 牌號及 PET／樹脂／保護膜結構。"
+  - id: ajinomoto-stock-data
+    name: "Ajinomoto IR 公司與股票資訊"
+    url: https://www.ajinomoto.co.jp/company/en/ir/faq.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, advanced-packaging]
+    notes: "上市公司、股票代碼與財務文件入口。"
+  - id: ajinomoto-aft-company-and-abf
+    name: "Ajinomoto Fine-Techno 增層膜分工"
+    url: https://www.ajinomoto.co.jp/company/en/presscenter/press/detail/g2016_04_13.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "載板乾膜、varnish 製程及 AFT 法律關係。"
+  - id: ajinomoto-ict-abf-briefing
+    name: "Ajinomoto ICT 事業說明會"
+    url: https://www.ajinomoto.co.jp/company/en/ir/event/business_briefing/main/01113/teaserItems1/01/linkList/00/link/3_ICT_E.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "ABF 原液、塗膜、物流分工與應用。"
+  - id: sekisui-taiwan-build-up-film
+    name: "積水化學 BUF 絕緣增層膜"
+    url: https://www.sekisui.com.tw/product/21/17
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "製程、NX04H／NQ07XP 量產階段與典型 CTE／Dk。"
+  - id: sekisui-nx-build-up-film
+    name: "積水化學工業 熱硬化層間絕緣膜"
+    url: https://www.sekisui.co.jp/search/detail-3585.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "系列、SAP 相容性及具名客戶自述。"
+  - id: waferchem-tbf-material
+    name: "晶化科技 Taiwan Build-Up Film"
+    url: https://www.waferchem.com.tw/taiwan-build-up-film-en.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "TBF 原廠頁，試驗與資格資料按用途另查。"
+  - id: qnity-ic-substrate-materials
+    name: "Qnity IC Substrate 產品"
+    url: https://www.qnityelectronics.com/ic-substrates.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [substrate, materials]
+    notes: "光阻、鍍銅及 IC substrate 產品清單。"
+  - id: ibiden-integrated-report-2026
+    name: "Ibiden Integrated Report 2026：AI 伺服器載板"
+    url: https://www.ibiden.com/ir/items/IntegratedReport2026_en.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "p.9–10 尺寸／層數趨勢、翹曲、細線與研究路徑。"
+  - id: shinko-dll-dll3-substrate
+    name: "Shinko：DLL／DLL3 覆晶載板"
+    url: https://www.shinko.co.jp/english/product/package/substrate/dll.php
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "CO₂／UV 微孔、SAP、堆疊 vias 及 coreless 交付。"
+  - id: shinko-glass-core-tgv-prototype
+    name: "Shinko：玻璃核心 TGV 載板原型"
+    url: https://www.shinko.co.jp/english/news/2026/07/b2e0e1c9fadd06989a3ba3940788615cdb6ddaf4.php
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "ECTC 2025 研究、TGV、CTE、260°C 回焊與限制。"
+  - id: ajinomoto-abf-innovation
+    name: "Ajinomoto：Ajinomoto Build-up Film 材料"
+    url: https://www.ajinomoto.com/innovation/our_innovation/buildupfilm
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "膜料絕緣、雷射及鍍銅製程適性。"
+  - id: intel-lens-glass-substrate-2026
+    name: "Intel：與 Lens Technology 研究玻璃基板"
+    url: https://www.intel.com/content/www/us/en/newsroom/news/corporate/intel-and-lens-technology-collaborate-to-enable-advanced-semiconductor-packaging-for-the-ai-era.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "2026 合作與開發意向。"
+  - id: tsmc-3dfabric-cowos
+    name: "TSMC 3DFabric：CoWoS-S／R／L"
+    url: https://3dfabric.tsmc.com/english/dedicatedFoundry/technology/cowos.htm
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "晶圓級整合的三種架構與 3.5× 與 3.3× 級距。"
+  - id: tsmc-2025-rd-packaging
+    name: "TSMC FY2025 年報：Research and Development"
+    url: https://investor.tsmc.com/static/annualReports/2025/english/pdf/2025_tsmc_ar_e_ch5.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "CoWoS-L 3.5× 生產與 5.5× 資格的年報時程。"
+  - id: tsmc-3dfabric-hpc-qualification
+    name: "TSMC HPC Platform 3DFabric：CoWoS 認證"
+    url: https://www.tsmc.com/english/dedicatedFoundry/technology/platform_HPC_tech_WLSI
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "5.5× Q&R 說明，與年報的資格時程口徑分列。"
+  - id: ase-focos-test-vehicles
+    name: "ASE FOCoS：CF／CL／Bridge 示範件"
+    url: https://ase.aseglobal.com/focos/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "RDL、局部矽橋、HBM 及 BGA substrate 的位置。"
+  - id: ase-kaohsiung-flip-chip
+    name: "ASE Kaohsiung：Flip Chip 封裝"
+    url: https://asekh.aseglobal.com/products-services/flip-chip.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "覆晶的多種組裝交付及技術表。"
+  - id: amkor-tsv-backend
+    name: "Amkor：2.5D/3D TSV backend"
+    url: https://amkor.com/technology/25d-3d-tsv/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "晶圓薄化、TSV reveal 及 backside metallization；TSV 形成另行。"
+  - id: amkor-fcbga-product-spec
+    name: "Amkor：FCBGA Laminate Packaging"
+    url: https://amkor.com/packaging/laminate/fcbga/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [advanced-packaging, substrate]
+    notes: "封裝尺寸、凸塊、基板、節點資格與開發分列。"
+  - id: vicor-nbm-datasheet
+    name: "Vicor NBM2317S60E1560T0R datasheet"
+    url: https://www.vicorpower.com/documents/datasheets/ds-NBM2317S60E1560T0R-VICOR.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "非隔離雙向固定比轉換器，條件式連續功率與熱規格。"
+  - id: vicor-hydra-ii
+    name: "Vicor Hydra II：48 V direct-to-XPU 產品公告"
+    url: https://www.vicorpower.com/press-room/hydra-ii
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "核對 XPU 近負載交付及垂直結構。"
+  - id: vertiv-powerdirect-ordering-datasheet
+    name: "Vertiv PowerDirect Rack：33 kW 電源架與 PSU 資料表"
+    url: https://www.vertiv.com/4994f8/globalassets/products/critical-power/dc-power-systems/vertiv-powerdirect-it-rack/vertiv-powerdirect-it-rack-ds-en-na.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "50 VDC、六顆模組及 PSS5033-21N2 訂貨資訊。"
+  - id: liteon-qct-gb300-power-integration
+    name: "光寶科：與 QCT 展示 GB300 NVL72 電源整合"
+    url: https://www.liteon.com/en/news/press-center/content/liteon-ocp-qct-2025
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "公告有兩家公司具名、33 kW power shelf 與實際展示情境。"
+  - id: liteon-2026-q3-power-outlook
+    name: "光寶科 3Q26：下一季電源產品展望"
+    url: https://www.liteon.com/en/news/press-center/content/quarterly-third-eps-2026
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "分別說明電源出貨展望、800 VDC 原型與公司自報 AI 收入。"
+  - id: tecobar-lb-busway
+    name: "TECOBAR：LB 系列低壓鑄樹脂銅母線"
+    url: https://www.tecobar.com.tw/en/product-396369/LV-Cast-Resin-Insulated-Busway-Copper-Busway-LB-Series.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "低於 1 kV 的銅 busway，按額定及安裝條件選型。"
+  - id: teco-2026-tecobar-affiliation
+    name: "東元：2026 新加坡模組化資料中心展示"
+    url: https://www.teco.com.tw/en-us/press/news/TECO-Showcases-Integrated-Modular-Data-Center-Solutions-in-Singapore--Targeting-Southeast-Asia-s-AI-Infrastructure-Opportunities?tags=1014
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "以公告確認 TECOBAR 為集團子公司及其展示品。"
+  - id: vertiv-powerbar-impb-datasheet
+    name: "Vertiv PowerBar iMPB 北美 datasheet"
+    url: https://www.vertiv.com/492f82/globalassets/shared/vertiv-powerbar-impb-data-sheet-sl-70397.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "三相 600 VAC、160–800 A、分接盒與北美規格。"
+  - id: vertiv-geist-universal-rpdu
+    name: "Vertiv Geist：Rack PDU brochure"
+    url: https://www.vertiv.com/globalassets/products/critical-power/power-distribution/vertiv-geist-rpdu---brochure.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "指定料號的供電架構、插座和監控方式。"
+  - id: delta-vilink-rpdu-manual
+    name: "Delta ViLink：Metered rPDU 操作手冊"
+    url: https://filecenter.deltaww.com/rPDU_Selector/Files/Manual-1-PDUA117BSA23500.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "架內供電與監控功能，個別額定另查。"
+  - id: apc-apdu10350me-rpdu
+    name: "Schneider Electric APC NetShelter APDU10350ME"
+    url: https://www.se.com/sg/en/product/APDU10350ME/apc-netshelter-rack-pdu-advanced-metered-3phase-22-1kw-400v-32a-or-17-3kw-415v-30a-48-outlets-iec309/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "三相計量 rPDU、端點與兩種額定條件。"
+  - id: ocp-orv3-bbu-module
+    name: "OCP：Open Rack V3 BBU Module Specification"
+    url: https://www.opencompute.org/documents/open-rack-v3-bbu-module-spec-1-4-pdf/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "3 kW battery pack、放電介面及 SOH 測試期間 5+1 備援。"
+  - id: liteon-datacloud-2025-power
+    name: "LITEON：Datacloud Global Congress 2025 電源產品"
+    url: https://www.liteon.com/en/news/press-center/content/liteon-datacloudglobalcongress
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "分別列 72 kW BBU、電源架及 capacitor shelf 展示。"
+  - id: vertiv-800vdc-power-rack-2026
+    name: "Vertiv：800 VDC 供電技術"
+    url: https://www.vertiv.com/en-in/about/news-and-events/news-releases/2026/vertiv-advances-800-vdc-power-architectures-to-support-growing-ai-data-center-demands/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "對外公布 800 VDC power rack 內建 BBU 的設計。"
+  - id: vertiv-trinergy-ups-brochure
+    name: "Vertiv Trinergy：UPS Technical Data"
+    url: https://www.vertiv.com/4a095b/globalassets/shared/vertiv-trinergy-ups-brochure-sl-71331.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "同系列按 35°C、電壓和功率標示不同配置。"
+  - id: delta-modulon-dph-ups
+    name: "Delta Modulon DPH：50–300／500／600 kVA UPS"
+    url: https://filecenter.deltaww.com/Products/download/07/070103/Catalogue/Leaflet_UPS_DPH-300-500-600kVA_en_v3.2.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "模組化 UPS，列分模式效率、熱插拔與額定容量。"
+  - id: schneider-galaxy-vx-ups-modes
+    name: "Schneider Galaxy VX：UPS 與電池櫃運行模式"
+    url: https://productinfo.se.com/galaxyvx_ul/990-914303-energy-storage-system-for-ul9540-galaxy-vx-ups-and-galaxy-lithium-ion-battery-cabinets-operation/English/990-914303_EN.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "比較雙變換、電池、靜態及外部維護旁路。"
+  - id: vertiv-powerboard-lv-switchgear
+    name: "Vertiv PowerBoard：低壓開關設備"
+    url: https://www.vertiv.com/en-asia/products-catalog/critical-power/switchgear/vertiv-ei-low-voltage-switchgear-iec/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "800–6,300 A 低壓組合、保護及分隔設計。"
+  - id: schneider-mcset-24kv-ratings
+    name: "Schneider Electric MCSeT：24 kV 櫃額定值"
+    url: https://productinfo.se.com/mcset_24kv_installation_guide/bqt6904400_mcset_installation-guide/English/BQT6904400_MCSeT4_Installation_Guide_DD00597955.xml/%24/TPC_MCSeT4IG_MCSeTCubicleRatingsCPT_DD00739416
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "按中壓等級分列正常電流及短時耐受。"
+  - id: teco-transformer-catalog
+    name: "東元電機：變壓器產品與規格"
+    url: https://www.teco.com.tw/en-us/products/power-transmission/transformer/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "區分乾式及油浸配電、150／161 kV 油浸電力用；額定為產品範圍。"
+  - id: teco-transformer-spec-guide
+    name: "東元電機：變壓器型錄"
+    url: https://www.teco.com.tw/upload/userfiles/files/%E8%AE%8A%E5%A3%93%E5%99%A8%E5%9E%8B%E9%8C%84%E8%8B%B1%E6%96%87%E7%89%88_251210_final_TECO_Transformers.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "乾式乾鑄樹脂 22.8 kV／380 V 範例表含無載、75°C 負載損耗及阻抗。"
+  - id: teco-datacenter-solutions
+    name: "東元電機：資料中心解決方案"
+    url: https://www.teco.com.tw/en-us/solution/data-center/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "區分工程、開關設備、UPS、母線與變壓器；產品和項目驗收分開。"
+  - id: teco-2026-agm
+    name: "東元電機：2026 年股東會與 FY2025 結果"
+    url: https://www.teco.com.tw/en-us/press/news/20260528?tags=2260
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "1504 TWSE、FY2025 合併總收入與 AIDC 策略。"
+  - id: eaton-secondary-substations-guide
+    name: "Eaton Secondary Unit Substations Design Guide"
+    url: https://www.eaton.com/content/dam/eaton/products/design-guides---consultant-audience/eaton-secondary-unit-substation-design-guide-dg022017en.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "低壓側單元變電站、乾式 cast coil 與液浸比較參考。"
+  - id: eaton-2025-annual
+    name: "Eaton Corporation plc：2025 Annual Report"
+    url: https://www.eaton.com/content/dam/eaton/company/investor-relations/annual-report/eaton-2025-annual-report.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "10-K 封面確認愛爾蘭註冊與 NYSE 普通股上市。"
+  - id: hitachi-energy-hidry
+    name: "Hitachi Energy：HiDry 乾式變壓器"
+    url: https://www.hitachienergy.com/us/en/products-and-solutions/transformers/distribution-transformers/dry-type-transformers/hidry-dry-type-transformers-40-5-kv
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "高級距乾式設備的電壓、容量和冷卻選項。"
+  - id: hitachi-energy-ownership
+    name: "日立：Hitachi Energy 剩餘股權收購公告"
+    url: https://www.hitachi.com/en/press/articles/2022/09/0930/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "2022 年簽訂收購剩餘股權之公告；日立 6501，設備公司保留原法律主體。"
+  - id: mps-mp2965-datasheet
+    name: "MPS MP2965：雙迴路數位 PWM controller datasheet"
+    url: https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/EN/sku/MP2965
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "VR13.HC／AVSBus controller，典型應用圖列外部功率級及電感。"
+  - id: mps-mpm3698-datasheet
+    name: "MPS MPM3698：整合式降壓 power module datasheet"
+    url: https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MPM3698GBH/document_id/11450/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "整合度、連續與峰值電流、功能與熱資料。"
+  - id: renesas-raa228228-datasheet
+    name: "Renesas RAA228228：多相控制器 Short-Form Datasheet"
+    url: https://www.renesas.com/en/document/sds/raa228228-short-form-datasheet
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "16+4 智慧功率級應用圖。"
+  - id: vicor-vtm-095ba0-datasheet
+    name: "Vicor VTM48KP020x095BA0：current multiplier datasheet"
+    url: https://www.vicorpower.com/documents/datasheets/VTM48K_020_095BA0.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "Rev 1.5；標註不建議新設計，作為架構與額定口徑例。"
+  - id: delta-rbc-ubc-ai-converters
+    name: "Delta：AI 伺服器 RBC／UBC DC/DC 方案"
+    url: https://brandnews.deltaww.com/en/BrandCircleDetail/12476
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power]
+    notes: "說明中間匯流排與負載端穩壓的分工。"
+  - id: ocp-delta-18kw-power-shelf
+    name: "OCP Marketplace：Delta 18 kW ORv3 power shelf"
+    url: https://www.opencompute.org/marketplace/facilities-physical-infrastructure/delta-18kw-1ou-open-rack-v3-power-shelf/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "台達提交的 18 kW 電源架，含 5+1 輸出及 48／50 VDC。"
+  - id: delta-33kw-power-shelf
+    name: "Delta：33 kW 電源架與 OCP 供電解決方案"
+    url: https://www.deltaww.com/en-US/products/power-solutions
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "產品與展示公告列 5+1、PSU 熱插拔及瞬態條件。"
+  - id: ocp-acbel-33kw-power-shelf
+    name: "OCP Marketplace：AcBel 19 吋 33 kW power shelf"
+    url: https://www.opencompute.org/marketplace/facilities-physical-infrastructure/acbel-19-33kw-power-shelf/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "康舒提交的 19 吋 1RU 三相 AC 轉 50VDC 電源架。"
+  - id: liteon-ocp-2023-power
+    name: "LITEON：ORv3 power 與備援產品展示"
+    url: https://www.liteon.com/en/news/press-center/content/683
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "供應商公告區分 power shelf、PSU 與備援，量產查核另列。"
+  - id: ocp-orv3-hvdc-100kw-shelf
+    name: "OCP：ORV3 HVDC-LVDC 100 kW Power Shelf Specification"
+    url: https://www.opencompute.org/documents/orv3-hvdc-lvdc-100kw-power-shelf-spec-1-0-0-pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "機架側 ±400 VDC 輸入、48 V 等級輸出及接頭介面。"
+  - id: ocp-diablo-400-power-spec
+    name: "OCP Diablo 400 v0.7.0：Rack and Power"
+    url: https://www.opencompute.org/documents/ocp-specification-diablo-400-v0-7-0-final-pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [power, datacenter]
+    notes: "端到端效率的輸入電壓與負載分組，為規格要求。"
+  - id: oif-800zr-ia
+    name: "OIF 800ZR Implementation Agreement 01.0"
+    url: https://www.oiforum.com/wp-content/uploads/OIF-800ZR-01.0.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2024-10 版，已讀 §§1–2 的單跨、放大、點對點 DWDM 規格與用途。"
+  - id: broadcom-th5-bailly-production-context
+    name: "Broadcom 第三代 CPO 與 TH5-Bailly 生產公告"
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-announces-third-generation-co-packaged-optics-cpo
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀第三代 200G/lane 與第二代 Bailly 生產、合作夥伴說明。"
+  - id: fabrinet-optical-manufacturing-services
+    name: "Fabrinet Optical Communications 代工交付"
+    url: https://fabrinet.com/markets/opticalcommunications
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀光封裝、對準、整合、NPI 與量產服務；僅為同交付條件的技術比較參照。"
+  - id: luxnet-cwdm-milestones
+    name: "華星光光通訊產品開發沿革"
+    url: https://www.luxnetcorp.com.tw/about-111-page179
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀上市主體沿革及民國 108 至 113 年 CW DFB 晶粒與模組組裝里程碑。"
+  - id: pci-sig-retimer-integrators-2026
+    name: "PCI-SIG Integrators List PCIe 6.x Retimers"
+    url: https://pcisig.com/developers/integrators-list?field_il_comp_product_type_value=All&keys=&order=created&sort=desc
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 64 GT/s x16 的 CPR61664、PT6162 與日期，並對照 32 GT/s 名單。"
+  - id: astera-aries6-compliance-announcement
+    name: "Astera Labs Aries 6 與 Scorpio PCI-SIG 相容性說明"
+    url: https://www.asteralabs.com/resources/blog/industry-leading-high-volume-scorpio-smart-fabric-switches-and-aries-smart-retimers-achieve-compliance-at-first-pci-sig-6-x-workshop/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀公司對 Aries／Scorpio 的量產及相容測試描述，未見料號出貨數。"
+  - id: credo-800g-2xdr4-osfp-rhs
+    name: "Credo 800G 2×DR4 ZeroFlap OSFP-RHS 光模組"
+    url: https://credosemi.com/products/zeroflap-optical-transceivers/800g-2xdr4-zeroflap-transceiver-osfp-rhs/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 500 m 平行 SMF、MPO-12 與 PILOT／Host SDK 遙測條件。"
+  - id: credo-800g-zeroflap-ga
+    name: "Credo 800G ZeroFlap GA 公告"
+    url: https://s205.q4cdn.com/511065572/files/doc_news/Credo-Launches-800G-ZeroFlap-Optical-Transceivers-Engineered-for-AI-Networks-2026.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "原廠 2026-03-17 公告 800G 2×DR4 一般供應及遙測軟體。"
+  - id: broadcom-bcm85822-optical-dsp-brief
+    name: "Broadcom BCM85822 PAM4 PHY Product Brief"
+    url: https://docs.broadcom.com/doc/85822-DIE-PB
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "85822-DIE-PB100，已讀 8:4 gearbox、整合 driver 與 FEC。"
+  - id: broadcom-tomahawk-6-volume-2026
+    name: "Broadcom Tomahawk 6 量產出貨公告"
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-now-shipping-worlds-first-1024-tbps-switch-production
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2026-03-12，已讀家族量產出貨與 SerDes。"
+  - id: marvell-alaska-a-mv-cha180c0c
+    name: "Marvell Alaska A MV-CHA180C0C AEC DSP 資料"
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/phys-transceivers/marvell-alaska-a-800g-pam4-dsp-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2022-02 版，已讀 8:8、112G PAM4 和線端應用。"
+  - id: marvell-alaska-p-mv-chp10160
+    name: "Marvell Alaska P MV-CHP10160 PCIe Retimer 資料"
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/pcie-retimers/marvell-alaska-p-gen6-16l-pcie-retimer-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2024-05 版，已讀 PCIe 6 x16、64 GT/s、CXL 3.x 與通道條件。"
+  - id: marvell-alaska-p-adoption-2025
+    name: "Marvell Alaska P PCIe Retimer 採用公告"
+    url: https://www.marvell.com/company/newsroom/marvell-announces-pcie-retimers-adoption-by-ai-dc-providers.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2025-12-09，已讀系列採用與合作夥伴引言。"
+  - id: marvell-fastlinq-41000-brief
+    name: "Marvell FastLinQ 41000 Ethernet 介面卡簡介"
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/ethernet-adaptersandcontrollers/marvell-ethernet-adapters-fastlinq-41000-series-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "Rev J，2021-11，已讀表 3 的雙埠 25／10GbE 料號，限歷史產品。"
+  - id: broadcom-bcm57708-nic-brief
+    name: "Broadcom BCM57708 Ethernet NIC Adapters Product Brief"
+    url: https://docs.broadcom.com/doc/57708-PB
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "57708-PB103，2026-03-13。已讀網路埠、主機介面、RoCE 與料號。"
+  - id: nvidia-connectx8-compatible-opns
+    name: "NVIDIA ConnectX-8 OPN 與韌體相容清單"
+    url: https://networking-docs.nvidia.com/connectx8fwrn/40451020/firmware-compatible-products
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "v40.45.1020 表列 C8180、C8240 可訂購料號及速率。"
+  - id: nvidia-connectx8-hardware-specs
+    name: "NVIDIA ConnectX-8 SuperNIC 硬體規格"
+    url: https://networking-docs.nvidia.com/connectx8hw/specifications
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 C8180 規格，主機介面、散熱、單 OSFP cage 及協定分開核對。"
+  - id: nvidia-connectx8-system-requirements
+    name: "NVIDIA ConnectX-8 SuperNIC 系統需求"
+    url: https://networking-docs.nvidia.com/connectx8hw/introduction
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 Socket Direct 及 System Requirements、Features and Benefits，依 OPN 與驅動配套。"
+  - id: advantech-pcie-2711-datasheet
+    name: "研華 PCIE-2711 200GbE NIC 資料表"
+    url: https://advdownload.advantech.com/productfile/PIS/PCIE-2711/file/PCIE-2711_DS%28101722%2920221019135351.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2022-10-17 版，已讀單埠 200GbE、PCIe 4 x16、QSFP56 與 ConnectX-6 控制器。"
+  - id: silicom-o32cg2b608-nic
+    name: "Silicom O32CG2B608 200GbE OCP NIC 型錄"
+    url: https://www.silicom-usa.com/wp-content/uploads/2026/05/O32CG2B608-200G-OCP-Broadcom-based.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 200GbE、使用 BCM57608 的卡級交付與應用。"
+  - id: senao-sx906-smartnic
+    name: "神準 SX906 SmartNIC 產品頁"
+    url: https://www.senaonetworks.com/en/products/server/smartnic/sx906/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 Intel Xeon 6 SoC、主機端卸載與總帶寬依配置的限制。"
+  - id: aph-mpo-cable-assemblies
+    name: "Amphenol Fiber Optic Products MPO 組件"
+    url: https://www.amphenol-fop.com/indoor-cable-assemblies/mpo-cable-assemblies
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀 Features 與 Specifications，纖芯、極性與單／多模損耗級別依組件。"
+  - id: bizlink-xfs-optical-acquisition
+    name: "貿聯完成收購 XFS 公告"
+    url: https://www.bizlinktech.com/news/bizlink-completes-acquisition-of-xfs-communications-inc-advancing-optical-interconnect-leadership-for-ai-and-data-center-applications
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "2026-01-05，已讀 3665 上市身分、透過子公司完成收購與 XFS 交付範圍。"
+  - id: bizlink-mpo-assemblies
+    name: "貿聯 MPO 產品清單"
+    url: https://www.bizlinktech.com/product-categories/mpo-connectors
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀 All Products 所列 APC 光纜與 PPB 連接器，個別性能仍需料號規格。"
+  - id: corning-edge8-ge7e796glzddu030m
+    name: "Corning EDGE8 GE7E796GLZDDU030M 產品資料"
+    url: https://ecatalog.corning.com/optical-communications/EMEA/en/Fiber-Optic-Cable-Assemblies/Indoor-Cable-Assemblies/Multifiber-Indoor-Cable-Assemblies/EDGE8%C2%AE-MTP%C2%AE-Trunk/p/GE7E796GLZDDU030M
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀整線纖芯、極性、彎曲半徑、安裝環境與各接頭損耗口徑。"
+  - id: corning-aen163-edge8-loss
+    name: "Corning AEN163 光纖配線技術說明"
+    url: https://www.corning.com/catalog/coc/documents/application-engineering-notes/AEN163.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "Rev 1，第 3 頁表 3 及配接示例；源文件為 FICON 佈線，僅引用組件損耗方法。"
+  - id: senko-mpo-plus-standard
+    name: "SENKO MPO-PLUS Standard Connector 產品頁"
+    url: https://www.senko.com/product/mpo-plus-standard-connector/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀 MPO connector 的導引針、纖芯容量與規格，限光接頭零件交付。"
+  - id: senko-advanced-components-history
+    name: "SENKO Advanced Components 公司沿革"
+    url: https://www.senko.com/corporate/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [interconnect]
+    notes: "已讀 SENKO History，區分美國子公司與日本母公司。"
+  - id: broadcom-tomahawk-6-shipping
+    name: "Broadcom Tomahawk 6 交換晶片出貨公告"
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-ships-tomahawk-6-worlds-first-1024-tbps-switch
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 2025-06-03 開頭、SerDes 與連接方案。限晶片家族公布能力。"
+  - id: broadcom-tomahawk-ultra-release
+    name: "Broadcom Tomahawk Ultra scale-up 公告"
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-ships-tomahawk-ultra-reimagining-ethernet-switch-hpc
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 2025-07-15 公告的流控、重傳與 scale-up 用途。"
+  - id: broadcom-jericho4-release
+    name: "Broadcom Jericho4 跨資料中心公告"
+    url: https://investors.broadcom.com/news-releases/news-release-details/broadcom-ships-jericho4-enabling-distributed-ai-computing-across
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀深緩衝、MACsec、HyperPort 與 Availability。內文按送樣處理。"
+  - id: marvell-teralynx-10-brief
+    name: "Marvell Teralynx 10 交換晶片產品簡介"
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/switching/marvell-teralynx-10-data-center-ethernet-switch-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 overview、block diagram、Key Features 及埠組態。"
+  - id: marvell-teralynx-10-production
+    name: "Marvell Teralynx 10 量產公告"
+    url: https://www.marvell.com/company/newsroom/marvell-teralynx-512t-ethernet-switch-enters-volume-production-for-global-ai-cloud-deployments.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 2024-07-25 量產、SONiC／SAI 與未具名部署說明。"
+  - id: accton-as9817-64o-datasheet
+    name: "智邦 AS9817-64O 800G 交換器資料表"
+    url: https://www.accton.com/wp-content/uploads/2023/09/2023-036-AS9817-64O_Accton-R01-20230905-1.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "E092023-AP-R01，已讀埠、晶片、ONIE、風道、PSU 與風扇規格。"
+  - id: arista-7060x6-datasheet
+    name: "Arista 7060X6 交換器資料表"
+    url: https://www.arista.com/assets/data/pdf/Datasheets/7060X6-Datasheet.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "04-0053-08，已讀 Model Overview、EOS 與典型／最大功耗腳註。"
+  - id: astera-aries-retimer-2024
+    name: "Astera Labs Aries PCIe／CXL Retimer Portfolio Brief"
+    url: https://www.asteralabs.com/wp-content/uploads/2024/03/2402_Astera_Labs-Aries_Smart_DSP_Retimer_Family-Product_Brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2024-02 版，已讀 Benefits and Features、Description 及產品家族表。"
+  - id: astera-retimer-technical-faq
+    name: "Astera Labs PCIe Retimer 技術 FAQ"
+    url: https://www.asteralabs.com/resources/faqs/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀插入損耗、CDR、redriver 與通道配置的 PCIe 問答。"
+  - id: credo-toucan-gen6x16-pcisig-announcement
+    name: "Credo Toucan Gen6x16 PCIe 6.x 相容性公告"
+    url: https://investors.credosemi.com/news-events/news/news-details/2026/Credos-Toucan-PCIe-Retimer-Achieves-PCI-Express-Compliance-and-Joins-PCI-Express-6-x-Integrators-List/default.aspx
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2026-08-31 廠商公告，已讀 64 GT/s 測試及發佈範圍。"
+  - id: credo-800g-shift-dd-breakout-brief
+    name: "Credo 800G SHIFT QSFP-DD 分接 AEC Product Brief"
+    url: https://credosemi.com/wp-content/uploads/Credo_AEC_800G_SHIFT_DD-2xDD_Product_Brief_2025Sept26.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀分接埠、線路 lane、BER 測試與料號表。"
+  - id: credo-800g-span-osfp-brief
+    name: "Credo 800G SPAN OSFP AEC Product Brief"
+    url: https://credosemi.com/wp-content/uploads/2024/10/Credo-HiWire-SPAN-AEC-800G-CAC8XXXX1A1B-C1-Product-Brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "REV 100924，已讀 800G OSFP 對 OSFP-RHS、溫度、長度、BER 及料號表。"
+  - id: astera-taurus-scm-brief
+    name: "Astera Labs Taurus Ethernet Smart Cable Modules Product Brief"
+    url: https://www.asteralabs.com/wp-content/uploads/2025/05/PB_Taurus_Ethernet_Smart_Cable_Modules.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: "已讀 Description 與料號表。800G 例為 3 m 30 AWG 的線纜設計，交付為 SCM。"
+  - id: ipsr-inp-iii-v-roadmap
+    name: "IPSR-I InP 與 III-V 族製程技術路線圖"
+    url: https://www.ipsr-i.org/03-technologies/indium-phosphide-and-iii-v-compounds
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 §§2.2.1、2.2.5、2.3 及磊晶目標表。路線圖數值為目標，非商業規格。"
+  - id: lumentum-hl13b5cp00-eml
+    name: "Lumentum HL13B5CP00-Ln 100G EML"
+    url: https://www.lumentum.com/en/products/eml-100g-pam4-cwdm-laser
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 Overview 的晶片整合、波長、速率與合格聲明。"
+  - id: coherent-100g-200g-eml
+    name: "Coherent 100G／200G InP EML 晶片"
+    url: https://www.coherent.com/100-gbps-and-200-gbps-eml.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 Description 與 Specifications 的 PAM4、CWDM、溫度與封裝選項。"
+  - id: lumentum-100g-dml-sampling
+    name: "Lumentum 100G PAM4 DML 送樣公告"
+    url: https://investor.lumentum.com/financial-news-releases/news-details/2020/Lumentum-Announces-Industry-First-100g-PAM4-DMLs-Available-For-Sampling-2020-12-7/default.aspx
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2020-12-07 公告。已讀送樣、速率、用途與成本說法，未讀到同條件比較。"
+  - id: coherent-cw-inp-silicon-photonics
+    name: "Coherent 矽光子用 InP CW DFB 雷射公告"
+    url: https://www.coherent.com/news/press-releases/high-efficiency-lasers-for-silicon-photonics-transceivers
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "2024-08-28 公告。已讀 O-band、CW DFB 與矽光子收發模組分工。"
+  - id: landmark-datacenter-epiwafer
+    name: "聯亞光電資料中心磊晶產品頁"
+    url: https://www.lmoc.com.tw/index.php?id=110&index=2&lang=en&option=module&task=pageinfo
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 DFB、VCSEL、CW、矽光子及 GaAs PD 磊晶的分類與部分加工選項。"
+  - id: iqe-inp-epiwafer
+    name: "IQE InP 磊晶產品頁"
+    url: https://www.iqep.com/products/inp/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: "已讀 Wafer structures offered。涵蓋 InP FP、DFB、EML 與檢光磊晶。"
+  - id: cisco-qsfp-dd800-datasheet
+    name: Cisco QSFP-DD800 光模組資料表
+    url: https://www.cisco.com/c/en/us/products/collateral/interfaces-modules/transceiver-modules/qsfp-dd800-transceiver-modules-ds.html
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: 查閱 2026-09-21 版產品說明、表 2–5 及相容性入口，VR8 的距離採產品段落與表 3／4。
+  - id: lpo-msa-100g-dr
+    name: LPO MSA 100G-DR-LPO Revision 1.0
+    url: https://www.lpo-msa.org/files/live/sites/lpomsa/files/specs/LPO_MSA_Specification_v1p2_final.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: 公開規格以封面 Revision 1.0 識別，查閱摘要及收發功能、主機電介面條件。
+  - id: arista-800g-cables-qa
+    name: Arista 800G 光模組與線纜 Q&A
+    url: https://www.arista.com/assets/data/pdf/Datasheets/Arista-800G_Optics_FAQ.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking, interconnect]
+    notes: 2026-09 版（04-0046-07），查閱第 3 頁的 800G 直連 AEC 料號及長度。
+  - id: marvell-spica-gen2-brief
+    name: Marvell Spica Gen2 MV-CD822 Product Brief
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/dsp/marvell-spica-gen2-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: 2022-12 版，查閱料號、功能與適用模組架構。
+  - id: marvell-nova-mv-cd432-brief
+    name: Marvell Nova MV-CD432 Product Brief
+    url: https://www.marvell.com/content/dam/marvell/en/public-collateral/dsp/marvell-nova-1.6t-pam4-dsp-for-optical-transceiver-applications-product-brief.pdf
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: 2023-03 版，已讀主機與線側 lane 映射、整合 driver、診斷及 FEC；限 MV-CD432。
+  - id: credo-dove-800-product
+    name: Credo Dove 800 官方產品頁
+    url: https://credosemi.com/products/optical-dsp/dove-800/
+    type: technical-documents
+    access: free
+    reachability: verified
+    checked: '2026-11-24'
+    segments: [networking]
+    notes: 產品頁無修訂日期，已讀 Dove 80X 說明與 Dove 800 規格表。driver 配置依型號。
   - id: aph-liquid-cooling-product-page
     name: Amphenol Industrial 液冷快接頭產品頁
     url: https://amphenol-industrial.com/products/liquid-cooling-systems/

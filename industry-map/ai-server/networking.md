@@ -126,6 +126,8 @@ technical-profile:
 
 ## 傳導鏈
 
+由[AI 叢集網路](/next?focus=application-ai-networking)可接續[光／電互連比較與需求案例](/next?focus=research-ai-networking-optical-electrical)。先分 scale-up、scale-out 與跨機房，再核對端點、媒介與元件交付。
+
 **`eda-ip`、`foundry` → 本環節**：工具／介面 IP 與製程的認證和產能，影響 switch ASIC、DSP 及連接晶片的上市、供給與成本。
 
 **本環節 → `odm` → `datacenter`**：網通料件交期與新速率平台的互通測試影響整機櫃交付。加速器數量增長是否帶動更多網通價值量，還取決於拓樸、每個交換器可承載的規模與重用比例，屬 **inference**。

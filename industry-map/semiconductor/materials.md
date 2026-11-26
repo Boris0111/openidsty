@@ -135,6 +135,8 @@ technical-profile:
 
 ## 傳導鏈
 
+[載板增層介電膜](/next?focus=product-substrate-build-up-dielectric)是層間介電膜，原料、壓合與成品由不同供應者交付，參見[先進封裝與 ABF 載板的規格傳導](/next?focus=research-chip-integration-abf-demand)。
+
 `materials → foundry`：材料純度、認證與交期影響晶圓產量及良率；`materials → advanced-packaging`：封裝材料與製程污染控制影響大型封裝可靠度。`materials → substrate / pcb`：規格升級先形成材料資格認證，再形成載板與板材供應。透過 2nm 題材取得 `equipment`，表示新節點同時改變材料與設備需求。**inference**：封裝擴產增加材料機會，但環球晶等矽晶圓公司是否取得增量，要確認是否涉及矽中介層等實際用料；不能把全清單當直接受惠者。
 
 ## 監測指標

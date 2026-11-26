@@ -7,7 +7,7 @@ aliases:
 - advanced packaging
 summary: 把運算晶片、HBM 與載板整合成可上板的封裝。
 question: 晶片、記憶體與電路板，怎麼一層層接起來？
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 definition: 把運算晶片、HBM 與載板整合成可上板的封裝。
 purpose: 分開中介層整合、委外封裝與封裝載板三層，辨認各自的供應者。
 boundary: 中介層／RDL、封裝載板、D2D 介面與系統電路板是不同層次；封裝能力不等於載板或系統板能力。
@@ -33,11 +33,13 @@ flow-steps:
   note: 封裝再接到伺服器電路板
 claims: []
 gaps:
-- status: not-researched
-  reason: 已有 4 家深研公司在此應用的角色附能力連結（見各角色與公司頁）；其餘列名公司依既有環節角色列出，產品能力、客戶與收入尚未研究。
+- status: not-obtained
+  reason: "公開產品資料支援分層比較；同條件規格、認證、良率與成本另核。"
 ---
 
 ## 定義與用途
+
+[2.5D 中介層封裝](/next?focus=product-2p5d-interposer-package)、[覆晶與委外封裝服務](/next?focus=product-flip-chip-package-service)與[ABF 封裝載板](/next?focus=product-abf-substrate)各有交付。向下連到[伺服器多層 PCB](/next?focus=product-server-multilayer-pcb)，往製程查看[載板增層介電膜](/next?focus=product-substrate-build-up-dielectric)、[載板雷射微孔設備](/next?focus=product-substrate-laser-microvia-drill)和[載板線路曝光設備](/next?focus=product-substrate-patterning-lithography)。完整條件與案例見[先進封裝與 ABF 載板的規格傳導](/next?focus=research-chip-integration-abf-demand)。
 
 把運算晶片、HBM 與載板整合成可上板的封裝。分開中介層整合、委外封裝與封裝載板三層，辨認各自的供應者。對應既有環節：[先進封裝](/next?focus=segment-advanced-packaging)、[ABF 載板](/next?focus=segment-substrate)。
 

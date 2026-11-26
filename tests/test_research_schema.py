@@ -75,9 +75,11 @@ class ResearchSchemaTests(unittest.TestCase):
         docs = [legacy.parse_doc(p, legacy.Errors())[0] for p in (map_dir / 'companies').glob('*.md')]
         by_key = {key: obj for obj in docs for key in obj['legacy-keys']}
         self.assertEqual(set(by_key), set(old))
-        self.assertEqual(len({d['entity-id'] for d in docs}), 95)
-        self.assertEqual(sum(len(d['roles']) for d in docs), 100)
+        # Check the migrated baseline independently of companies added to the research registry.
+        self.assertEqual(len({company['entity-id'] for company in by_key.values()}), 95)
+        self.assertEqual(sum(len(company['roles']) for company in by_key.values()), 100)
         for key, expected in old.items():
+            self.assertEqual(by_key[key]['entity-id'], expected['entity-id'])
             self.assertEqual(by_key[key]['roles'], expected['roles'])
             self.assertLessEqual(set(expected['aliases']), set(by_key[key]['aliases']))
             self.assertEqual(by_key[key]['source-identifiers'], expected['source-identifiers'])

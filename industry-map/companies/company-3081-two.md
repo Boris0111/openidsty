@@ -6,6 +6,8 @@ name-zh: 聯亞
 aliases:
 - LandMark Optoelectronics
 - 聯亞光電
+- 聯亞光電工業股份有限公司
+- LandMark Optoelectronics Corporation
 summary: III-V 族磊晶片純代工廠，磊晶片及加工品占營收 99%；114 年度營收成長 82%，四家匿名客戶各占一成以上，前三大客戶產品主要用於資料中心與光通訊。
 legacy-keys:
 - 3081.TWO
@@ -18,7 +20,7 @@ listings:
   valid-to: null
 source-identifiers: []
 research-depth: deep
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: tw-mops-summary
   confidence: well-supported
@@ -104,6 +106,25 @@ claims:
     read-scope: 已讀原料與供應商表
     stance: supporting
     applicable-period: 113 至 114 年度
+- id: datacenter-epiwafer-delivery
+  statement: "聯亞的 114 年報列 MOCVD 生產 InP 雷射（1200–1650 nm）、檢光及 GaAs 磊晶產品。Data center 產品頁列 DFB、高功率 CW 的光柵／p-metal 選項、850 nm VCSEL 與 GaAs PD 磊晶。"
+  confidence: well-supported
+  conditions:
+  - "能力為磊晶片及約定加工。年報 99.21% 為磊晶及加工品合計，未列 EML 或 CW 分項；官網加工選項不代表已完成晶粒。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: landmark-annual-report-2025-ir
+    url: https://www.lmoc.com.tw/index.php?i=1&id=390&lang=cht&option=module&task=dfile
+    locator: "封面、第 69 頁（PDF 73）業務範圍與商品"
+    read-scope: "重讀法律主體、MOCVD、產品比重與材料。"
+    stance: supporting
+    applicable-period: "114 年度，115-03-31 刊印"
+  - source-id: landmark-datacenter-epiwafer
+    url: https://www.lmoc.com.tw/index.php?id=110&index=2&lang=en&option=module&task=pageinfo
+    locator: "Data center：DFB、VCSEL、High Power CW、GaAs PD"
+    read-scope: "已讀各族與光柵、p-metal、波長。"
+    stance: supporting
+    applicable-period: "官網 2026-11-24 查閱"
 gaps:
 - status: not-public
   reason: 年報未揭露客戶名稱、各應用營收與具名競爭者。
@@ -111,13 +132,19 @@ gaps:
 
 ## 供應角色
 
+聯亞光電工業股份有限公司（LandMark Optoelectronics Corporation，3081.TWO）供應[光通訊磊晶片](/next?focus=product-optical-epiwafer)及約定的晶圓加工。
+
 聯亞在[網路環節](/next?focus=segment-networking)屬[光通訊磊晶片](/next?focus=role-optical-epiwafer)，為雷射與檢光晶片廠供應 [III-V 族磊晶片](/next?focus=product-optical-epiwafer)。
 
 ## 研究界線
 
+114 年度年報封面載明主體與代號。產品頁查到光柵與 p-metal 選項；所有能力及替換判斷以磊晶片交付為限。
+
 **邊界裁決**：聯亞原列於[光通訊雷射與光電晶片](/next?focus=role-optical-chip)。年報顯示 99.21% 營收來自磊晶片及加工品，並自述為純代工；它的客戶是雷射晶片廠，和自有磊晶的晶片廠（如[博通](/next?focus=company-avgo)）不能互相替換，因此改列新的光通訊磊晶片角色。依據為 114 年度年報第 69、76 頁。
 
 ## 產品與用途
+
+資料中心頁列 DFB、CW、850 nm VCSEL、GaAs PD。InP 雷射磊晶在年報涵蓋 1200–1650 nm；100G 以上 EML、50G 以上直調 DFB 與 6 吋 VCSEL 列入規劃，與已列產品分開。
 
 - **InP 雷射磊晶片**：1200–1650nm，用於光通訊與資料傳輸雷射（第 69 頁）。
 - **檢光二極體磊晶片**：650–1600nm，用於光通訊 PD、APD 與監控（第 69 頁）。
@@ -126,27 +153,39 @@ gaps:
 
 ## 商業模式
 
+客戶提供元件設計的結構及規格，聯亞以 MOCVD 與指定加工交付。光柵選項可移動部分製程責任，晶粒仍需下游客戶加工及測試。
+
 純代工，以 MOCVD 產能配合客戶開發（第 76 頁）。114 年度營業額 2,202,822 仟元，較 113 年度成長約 82%（第 69 頁）。
 
 ## 客戶與供應商
+
+114 年報的銷貨表及風險段用代號，讀到主要客戶用途是資料中心或光通訊。型錄未揭露哪些晶粒廠、模組或終端派生出該合作。
 
 四家匿名客戶各占一成以上，C09 由 0.35% 升到 21.01%、C10 由 0.02% 升到 10.40%，顯示新客戶快速放量（第 80–81 頁）。最大原料供應商占 40.62%（第 80、93 頁）。
 
 ## 競爭與替代
 
+與 IQE 可比較同 InP DFB 層結構的外購磊晶。必須對齊片徑、材料、PL／厚度公差、是否需光柵，以及同一後段流程的良率；IQE 的 EML 清單和聯亞的年報規劃分開。
+
 年報沒有具名競爭者。磊晶來源更換需晶片廠重新認證；自有磊晶的雷射晶片廠可能不需要外購磊晶片。
 
 ## 業務曝險
 
+99.21% 是磊晶與加工合計，涵蓋多種 III-V 用途。若高功率 CW 需求增加且晶粒廠仍以外購磊晶供應才可能影響出貨，不能用資料中心模組增量直接換算。
+
 前三大客戶約六成，產品主要用於資料中心與光通訊；中國客戶占 71.40%，美國由 9.43% 升到 21.46%。AI 光模組需求透過晶片廠間接傳到磊晶片。
 
 ## 風險
+
+主要原料包括基板、MO 源與設備耗材。跨批均勻性、客戶重新驗證以及在地生產或內製可能限制實際交付。
 
 - **客戶集中**：前三大客戶約 60%，新客戶比重變動大。
 - **供應商集中**：最大原料供應商占四成。
 - **地緣政治**：中國銷售占七成，受美中科技競爭與貿易政策影響（年報第四章）。
 
 ## 財務可取性
+
+114 年度年報可核磊晶與加工收入、地區、集中度，未拆 CW、EML、產品別良率或模組客戶。
 
 - 月營收、損益與負債摘要可由櫃買中心公開資料自動取得。
 - 營業現金流、資本支出需由年報合併財報人工補錄。

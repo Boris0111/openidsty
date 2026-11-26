@@ -93,6 +93,8 @@ technical-profile:
 
 ## 傳導鏈
 
+容量擴建先看[變壓器](/next?focus=product-datacenter-transformer)與[開關與配電盤](/next?focus=product-datacenter-switchgear)的接入，再查[設施、機櫃與板端的供電比較與需求案例](/next?focus=research-ai-facility-to-board-power)中的備援、送電與設備交期。
+
 `odm → datacenter` 與 `power → datacenter` 表示整櫃及供電設備進入設施；`datacenter → compute` 表示部署預算與算力需求回頭驅動 GPU／ASIC 採購。因此 `compute → advanced-packaging → odm → datacenter → compute` 是需求回饋的真實回路，遍歷必須記錄已訪問節點。經液冷與 800VDC 題材可跳到散熱、電源及機櫃介面。**inference**：capex 指引調升擴大供應鏈機會，但若增量主要是土地、建物或租賃，不能直接換算當季晶片或 ODM 收入。
 
 ## 監測指標

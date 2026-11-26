@@ -786,6 +786,90 @@ taxonomy:
 - id: taxonomy-amkr-from-interposer-integration
   parent: role-interposer-integration
   child: company-amkr
+- id: taxonomy-passive-fiber-connectivity-from-ai-networking
+  parent: application-ai-networking
+  child: role-passive-fiber-connectivity
+- id: taxonomy-fiber-cable-assembly-from-passive-fiber-connectivity
+  parent: role-passive-fiber-connectivity
+  child: product-fiber-cable-assembly
+- id: taxonomy-aph-from-passive-fiber-connectivity
+  parent: role-passive-fiber-connectivity
+  child: company-aph
+- id: taxonomy-3665-tw-from-passive-fiber-connectivity
+  parent: role-passive-fiber-connectivity
+  child: company-3665-tw
+- id: taxonomy-host-network-adapter-from-ai-networking
+  parent: application-ai-networking
+  child: role-host-network-adapter
+- id: taxonomy-datacenter-network-adapter-from-host-network-adapter
+  parent: role-host-network-adapter
+  child: product-datacenter-network-adapter
+- id: taxonomy-avgo-from-host-network-adapter
+  parent: role-host-network-adapter
+  child: company-avgo
+- id: taxonomy-nvda-from-host-network-adapter
+  parent: role-host-network-adapter
+  child: company-nvda
+- id: taxonomy-avgo-from-optical-dsp
+  parent: role-optical-dsp
+  child: company-avgo
+- id: taxonomy-crdo-from-optical-module
+  parent: role-optical-module
+  child: company-crdo
+- id: taxonomy-facility-transformer-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-facility-transformer
+- id: taxonomy-datacenter-transformer-from-facility-transformer
+  parent: role-facility-transformer
+  child: product-datacenter-transformer
+- id: taxonomy-facility-switchgear-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-facility-switchgear
+- id: taxonomy-datacenter-switchgear-from-facility-switchgear
+  parent: role-facility-switchgear
+  child: product-datacenter-switchgear
+- id: taxonomy-facility-ups-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-facility-ups
+- id: taxonomy-facility-ups-from-facility-ups
+  parent: role-facility-ups
+  child: product-facility-ups
+- id: taxonomy-rack-battery-backup-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-rack-battery-backup
+- id: taxonomy-rack-battery-backup-from-rack-battery-backup
+  parent: role-rack-battery-backup
+  child: product-rack-battery-backup
+- id: taxonomy-facility-busway-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-facility-busway
+- id: taxonomy-datacenter-busway-from-facility-busway
+  parent: role-facility-busway
+  child: product-datacenter-busway
+- id: taxonomy-rack-power-distribution-from-ai-rack-power
+  parent: application-ai-rack-power
+  child: role-rack-power-distribution
+- id: taxonomy-rack-pdu-from-rack-power-distribution
+  parent: role-rack-power-distribution
+  child: product-rack-pdu
+- id: taxonomy-substrate-dielectric-material-from-chip-integration
+  parent: application-chip-integration
+  child: role-substrate-dielectric-material
+- id: taxonomy-substrate-build-up-dielectric-from-substrate-dielectric-material
+  parent: role-substrate-dielectric-material
+  child: product-substrate-build-up-dielectric
+- id: taxonomy-substrate-microvia-equipment-from-chip-integration
+  parent: application-chip-integration
+  child: role-substrate-microvia-equipment
+- id: taxonomy-substrate-laser-microvia-drill-from-substrate-microvia-equipment
+  parent: role-substrate-microvia-equipment
+  child: product-substrate-laser-microvia-drill
+- id: taxonomy-substrate-patterning-equipment-from-chip-integration
+  parent: application-chip-integration
+  child: role-substrate-patterning-equipment
+- id: taxonomy-substrate-patterning-lithography-from-substrate-patterning-equipment
+  parent: role-substrate-patterning-equipment
+  child: product-substrate-patterning-lithography
 offerings:
 - id: offering-auras-cold-plate
   company: company-auras
@@ -864,46 +948,46 @@ offerings:
   product: product-power-shelf-psu
   role: role-rack-power-supply
   conditions:
-  - 年報列出機架式 DC/DC 電源、電容系統與列間電源系統，未揭露客戶或出貨
+  - "18／33 kW 指定架方案，5+1 與適用介面另核。"
   claim-refs:
   - entity-id: company-delta-electronics
-    claim-id: ai-power-products
+    claim-id: delta-33kw-shelf-delivery
 - id: offering-2301-tw-power-shelf-psu
   company: company-2301-tw
   product: product-power-shelf-psu
   role: role-rack-power-supply
   conditions:
-  - 雲端及物聯網部門列有伺服器電源及儲能系統解決方案，未揭露客戶或出貨
+  - "33 kW QCT 展示；其他平台或量產驗證另核。"
   claim-refs:
   - entity-id: company-2301-tw
-    claim-id: segment-mix
+    claim-id: liteon-33kw-shelf-integration
 - id: offering-6282-tw-power-shelf-psu
   company: company-6282-tw
   product: product-power-shelf-psu
   role: role-rack-power-supply
   conditions:
-  - 年報列出伺服器電源與資料中心機櫃級電源系統，未揭露客戶或出貨
+  - "限 19 吋 33 kW OCP 產品及年報列的量產界線。"
   claim-refs:
   - entity-id: company-6282-tw
-    claim-id: server-power-products
+    claim-id: acbel-33kw-listed-shelf
 - id: offering-mpwr-pmic-voltage-regulator
   company: company-mpwr
   product: product-pmic-voltage-regulator
   role: role-board-power-conversion
   conditions:
-  - 10-K 將 DC to DC 方案用於伺服器與 AI 系統，未揭露具體平台或客戶
+  - "限 MP2965 控制晶片及典型介面。"
   claim-refs:
   - entity-id: company-mpwr
-    claim-id: end-market-mix
+    claim-id: mp2965-control-delivery
 - id: offering-vicr-power-module
   company: company-vicr
   product: product-power-module
   role: role-board-power-conversion
   conditions:
-  - 10-K 描述 Power-on-Package 與垂直供電模組，未揭露具體平台或客戶
+  - "分中間端、調節與近負載，NRND 型號只用於結構比較。"
   claim-refs:
   - entity-id: company-vicr
-    claim-id: product-categories
+    claim-id: vicor-nbm-and-current-multiplier-delivery
 - id: offering-3533-tw-high-speed-connector
   company: company-3533-tw
   product: product-high-speed-connector
@@ -981,19 +1065,19 @@ offerings:
   product: product-ethernet-switch-asic
   role: role-switch-silicon
   conditions:
-  - 10-K 描述資料中心 Ethernet 交換晶片，未拆分收入
+  - "BCM78900 型號設計與 Tomahawk 6 家族量產各自有原文。"
   claim-refs:
   - entity-id: company-avgo
-    claim-id: ethernet-switching
+    claim-id: tomahawk-asic-delivery
 - id: offering-avgo-inp-laser-chip
   company: company-avgo
   product: product-inp-laser-chip
   role: role-optical-chip
   conditions:
-  - 10-K 說明以自有晶圓廠生產光纖通訊用 InP 與 GaAs 雷射，未揭露收入或客戶
+  - "FY2025 10-K 支持製造，公開資料未拆料號與外售比例。"
   claim-refs:
   - entity-id: company-avgo
-    claim-id: manufacturing-partners
+    claim-id: inp-laser-fabrication-scope
 - id: offering-mrvl-custom-ai-asic
   company: company-mrvl
   product: product-custom-ai-asic
@@ -1008,109 +1092,109 @@ offerings:
   product: product-optical-dsp
   role: role-optical-dsp
   conditions:
-  - 10-K 描述 PAM 與 coherent 光 DSP，未拆分收入
+  - "Spica／Nova 按各自 lane 映射及光元件適用。"
   claim-refs:
   - entity-id: company-mrvl
-    claim-id: interconnect-portfolio
+    claim-id: novaspica-dsp-delivery
 - id: offering-mrvl-ethernet-switch-asic
   company: company-mrvl
   product: product-ethernet-switch-asic
   role: role-switch-silicon
   conditions:
-  - 10-K 描述 Teralynx 與 Prestera 交換晶片，未拆分收入
+  - "限 Teralynx 10 51.2T 與 2024-07 量產公告。"
   claim-refs:
   - entity-id: company-mrvl
-    claim-id: ethernet-switches
+    claim-id: teralynx-10-switch-delivery
 - id: offering-mrvl-retimer
   company: company-mrvl
   product: product-retimer
   role: role-electrical-connectivity
   conditions:
-  - 10-K 描述 PCIe retimer 與 AEC DSP，未拆分收入
+  - "此能力指 MV-CHP10160 PCIe／CXL，Alaska A 為獨立線端 DSP。"
   claim-refs:
   - entity-id: company-mrvl
-    claim-id: interconnect-portfolio
+    claim-id: alaska-p-and-a-delivery
 - id: offering-crdo-active-electrical-cable
   company: company-crdo
   product: product-active-electrical-cable
   role: role-electrical-connectivity
   conditions:
-  - 10-K 說明 AEC 放量貢獻營收增量逾 99%，AEC 由貿聯代工
+  - "SPAN 與 SHIFT 是 Ethernet 成品線組；直連與分接需按料號。"
   claim-refs:
   - entity-id: company-crdo
-    claim-id: aec-revenue
+    claim-id: span-shift-aec-delivery
 - id: offering-crdo-retimer
   company: company-crdo
   product: product-retimer
   role: role-electrical-connectivity
   conditions:
-  - 10-K 列出 Ethernet 與 PCIe retimer，未拆分收入
+  - "Toucan CPR61664 的 PCIe 6.x 64 GT/s x16 tested。"
   claim-refs:
   - entity-id: company-crdo
-    claim-id: product-portfolio
+    claim-id: toucan-cpr61664-compliance
 - id: offering-crdo-optical-dsp
   company: company-crdo
   product: product-optical-dsp
   role: role-optical-dsp
   conditions:
-  - 10-K 列出光 Ethernet DSP，未拆分收入
+  - "Dove 80X 為 800G 光模組 DSP，driver 依料號。"
   claim-refs:
   - entity-id: company-crdo
-    claim-id: product-portfolio
+    claim-id: dove-80x-optical-dsp-delivery
 - id: offering-alab-retimer
   company: company-alab
   product: product-retimer
   role: role-electrical-connectivity
   conditions:
-  - 10-K 列出 Aries PCIe／CXL retimer，未拆分收入
+  - "PCI-SIG 登錄 PT6162，認證限該料號的 PCIe 6.x x16 64 GT/s。"
   claim-refs:
   - entity-id: company-alab
-    claim-id: product-families
+    claim-id: aries-pt6162-compliance
 - id: offering-alab-active-electrical-cable
   company: company-alab
   product: product-active-electrical-cable
   role: role-electrical-connectivity
   conditions:
-  - 10-K 列出 Aries 與 Taurus 智慧線纜模組，是裝入線纜的模組，不是整條線纜
+  - "成品 AEC 內部的 Taurus Ethernet SCM；Aries SCM 支援 PCIe／CXL。Astera 交付為模組。"
   claim-refs:
   - entity-id: company-alab
-    claim-id: product-families
+    claim-id: taurus-aries-cable-module-delivery
 - id: offering-2345-tw-datacenter-switch
   company: company-2345-tw
   product: product-datacenter-switch
   role: role-switch-system
   conditions:
-  - 年報列出 200G／400G／800G 資料中心交換器，網路交換器占營收 35%
+  - "AS9817-64O 800G 整機採 BCM78900，未揭露此型號出貨與驗收。"
   claim-refs:
   - entity-id: company-2345-tw
-    claim-id: product-mix
+    claim-id: as9817-64o-system-delivery
 - id: offering-3081-two-optical-epiwafer
   company: company-3081-two
   product: product-optical-epiwafer
   role: role-optical-epiwafer
   conditions:
-  - 年報揭露磊晶片及加工品占營收 99.21%，客戶為光通訊元件廠
+  - "交付 III-V 磊晶片及選定加工；下游晶粒／模組能力另驗證。"
   claim-refs:
   - entity-id: company-3081-two
-    claim-id: epiwafer-business
+    claim-id: datacenter-epiwafer-delivery
 - id: offering-4979-two-optical-transceiver
   company: company-4979-two
   product: product-optical-transceiver
   role: role-optical-module
   conditions:
-  - 主動元件及模組占 86.35%，含資料中心光學引擎與相干光模組，未拆分資料中心收入
+  - "年報列相干模組與代工，800G ZR 已完成開發。光引擎／CoC 與成品模組分列。"
   claim-refs:
   - entity-id: company-4979-two
-    claim-id: product-mix
+    claim-id: optical-engine-and-coherent-boundary
 - id: offering-4979-two-inp-laser-chip
   company: company-4979-two
   product: product-inp-laser-chip
   role: role-optical-chip
   conditions:
-  - 年報稱 CW DFB 雷射晶粒已獲數家主要客戶採用，晶粒營收占 11.05%
+  - "CW DFB 家族有公司量產自述；晶粒料號、個別功率與 200G EML 出貨另核。"
   claim-refs:
   - entity-id: company-4979-two
-    claim-id: cw-laser-and-engines
+    claim-id: cw-dfb-die-delivery
 - id: offering-tsmc-advanced-logic-wafer
   company: company-tsmc
   product: product-advanced-logic-wafer
@@ -1125,19 +1209,19 @@ offerings:
   product: product-2p5d-interposer-package
   role: role-interposer-integration
   conditions:
-  - 年報說明 CoWoS 各版本量產狀態，未揭露封裝營收或客戶
+  - "3.5× CoWoS-L 與各家族能力，5.5× 資格差異另核。"
   claim-refs:
   - entity-id: company-tsmc
-    claim-id: three-d-fabric
+    claim-id: tsmc-cowos-l-family-production
 - id: offering-3711-tw-flip-chip-package-service
   company: company-3711-tw
   product: product-flip-chip-package-service
   role: role-osat-assembly
   conditions:
-  - 封裝營收 NT$308,342.6 百萬元，未拆分覆晶與其他封裝
+  - "ASE 高雄覆晶方案，按技術、廠區與資格驗證。"
   claim-refs:
   - entity-id: company-3711-tw
-    claim-id: revenue-mix
+    claim-id: ase-kaohsiung-fc-assembly-delivery
 - id: offering-3711-tw-chip-test-service
   company: company-3711-tw
   product: product-chip-test-service
@@ -1152,19 +1236,19 @@ offerings:
   product: product-2p5d-interposer-package
   role: role-interposer-integration
   conditions:
-  - 20-F 列出 2.5D 與 CoWoS 類技術，未揭露營收或客戶
+  - "ASE Inc. 的 TSV 2.5D 及 FOCoS 示範，指定量產案另核。"
   claim-refs:
   - entity-id: company-3711-tw
-    claim-id: advanced-packaging
+    claim-id: ase-tsv-and-focos-integration
 - id: offering-6239-tw-flip-chip-package-service
   company: company-6239-tw
   product: product-flip-chip-package-service
   role: role-osat-assembly
   conditions:
-  - IC 封裝服務占 61.76%，以記憶體封裝為主，含覆晶與扇出型封裝
+  - "FCBGA／FCCSP 等覆晶，85 mm／HBM TSV 限年報開發成果。"
   claim-refs:
   - entity-id: company-6239-tw
-    claim-id: revenue-mix
+    claim-id: pti-fcbga-and-memory-package
 - id: offering-6239-tw-chip-test-service
   company: company-6239-tw
   product: product-chip-test-service
@@ -1179,10 +1263,10 @@ offerings:
   product: product-flip-chip-package-service
   role: role-osat-assembly
   conditions:
-  - 10-K 描述覆晶、扇出、晶圓級與 SiP 封裝，未拆分各型態營收
+  - "FCBGA 服務，5 nm／85 mm 仍以型錄開發／認證口徑。"
   claim-refs:
   - entity-id: company-amkr
-    claim-id: technology-portfolio
+    claim-id: amkor-fcbga-bump-and-qualification
 - id: offering-amkr-chip-test-service
   company: company-amkr
   product: product-chip-test-service
@@ -1197,11 +1281,276 @@ offerings:
   product: product-2p5d-interposer-package
   role: role-interposer-integration
   conditions:
-  - 10-K 列 2.5D 整合為技術能力，未揭露量產規模或客戶
+  - "TSV 已由前段形成，Amkor 提供 MEOL 與所列 2.5D 組裝。"
   claim-refs:
   - entity-id: company-amkr
-    claim-id: technology-portfolio
+    claim-id: amkor-tsv-meol-and-assembly
+- id: offering-aph-fiber-cable-assembly
+  company: company-aph
+  product: product-fiber-cable-assembly
+  role: role-passive-fiber-connectivity
+  conditions:
+  - "可採購 MPO 完整組件；指定客戶和收入未公開。"
+  claim-refs:
+  - entity-id: company-aph
+    claim-id: mpo-fiber-assembly-capability
+- id: offering-3665-tw-fiber-cable-assembly
+  company: company-3665-tw
+  product: product-fiber-cable-assembly
+  role: role-passive-fiber-connectivity
+  conditions:
+  - "2026-01-05 後集團能力含 XFS；未證實指定模組採用。"
+  claim-refs:
+  - entity-id: company-3665-tw
+    claim-id: xfs-optical-assembly-capability
+- id: offering-avgo-datacenter-network-adapter
+  company: company-avgo
+  product: product-datacenter-network-adapter
+  role: role-host-network-adapter
+  conditions:
+  - "BCM57708 系列有單 800GbE CEM、OCP 3.0 成卡料號，限型錄。"
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: bcm57708-host-adapter-delivery
+- id: offering-nvda-datacenter-network-adapter
+  company: company-nvda
+  product: product-datacenter-network-adapter
+  role: role-host-network-adapter
+  conditions:
+  - "C8180 的網路模式、PCIe 及機構以所列 OPN／韌體為準。"
+  claim-refs:
+  - entity-id: company-nvda
+    claim-id: connectx8-host-adapter-delivery
+- id: offering-avgo-optical-dsp
+  company: company-avgo
+  product: product-optical-dsp
+  role: role-optical-dsp
+  conditions:
+  - "BCM85822 的 800GbE 模式為 8:4 光模組 DSP。"
+  claim-refs:
+  - entity-id: company-avgo
+    claim-id: bcm85822-optical-dsp-delivery
+- id: offering-crdo-optical-transceiver
+  company: company-crdo
+  product: product-optical-transceiver
+  role: role-optical-module
+  conditions:
+  - "800G 2×DR4 OSFP-RHS 成品，依光路及端點適用。"
+  claim-refs:
+  - entity-id: company-crdo
+    claim-id: zeroflap-800g-module-delivery
+- id: offering-1504-tw-datacenter-transformer
+  company: company-1504-tw
+  product: product-datacenter-transformer
+  role: role-facility-transformer
+  conditions:
+  - "限型錄的乾式與油浸設備能力；案場選型和試驗另核。"
+  claim-refs:
+  - entity-id: company-1504-tw
+    claim-id: facility-transformer-delivery
+- id: offering-1504-tw-datacenter-switchgear
+  company: company-1504-tw
+  product: product-datacenter-switchgear
+  role: role-facility-switchgear
+  conditions:
+  - "公司方案覆蓋中低壓與工程服務，案場設備驗收另核。"
+  claim-refs:
+  - entity-id: company-1504-tw
+    claim-id: teco-switchgear-delivery
+- id: offering-vertiv-datacenter-switchgear
+  company: company-vertiv
+  product: product-datacenter-switchgear
+  role: role-facility-switchgear
+  conditions:
+  - "限公開低壓 PowerBoard 系列與案場所需配置。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: powerboard-switchgear-delivery
+- id: offering-vertiv-facility-ups
+  company: company-vertiv
+  product: product-facility-ups
+  role: role-facility-ups
+  conditions:
+  - "限 480 V 型號表及指定溫度；實配電池另查。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: trinergy-ups-delivery
+- id: offering-delta-electronics-facility-ups
+  company: company-delta-electronics
+  product: product-facility-ups
+  role: role-facility-ups
+  conditions:
+  - "限 DPH v3.2 的三相配置，續航及地域版另核。"
+  claim-refs:
+  - entity-id: company-delta-electronics
+    claim-id: modulon-dph-ups-delivery
+- id: offering-2301-tw-rack-battery-backup
+  company: company-2301-tw
+  product: product-rack-battery-backup
+  role: role-rack-battery-backup
+  conditions:
+  - "72 kW 展示能力，續航和採用另核。"
+  claim-refs:
+  - entity-id: company-2301-tw
+    claim-id: liteon-rack-bbu-delivery
+- id: offering-vertiv-rack-battery-backup
+  company: company-vertiv
+  product: product-rack-battery-backup
+  role: role-rack-battery-backup
+  conditions:
+  - "限 800 VDC power rack 整合設計。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: vertiv-power-rack-bbu-design
+- id: offering-1504-tw-datacenter-busway
+  company: company-1504-tw
+  product: product-datacenter-busway
+  role: role-facility-busway
+  conditions:
+  - "東元集團的 TECOBAR 交付，依 LB 系列。"
+  claim-refs:
+  - entity-id: company-1504-tw
+    claim-id: tecobar-busway-delivery
+- id: offering-vertiv-datacenter-busway
+  company: company-vertiv
+  product: product-datacenter-busway
+  role: role-facility-busway
+  conditions:
+  - "限 PowerBar iMPB 北美版額定。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: powerbar-impb-delivery
+- id: offering-vertiv-rack-pdu
+  company: company-vertiv
+  product: product-rack-pdu
+  role: role-rack-power-distribution
+  conditions:
+  - "限 Geist UU30009L 配置。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: geist-rpdu-delivery
+- id: offering-delta-electronics-rack-pdu
+  company: company-delta-electronics
+  product: product-rack-pdu
+  role: role-rack-power-distribution
+  conditions:
+  - "限 ViLink Metered 系列，各料號額定另核。"
+  claim-refs:
+  - entity-id: company-delta-electronics
+    claim-id: delta-vilink-rpdu-delivery
+- id: offering-delta-electronics-power-module
+  company: company-delta-electronics
+  product: product-power-module
+  role: role-board-power-conversion
+  conditions:
+  - "屬 40–60 V → 12 V 中間端電源。"
+  claim-refs:
+  - entity-id: company-delta-electronics
+    claim-id: delta-rbc-board-module-delivery
+- id: offering-mpwr-power-module
+  company: company-mpwr
+  product: product-power-module
+  role: role-board-power-conversion
+  conditions:
+  - "限 MPM3698 的額定與模組介面。"
+  claim-refs:
+  - entity-id: company-mpwr
+    claim-id: mpm3698-module-delivery
+- id: offering-vertiv-power-shelf-psu
+  company: company-vertiv
+  product: product-power-shelf-psu
+  role: role-rack-power-supply
+  conditions:
+  - "限 50 VDC ORv3 產品表及訂貨資訊。"
+  claim-refs:
+  - entity-id: company-vertiv
+    claim-id: powerdirect-33kw-shelf-delivery
+- id: offering-2802-t-substrate-build-up-dielectric
+  company: company-2802-t
+  product: product-substrate-build-up-dielectric
+  role: role-substrate-dielectric-material
+  conditions:
+  - "AFT 交付的 ABF 系列，牌號與導入認證另核。"
+  claim-refs:
+  - entity-id: company-2802-t
+    claim-id: aft-abf-grade-delivery
+- id: offering-mksi-substrate-laser-microvia-drill
+  company: company-mksi
+  product: product-substrate-laser-microvia-drill
+  role: role-substrate-microvia-equipment
+  conditions:
+  - "ESI Geode A 的 ABF／FCBGA 微孔設備；非客戶鑽孔良率。"
+  claim-refs:
+  - entity-id: company-mksi
+    claim-id: geode-a-abf-microvia-tool
+- id: offering-onto-substrate-patterning-lithography
+  company: company-onto
+  product: product-substrate-patterning-lithography
+  role: role-substrate-patterning-equipment
+  conditions:
+  - "JetStep X500 的面板曝光能力，指定載板資格另核。"
+  claim-refs:
+  - entity-id: company-onto
+    claim-id: jetstep-x500-substrate-exposure
+- id: offering-4062-t-abf-substrate
+  company: company-4062-t
+  product: product-abf-substrate
+  role: role-ic-substrate
+  conditions:
+  - "高性能覆晶載板的 SAP 與微孔交付，產品膜料／合格規格另查。"
+  claim-refs:
+  - entity-id: company-4062-t
+    claim-id: ibiden-flip-chip-sap-and-microvia
+- id: offering-private-shinko-abf-substrate
+  company: company-private-shinko
+  product: product-abf-substrate
+  role: role-ic-substrate
+  conditions:
+  - "DLL／DLL3 有機增層相近產品，玻璃為原型且個別膜牌號另核。"
+  claim-refs:
+  - entity-id: company-private-shinko
+    claim-id: shinko-dll-and-dll3-delivery
+- id: offering-3037-tw-abf-substrate
+  company: company-3037-tw
+  product: product-abf-substrate
+  role: role-ic-substrate
+  conditions:
+  - "IC 載板、FCBGA 製程與 KF 產能預留；集團工廠和料號另核。"
+  claim-refs:
+  - entity-id: company-3037-tw
+    claim-id: unimicron-substrate-capability
+- id: offering-8046-tw-abf-substrate
+  company: company-8046-tw
+  product: product-abf-substrate
+  role: role-ic-substrate
+  conditions:
+  - "ABF 成品與原廠技術路線，實際量產組合另核。"
+  claim-refs:
+  - entity-id: company-8046-tw
+    claim-id: nan-ya-pcb-abf-and-spec-roadmap
+- id: offering-3189-tw-abf-substrate
+  company: company-3189-tw
+  product: product-abf-substrate
+  role: role-ic-substrate
+  conditions:
+  - "FCBGA 與大型高層 ABF 交付；客戶的同版驗收另核。"
+  claim-refs:
+  - entity-id: company-3189-tw
+    claim-id: kinsus-fcbga-abf-substrate-delivery
 relations:
+- id: relation-3189-tw-supplies-nvda-abf
+  source: company-3189-tw
+  target: company-nvda
+  kind: named-supply
+  direction: directed
+  mechanism: "景碩與 NVIDIA 公告既有先進載板供應及幼獅 ABF 產能擴充協議。"
+  conditions:
+  - "依雙方公告，現有合作與 2027／2028 預計產能分開；料號、交貨量與收入另核。"
+  confidence: well-supported
+  reviewed: '2026-11-24'
+  claim-refs:
+  - entity-id: company-3189-tw
+    claim-id: kinsus-nvidia-youth-substrate-supply
 - id: relation-vertiv-delta-competition
   source: company-vertiv
   target: company-delta-electronics
@@ -1405,7 +1754,7 @@ relations:
   direction: symmetric
   mechanism: Credo 10-K 將 Astera Labs 列為主要競爭者；Astera Labs 10-K 也列出 Credo
   conditions:
-  - 競爭限於重疊的 retimer 與主動線纜產品
+  - 同角色重疊可用 PCIe 6.x x16 retimer 比對；AEC 線組與線端模組分屬不同交付層。
   confidence: well-supported
   reviewed: '2026-10-18'
   claim-refs:

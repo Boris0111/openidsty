@@ -118,6 +118,8 @@ technical-profile:
 
 ## 傳導鏈
 
+從[AI 機櫃供電](/next?focus=application-ai-rack-power)進入[設施、機櫃與板端的供電比較與需求案例](/next?focus=research-ai-facility-to-board-power)，可沿設施、機櫃與板端驗證不同轉換位置。
+
 `power-discrete → power → odm`：功率元件耐壓、導通與切換損耗影響 PSU/DC/DC 的效率和散熱，再限制可交付機櫃功率。`power → datacenter → compute` 表示設施供電改善能解除部署瓶頸並回頭形成晶片需求，並非電源廠直接向晶片設計商出售伺服器。經 `800vdc` 題材可連到 `interconnect` 的高壓連接介面；經 `liquid-cooling` 連到 `thermal`。**inference**：每櫃功率提高可增加電源價值量，但減少轉換級數也可能移轉原有 PSU 的收入位置。
 
 ## 監測指標

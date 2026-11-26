@@ -20,7 +20,7 @@ listings:
   valid-to: null
 source-identifiers: []
 research-depth: deep
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: tw-mops-summary
   confidence: well-supported
@@ -41,6 +41,38 @@ roles:
   tier: 1
   baseline-path: ai-server/power.md
 claims:
+- id: liteon-33kw-shelf-integration
+  statement: "光寶科公布其 33 kW power shelf 已整合入與 QCT 共同展示的 GB300 NVL72 系統。3Q26 公告另把 8.5 kW PSU／BBU、110 kW 方案和 800 VDC 原型列於 4Q26 展望。"
+  confidence: well-supported
+  conditions:
+  - "展示支持該次整合，終端採用無法由展示推導；展望要與通過驗收、量產及實際銷量分開。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: liteon-qct-gb300-power-integration
+    url: https://www.liteon.com/en/news/press-center/content/liteon-ocp-qct-2025
+    locator: "OCP Global Summit／About LITEON"
+    read-scope: "查 33 kW、QCT、平台、展示、上市主體。"
+    stance: supporting
+    applicable-period: "2025-10 展示"
+  - source-id: liteon-2026-q3-power-outlook
+    url: https://www.liteon.com/en/news/press-center/content/quarterly-third-eps-2026
+    locator: "Outlook for Q4"
+    read-scope: "查量產展望和原型。"
+    stance: supporting
+    applicable-period: "2026 Q3 outlook"
+- id: liteon-rack-bbu-delivery
+  statement: "光寶 2025 Datacloud 展示 72 kW BBU，與獨立 capacitor shelf 及電源架分項列出。"
+  confidence: well-supported
+  conditions:
+  - "展示支持產品範圍，續航、電池狀態及指定平台採用另核。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: liteon-datacloud-2025-power
+    url: https://www.liteon.com/en/news/press-center/content/liteon-datacloudglobalcongress
+    locator: "2025 Datacloud 產品列表"
+    read-scope: "查 72 kW BBU 與另一 capacitor shelf。"
+    stance: supporting
+    applicable-period: "2025-06 活動公告"
 - id: segment-mix
   statement: 年報 114 年度營業比重為光電部門 17%、雲端及物聯網部門 45%、資訊及消費性電子部門 38%；雲端及物聯網部門產品包括伺服器電源及儲能系統解決方案、網通設備零組件與智慧影像裝置。
   confidence: well-supported
@@ -128,13 +160,19 @@ gaps:
 
 ## 供應角色
 
+LITEON Technology（2301.TW）的交付涵蓋電源架、PSU 與[架側 BBU](/next?focus=product-rack-battery-backup)。
+
 光寶科在[電源環節](/next?focus=segment-power)提供伺服器[電源供應器與電源架](/next?focus=product-power-shelf-psu)，雲端及物聯網部門同時包含儲能與網通零組件。它也有光電與消費性電源業務，研究 AI 供電時要先分開部門。
 
 ## 研究界線
 
+OCP 的具名整合只證實展示。3Q26 公告的量產和原型須按其 4Q26 展望閱讀。
+
 本頁以 114 年度股東會年報為依據。部門比重與銷售地區表已用表列順序與合計重新核對。展會展示與「全球前兩大」屬公司自述，分別標為推論與待核實。
 
 ## 產品與用途
+
+2025 OCP 展示中，QCT 將光寶 33 kW 電源架配置在 GB300 NVL72 系統。Datacloud 另有 72 kW BBU 展示，與 capacitor shelf 分項。
 
 - **雲端及物聯網（45%）**：伺服器電源及儲能系統、網通設備零組件、智慧影像與物聯網裝置（第 105 頁）。
 - **資訊及消費性電子（38%）**：電源供應器、智慧輸入裝置（第 105 頁）。
@@ -147,9 +185,13 @@ gaps:
 
 ## 客戶與供應商
 
+QCT 是該設備的具名展示伙伴。114 年度客戶甲與終端客戶歸屬在已讀證據中無從核對。
+
 一家代號「甲」的客戶占 114 年度銷貨 11.31%，其餘客戶都低於一成（第 120 頁）；沒有供應商占進貨一成以上（第 119 頁）。年報未揭露客戶名稱。
 
 ## 競爭與替代
+
+和台達、康舒同級架側交付比較時，需對齊輸入、機框、備援後容量及負載資料。72 kW BBU 額定須加查續航與母線介面。
 
 年報沒有具名競爭者。在[機櫃與系統電源](/next?focus=role-rack-power-supply)角色，可與[台達電](/next?focus=company-delta-electronics)、[康舒](/next?focus=company-6282-tw)比較；800VDC 架構會改變電源轉換位置，需逐案看產品是否進入量產。
 
@@ -164,6 +206,8 @@ gaps:
 - **產能布局**：年報提到擴大台灣、美國與越南投入，實際產能與時程未在本輪核對。
 
 ## 財務可取性
+
+3Q26 公告的 AI 相關收入為公司自報的廣義口徑，未拆出 33 kW 或 BBU；114 年部門分類另列。
 
 - 月營收、損益與負債摘要可由證交所公開資料自動取得。
 - 部門比重可由年報核對；營業現金流、資本支出需由合併財報人工補錄。

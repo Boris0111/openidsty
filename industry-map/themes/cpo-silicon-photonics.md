@@ -137,6 +137,8 @@ technical-profile:
 
 ## 傳導與受惠條件
 
+看[光／電互連比較與需求案例](/next?focus=research-ai-networking-optical-electrical)的 LPO／CPO 列。LPO 改變主機訊號處理責任，CPO 改變交換端光引擎位置及可維修單位。Broadcom 2025-10-08 公告開頭描述平台出貨，Availability 仍將 BCM78919 列為對早期客戶送樣；型號量產須另核。前代 51.2T Bailly 有另外的生產紀錄，須依各世代判讀。[Broadcom 第三代 CPO 與 Bailly 生產公告](https://investors.broadcom.com/news-releases/news-release-details/broadcom-announces-third-generation-co-packaged-optics-cpo)。
+
 `networking ↔ cpo-silicon-photonics ↔ advanced-packaging / compute` 是題材擴散，並非新增上下游邊。AVGO、MRVL 對應交換器／光學訊號處理，2330.TW 對應封裝整合；3081.TWO、4979.TWO 是光通訊候選角色。**inference**：光學布局轉換增加某些元件需求，也可能替代既有可插拔產品；`beneficiaries` 表示追蹤候選，個別 CPO 訂單與產品適配仍列 **needs verification**。
 
 ## 狀態判定依據

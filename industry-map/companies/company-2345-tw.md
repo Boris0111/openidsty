@@ -6,6 +6,8 @@ name-zh: 智邦
 aliases:
 - Accton
 - 智邦科技
+- 智邦科技股份有限公司
+- Accton Technology Corporation
 summary: 網通設備廠；114 年營收成長 124.9%，網路應用設備占 62%、網路交換器占 35%，最大客戶占 52%，美洲占銷售 81%。
 legacy-keys:
 - 2345.TW
@@ -18,7 +20,7 @@ listings:
   valid-to: null
 source-identifiers: []
 research-depth: deep
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: tw-mops-summary
   confidence: well-supported
@@ -117,6 +119,25 @@ claims:
     read-scope: 已讀市場占有率段落
     stance: supporting
     applicable-period: 2025 年市場資料
+- id: as9817-64o-system-delivery
+  statement: "智邦 AS9817-64O 整合 Tomahawk 5 BCM78900，列 64×800GbE OSFP800、ONIE、2RU 及備援風扇與電源。公司 2025 年報分別描述 400G／800G 產量擴充及 1.6T 液冷展示。"
+  confidence: well-supported
+  conditions:
+  - "AS9817-64O 型錄支持整機配置；不推定實際出貨客戶或 ASIC 採購量。展出世代不能當作量產機型。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: accton-as9817-64o-datasheet
+    url: https://www.accton.com/wp-content/uploads/2023/09/2023-036-AS9817-64O_Accton-R01-20230905-1.pdf
+    locator: "Key Features、Specifications"
+    read-scope: "已讀埠、系統晶片、機構及軟體安裝環境。"
+    stance: supporting
+    applicable-period: "E092023-AP-R01"
+  - source-id: accton-annual-report-2025-ir
+    url: https://www.accton.com/wp-content/uploads/2026/06/2025-Annual-Report.pdf
+    locator: "Letter to Shareholders：R&D highlights；DLC 段"
+    read-scope: "已讀 51.2T／800G、102T／1.6T 的商業化進度差異。"
+    stance: supporting
+    applicable-period: "2025 年報、OCP 2025 展示"
 gaps:
 - status: not-public
   reason: 年報未說明「網路應用設備」的產品組成，也未揭露客戶名稱與 AI 相關收入。
@@ -126,13 +147,19 @@ gaps:
 
 ## 供應角色
 
+智邦科技股份有限公司（Accton Technology Corporation，2345.TW）以 AS9817-64O 為[資料中心交換器](/next?focus=product-datacenter-switch)整機例，整合博通晶片、前面板、PSU、散熱與 NOS 安裝環境。
+
 智邦在[網路環節](/next?focus=segment-networking)屬[資料中心交換器系統](/next?focus=role-switch-system)，供應[資料中心交換器](/next?focus=product-datacenter-switch)。年報也描述 AI 加速卡、智慧網卡與機櫃式伺服器設計，但沒有收入或客戶證據，本頁不把它列為加速器或伺服器供應者。
 
 ## 研究界線
 
+重讀 2025 年報與 AS9817-64O 資料表。機型的硬體規格、2025 年報中的產品家族進度、OCP 會場展示與實際商用採用分別記錄。
+
 本頁以 114 年度股東會年報為依據。最大的營業類別「網路應用設備」（62%）在年報中沒有定義，不能直接當成交換器或 AI 加速器收入；AI 產品導入與市占增長屬公司自述或轉述，標為待核實。
 
 ## 產品與用途
+
+AS9817-64O 以 BCM78900 做 64×800GbE OSFP800；在相同埠下比對 2×400／4×200／8×100 的 breakout、ONIE 及風道。年報稱 2025 年擴充高速交換器產量，1.6T 水冷機型列為展示。智慧網卡或 DPU 目前只有年報描述，尚缺本批可核成卡料號。
 
 - **資料中心交換器**：200G／400G／800G 與 10G–100G 機型，51.2T 已採用、102T 開發中（第 70 頁、致股東報告書）。
 - **網路應用設備**：占 62%，年報未說明組成。
@@ -141,27 +168,39 @@ gaps:
 
 ## 商業模式
 
+交付可涵蓋機箱、PCB、軟體安裝環境與共同設計。ASIC、NOS 支援與終端現場部署各有來源，定義 ODM／JDM 的比較範圍。
+
 為國際大廠設計製造網通設備，並提供開放式網路軟體；生產據點在台灣、越南與美國，規劃擴展墨西哥與馬來西亞（第 77 頁）。114 年營收 2,483.20 億元、稅後淨利 263.06 億元（致股東報告書）。
 
 ## 客戶與供應商
+
+AS9817-64O 型錄支持 BCM78900 設計，但未揭露該機型的下游買方、數量或現場資格。年報最大客戶以代號揭露，不能反推型號客群。
 
 客戶甲占 114 年銷貨 52%，前一年是 32%；供應商 A 占進貨 11%（第 85 頁）。主要零組件至少維持兩家供應商，並提供 12–18 個月需求預測給主要晶片與零件商（第 84 頁）。
 
 ## 競爭與替代
 
+與 Arista 7060X6-64PE 比較同為 64×800G 2RU 整機時，智邦附 ONIE，Arista 含 EOS；要固定 NOS 功能、可用埠、互通及風道再比價格和功耗。
+
 年報引用 Dell'Oro，把 Arista、Celestica 與 NVIDIA 列為資料中心交換機市場的主要參與者（第 80 頁）。同一角色的白牌交換器廠，可依交換晶片、埠速與散熱方案比較；交換器系統不能替代交換晶片。
 
 ## 業務曝險
 
+交換器業務會隨網路架構、有效埠和箱數變動。全年交換器營收比重含其他規格，未單列 800G 或 1.6T。
+
 營收倍增、最大客戶占比由 32% 升到 52%、美洲占 81%，曝險集中在北美雲端客戶的資料中心建置；但年報沒有拆出 AI 相關收入。
 
 ## 風險
+
+電熱設計、NOS、光模組互通與樣品轉量產是不同關卡。對已量產的產品家族，也要確認場址、出貨與客戶的集中風險。
 
 - **客戶集中**：單一客戶占五成以上。
 - **地緣政治與關稅**：美國關稅政策促使擴充台灣與越南產能（第 84 頁）。
 - **零組件供應**：關鍵零組件可能短缺（第 84 頁）。
 
 ## 財務可取性
+
+從公開資訊觀測站或公司年報核對產品分類與主要銷貨資料，未拆個別機型、800G 或展示平台收入。
 
 - 月營收、損益與負債摘要可由證交所公開資料自動取得。
 - 營業現金流、資本支出需由年報合併財報人工補錄。

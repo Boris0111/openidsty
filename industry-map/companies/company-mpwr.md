@@ -21,7 +21,7 @@ source-identifiers:
 - provider: sec-cik
   value: '1280452'
 research-depth: deep
-reviewed: '2026-10-18'
+reviewed: '2026-11-24'
 financial-reporting:
   primary-source-family: sec
   confidence: well-supported
@@ -42,6 +42,38 @@ roles:
   tier: 1
   baseline-path: ai-server/power.md
 claims:
+- id: mp2965-control-delivery
+  statement: "MPS MP2965 是雙迴路多相 PWM controller。典型 6+1 應用圖另接功率級和每相電感。"
+  confidence: well-supported
+  conditions:
+  - "應用圖確認介面和控制分工；以負載端、相數及電熱條件比較。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: mps-mp2965-datasheet
+    url: https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/EN/sku/MP2965
+    locator: "Description、Figure 2"
+    read-scope: "查多相控制、功率級和電感分離。"
+    stance: supporting
+    applicable-period: "MP2965 datasheet"
+  - source-id: renesas-raa228228-datasheet
+    url: https://www.renesas.com/en/document/sds/raa228228-short-form-datasheet
+    locator: "Figure 2"
+    read-scope: "類似控制器交付的可比較對象。"
+    stance: supporting
+    applicable-period: "2021-05-17 Rev.2.0"
+- id: mpm3698-module-delivery
+  statement: "MPS MPM3698 在模組中整合 controller、MOSFET 和電感，單 rail 三相併聯可 90 A 連續或 120 A 峰值。"
+  confidence: well-supported
+  conditions:
+  - "型號額定須依降額曲線、負載和板端散熱。"
+  reviewed: '2026-11-24'
+  evidence:
+  - source-id: mps-mpm3698-datasheet
+    url: https://www.monolithicpower.com/en/documentview/productdocument/index/version/2/document_type/Datasheet/lang/en/sku/MPM3698GBH/document_id/11450/
+    locator: "Operation、Recommended Operating Conditions"
+    read-scope: "查整合及持續／峰值條件。"
+    stance: supporting
+    applicable-period: "MPM3698GBH datasheet"
 - id: fabless-model
   statement: 10-K 說明 MPS 採 fabless 模式，但與一般 fabless 不同，自行開發製程與封裝技術並安裝在代工夥伴設備上；晶圓代工位於中國、台灣、南韓與新加坡，封裝由中國、台灣、馬來西亞與南韓的外包廠完成。
   confidence: well-supported
@@ -127,13 +159,19 @@ gaps:
 
 ## 供應角色
 
+Monolithic Power Systems, Inc.（MPWR，Nasdaq）交付 [電壓調節晶片](/next?focus=product-pmic-voltage-regulator)與[電源模組](/next?focus=product-power-module)。
+
 MPS 在[電源環節](/next?focus=segment-power)屬[板端電源轉換](/next?focus=role-board-power-conversion)，提供把母線電壓降到晶片電壓的[電源管理與電壓調節晶片](/next?focus=product-pmic-voltage-regulator)與電源模組。
 
 ## 研究界線
 
+應用參考電路、Active 型錄、量產採用和收入均分開。公告沒有能把客戶或採購金額分配給 MP2965 或 MPM3698 的資料。
+
 本頁以 FY2025 10-K 為依據。終端市場表的 Enterprise Data 包含一般 CPU 伺服器與 AI 系統，不能直接當成 AI 加速器電源收入；經銷商與最終客戶都沒有具名。
 
 ## 產品與用途
+
+MP2965 交付控制功能，外接功率級；MPM3698 隨封裝提供控制、功率級及磁件，三相併聯後 90 A 連續／120 A 峰值。
 
 10-K 說明 DC to DC 方案用於雲端與本地 CPU 伺服器、AI 系統、記憶體、儲存、筆電、車用與網通等。終端市場分為 Storage and Computing、Enterprise Data、Automotive、Communications、Consumer 與 Industrial。
 
@@ -147,9 +185,13 @@ Fabless，但自有製程與封裝技術，安裝在代工夥伴設備上（Item
 
 ## 競爭與替代
 
+與 Renesas 先比較相數、VID、控制介面、功率級，再實測核心瞬態。與 Vicor 模組比較須先對齊轉換位置及總路徑限制。
+
 10-K 列出 ADI、Infineon、NXP、onsemi、Power Integrations、Renesas、ROHM、Semtech、ST 與 TI。在[板端電源轉換](/next?focus=role-board-power-conversion)角色，可與 [Vicor](/next?focus=company-vicr) 的電源模組方案比較；模組與分立方案依設計取捨，不能只比效率數字。
 
 ## 業務曝險
+
+分立控制器的銷售受功率級方案、合格代工與相數影響；整合模組的出貨按留給電源的板空間及散熱規格驗證。
 
 Enterprise Data 由 2023 年 17.7% 升到 2024 年 32.5%，2025 年回到 25.2%，顯示伺服器與 AI 系統需求的波動。2025 年最大終端市場是 Storage and Computing（26.3%）。
 
